@@ -51,10 +51,8 @@ int putchar(int c)
     //Wait till ,module is ready to transmit again
     while (!USCI_A_UART_getInterruptStatus(USCI_A3_BASE,
                USCI_A_UART_TRANSMIT_INTERRUPT_FLAG)) ;
-    
   
     USCI_A_UART_transmitData(USCI_A3_BASE,(uint8_t)c);
 
-    USCI_A_UART_transmitBreak(USCI_A3_BASE);
     return c;
 }
