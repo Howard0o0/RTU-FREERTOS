@@ -27,7 +27,8 @@
 static void prvSetupHardware( void );
 
 static void task_lcd( void *pvParameters );
-static void task_print( void *pvParameters );
+static void task_print_1( void *pvParameters );
+static void task_print_2( void *pvParameters );
 
 void main( void )
 {
@@ -35,7 +36,8 @@ void main( void )
 	configuring the joystick input select button to generate interrupts. */
 	prvSetupHardware();
         
-	xTaskCreate( task_print, "LCD", 1024 * 2, NULL, tskIDLE_PRIORITY + 1, NULL );
+	xTaskCreate( task_print_1, "LCD", configMINIMAL_STACK_SIZE * 2, NULL, tskIDLE_PRIORITY + 1, NULL );
+	xTaskCreate( task_print_2, "LCD", configMINIMAL_STACK_SIZE * 2, NULL, tskIDLE_PRIORITY + 1, NULL );
 	vTaskStartScheduler();
 
 	/* If all is well then this line will never be reached.  If it is reached
@@ -77,12 +79,24 @@ static void task_lcd( void *pvParameters ){
 }
 /*-----------------------------------------------------------*/
 
-static void task_print( void *pvParameters ){
+static void task_print_1( void *pvParameters ){
 
 	uart3_init();
+	static int cnt = 0;
 	while (1){
-		printf("haha \r\n");
-		// USCI_A_UART_transmitData(USCI_A3_BASE,0x55);
+		printf("p1: %d \r\n",cnt++);
+		vTaskDelay(1000 / portTICK_PERIOD_MS);
+	}
+	
+        
+}
+
+static void task_print_2( void *pvParameters ){
+
+	uart3_init();
+	static int cnt = 0;
+	while (1){
+		printf("p2: %d \r\n",cnt++);
 		vTaskDelay(1000 / portTICK_PERIOD_MS);
 	}
 	
@@ -95,10 +109,10 @@ This allows the application to choose the tick interrupt source.
 configTICK_VECTOR must also be set in FreeRTOSConfig.h to the correct
 interrupt vector for the chosen tick interrupt source.  This implementation of
 vApplicationSetupTimerInterrupt() generates the tick from timer A0, so in this
-case configTICK_VECTOR is set to TIMER0_A0_VECTOR. */
+case configTICK_VECTOR is set to TIMER0_B0_VECTOR. */
 void vApplicationSetupTimerInterrupt( void )
 {
-	const unsigned short usACLK_Frequency_Hz = 32768;
+	const unsigned short usACLK_Frequency_Hz = 32768/8;
 
 	/* Ensure the timer is stopped. */
 	TB0CTL = 0;

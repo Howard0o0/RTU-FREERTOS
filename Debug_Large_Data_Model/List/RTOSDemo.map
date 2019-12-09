@@ -2,7 +2,7 @@
 #                                                                              #
 #      IAR Universal Linker V6.5.4.100                                         #
 #                                                                              #
-#           Link time     =  09/Dec/2019  19:07:39                             #
+#           Link time     =  09/Dec/2019  20:23:48                             #
 #           Target CPU    =  MSP430                                            #
 #           List file     =  C:\Users\83797\work\RTU\RTU-FREERTOS\Debug_Large_ #
 #                            Data_Model\List\RTOSDemo.map                      #
@@ -11,7 +11,7 @@
 #                            Format: ubrof10                                   #
 #                            UBROF version 10.0.6                              #
 #                            Using library modules for C-SPY (-rt)             #
-#           Command line  =  -f C:\Users\83797\AppData\Local\Temp\EWE243.tmp   #
+#           Command line  =  -f C:\Users\83797\AppData\Local\Temp\EWA2B8.tmp   #
 #                            (C:\Users\83797\work\RTU\RTU-FREERTOS\Debug_Large #
 #                            _Data_Model\Obj\adc10_a.r43                       #
 #                            C:\Users\83797\work\RTU\RTU-FREERTOS\Debug_Large_ #
@@ -65,7 +65,7 @@
 #                            C:\Users\83797\work\RTU\RTU-FREERTOS\Debug_Large_ #
 #                            Data_Model\Obj\hal_UCS.r43                        #
 #                            C:\Users\83797\work\RTU\RTU-FREERTOS\Debug_Large_ #
-#                            Data_Model\Obj\heap_1.r43                         #
+#                            Data_Model\Obj\heap_4.r43                         #
 #                            C:\Users\83797\work\RTU\RTU-FREERTOS\Debug_Large_ #
 #                            Data_Model\Obj\lcd_b.r43                          #
 #                            C:\Users\83797\work\RTU\RTU-FREERTOS\Debug_Large_ #
@@ -188,13 +188,13 @@
 #                            -e?Mul64Hw32=_Mul64i                              #
 #                            -e?Mul32u32uto64iHw32=_Mul32u32uto64i             #
 #                            -e?Mul32fHw32=_Mul32f                             #
-#                            -e_Mul64fHw32Ptr=_Mul64fPtr) -D_STACK_SIZE=A0     #
+#                            -e_Mul64fHw32Ptr=_Mul64fPtr) -D_STACK_SIZE=800    #
 #                            -rt                                               #
 #                            "C:\Program Files (x86)\IAR Systems\Embedded Work #
 #                            bench 8.0\430\lib\dlib\dl430xllff.r43"            #
 #                            -e_PrintfSmall=_Printf -e_ScanfSmall=_Scanf       #
-#                            -D_DATA16_HEAP_SIZE=4 -s __program_start          #
-#                            -D_DATA20_HEAP_SIZE=4)                            #
+#                            -D_DATA16_HEAP_SIZE=800 -s __program_start        #
+#                            -D_DATA20_HEAP_SIZE=50)                           #
 #                                                                              #
 #                           Copyright (C) 1987-2018 IAR Systems AB.            #
 ################################################################################
@@ -259,9 +259,9 @@
 Absolute parts
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           _DATA20_HEAP_SIZE       0004 
-           _DATA16_HEAP_SIZE       0004 
-           _STACK_SIZE             00A0 
+           _DATA20_HEAP_SIZE       0050 
+           _DATA16_HEAP_SIZE       0800 
+           _STACK_SIZE             0800 
            __iar_HWMUL             04C0            Segment part 1 (?Mul8Hw)
            ?CPU30_OFFSET           0002 
     *************************************************************************
@@ -329,19 +329,19 @@ Absolute parts
   SEGMENTS IN THE MODULE
   ======================
 DATA20_C
-  Relative segment, address: 7B3A - 7B55 (0x1c bytes), align: 1
+  Relative segment, address: 7ECA - 7EE5 (0x1c bytes), align: 1
   Segment part 2.             Intra module refs:   GPIO_setAsPeripheralModuleFunctionInputPin
            LOCAL                   ADDRESS         
            =====                   =======         
-           GPIO_PORT_TO_BASE       7B3A 
+           GPIO_PORT_TO_BASE       7ECA 
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 7786 - 77B3 (0x2e bytes), align: 1
+  Relative segment, address: 7B76 - 7BA3 (0x2e bytes), align: 1
   Segment part 6.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            GPIO_setAsPeripheralModuleFunctionInputPin
-                                   7786            uart3_init (uart3)
+                                   7B76            uart3_init (uart3)
 
     *************************************************************************
 
@@ -642,7 +642,8 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 0102 - 0103 (0x2 bytes), align: 0
-  Segment part 25. ROOT       Intra module refs:   Clock_Init
+  Segment part 25. ROOT       Intra module refs:   Clock_ACLK_DIV
+                                                   Clock_Init
                                                    Clock_SMCLK_DIV
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
@@ -667,7 +668,8 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 016A - 016B (0x2 bytes), align: 0
-  Segment part 27. ROOT       Intra module refs:   Clock_SMCLK_DIV
+  Segment part 27. ROOT       Intra module refs:   Clock_ACLK_DIV
+                                                   Clock_SMCLK_DIV
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_UCSCTL5_L            016A 
@@ -715,25 +717,25 @@ DATA16_AN
            WDTCTL_L                015C 
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 7354 - 73AB (0x58 bytes), align: 1
+  Relative segment, address: 7720 - 7777 (0x58 bytes), align: 1
   Segment part 35.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           halBoardInit            7354            prvSetupHardware (main)
+           halBoardInit            7720            prvSetupHardware (main)
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 7402 - 7457 (0x56 bytes), align: 1
+  Relative segment, address: 77CE - 7823 (0x56 bytes), align: 1
   Segment part 37.            Intra module refs:   Clock_Init
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           Set_Vcore               7402 
+           Set_Vcore               77CE 
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 75CA - 7607 (0x3e bytes), align: 1
+  Relative segment, address: 792C - 7969 (0x3e bytes), align: 1
   Segment part 38.            Intra module refs:   Clock_Init
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           System_Delayms          75CA 
+           System_Delayms          792C 
     -------------------------------------------------------------------------
 DATA20_Z
   Relative segment, address: 1C02 - 1C03 (0x2 bytes), align: 1
@@ -744,18 +746,25 @@ DATA20_Z
                                    1C02 
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 71D6 - 723F (0x6a bytes), align: 1
+  Relative segment, address: 7430 - 7499 (0x6a bytes), align: 1
   Segment part 39.            Intra module refs:   Clock_Init
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           Clock_SMCLK_DIV         71D6 
+           Clock_SMCLK_DIV         7430 
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 73AC - 7401 (0x56 bytes), align: 1
+  Relative segment, address: 73C6 - 742F (0x6a bytes), align: 1
+  Segment part 40.            Intra module refs:   Clock_Init
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           Clock_ACLK_DIV          73C6 
+    -------------------------------------------------------------------------
+<CODE> 1 (was CODE)
+  Relative segment, address: 7610 - 766B (0x5c bytes), align: 1
   Segment part 41.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           Clock_Init              73AC            prvSetupHardware (main)
+           Clock_Init              7610            prvSetupHardware (main)
                calls direct
 
     *************************************************************************
@@ -984,47 +993,104 @@ DATA16_AN
 
     *************************************************************************
 
-  FILE NAME : C:\Users\83797\work\RTU\RTU-FREERTOS\Debug_Large_Data_Model\Obj\heap_1.r43
-  PROGRAM MODULE, NAME : heap_1
+  FILE NAME : C:\Users\83797\work\RTU\RTU-FREERTOS\Debug_Large_Data_Model\Obj\heap_4.r43
+  PROGRAM MODULE, NAME : heap_4
 
   SEGMENTS IN THE MODULE
   ======================
 DATA20_Z
-  Relative segment, address: 1D08 - 4507 (0x2800 bytes), align: 0
-  Segment part 2.             Intra module refs:   pvPortMalloc
+  Relative segment, address: 1D30 - 4D2F (0x3000 bytes), align: 0
+  Segment part 2.             Intra module refs:   prvHeapInit
            LOCAL                   ADDRESS         
            =====                   =======         
-           ucHeap                  1D08 
+           ucHeap                  1D30 
+    -------------------------------------------------------------------------
+DATA20_C
+  Relative segment, address: 7EE6 - 7EE9 (0x4 bytes), align: 1
+  Segment part 3.             Intra module refs:   prvHeapInit
+                                                   pvPortMalloc
+                                                   vPortFree
+           LOCAL                   ADDRESS         
+           =====                   =======         
+           xHeapStructSize         7EE6 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1C04 - 1C07 (0x4 bytes), align: 1
-  Segment part 3.             Intra module refs:   pvPortMalloc
+  Relative segment, address: 1C04 - 1C0B (0x8 bytes), align: 1
+  Segment part 4.             Intra module refs:   prvHeapInit
+                                                   prvInsertBlockIntoFreeList
+                                                   pvPortMalloc
            LOCAL                   ADDRESS         
            =====                   =======         
-           xNextFreeByte           1C04 
+           xStart                  1C04 
+    -------------------------------------------------------------------------
+DATA20_Z
+  Relative segment, address: 1C0C - 1C0F (0x4 bytes), align: 1
+  Segment part 5.             Intra module refs:   prvHeapInit
+                                                   prvInsertBlockIntoFreeList
+                                                   pvPortMalloc
+           LOCAL                   ADDRESS         
+           =====                   =======         
+           pxEnd                   1C0C 
+    -------------------------------------------------------------------------
+DATA20_Z
+  Relative segment, address: 1C10 - 1C13 (0x4 bytes), align: 1
+  Segment part 6.             Intra module refs:   prvHeapInit
+                                                   pvPortMalloc
+                                                   vPortFree
+           LOCAL                   ADDRESS         
+           =====                   =======         
+           xFreeBytesRemaining     1C10 
+    -------------------------------------------------------------------------
+DATA20_Z
+  Relative segment, address: 1C14 - 1C17 (0x4 bytes), align: 1
+  Segment part 7.             Intra module refs:   prvHeapInit
+                                                   pvPortMalloc
+           LOCAL                   ADDRESS         
+           =====                   =======         
+           xMinimumEverFreeBytesRemaining
+                                   1C14 
+    -------------------------------------------------------------------------
+DATA20_Z
+  Relative segment, address: 1C18 - 1C1B (0x4 bytes), align: 1
+  Segment part 8.             Intra module refs:   prvHeapInit
+                                                   pvPortMalloc
+                                                   vPortFree
+           LOCAL                   ADDRESS         
+           =====                   =======         
+           xBlockAllocatedBit      1C18 
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 6E06 - 6EA5 (0xa0 bytes), align: 1
-  Segment part 5.
+  Relative segment, address: 668C - 67DD (0x152 bytes), align: 1
+  Segment part 11.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           pvPortMalloc            6E06            xTaskCreate (tasks)
+           pvPortMalloc            668C            xTaskCreate (tasks)
                calls direct
     -------------------------------------------------------------------------
-DATA20_Z
-  Relative segment, address: 1C08 - 1C0B (0x4 bytes), align: 1
-  Segment part 4.             Intra module refs:   pvPortMalloc
-           LOCAL                   ADDRESS         
-           =====                   =======         
-           pvPortMalloc::pucAlignedHeap
-                                   1C08 
-    -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 7B34 - 7B35 (0x2 bytes), align: 1
-  Segment part 6.
+  Relative segment, address: 7556 - 75B3 (0x5e bytes), align: 1
+  Segment part 12.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           vPortFree               7B34            xTaskCreate (tasks)
+           vPortFree               7556            prvDeleteTCB (tasks)
+                                                   xTaskCreate (tasks)
+               calls direct
+    -------------------------------------------------------------------------
+<CODE> 1 (was CODE)
+  Relative segment, address: 6CA4 - 6D65 (0xc2 bytes), align: 1
+  Segment part 10.            Intra module refs:   pvPortMalloc
+           LOCAL                   ADDRESS         
+           =====                   =======         
+           prvHeapInit             6CA4 
+    -------------------------------------------------------------------------
+<CODE> 1 (was CODE)
+  Relative segment, address: 734A - 73C5 (0x7c bytes), align: 1
+  Segment part 9.             Intra module refs:   pvPortMalloc
+                                                   vPortFree
+           LOCAL                   ADDRESS         
+           =====                   =======         
+           prvInsertBlockIntoFreeList
+                                   734A 
 
     *************************************************************************
 
@@ -1051,25 +1117,25 @@ DATA20_Z
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 77E2 - 780D (0x2c bytes), align: 1
+  Relative segment, address: 7BA4 - 7BCF (0x2c bytes), align: 1
   Segment part 2.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           vListInitialise         77E2            prvInitialiseTaskLists (tasks)
+           vListInitialise         7BA4            prvInitialiseTaskLists (tasks)
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 7B1C - 7B21 (0x6 bytes), align: 1
+  Relative segment, address: 7EB0 - 7EB5 (0x6 bytes), align: 1
   Segment part 3.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           vListInitialiseItem     7B1C            prvInitialiseNewTask (tasks)
+           vListInitialiseItem     7EB0            prvInitialiseNewTask (tasks)
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 7886 - 78AB (0x26 bytes), align: 1
+  Relative segment, address: 7C20 - 7C45 (0x26 bytes), align: 1
   Segment part 4.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           vListInsertEnd          7886            prvAddCurrentTaskToDelayedList (tasks)
+           vListInsertEnd          7C20            prvAddCurrentTaskToDelayedList (tasks)
                                                    prvAddNewTaskToReadyList (tasks)
                                                    xTaskIncrementTick (tasks)
                                                    xTaskPriorityDisinherit (tasks)
@@ -1077,18 +1143,19 @@ DATA20_Z
                                                    xTaskResumeAll (tasks)
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 72FC - 7353 (0x58 bytes), align: 1
+  Relative segment, address: 76C8 - 771F (0x58 bytes), align: 1
   Segment part 5.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           vListInsert             72FC            prvAddCurrentTaskToDelayedList (tasks)
+           vListInsert             76C8            prvAddCurrentTaskToDelayedList (tasks)
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 7680 - 76B9 (0x3a bytes), align: 1
+  Relative segment, address: 79E2 - 7A1B (0x3a bytes), align: 1
   Segment part 6.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           uxListRemove            7680            prvAddCurrentTaskToDelayedList (tasks)
+           uxListRemove            79E2            prvAddCurrentTaskToDelayedList (tasks)
+                                                   prvCheckTasksWaitingTermination (tasks)
                                                    xTaskIncrementTick (tasks)
                                                    xTaskPriorityDisinherit (tasks)
                                                    xTaskRemoveFromEventList (tasks)
@@ -1102,11 +1169,11 @@ DATA20_Z
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 7AA8 - 7AB5 (0xe bytes), align: 1
+  Relative segment, address: 7E3C - 7E49 (0xe bytes), align: 1
   Segment part 3. ROOT 
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           __low_level_init        7AA8            ?cstart_call_low_level_init (?cstart)
+           __low_level_init        7E3C            ?cstart_call_low_level_init (?cstart)
 
     *************************************************************************
 
@@ -1137,75 +1204,101 @@ DATA16_AN
            TB0CCR0                 03D2 
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 7836 - 785D (0x28 bytes), align: 1
-  Segment part 8.
-           ENTRY                   ADDRESS         REF BY
-           =====                   =======         ======
-           main                    7836            Segment part 27 (?cstart)
-               calls direct
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 7B36 - 7B37 (0x2 bytes), align: 1
-  Segment part 9.
-           ENTRY                   ADDRESS         REF BY
-           =====                   =======         ======
-           vApplicationTickHook    7B36            xTaskIncrementTick (tasks)
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 7A8A - 7A99 (0x10 bytes), align: 1
-  Segment part 7.             Intra module refs:   main
-           LOCAL                   ADDRESS         
-           =====                   =======         
-           prvSetupHardware        7A8A 
-               calls direct
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 79C6 - 79E1 (0x1c bytes), align: 1
-  Segment part 10.            Intra module refs:   main
-           LOCAL                   ADDRESS         
-           =====                   =======         
-           task_print              79C6 
-               calls direct
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 76BA - 76EF (0x36 bytes), align: 1
+  Relative segment, address: 78EC - 792B (0x40 bytes), align: 1
   Segment part 11.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           vApplicationSetupTimerInterrupt
-                                   76BA            vPortSetupTimerInterrupt (port)
+           main                    78EC            Segment part 27 (?cstart)
                calls direct
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 7B02 - 7B0B (0xa bytes), align: 1
+  Relative segment, address: 7EC8 - 7EC9 (0x2 bytes), align: 1
   Segment part 12.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           vApplicationIdleHook    7B02            prvIdleTask (tasks)
+           vApplicationTickHook    7EC8            xTaskIncrementTick (tasks)
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 7AEE - 7AF7 (0xa bytes), align: 1
-  Segment part 13.
+  Relative segment, address: 7E1E - 7E2D (0x10 bytes), align: 1
+  Segment part 10.            Intra module refs:   main
+           LOCAL                   ADDRESS         
+           =====                   =======         
+           prvSetupHardware        7E1E 
+               calls direct
+    -------------------------------------------------------------------------
+<CODE> 1 (was CODE)
+  Relative segment, address: 7B18 - 7B47 (0x30 bytes), align: 1
+  Segment part 13.            Intra module refs:   main
+           LOCAL                   ADDRESS         
+           =====                   =======         
+           task_print_1            7B18 
+               calls direct
+    -------------------------------------------------------------------------
+DATA20_Z
+  Relative segment, address: 1C1C - 1C1D (0x2 bytes), align: 1
+  Segment part 8.             Intra module refs:   task_print_1
+           LOCAL                   ADDRESS         
+           =====                   =======         
+           task_print_1::cnt       1C1C 
+    -------------------------------------------------------------------------
+<CODE> 1 (was CODE)
+  Relative segment, address: 7A88 - 7AB7 (0x30 bytes), align: 1
+  Segment part 14.            Intra module refs:   main
+           LOCAL                   ADDRESS         
+           =====                   =======         
+           task_print_2            7A88 
+               calls direct
+    -------------------------------------------------------------------------
+DATA20_Z
+  Relative segment, address: 1C1E - 1C1F (0x2 bytes), align: 1
+  Segment part 9.             Intra module refs:   task_print_2
+           LOCAL                   ADDRESS         
+           =====                   =======         
+           task_print_2::cnt       1C1E 
+    -------------------------------------------------------------------------
+<CODE> 1 (was CODE)
+  Relative segment, address: 7A1C - 7A51 (0x36 bytes), align: 1
+  Segment part 15.
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           vApplicationSetupTimerInterrupt
+                                   7A1C            vPortSetupTimerInterrupt (port)
+               calls direct
+    -------------------------------------------------------------------------
+<CODE> 1 (was CODE)
+  Relative segment, address: 7E82 - 7E8B (0xa bytes), align: 1
+  Segment part 16.
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           vApplicationIdleHook    7E82            prvIdleTask (tasks)
+    -------------------------------------------------------------------------
+<CODE> 1 (was CODE)
+  Relative segment, address: 7E78 - 7E81 (0xa bytes), align: 1
+  Segment part 17.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            vApplicationMallocFailedHook
-                                   7AEE            pvPortMalloc (heap_1)
+                                   7E78            pvPortMalloc (heap_4)
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 7AE4 - 7AED (0xa bytes), align: 1
-  Segment part 14.
+  Relative segment, address: 7E6E - 7E77 (0xa bytes), align: 1
+  Segment part 18.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            vApplicationStackOverflowHook
-                                   7AE4            vTaskSwitchContext (tasks)
+                                   7E6E            vTaskSwitchContext (tasks)
     -------------------------------------------------------------------------
 DATA20_C
-  Relative segment, address: 7B56 - 7B59 (0x4 bytes), align: 0
+  Relative segment, address: 7EEA - 7EED (0x4 bytes), align: 0
   Segment part 5.             Intra module refs:   main
     -------------------------------------------------------------------------
 DATA20_C
-  Relative segment, address: 7B5A - 7B61 (0x8 bytes), align: 0
-  Segment part 6.             Intra module refs:   task_print
+  Relative segment, address: 7EEE - 7EF7 (0xa bytes), align: 0
+  Segment part 6.             Intra module refs:   task_print_1
+    -------------------------------------------------------------------------
+DATA20_C
+  Relative segment, address: 7EF8 - 7F01 (0xa bytes), align: 0
+  Segment part 7.             Intra module refs:   task_print_2
 
     *************************************************************************
 
@@ -1241,22 +1334,23 @@ DATA20_I
            =====                   =======         ======
            usCriticalNesting       1C00            Segment part 0 (portext)
                                                    prvAddNewTaskToReadyList (tasks)
+                                                   prvCheckTasksWaitingTermination (tasks)
                                                    xTaskResumeAll (tasks)
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 758A - 75C9 (0x40 bytes), align: 1
+  Relative segment, address: 786C - 78AB (0x40 bytes), align: 1
   Segment part 5.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           pxPortInitialiseStack   758A            prvInitialiseNewTask (tasks)
+           pxPortInitialiseStack   786C            prvInitialiseNewTask (tasks)
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 7B22 - 7B25 (0x4 bytes), align: 1
+  Relative segment, address: 7EC2 - 7EC5 (0x4 bytes), align: 1
   Segment part 7.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            vPortSetupTimerInterrupt
-                                   7B22            Segment part 0 (portext)
+                                   7EC2            Segment part 0 (portext)
                calls direct
     -------------------------------------------------------------------------
 ISR_CODE
@@ -1277,7 +1371,7 @@ INTVEC
                                    FFF8 
     -------------------------------------------------------------------------
 DATA20_ID
-  Relative segment, address: 7B6E - 7B6F (0x2 bytes), align: 1
+  Relative segment, address: 7F0E - 7F0F (0x2 bytes), align: 1
   Segment part 4.             Intra module refs:   usCriticalNesting
 
     *************************************************************************
@@ -1292,20 +1386,20 @@ Absolute parts
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 6EA6 - 6F41 (0x9c bytes), align: 1
+  Relative segment, address: 701A - 70B5 (0x9c bytes), align: 1
   Segment part 0. ROOT 
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           vPortTickISR            6EA6            vTickISREntry (port)
-           vPortYield              6EE6            prvAddNewTaskToReadyList (tasks)
+           vPortTickISR            701A            vTickISREntry (port)
+           vPortYield              705A            prvAddNewTaskToReadyList (tasks)
                                                    prvIdleTask (tasks)
                                                    prvUSCI_A1_ISR (serial)
                                                    vTaskDelay (tasks)
                                                    xTaskResumeAll (tasks)
-           xPortStartScheduler     6F22            vTaskStartScheduler (tasks)
+           xPortStartScheduler     7096            vTaskStartScheduler (tasks)
            LOCAL                   ADDRESS         
            =====                   =======         
-           SkipContextSwitch       6ECA 
+           SkipContextSwitch       703E 
 
     *************************************************************************
 
@@ -1315,36 +1409,36 @@ Absolute parts
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 7240 - 729D (0x5e bytes), align: 1
+  Relative segment, address: 749A - 74F7 (0x5e bytes), align: 1
   Segment part 11.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            xQueueGenericSendFromISR
-                                   7240            prvUSCI_A1_ISR (serial)
+                                   749A            prvUSCI_A1_ISR (serial)
                calls direct
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 729E - 72FB (0x5e bytes), align: 1
+  Relative segment, address: 74F8 - 7555 (0x5e bytes), align: 1
   Segment part 18.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           xQueueReceiveFromISR    729E            prvUSCI_A1_ISR (serial)
+           xQueueReceiveFromISR    74F8            prvUSCI_A1_ISR (serial)
                calls direct
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 6CB8 - 6D61 (0xaa bytes), align: 1
+  Relative segment, address: 6ECC - 6F75 (0xaa bytes), align: 1
   Segment part 7.             Intra module refs:   xQueueGenericSendFromISR
            LOCAL                   ADDRESS         
            =====                   =======         
-           prvCopyDataToQueue      6CB8 
+           prvCopyDataToQueue      6ECC 
                calls direct
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 7608 - 7645 (0x3e bytes), align: 1
+  Relative segment, address: 796A - 79A7 (0x3e bytes), align: 1
   Segment part 13.            Intra module refs:   xQueueReceiveFromISR
            LOCAL                   ADDRESS         
            =====                   =======         
-           prvCopyDataFromQueue    7608 
+           prvCopyDataFromQueue    796A 
                calls direct
 
     *************************************************************************
@@ -1385,19 +1479,19 @@ DATA16_AN
            TA1CCTL0                0382 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1C0C - 1C0F (0x4 bytes), align: 1
+  Relative segment, address: 1C20 - 1C23 (0x4 bytes), align: 1
   Segment part 5.             Intra module refs:   prvRunTimeStatsOverflowISR
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           ulStatsOverflowCount    1C0C            vTaskSwitchContext (tasks)
+           ulStatsOverflowCount    1C20            vTaskSwitchContext (tasks)
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 7932 - 7951 (0x20 bytes), align: 1
+  Relative segment, address: 7C8C - 7CAB (0x20 bytes), align: 1
   Segment part 6.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            vConfigureTimerForRunTimeStats
-                                   7932            vTaskStartScheduler (tasks)
+                                   7C8C            vTaskStartScheduler (tasks)
     -------------------------------------------------------------------------
 ISR_CODE
   Relative segment, address: 5C44 - 5C51 (0xe bytes), align: 1
@@ -1484,18 +1578,18 @@ DATA16_AN
            UCA1ICTL_L              061C 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1C10 - 1C13 (0x4 bytes), align: 1
+  Relative segment, address: 1C24 - 1C27 (0x4 bytes), align: 1
   Segment part 9.             Intra module refs:   prvUSCI_A1_ISR
            LOCAL                   ADDRESS         
            =====                   =======         
-           xRxedChars              1C10 
+           xRxedChars              1C24 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1C14 - 1C17 (0x4 bytes), align: 1
+  Relative segment, address: 1C28 - 1C2B (0x4 bytes), align: 1
   Segment part 10.            Intra module refs:   prvUSCI_A1_ISR
            LOCAL                   ADDRESS         
            =====                   =======         
-           xCharsForTx             1C14 
+           xCharsForTx             1C28 
     -------------------------------------------------------------------------
 ISR_CODE
   Relative segment, address: 5C52 - 5CB5 (0x64 bytes), align: 1
@@ -1538,7 +1632,7 @@ DATA16_AN
            TA1R                    0390 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1C18 - 1C1B (0x4 bytes), align: 1
+  Relative segment, address: 1C2C - 1C2F (0x4 bytes), align: 1
   Segment part 8.             Intra module refs:   prvAddCurrentTaskToDelayedList
                                                    prvAddNewTaskToReadyList
                                                    vTaskSwitchContext
@@ -1547,10 +1641,10 @@ DATA20_Z
                                                    xTaskResumeAll
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           pxCurrentTCB            1C18            Segment part 0 (portext)
+           pxCurrentTCB            1C2C            Segment part 0 (portext)
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1C1C - 1C75 (0x5a bytes), align: 1
+  Relative segment, address: 1C30 - 1C89 (0x5a bytes), align: 1
   Segment part 9.             Intra module refs:   prvAddNewTaskToReadyList
                                                    prvIdleTask
                                                    prvInitialiseTaskLists
@@ -1561,80 +1655,98 @@ DATA20_Z
                                                    xTaskResumeAll
            LOCAL                   ADDRESS         
            =====                   =======         
-           pxReadyTasksLists       1C1C 
+           pxReadyTasksLists       1C30 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1C76 - 1C87 (0x12 bytes), align: 1
+  Relative segment, address: 1C8A - 1C9B (0x12 bytes), align: 1
   Segment part 10.            Intra module refs:   prvInitialiseTaskLists
            LOCAL                   ADDRESS         
            =====                   =======         
-           xDelayedTaskList1       1C76 
+           xDelayedTaskList1       1C8A 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1C88 - 1C99 (0x12 bytes), align: 1
+  Relative segment, address: 1C9C - 1CAD (0x12 bytes), align: 1
   Segment part 11.            Intra module refs:   prvInitialiseTaskLists
            LOCAL                   ADDRESS         
            =====                   =======         
-           xDelayedTaskList2       1C88 
+           xDelayedTaskList2       1C9C 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1C9A - 1C9D (0x4 bytes), align: 1
+  Relative segment, address: 1CAE - 1CB1 (0x4 bytes), align: 1
   Segment part 12.            Intra module refs:   prvAddCurrentTaskToDelayedList
                                                    prvInitialiseTaskLists
                                                    prvResetNextTaskUnblockTime
                                                    xTaskIncrementTick
            LOCAL                   ADDRESS         
            =====                   =======         
-           pxDelayedTaskList       1C9A 
+           pxDelayedTaskList       1CAE 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1C9E - 1CA1 (0x4 bytes), align: 1
+  Relative segment, address: 1CB2 - 1CB5 (0x4 bytes), align: 1
   Segment part 13.            Intra module refs:   prvAddCurrentTaskToDelayedList
                                                    prvInitialiseTaskLists
                                                    xTaskIncrementTick
            LOCAL                   ADDRESS         
            =====                   =======         
            pxOverflowDelayedTaskList
-                                   1C9E 
+                                   1CB2 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1CA2 - 1CB3 (0x12 bytes), align: 1
+  Relative segment, address: 1CB6 - 1CC7 (0x12 bytes), align: 1
   Segment part 14.            Intra module refs:   prvInitialiseTaskLists
                                                    xTaskRemoveFromEventList
                                                    xTaskResumeAll
            LOCAL                   ADDRESS         
            =====                   =======         
-           xPendingReadyList       1CA2 
+           xPendingReadyList       1CB6 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1CB4 - 1CC5 (0x12 bytes), align: 1
-  Segment part 15.            Intra module refs:   prvAddCurrentTaskToDelayedList
+  Relative segment, address: 1CC8 - 1CD9 (0x12 bytes), align: 1
+  Segment part 15.            Intra module refs:   prvCheckTasksWaitingTermination
                                                    prvInitialiseTaskLists
            LOCAL                   ADDRESS         
            =====                   =======         
-           xSuspendedTaskList      1CB4 
+           xTasksWaitingTermination
+                                   1CC8 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1CC6 - 1CC7 (0x2 bytes), align: 1
-  Segment part 16.            Intra module refs:   prvAddNewTaskToReadyList
+  Relative segment, address: 1CDA - 1CDB (0x2 bytes), align: 1
+  Segment part 16.            Intra module refs:   prvCheckTasksWaitingTermination
+           LOCAL                   ADDRESS         
+           =====                   =======         
+           uxDeletedTasksWaitingCleanUp
+                                   1CDA 
+    -------------------------------------------------------------------------
+DATA20_Z
+  Relative segment, address: 1CDC - 1CED (0x12 bytes), align: 1
+  Segment part 17.            Intra module refs:   prvAddCurrentTaskToDelayedList
+                                                   prvInitialiseTaskLists
+           LOCAL                   ADDRESS         
+           =====                   =======         
+           xSuspendedTaskList      1CDC 
+    -------------------------------------------------------------------------
+DATA20_Z
+  Relative segment, address: 1CEE - 1CEF (0x2 bytes), align: 1
+  Segment part 18.            Intra module refs:   prvAddNewTaskToReadyList
+                                                   prvCheckTasksWaitingTermination
                                                    xTaskResumeAll
            LOCAL                   ADDRESS         
            =====                   =======         
            uxCurrentNumberOfTasks
-                                   1CC6 
+                                   1CEE 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1CC8 - 1CCB (0x4 bytes), align: 1
-  Segment part 17.            Intra module refs:   prvAddCurrentTaskToDelayedList
+  Relative segment, address: 1CF0 - 1CF3 (0x4 bytes), align: 1
+  Segment part 19.            Intra module refs:   prvAddCurrentTaskToDelayedList
                                                    vTaskStartScheduler
                                                    xTaskIncrementTick
            LOCAL                   ADDRESS         
            =====                   =======         
-           xTickCount              1CC8 
+           xTickCount              1CF0 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1CCC - 1CCD (0x2 bytes), align: 1
-  Segment part 18.            Intra module refs:   prvAddNewTaskToReadyList
+  Relative segment, address: 1CF4 - 1CF5 (0x2 bytes), align: 1
+  Segment part 20.            Intra module refs:   prvAddNewTaskToReadyList
                                                    vTaskSwitchContext
                                                    xTaskIncrementTick
                                                    xTaskPriorityDisinherit
@@ -1642,226 +1754,238 @@ DATA20_Z
                                                    xTaskResumeAll
            LOCAL                   ADDRESS         
            =====                   =======         
-           uxTopReadyPriority      1CCC 
+           uxTopReadyPriority      1CF4 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1CCE - 1CCF (0x2 bytes), align: 1
-  Segment part 19.            Intra module refs:   prvAddNewTaskToReadyList
+  Relative segment, address: 1CF6 - 1CF7 (0x2 bytes), align: 1
+  Segment part 21.            Intra module refs:   prvAddNewTaskToReadyList
                                                    vTaskStartScheduler
            LOCAL                   ADDRESS         
            =====                   =======         
-           xSchedulerRunning       1CCE 
+           xSchedulerRunning       1CF6 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1CD0 - 1CD1 (0x2 bytes), align: 1
-  Segment part 20.            Intra module refs:   xTaskIncrementTick
+  Relative segment, address: 1CF8 - 1CF9 (0x2 bytes), align: 1
+  Segment part 22.            Intra module refs:   xTaskIncrementTick
                                                    xTaskResumeAll
            LOCAL                   ADDRESS         
            =====                   =======         
-           uxPendedTicks           1CD0 
+           uxPendedTicks           1CF8 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1CD2 - 1CD3 (0x2 bytes), align: 1
-  Segment part 21.            Intra module refs:   vTaskSwitchContext
+  Relative segment, address: 1CFA - 1CFB (0x2 bytes), align: 1
+  Segment part 23.            Intra module refs:   vTaskSwitchContext
                                                    xTaskIncrementTick
                                                    xTaskRemoveFromEventList
                                                    xTaskResumeAll
            LOCAL                   ADDRESS         
            =====                   =======         
-           xYieldPending           1CD2 
+           xYieldPending           1CFA 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1CD4 - 1CD5 (0x2 bytes), align: 1
-  Segment part 22.            Intra module refs:   xTaskIncrementTick
+  Relative segment, address: 1CFC - 1CFD (0x2 bytes), align: 1
+  Segment part 24.            Intra module refs:   xTaskIncrementTick
            LOCAL                   ADDRESS         
            =====                   =======         
-           xNumOfOverflows         1CD4 
+           xNumOfOverflows         1CFC 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1CD6 - 1CD7 (0x2 bytes), align: 1
-  Segment part 23.            Intra module refs:   prvAddNewTaskToReadyList
+  Relative segment, address: 1CFE - 1CFF (0x2 bytes), align: 1
+  Segment part 25.            Intra module refs:   prvAddNewTaskToReadyList
            LOCAL                   ADDRESS         
            =====                   =======         
-           uxTaskNumber            1CD6 
+           uxTaskNumber            1CFE 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1CD8 - 1CDB (0x4 bytes), align: 1
-  Segment part 24.            Intra module refs:   prvAddCurrentTaskToDelayedList
+  Relative segment, address: 1D00 - 1D03 (0x4 bytes), align: 1
+  Segment part 26.            Intra module refs:   prvAddCurrentTaskToDelayedList
                                                    prvResetNextTaskUnblockTime
                                                    vTaskStartScheduler
                                                    xTaskIncrementTick
            LOCAL                   ADDRESS         
            =====                   =======         
-           xNextTaskUnblockTime    1CD8 
+           xNextTaskUnblockTime    1D00 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1CDC - 1CDF (0x4 bytes), align: 1
-  Segment part 25.            Intra module refs:   vTaskStartScheduler
+  Relative segment, address: 1D04 - 1D07 (0x4 bytes), align: 1
+  Segment part 27.            Intra module refs:   vTaskStartScheduler
            LOCAL                   ADDRESS         
            =====                   =======         
-           xIdleTaskHandle         1CDC 
+           xIdleTaskHandle         1D04 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1CE0 - 1CE1 (0x2 bytes), align: 1
-  Segment part 26.            Intra module refs:   vTaskSuspendAll
+  Relative segment, address: 1D08 - 1D09 (0x2 bytes), align: 1
+  Segment part 28.            Intra module refs:   vTaskSuspendAll
                                                    vTaskSwitchContext
                                                    xTaskIncrementTick
                                                    xTaskRemoveFromEventList
                                                    xTaskResumeAll
            LOCAL                   ADDRESS         
            =====                   =======         
-           uxSchedulerSuspended    1CE0 
+           uxSchedulerSuspended    1D08 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1CE2 - 1CE5 (0x4 bytes), align: 1
-  Segment part 27.            Intra module refs:   vTaskSwitchContext
+  Relative segment, address: 1D0A - 1D0D (0x4 bytes), align: 1
+  Segment part 29.            Intra module refs:   vTaskSwitchContext
            LOCAL                   ADDRESS         
            =====                   =======         
-           ulTaskSwitchedInTime    1CE2 
+           ulTaskSwitchedInTime    1D0A 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1CE6 - 1CE9 (0x4 bytes), align: 1
-  Segment part 28.            Intra module refs:   vTaskSwitchContext
+  Relative segment, address: 1D0E - 1D11 (0x4 bytes), align: 1
+  Segment part 30.            Intra module refs:   vTaskSwitchContext
            LOCAL                   ADDRESS         
            =====                   =======         
-           ulTotalRunTime          1CE6 
+           ulTotalRunTime          1D0E 
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 70D8 - 7157 (0x80 bytes), align: 1
-  Segment part 32.            Intra module refs:   vTaskStartScheduler
+  Relative segment, address: 724C - 72CB (0x80 bytes), align: 1
+  Segment part 34.            Intra module refs:   vTaskStartScheduler
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           xTaskCreate             70D8            main (main)
+           xTaskCreate             724C            main (main)
                calls direct
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 67C4 - 68DB (0x118 bytes), align: 1
-  Segment part 31.            Intra module refs:   xTaskCreate
+  Relative segment, address: 6916 - 6A2D (0x118 bytes), align: 1
+  Segment part 33.            Intra module refs:   xTaskCreate
            LOCAL                   ADDRESS         
            =====                   =======         
-           prvInitialiseNewTask    67C4 
+           prvInitialiseNewTask    6916 
                calls direct
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 6B52 - 6C0B (0xba bytes), align: 1
-  Segment part 30.            Intra module refs:   xTaskCreate
+  Relative segment, address: 6D66 - 6E1F (0xba bytes), align: 1
+  Segment part 32.            Intra module refs:   xTaskCreate
            LOCAL                   ADDRESS         
            =====                   =======         
            prvAddNewTaskToReadyList
-                                   6B52 
+                                   6D66 
                calls direct
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 77B4 - 77E1 (0x2e bytes), align: 1
-  Segment part 38.
+  Relative segment, address: 7B48 - 7B75 (0x2e bytes), align: 1
+  Segment part 42.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           vTaskDelay              77B4            task_print (main)
+           vTaskDelay              7B48            task_print_1 (main)
+                                                   task_print_2 (main)
                calls direct
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 7458 - 74AD (0x56 bytes), align: 1
-  Segment part 48.
+  Relative segment, address: 7778 - 77CD (0x56 bytes), align: 1
+  Segment part 52.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           vTaskStartScheduler     7458            main (main)
+           vTaskStartScheduler     7778            main (main)
                calls direct
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 7B14 - 7B1B (0x8 bytes), align: 1
-  Segment part 36.            Intra module refs:   vTaskDelay
+  Relative segment, address: 7EA8 - 7EAF (0x8 bytes), align: 1
+  Segment part 40.            Intra module refs:   vTaskDelay
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           vTaskSuspendAll         7B14            pvPortMalloc (heap_1)
+           vTaskSuspendAll         7EA8            pvPortMalloc (heap_4)
+                                                   vPortFree (heap_4)
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 68DC - 69C5 (0xea bytes), align: 1
-  Segment part 34.            Intra module refs:   vTaskDelay
+  Relative segment, address: 6A2E - 6B17 (0xea bytes), align: 1
+  Segment part 38.            Intra module refs:   vTaskDelay
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           xTaskResumeAll          68DC            pvPortMalloc (heap_1)
+           xTaskResumeAll          6A2E            pvPortMalloc (heap_4)
+                                                   vPortFree (heap_4)
                calls direct
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 668C - 67C3 (0x138 bytes), align: 1
-  Segment part 55.            Intra module refs:   xTaskResumeAll
+  Relative segment, address: 67DE - 6915 (0x138 bytes), align: 1
+  Segment part 59.            Intra module refs:   xTaskResumeAll
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           xTaskIncrementTick      668C            Segment part 0 (portext)
+           xTaskIncrementTick      67DE            Segment part 0 (portext)
                calls direct
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
   Relative segment, address: 63CC - 6535 (0x16a bytes), align: 1
-  Segment part 43.
+  Segment part 47.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            vTaskSwitchContext      63CC            Segment part 0 (portext)
                calls direct
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 7056 - 70D7 (0x82 bytes), align: 1
-  Segment part 58.
+  Relative segment, address: 71CA - 724B (0x82 bytes), align: 1
+  Segment part 62.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            xTaskRemoveFromEventList
-                                   7056            xQueueGenericSendFromISR (queue)
+                                   71CA            xQueueGenericSendFromISR (queue)
                                                    xQueueReceiveFromISR (queue)
                calls direct
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 79E2 - 79FB (0x1a bytes), align: 1
-  Segment part 67.            Intra module refs:   vTaskStartScheduler
+  Relative segment, address: 7D7A - 7D93 (0x1a bytes), align: 1
+  Segment part 71.            Intra module refs:   vTaskStartScheduler
            LOCAL                   ADDRESS         
            =====                   =======         
-           prvIdleTask             79E2 
+           prvIdleTask             7D7A 
                calls direct
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 74AE - 7501 (0x54 bytes), align: 1
-  Segment part 29.            Intra module refs:   prvAddNewTaskToReadyList
+  Relative segment, address: 766C - 76C7 (0x5c bytes), align: 1
+  Segment part 31.            Intra module refs:   prvAddNewTaskToReadyList
            LOCAL                   ADDRESS         
            =====                   =======         
            prvInitialiseTaskLists
-                                   74AE 
+                                   766C 
                calls direct
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 7B32 - 7B33 (0x2 bytes), align: 1
-  Segment part 66.            Intra module refs:   prvIdleTask
+  Relative segment, address: 75B4 - 760F (0x5c bytes), align: 1
+  Segment part 70.            Intra module refs:   prvIdleTask
            LOCAL                   ADDRESS         
            =====                   =======         
            prvCheckTasksWaitingTermination
-                                   7B32 
+                                   75B4 
+               calls direct
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 76F0 - 7725 (0x36 bytes), align: 1
-  Segment part 33.            Intra module refs:   xTaskIncrementTick
+  Relative segment, address: 7DF4 - 7E09 (0x16 bytes), align: 1
+  Segment part 36.            Intra module refs:   prvCheckTasksWaitingTermination
+           LOCAL                   ADDRESS         
+           =====                   =======         
+           prvDeleteTCB            7DF4 
+               calls direct
+    -------------------------------------------------------------------------
+<CODE> 1 (was CODE)
+  Relative segment, address: 7A52 - 7A87 (0x36 bytes), align: 1
+  Segment part 35.            Intra module refs:   xTaskIncrementTick
                                                    xTaskResumeAll
            LOCAL                   ADDRESS         
            =====                   =======         
            prvResetNextTaskUnblockTime
-                                   76F0 
+                                   7A52 
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 7158 - 71D5 (0x7e bytes), align: 1
-  Segment part 73.
+  Relative segment, address: 72CC - 7349 (0x7e bytes), align: 1
+  Segment part 77.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            xTaskPriorityDisinherit
-                                   7158            prvCopyDataToQueue (queue)
+                                   72CC            prvCopyDataToQueue (queue)
                calls direct
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 6D62 - 6E05 (0xa4 bytes), align: 1
-  Segment part 35.            Intra module refs:   vTaskDelay
+  Relative segment, address: 6F76 - 7019 (0xa4 bytes), align: 1
+  Segment part 39.            Intra module refs:   vTaskDelay
            LOCAL                   ADDRESS         
            =====                   =======         
            prvAddCurrentTaskToDelayedList
-                                   6D62 
+                                   6F76 
                calls direct
     -------------------------------------------------------------------------
 DATA20_C
-  Relative segment, address: 7B62 - 7B66 (0x5 bytes), align: 0
+  Relative segment, address: 7F02 - 7F06 (0x5 bytes), align: 0
   Segment part 4.             Intra module refs:   vTaskStartScheduler
 
     *************************************************************************
@@ -1890,19 +2014,20 @@ DATA20_C
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 6F42 - 6FCF (0x8e bytes), align: 1
+  Relative segment, address: 70B6 - 7143 (0x8e bytes), align: 1
   Segment part 3.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           uart3_init              6F42            task_print (main)
+           uart3_init              70B6            task_print_1 (main)
+                                                   task_print_2 (main)
                calls direct
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 785E - 7885 (0x28 bytes), align: 1
+  Relative segment, address: 7BD0 - 7BF7 (0x28 bytes), align: 1
   Segment part 4.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           putchar                 785E            _Prout (?xprout)
+           putchar                 7BD0            _Prout (?xprout)
                calls direct
 
     *************************************************************************
@@ -1919,43 +2044,43 @@ DATA20_C
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 69C6 - 6A8F (0xca bytes), align: 1
+  Relative segment, address: 6B18 - 6BE1 (0xca bytes), align: 1
   Segment part 2.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           USCI_A_UART_init        69C6            uart3_init (uart3)
+           USCI_A_UART_init        6B18            uart3_init (uart3)
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 78AC - 78CF (0x24 bytes), align: 1
+  Relative segment, address: 7C46 - 7C69 (0x24 bytes), align: 1
   Segment part 3.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            USCI_A_UART_transmitData
-                                   78AC            putchar (uart3)
+                                   7C46            putchar (uart3)
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 7ADA - 7AE3 (0xa bytes), align: 1
+  Relative segment, address: 7E8C - 7E95 (0xa bytes), align: 1
   Segment part 7.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            USCI_A_UART_getInterruptStatus
-                                   7ADA            putchar (uart3)
+                                   7E8C            putchar (uart3)
                                                    uart3_init (uart3)
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 7B0C - 7B13 (0x8 bytes), align: 1
+  Relative segment, address: 7EA0 - 7EA7 (0x8 bytes), align: 1
   Segment part 9.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           USCI_A_UART_enable      7B0C            uart3_init (uart3)
+           USCI_A_UART_enable      7EA0            uart3_init (uart3)
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 7502 - 7549 (0x48 bytes), align: 1
+  Relative segment, address: 7824 - 786B (0x48 bytes), align: 1
   Segment part 15.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            USCI_A_UART_transmitBreak
-                                   7502            uart3_init (uart3)
+                                   7824            uart3_init (uart3)
 
     *************************************************************************
 
@@ -1971,11 +2096,11 @@ DATA20_C
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 7952 - 796F (0x1e bytes), align: 1
+  Relative segment, address: 7CEC - 7D09 (0x1e bytes), align: 1
   Segment part 2.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           WDT_A_hold              7952            prvSetupHardware (main)
+           WDT_A_hold              7CEC            prvSetupHardware (main)
                                                    uart3_init (uart3)
 
     *************************************************************************
@@ -1986,11 +2111,11 @@ DATA20_C
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 7B38 - 7B39 (0x2 bytes), align: 1
+  Relative segment, address: 7EC6 - 7EC7 (0x2 bytes), align: 1
   Segment part 2.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           __DebugBreak            7B38            __exit (?__exit)
+           __DebugBreak            7EC6            __exit (?__exit)
 
     -------------------------------------------------------------------------
   LIBRARY MODULE, NAME : ?__exit
@@ -1998,11 +2123,11 @@ DATA20_C
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 7A76 - 7A89 (0x14 bytes), align: 1
+  Relative segment, address: 7E0A - 7E1D (0x14 bytes), align: 1
   Segment part 2.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           __exit                  7A76            Segment part 6 (?_exit)
+           __exit                  7E0A            Segment part 6 (?_exit)
                                                    _exit (?_exit)
                calls direct
 
@@ -2012,14 +2137,14 @@ DATA20_C
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 7B2A, align: 1
+  Relative segment, address: 7EBA, align: 1
   Segment part 0.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           _exit                   7B2A            exit (?exit)
+           _exit                   7EBA            exit (?exit)
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 7B2A - 7B2D (0x4 bytes), align: 1
+  Relative segment, address: 7EBA - 7EBD (0x4 bytes), align: 1
   Segment part 6.             Intra module refs:   _exit
 
     -------------------------------------------------------------------------
@@ -2028,7 +2153,7 @@ DATA20_C
   SEGMENTS IN THE MODULE
   ======================
 CSTACK
-  Relative segment, address: 5B60, align: 1
+  Relative segment, address: 5400, align: 1
   Segment part 1.
     -------------------------------------------------------------------------
 CODE_I
@@ -2036,11 +2161,11 @@ CODE_I
   Segment part 5.
     -------------------------------------------------------------------------
 CODE_ID
-  Relative segment, address: 7B70, align: 1
+  Relative segment, address: 7F10, align: 1
   Segment part 6.
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1CEA, align: 1
+  Relative segment, address: 1D12, align: 1
   Segment part 7.
     -------------------------------------------------------------------------
 DATA20_I
@@ -2048,15 +2173,15 @@ DATA20_I
   Segment part 8.
     -------------------------------------------------------------------------
 DATA20_ID
-  Relative segment, address: 7B70, align: 1
+  Relative segment, address: 7F10, align: 1
   Segment part 9.
     -------------------------------------------------------------------------
 DATA20_C
-  Relative segment, address: 7B56, align: 1
+  Relative segment, address: 7EEA, align: 1
   Segment part 10.
     -------------------------------------------------------------------------
 DATA20_N
-  Relative segment, address: 4508, align: 1
+  Relative segment, address: 4D30, align: 1
   Segment part 12.
     -------------------------------------------------------------------------
 CSTART
@@ -2086,31 +2211,38 @@ CSTART
                                                    _Locale_Profile (?setlocale)
                                                    __data20_Aldata (?xxmemxmalloc)
                                                    __iar_Tls_setup__Locale_Profile (?setlocale)
-                                                   pvPortMalloc::pucAlignedHeap (heap_1)
                                                    pxCurrentTCB (tasks)
                                                    pxDelayedTaskList (tasks)
+                                                   pxEnd (heap_4)
                                                    pxOverflowDelayedTaskList (tasks)
                                                    pxReadyTasksLists (tasks)
-                                                   ucHeap (heap_1)
+                                                   task_print_1::cnt (main)
+                                                   task_print_2::cnt (main)
+                                                   ucHeap (heap_4)
                                                    ulStatsOverflowCount (RunTimeStatsConfig)
                                                    ulTaskSwitchedInTime (tasks)
                                                    ulTotalRunTime (tasks)
                                                    uxCurrentNumberOfTasks (tasks)
+                                                   uxDeletedTasksWaitingCleanUp (tasks)
                                                    uxPendedTicks (tasks)
                                                    uxSchedulerSuspended (tasks)
                                                    uxTaskNumber (tasks)
                                                    uxTopReadyPriority (tasks)
+                                                   xBlockAllocatedBit (heap_4)
                                                    xCharsForTx (serial)
                                                    xDelayedTaskList1 (tasks)
                                                    xDelayedTaskList2 (tasks)
+                                                   xFreeBytesRemaining (heap_4)
                                                    xIdleTaskHandle (tasks)
-                                                   xNextFreeByte (heap_1)
+                                                   xMinimumEverFreeBytesRemaining (heap_4)
                                                    xNextTaskUnblockTime (tasks)
                                                    xNumOfOverflows (tasks)
                                                    xPendingReadyList (tasks)
                                                    xRxedChars (serial)
                                                    xSchedulerRunning (tasks)
+                                                   xStart (heap_4)
                                                    xSuspendedTaskList (tasks)
+                                                   xTasksWaitingTermination (tasks)
                                                    xTickCount (tasks)
                                                    xYieldPending (tasks)
     -------------------------------------------------------------------------
@@ -2131,7 +2263,7 @@ CSTART
            ?cstart_end             5C38 
     -------------------------------------------------------------------------
 CODE_ID
-  Relative segment, address: 7B70, align: 1
+  Relative segment, address: 7F10, align: 1
   Segment part 28.            Intra module refs:   Segment part 5
 
     -------------------------------------------------------------------------
@@ -2152,11 +2284,11 @@ RESET
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 7B2E - 7B31 (0x4 bytes), align: 1
+  Relative segment, address: 7EB6 - 7EB9 (0x4 bytes), align: 1
   Segment part 2.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           exit                    7B2E            Segment part 27 (?cstart)
+           exit                    7EB6            Segment part 27 (?cstart)
                calls direct
 
     -------------------------------------------------------------------------
@@ -2165,11 +2297,11 @@ RESET
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 7A2E - 7A45 (0x18 bytes), align: 1
+  Relative segment, address: 7DDC - 7DF3 (0x18 bytes), align: 1
   Segment part 1.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           ?DivMod16u              7A2E            vApplicationSetupTimerInterrupt (main)
+           ?DivMod16u              7DDC            vApplicationSetupTimerInterrupt (main)
 
     -------------------------------------------------------------------------
   LIBRARY MODULE, NAME : ?DivMod32u
@@ -2177,11 +2309,11 @@ RESET
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 7756 - 7785 (0x30 bytes), align: 1
+  Relative segment, address: 7AE8 - 7B17 (0x30 bytes), align: 1
   Segment part 0.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           ?DivMod32u              7756            _LitobSmall (?xprintfsmall)
+           ?DivMod32u              7AE8            _LitobSmall (?xprintfsmall)
 
     -------------------------------------------------------------------------
   LIBRARY MODULE, NAME : ?memchr
@@ -2189,11 +2321,11 @@ RESET
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 7970 - 798D (0x1e bytes), align: 1
+  Relative segment, address: 7D0A - 7D27 (0x1e bytes), align: 1
   Segment part 2.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           __iar_Memchr            7970            _PrintfSmall (?xprintfsmall)
+           __iar_Memchr            7D0A            _PrintfSmall (?xprintfsmall)
 
     -------------------------------------------------------------------------
   LIBRARY MODULE, NAME : ?memcpy
@@ -2201,11 +2333,11 @@ RESET
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 798E - 79A9 (0x1c bytes), align: 1
+  Relative segment, address: 7D28 - 7D43 (0x1c bytes), align: 1
   Segment part 2.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           memcpy                  798E            _PutstrSmall (?xprintfsmall)
+           memcpy                  7D28            _PutstrSmall (?xprintfsmall)
                                                    __data20_memcpy (?memzero)
                                                    prvCopyDataFromQueue (queue)
                                                    prvCopyDataToQueue (queue)
@@ -2216,11 +2348,11 @@ RESET
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 79AA - 79C5 (0x1c bytes), align: 1
+  Relative segment, address: 7D44 - 7D5F (0x1c bytes), align: 1
   Segment part 2.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           memset                  79AA            prvInitialiseNewTask (tasks)
+           memset                  7D44            prvInitialiseNewTask (tasks)
 
     -------------------------------------------------------------------------
   LIBRARY MODULE, NAME : ?memzero
@@ -2228,18 +2360,18 @@ RESET
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 7A16 - 7A2D (0x18 bytes), align: 1
+  Relative segment, address: 7DC4 - 7DDB (0x18 bytes), align: 1
   Segment part 5.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           __data20_memzero        7A16            ?cstart_init_zero20 (?cstart)
+           __data20_memzero        7DC4            ?cstart_init_zero20 (?cstart)
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 7B26 - 7B29 (0x4 bytes), align: 1
+  Relative segment, address: 7EBE - 7EC1 (0x4 bytes), align: 1
   Segment part 6.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           __data20_memcpy         7B26            ?cstart_init_copy20 (?cstart)
+           __data20_memcpy         7EBE            ?cstart_init_copy20 (?cstart)
                calls direct
 
     -------------------------------------------------------------------------
@@ -2248,19 +2380,19 @@ RESET
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 7912 - 7915 (0x4 bytes), align: 1
+  Relative segment, address: 7CCC - 7CCF (0x4 bytes), align: 1
   Segment part 0.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           ?Mul8Hw                 7912            _LitobSmall (?xprintfsmall)
+           ?Mul8Hw                 7CCC            _LitobSmall (?xprintfsmall)
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 7916 - 7931 (0x1c bytes), align: 1
+  Relative segment, address: 7CD0 - 7CEB (0x1c bytes), align: 1
   Segment part 1.             Intra module refs:   ?Mul8Hw
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           ?Mul16Hw                7916 
-           ?Mul16to32uHw           7916 
+           ?Mul16Hw                7CD0 
+           ?Mul16to32uHw           7CD0 
 
     -------------------------------------------------------------------------
   LIBRARY MODULE, NAME : ?printf
@@ -2268,11 +2400,12 @@ RESET
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 78D0 - 78F1 (0x22 bytes), align: 1
+  Relative segment, address: 7C6A - 7C8B (0x22 bytes), align: 1
   Segment part 2.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           printf                  78D0            task_print (main)
+           printf                  7C6A            task_print_1 (main)
+                                                   task_print_2 (main)
                calls direct
 
     -------------------------------------------------------------------------
@@ -2281,30 +2414,30 @@ RESET
   SEGMENTS IN THE MODULE
   ======================
 DATA20_Z
-  Relative segment, address: 1CEA - 1CF7 (0xe bytes), align: 1
+  Relative segment, address: 1D12 - 1D1F (0xe bytes), align: 1
   Segment part 13.            Intra module refs:   _LocaleEncoding
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           _Locale_Profile         1CEA 
+           _Locale_Profile         1D12 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1CF8 - 1CFB (0x4 bytes), align: 1
+  Relative segment, address: 1D20 - 1D23 (0x4 bytes), align: 1
   Segment part 14.            Intra module refs:   Segment part 28
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            __iar_Tls_setup__Locale_Profile
-                                   1CF8 
+                                   1D20 
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 7ACE - 7AD9 (0xc bytes), align: 1
+  Relative segment, address: 7E56 - 7E61 (0xc bytes), align: 1
   Segment part 28.            Intra module refs:   _LocaleEncoding
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 7AC2 - 7ACD (0xc bytes), align: 1
+  Relative segment, address: 7E4A - 7E55 (0xc bytes), align: 1
   Segment part 21.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           _LocaleEncoding         7AC2            _Mbtowc (?xmbtowc)
+           _LocaleEncoding         7E4A            _Mbtowc (?xmbtowc)
                                                    _Wctomb (?xwctomb)
                                                    __iar_Mbcurmax (?xmbcurmax)
                calls indirect
@@ -2315,11 +2448,11 @@ DATA20_Z
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 7A9A - 7AA7 (0xe bytes), align: 1
+  Relative segment, address: 7E2E - 7E3B (0xe bytes), align: 1
   Segment part 2.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           __iar_Strchr            7A9A            _PrintfSmall (?xprintfsmall)
+           __iar_Strchr            7E2E            _PrintfSmall (?xprintfsmall)
 
     -------------------------------------------------------------------------
   LIBRARY MODULE, NAME : ?strlen
@@ -2327,11 +2460,11 @@ DATA20_Z
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 78F2 - 7911 (0x20 bytes), align: 1
+  Relative segment, address: 7CAC - 7CCB (0x20 bytes), align: 1
   Segment part 2.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           strlen                  78F2            _PrintfSmall (?xprintfsmall)
+           strlen                  7CAC            _PrintfSmall (?xprintfsmall)
 
     -------------------------------------------------------------------------
   LIBRARY MODULE, NAME : ?xencoding_sb
@@ -2339,18 +2472,18 @@ DATA20_Z
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 7A5E - 7A75 (0x18 bytes), align: 1
+  Relative segment, address: 7DAC - 7DC3 (0x18 bytes), align: 1
   Segment part 4.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           _EncodingSb_Wctomb      7A5E            _Wctomb (?xwctomb)
+           _EncodingSb_Wctomb      7DAC            _Wctomb (?xwctomb)
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 7646 - 767F (0x3a bytes), align: 1
+  Relative segment, address: 79A8 - 79E1 (0x3a bytes), align: 1
   Segment part 5.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           _EncodingSb_Mbtowc      7646            _Mbtowc (?xmbtowc)
+           _EncodingSb_Mbtowc      79A8            _Mbtowc (?xmbtowc)
 
     -------------------------------------------------------------------------
   LIBRARY MODULE, NAME : ?xgetmemchunk
@@ -2358,18 +2491,18 @@ DATA20_Z
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 754A - 7589 (0x40 bytes), align: 1
+  Relative segment, address: 78AC - 78EB (0x40 bytes), align: 1
   Segment part 5.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           __data20_GetMemChunk    754A            __data20_findmem (?xxmemxmalloc)
+           __data20_GetMemChunk    78AC            __data20_findmem (?xxmemxmalloc)
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1CFC - 1CFF (0x4 bytes), align: 1
+  Relative segment, address: 1D24 - 1D27 (0x4 bytes), align: 1
   Segment part 3.             Intra module refs:   __data20_GetMemChunk
     -------------------------------------------------------------------------
 DATA20_HEAP
-  Relative segment, address: 4508, align: 1
+  Relative segment, address: 4D30, align: 1
   Segment part 7.
 
     -------------------------------------------------------------------------
@@ -2378,11 +2511,11 @@ DATA20_HEAP
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 7AF8 - 7B01 (0xa bytes), align: 1
+  Relative segment, address: 7E96 - 7E9F (0xa bytes), align: 1
   Segment part 2.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           __iar_Mbcurmax          7AF8            _PutstrSmall (?xprintfsmall)
+           __iar_Mbcurmax          7E96            _PutstrSmall (?xprintfsmall)
                calls direct
 
     -------------------------------------------------------------------------
@@ -2391,11 +2524,11 @@ DATA20_HEAP
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 780E - 7835 (0x28 bytes), align: 1
+  Relative segment, address: 7BF8 - 7C1F (0x28 bytes), align: 1
   Segment part 2.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           _Mbtowc                 780E            _PrintfSmall (?xprintfsmall)
+           _Mbtowc                 7BF8            _PrintfSmall (?xprintfsmall)
                calls direct
 
     -------------------------------------------------------------------------
@@ -2412,7 +2545,7 @@ DATA20_HEAP
                calls direct
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 7AB6 - 7AC1 (0xc bytes), align: 1
+  Relative segment, address: 7E62 - 7E6D (0xc bytes), align: 1
   Segment part 7.             Intra module refs:   _PrintfSmall
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
@@ -2493,16 +2626,16 @@ DATA20_HEAP
                calls direct
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 7726 - 7755 (0x30 bytes), align: 1
+  Relative segment, address: 7AB8 - 7AE7 (0x30 bytes), align: 1
   Segment part 21.            Intra module refs:   Segment part 12
                                                    pad
            LOCAL                   ADDRESS         
            =====                   =======         
-           _PutcharsSmall          7726 
+           _PutcharsSmall          7AB8 
                calls indirect
     -------------------------------------------------------------------------
 DATA20_C
-  Relative segment, address: 7B67 - 7B6C (0x6 bytes), align: 0
+  Relative segment, address: 7F07 - 7F0C (0x6 bytes), align: 0
   Segment part 3.             Intra module refs:   _PrintfSmall
 
     -------------------------------------------------------------------------
@@ -2511,11 +2644,11 @@ DATA20_C
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 7A46 - 7A5D (0x18 bytes), align: 1
+  Relative segment, address: 7D94 - 7DAB (0x18 bytes), align: 1
   Segment part 2.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           _Prout                  7A46            printf (?printf)
+           _Prout                  7D94            printf (?printf)
                calls direct
 
     -------------------------------------------------------------------------
@@ -2524,11 +2657,11 @@ DATA20_C
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 79FC - 7A15 (0x1a bytes), align: 1
+  Relative segment, address: 7D60 - 7D79 (0x1a bytes), align: 1
   Segment part 2.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           _Wctomb                 79FC            _PutstrSmall (?xprintfsmall)
+           _Wctomb                 7D60            _PutstrSmall (?xprintfsmall)
                calls direct
 
     -------------------------------------------------------------------------
@@ -2537,11 +2670,11 @@ DATA20_C
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 6A90 - 6B51 (0xc2 bytes), align: 1
+  Relative segment, address: 6BE2 - 6CA3 (0xc2 bytes), align: 1
   Segment part 3.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           __data20_free           6A90            _PutstrSmall (?xprintfsmall)
+           __data20_free           6BE2            _PutstrSmall (?xprintfsmall)
                                                    __data20_findmem (?xxmemxmalloc)
 
     -------------------------------------------------------------------------
@@ -2550,27 +2683,27 @@ DATA20_C
   SEGMENTS IN THE MODULE
   ======================
 DATA20_Z
-  Relative segment, address: 1D00 - 1D07 (0x8 bytes), align: 1
+  Relative segment, address: 1D28 - 1D2F (0x8 bytes), align: 1
   Segment part 3.             Intra module refs:   __data20_findmem
                                                    __data20_malloc
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           __data20_Aldata         1D00            __data20_free (?xxmemxfree)
+           __data20_Aldata         1D28            __data20_free (?xxmemxfree)
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 6FD0 - 7055 (0x86 bytes), align: 1
+  Relative segment, address: 7144 - 71C9 (0x86 bytes), align: 1
   Segment part 5.             Intra module refs:   __data20_malloc
            LOCAL                   ADDRESS         
            =====                   =======         
-           __data20_findmem        6FD0 
+           __data20_findmem        7144 
                calls direct
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 6C0C - 6CB7 (0xac bytes), align: 1
+  Relative segment, address: 6E20 - 6ECB (0xac bytes), align: 1
   Segment part 7.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           __data20_malloc         6C0C            _PutstrSmall (?xprintfsmall)
+           __data20_malloc         6E20            _PutstrSmall (?xprintfsmall)
                calls direct
 
 
@@ -2628,16 +2761,16 @@ DATA16_AN                              0102 - 0103               2   rel    0
                                        067C - 067D               2 
 CODE_I                                    1C00                       rel    1
 DATA20_I                               1C00 - 1C01               2   rel    1
-DATA20_Z                               1C02 - 4507            2906   rel    1
-DATA20_N                                  4508                       rel    1
-DATA20_HEAP                            4508 - 450B               4   rel    1
-CSTACK                                 5B60 - 5BFF              A0   rel    1
+DATA20_Z                               1C02 - 4D2F            312E   rel    1
+DATA20_N                                  4D30                       rel    1
+DATA20_HEAP                            4D30 - 4D7F              50   rel    1
+CSTACK                                 5400 - 5BFF             800   rel    1
 CSTART                                 5C00 - 5C37              38   rel    1
 ISR_CODE                               5C38 - 5CB5              7E   rel    1
-<CODE> 1                               5CB6 - 7B39            1E84   rel    1
-DATA20_C                               7B3A - 7B6C              33   rel    1
-DATA20_ID                              7B6E - 7B6F               2   rel    1
-CODE_ID                                   7B70                       rel    1
+<CODE> 1                               5CB6 - 7EC9            2214   rel    1
+DATA20_C                               7ECA - 7F0C              43   rel    1
+DATA20_ID                              7F0E - 7F0F               2   rel    1
+CODE_ID                                   7F10                       rel    1
 INTVEC                                 FF80 - FFF9              7A   com    1
 RESET                                  FFFE - FFFF               2   rel    1
 
@@ -2647,9 +2780,9 @@ RESET                                  FFFE - FFFF               2   rel    1
                 *                                      *
                 ****************************************
 
-  8 118 bytes of CODE  memory
- 10 668 bytes of DATA  memory (+ 116 absolute )
-     53 bytes of CONST memory
+  9 030 bytes of CODE  memory
+ 14 720 bytes of DATA  memory (+ 116 absolute )
+     69 bytes of CONST memory
 
 Errors: none
 Warnings: none

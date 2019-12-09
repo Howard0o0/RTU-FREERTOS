@@ -204,6 +204,14 @@ void Clock_ACLK_DIV(int i)
       ;
   } while ((SFRIFG1 & OFIFG) == OFIFG);
 }
+
+/*
+ * Description  : 时钟初始化
+ * Details      : P5.2和P5.3选择为晶振XT2输入
+ *                P7.0和P7.1选择为晶振XT1输入
+ *                选择MCLK、SMCLK为XT2 => 8MHz  =(8分频)==>  1MHz
+ *                选择ACLK为XT1 => 32Khz  =(8分频)==>  4Khz
+*/
 void Clock_Init()
 {
   //unsigned char i;
@@ -228,6 +236,6 @@ void Clock_Init()
   } while (SFRIFG1 & OFIFG); // 判断XT2是否起振
                              //Delay_ms(50);
   System_Delayms(50);
-  // Clock_ACLK_DIV(8);
+  Clock_ACLK_DIV(8);
   Clock_SMCLK_DIV(8);
 }
