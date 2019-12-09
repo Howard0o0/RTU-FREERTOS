@@ -18,6 +18,7 @@
 
 #include "led.h"
 #include "driverlib.h"
+#include "uart3.h"
 
 
 /*
@@ -26,6 +27,7 @@
 static void prvSetupHardware( void );
 
 static void task_lcd( void *pvParameters );
+static void task_print( void *pvParameters );
 
 void main( void )
 {
@@ -33,8 +35,49 @@ void main( void )
 	configuring the joystick input select button to generate interrupts. */
 	prvSetupHardware();
         
-	xTaskCreate( task_lcd, "LCD", 1024 * 2, NULL, tskIDLE_PRIORITY + 1, NULL );
-	vTaskStartScheduler();
+	// xTaskCreate( task_print, "LCD", 1024 * 2, NULL, tskIDLE_PRIORITY + 1, NULL );
+	// vTaskStartScheduler();
+
+	//Stop WDT
+    WDT_A_hold(WDT_A_BASE);
+	
+    //P10.4,5 = USCI_A3 TXD/RXD
+    GPIO_setAsPeripheralModuleFunctionInputPin(
+        GPIO_PORT_P10,
+        GPIO_PIN4 + GPIO_PIN5
+        );
+
+    //Initialize USCI UART module
+    //Baudrate = 9600, clock freq = 1.048MHz
+    //UCBRx = 6, UCBRFx = 13, UCBRSx = 0, UCOS16 = 1
+    USCI_A_UART_initParam param = {0};
+    param.selectClockSource = USCI_A_UART_CLOCKSOURCE_SMCLK;
+    param.clockPrescalar = 6;
+    param.firstModReg = 13;
+    param.secondModReg = 0;
+    param.parity = USCI_A_UART_NO_PARITY;
+    param.msborLsbFirst = USCI_A_UART_LSB_FIRST;
+    param.numberofStopBits = USCI_A_UART_ONE_STOP_BIT;
+    param.uartMode = USCI_A_UART_AUTOMATIC_BAUDRATE_DETECTION_MODE;
+    param.overSampling = USCI_A_UART_OVERSAMPLING_BAUDRATE_GENERATION;
+    if (STATUS_FAIL == USCI_A_UART_init(USCI_A3_BASE, &param)){
+        return;
+    }
+
+    //Enable UART module for operation
+    USCI_A_UART_enable(USCI_A3_BASE);
+
+    //Transmit Break
+    USCI_A_UART_transmitBreak(USCI_A3_BASE);
+
+    //Wait till ,module is ready to transmit again
+    while (!USCI_A_UART_getInterruptStatus(USCI_A3_BASE,
+               USCI_A_UART_TRANSMIT_INTERRUPT_FLAG)) ;
+
+    
+    while(1){
+        USCI_A_UART_transmitData(USCI_A3_BASE,0x55);
+    }
         
 
 	/* If all is well then this line will never be reached.  If it is reached
@@ -57,15 +100,30 @@ static void prvSetupHardware( void )
 	hal430SetSystemClock( configCPU_CLOCK_HZ, configLFXT_CLOCK_HZ );
 
 	WDT_A_hold(WDT_A_BASE);
-	led_init();
+	
 }
 /*-----------------------------------------------------------*/
 
 static void task_lcd( void *pvParameters ){
+
+	led_init();
 	while (1){
 		Led6_On();
 		vTaskDelay(1000 / portTICK_PERIOD_MS);
 		Led6_Off();
+		vTaskDelay(1000 / portTICK_PERIOD_MS);
+	}
+	
+        
+}
+/*-----------------------------------------------------------*/
+
+static void task_print( void *pvParameters ){
+
+	uart3_init();
+	while (1){
+		// printf("haha \r\n");
+		USCI_A_UART_transmitData(USCI_A3_BASE,0x55);
 		vTaskDelay(1000 / portTICK_PERIOD_MS);
 	}
 	

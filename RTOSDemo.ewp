@@ -4628,6 +4628,12 @@
         <file>
             <name>$PROJ_DIR$\Apps\led.h</name>
         </file>
+        <file>
+            <name>$PROJ_DIR$\Apps\uart3.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Apps\uart3.h</name>
+        </file>
     </group>
     <group>
         <name>Common</name>

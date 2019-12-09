@@ -2,7 +2,7 @@
 #                                                                              #
 #      IAR Universal Linker V6.5.4.100                                         #
 #                                                                              #
-#           Link time     =  09/Dec/2019  10:28:32                             #
+#           Link time     =  09/Dec/2019  15:57:25                             #
 #           Target CPU    =  MSP430                                            #
 #           List file     =  C:\Users\83797\work\RTU\RTU-FREERTOS\Debug_Large_ #
 #                            Data_Model\List\RTOSDemo.map                      #
@@ -11,7 +11,7 @@
 #                            Format: ubrof10                                   #
 #                            UBROF version 10.0.6                              #
 #                            Using library modules for C-SPY (-rt)             #
-#           Command line  =  -f C:\Users\83797\AppData\Local\Temp\EW9149.tmp   #
+#           Command line  =  -f C:\Users\83797\AppData\Local\Temp\EWB4B1.tmp   #
 #                            (C:\Users\83797\work\RTU\RTU-FREERTOS\Debug_Large #
 #                            _Data_Model\Obj\adc10_a.r43                       #
 #                            C:\Users\83797\work\RTU\RTU-FREERTOS\Debug_Large_ #
@@ -132,6 +132,8 @@
 #                            Data_Model\Obj\timers.r43                         #
 #                            C:\Users\83797\work\RTU\RTU-FREERTOS\Debug_Large_ #
 #                            Data_Model\Obj\tlv.r43                            #
+#                            C:\Users\83797\work\RTU\RTU-FREERTOS\Debug_Large_ #
+#                            Data_Model\Obj\uart3.r43                          #
 #                            C:\Users\83797\work\RTU\RTU-FREERTOS\Debug_Large_ #
 #                            Data_Model\Obj\ucs.r43                            #
 #                            C:\Users\83797\work\RTU\RTU-FREERTOS\Debug_Large_ #
@@ -322,6 +324,25 @@ Absolute parts
     *************************************************************************
 
   FILE NAME : C:\Users\83797\work\RTU\RTU-FREERTOS\Debug_Large_Data_Model\Obj\gpio.r43
+  PROGRAM MODULE, NAME : gpio
+
+  SEGMENTS IN THE MODULE
+  ======================
+DATA20_C
+  Relative segment, address: 6688 - 66A3 (0x1c bytes), align: 1
+  Segment part 2.             Intra module refs:   GPIO_setAsPeripheralModuleFunctionInputPin
+           LOCAL                   ADDRESS         
+           =====                   =======         
+           GPIO_PORT_TO_BASE       6688 
+    -------------------------------------------------------------------------
+<CODE> 1 (was CODE)
+  Relative segment, address: 6548 - 6575 (0x2e bytes), align: 1
+  Segment part 6.
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           GPIO_setAsPeripheralModuleFunctionInputPin
+                                   6548            main (main)
+
     *************************************************************************
 
   FILE NAME : C:\Users\83797\work\RTU\RTU-FREERTOS\Debug_Large_Data_Model\Obj\hal_board.r43
@@ -331,7 +352,7 @@ Absolute parts
   ======================
 DATA16_AN
   Relative segment, address: 0202 - 0203 (0x2 bytes), align: 0
-  Segment part 1. ROOT 
+  Segment part 1. ROOT        Intra module refs:   halBoardInit
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_PAOUT_L              0202 
@@ -343,7 +364,7 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 0204 - 0205 (0x2 bytes), align: 0
-  Segment part 2. ROOT 
+  Segment part 2. ROOT        Intra module refs:   halBoardInit
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_PADIR_L              0204 
@@ -355,7 +376,7 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 020A - 020B (0x2 bytes), align: 0
-  Segment part 3. ROOT 
+  Segment part 3. ROOT        Intra module refs:   halBoardInit
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_PASEL_L              020A 
@@ -367,7 +388,7 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 0222 - 0223 (0x2 bytes), align: 0
-  Segment part 4. ROOT 
+  Segment part 4. ROOT        Intra module refs:   halBoardInit
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_PBOUT_L              0222 
@@ -379,7 +400,7 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 0224 - 0225 (0x2 bytes), align: 0
-  Segment part 5. ROOT 
+  Segment part 5. ROOT        Intra module refs:   halBoardInit
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_PBDIR_L              0224 
@@ -391,7 +412,7 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 022A - 022B (0x2 bytes), align: 0
-  Segment part 6. ROOT 
+  Segment part 6. ROOT        Intra module refs:   halBoardInit
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_PBSEL_L              022A 
@@ -403,7 +424,7 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 0242 - 0243 (0x2 bytes), align: 0
-  Segment part 7. ROOT        Intra module refs:   led_init (led)
+  Segment part 7. ROOT        Intra module refs:   halBoardInit
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_PCOUT_L              0242 
@@ -415,7 +436,7 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 0244 - 0245 (0x2 bytes), align: 0
-  Segment part 8. ROOT        Intra module refs:   led_init (led)
+  Segment part 8. ROOT        Intra module refs:   halBoardInit
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_PCDIR_L              0244 
@@ -427,7 +448,7 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 024A - 024B (0x2 bytes), align: 0
-  Segment part 9. ROOT        Intra module refs:   led_init (led)
+  Segment part 9. ROOT        Intra module refs:   halBoardInit
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_PCSEL_L              024A 
@@ -439,7 +460,7 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 0262 - 0263 (0x2 bytes), align: 0
-  Segment part 10. ROOT       Intra module refs:   led_init (led)
+  Segment part 10. ROOT       Intra module refs:   halBoardInit
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_PDOUT_L              0262 
@@ -451,7 +472,7 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 0264 - 0265 (0x2 bytes), align: 0
-  Segment part 11. ROOT       Intra module refs:   led_init (led)
+  Segment part 11. ROOT       Intra module refs:   halBoardInit
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_PDDIR_L              0264 
@@ -463,7 +484,7 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 026A - 026B (0x2 bytes), align: 0
-  Segment part 12. ROOT       Intra module refs:   led_init (led)
+  Segment part 12. ROOT       Intra module refs:   halBoardInit
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_PDSEL_L              026A 
@@ -475,9 +496,7 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 0282 - 0283 (0x2 bytes), align: 0
-  Segment part 13. ROOT       Intra module refs:   Led6_Off (led)
-                                                   Led6_On (led)
-                                                   led_init (led)
+  Segment part 13. ROOT       Intra module refs:   halBoardInit
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_PEOUT_L              0282 
@@ -489,7 +508,7 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 0284 - 0285 (0x2 bytes), align: 0
-  Segment part 14. ROOT       Intra module refs:   led_init (led)
+  Segment part 14. ROOT       Intra module refs:   halBoardInit
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_PEDIR_L              0284 
@@ -501,7 +520,7 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 028A - 028B (0x2 bytes), align: 0
-  Segment part 15. ROOT 
+  Segment part 15. ROOT       Intra module refs:   halBoardInit
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_PESEL_L              028A 
@@ -513,7 +532,7 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 02A2 - 02A3 (0x2 bytes), align: 0
-  Segment part 16. ROOT 
+  Segment part 16. ROOT       Intra module refs:   halBoardInit
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_PFOUT_L              02A2 
@@ -525,7 +544,7 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 02A4 - 02A5 (0x2 bytes), align: 0
-  Segment part 17. ROOT 
+  Segment part 17. ROOT       Intra module refs:   halBoardInit
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_PFDIR_L              02A4 
@@ -537,7 +556,7 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 02AA - 02AB (0x2 bytes), align: 0
-  Segment part 18. ROOT 
+  Segment part 18. ROOT       Intra module refs:   halBoardInit
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_PFSEL_L              02AA 
@@ -549,7 +568,7 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 0322 - 0323 (0x2 bytes), align: 0
-  Segment part 19. ROOT 
+  Segment part 19. ROOT       Intra module refs:   halBoardInit
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_PJOUT_L              0322 
@@ -561,7 +580,7 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 0324 - 0325 (0x2 bytes), align: 0
-  Segment part 20. ROOT 
+  Segment part 20. ROOT       Intra module refs:   halBoardInit
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_PJDIR_L              0324 
@@ -572,12 +591,11 @@ DATA16_AN
            PJDIR_L                 0324 
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 66FA - 6783 (0x8a bytes), align: 1
-  Segment part 25.
+  Relative segment, address: 63C4 - 641B (0x58 bytes), align: 1
+  Segment part 24.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           hal430SetSystemClock    66FA            prvSetupHardware (main)
-               calls direct
+           halBoardInit            63C4            prvSetupHardware (main)
 
     *************************************************************************
 
@@ -750,9 +768,7 @@ DATA16_AN
   ======================
 DATA16_AN
   Relative segment, address: 0120 - 0121 (0x2 bytes), align: 0
-  Segment part 1. ROOT        Intra module refs:   SetVCore
-                                                   SetVCoreDown
-                                                   SetVCoreUp
+  Segment part 1. ROOT 
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_PMMCTL0_L            0120 
@@ -764,8 +780,7 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 0124 - 0125 (0x2 bytes), align: 0
-  Segment part 2. ROOT        Intra module refs:   SetVCoreDown
-                                                   SetVCoreUp
+  Segment part 2. ROOT 
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_SVSMHCTL_L           0124 
@@ -777,8 +792,7 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 0126 - 0127 (0x2 bytes), align: 0
-  Segment part 3. ROOT        Intra module refs:   SetVCoreDown
-                                                   SetVCoreUp
+  Segment part 3. ROOT 
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_SVSMLCTL_L           0126 
@@ -790,8 +804,7 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 012C - 012D (0x2 bytes), align: 0
-  Segment part 4. ROOT        Intra module refs:   SetVCoreDown
-                                                   SetVCoreUp
+  Segment part 4. ROOT 
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_PMMIFG_L             012C 
@@ -803,8 +816,7 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 012E - 012F (0x2 bytes), align: 0
-  Segment part 5. ROOT        Intra module refs:   SetVCoreDown
-                                                   SetVCoreUp
+  Segment part 5. ROOT 
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_PMMRIE_L             012E 
@@ -813,28 +825,6 @@ DATA16_AN
            PMMRIE                  012E 
            PMMRIE_H                012F 
            PMMRIE_L                012E 
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 6238 - 6315 (0xde bytes), align: 1
-  Segment part 7.             Intra module refs:   SetVCore
-           LOCAL                   ADDRESS         
-           =====                   =======         
-           SetVCoreUp              6238 
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 651E - 65BD (0xa0 bytes), align: 1
-  Segment part 8.             Intra module refs:   SetVCore
-           LOCAL                   ADDRESS         
-           =====                   =======         
-           SetVCoreDown            651E 
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 6AC2 - 6B0F (0x4e bytes), align: 1
-  Segment part 9.
-           ENTRY                   ADDRESS         REF BY
-           =====                   =======         ======
-           SetVCore                6AC2            hal430SetSystemClock (hal_board)
-               calls direct
 
     *************************************************************************
 
@@ -845,8 +835,7 @@ DATA16_AN
   ======================
 DATA16_AN
   Relative segment, address: 0102 - 0103 (0x2 bytes), align: 0
-  Segment part 1. ROOT        Intra module refs:   Init_FLL
-                                                   LFXT_Start
+  Segment part 1. ROOT 
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_SFRIFG1_L            0102 
@@ -858,7 +847,7 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 0160 - 0161 (0x2 bytes), align: 0
-  Segment part 2. ROOT        Intra module refs:   Init_FLL
+  Segment part 2. ROOT 
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_UCSCTL0_L            0160 
@@ -870,7 +859,7 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 0162 - 0163 (0x2 bytes), align: 0
-  Segment part 3. ROOT        Intra module refs:   Init_FLL
+  Segment part 3. ROOT 
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_UCSCTL1_L            0162 
@@ -882,7 +871,7 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 0164 - 0165 (0x2 bytes), align: 0
-  Segment part 4. ROOT        Intra module refs:   Init_FLL
+  Segment part 4. ROOT 
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_UCSCTL2_L            0164 
@@ -894,7 +883,7 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 0168 - 0169 (0x2 bytes), align: 0
-  Segment part 5. ROOT        Intra module refs:   Init_FLL
+  Segment part 5. ROOT 
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_UCSCTL4_L            0168 
@@ -906,7 +895,7 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 016C - 016D (0x2 bytes), align: 0
-  Segment part 6. ROOT        Intra module refs:   LFXT_Start
+  Segment part 6. ROOT 
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_UCSCTL6_L            016C 
@@ -918,8 +907,7 @@ DATA16_AN
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 016E - 016F (0x2 bytes), align: 0
-  Segment part 7. ROOT        Intra module refs:   Init_FLL
-                                                   LFXT_Start
+  Segment part 7. ROOT 
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            _A_UCSCTL7_L            016E 
@@ -928,73 +916,10 @@ DATA16_AN
            UCSCTL7                 016E 
            UCSCTL7_H               016F 
            UCSCTL7_L               016E 
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 6D46 - 6D6D (0x28 bytes), align: 1
-  Segment part 9.
-           ENTRY                   ADDRESS         REF BY
-           =====                   =======         ======
-           LFXT_Start              6D46            prvSetupHardware (main)
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 6B10 - 6B59 (0x4a bytes), align: 1
-  Segment part 18.
-           ENTRY                   ADDRESS         REF BY
-           =====                   =======         ======
-           Init_FLL_Settle         6B10            hal430SetSystemClock (hal_board)
-               calls direct
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 615A - 6237 (0xde bytes), align: 1
-  Segment part 17.            Intra module refs:   Init_FLL_Settle
-           LOCAL                   ADDRESS         
-           =====                   =======         
-           Init_FLL                615A 
 
     *************************************************************************
 
   FILE NAME : C:\Users\83797\work\RTU\RTU-FREERTOS\Debug_Large_Data_Model\Obj\heap_1.r43
-  PROGRAM MODULE, NAME : heap_1
-
-  SEGMENTS IN THE MODULE
-  ======================
-DATA20_Z
-  Relative segment, address: 1CE8 - 44E7 (0x2800 bytes), align: 0
-  Segment part 2.             Intra module refs:   pvPortMalloc
-           LOCAL                   ADDRESS         
-           =====                   =======         
-           ucHeap                  1CE8 
-    -------------------------------------------------------------------------
-DATA20_Z
-  Relative segment, address: 1C02 - 1C05 (0x4 bytes), align: 1
-  Segment part 3.             Intra module refs:   pvPortMalloc
-           LOCAL                   ADDRESS         
-           =====                   =======         
-           xNextFreeByte           1C02 
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 65BE - 665D (0xa0 bytes), align: 1
-  Segment part 5.
-           ENTRY                   ADDRESS         REF BY
-           =====                   =======         ======
-           pvPortMalloc            65BE            xTaskCreate (tasks)
-               calls direct
-    -------------------------------------------------------------------------
-DATA20_Z
-  Relative segment, address: 1C06 - 1C09 (0x4 bytes), align: 1
-  Segment part 4.             Intra module refs:   pvPortMalloc
-           LOCAL                   ADDRESS         
-           =====                   =======         
-           pvPortMalloc::pucAlignedHeap
-                                   1C06 
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 6F30 - 6F31 (0x2 bytes), align: 1
-  Segment part 6.
-           ENTRY                   ADDRESS         REF BY
-           =====                   =======         ======
-           vPortFree               6F30            xTaskCreate (tasks)
-
     *************************************************************************
 
   FILE NAME : C:\Users\83797\work\RTU\RTU-FREERTOS\Debug_Large_Data_Model\Obj\lcd_b.r43
@@ -1011,26 +936,6 @@ DATA20_Z
 
   SEGMENTS IN THE MODULE
   ======================
-<CODE> 1 (was CODE)
-  Relative segment, address: 6BD8 - 6C15 (0x3e bytes), align: 1
-  Segment part 10.
-           ENTRY                   ADDRESS         REF BY
-           =====                   =======         ======
-           led_init                6BD8            prvSetupHardware (main)
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 6F12 - 6F19 (0x8 bytes), align: 1
-  Segment part 11.
-           ENTRY                   ADDRESS         REF BY
-           =====                   =======         ======
-           Led6_On                 6F12            task_lcd (main)
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 6F02 - 6F09 (0x8 bytes), align: 1
-  Segment part 12.
-           ENTRY                   ADDRESS         REF BY
-           =====                   =======         ======
-           Led6_Off                6F02            task_lcd (main)
 
     *************************************************************************
 
@@ -1040,48 +945,22 @@ DATA20_Z
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 6D1A - 6D45 (0x2c bytes), align: 1
-  Segment part 2.
-           ENTRY                   ADDRESS         REF BY
-           =====                   =======         ======
-           vListInitialise         6D1A            prvInitialiseTaskLists (tasks)
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 6F1A - 6F1F (0x6 bytes), align: 1
-  Segment part 3.
-           ENTRY                   ADDRESS         REF BY
-           =====                   =======         ======
-           vListInitialiseItem     6F1A            prvInitialiseNewTask (tasks)
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 6D96 - 6DBB (0x26 bytes), align: 1
+  Relative segment, address: 6576 - 659B (0x26 bytes), align: 1
   Segment part 4.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           vListInsertEnd          6D96            prvAddCurrentTaskToDelayedList (tasks)
-                                                   prvAddNewTaskToReadyList (tasks)
-                                                   xTaskIncrementTick (tasks)
+           vListInsertEnd          6576            xTaskIncrementTick (tasks)
                                                    xTaskPriorityDisinherit (tasks)
                                                    xTaskRemoveFromEventList (tasks)
-                                                   xTaskResumeAll (tasks)
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 69C0 - 6A17 (0x58 bytes), align: 1
-  Segment part 5.
-           ENTRY                   ADDRESS         REF BY
-           =====                   =======         ======
-           vListInsert             69C0            prvAddCurrentTaskToDelayedList (tasks)
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 6C16 - 6C4F (0x3a bytes), align: 1
+  Relative segment, address: 64A2 - 64DB (0x3a bytes), align: 1
   Segment part 6.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           uxListRemove            6C16            prvAddCurrentTaskToDelayedList (tasks)
-                                                   xTaskIncrementTick (tasks)
+           uxListRemove            64A2            xTaskIncrementTick (tasks)
                                                    xTaskPriorityDisinherit (tasks)
                                                    xTaskRemoveFromEventList (tasks)
-                                                   xTaskResumeAll (tasks)
 
     *************************************************************************
 
@@ -1103,11 +982,11 @@ DATA16_AN
            WDTCTL_L                015C 
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 6ED6 - 6EE3 (0xe bytes), align: 1
+  Relative segment, address: 663E - 664B (0xe bytes), align: 1
   Segment part 3. ROOT 
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           __low_level_init        6ED6            ?cstart_call_low_level_init (?cstart)
+           __low_level_init        663E            ?cstart_call_low_level_init (?cstart)
 
     *************************************************************************
 
@@ -1124,71 +1003,44 @@ DATA16_AN
            TA0CCTL0                0342 
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 6D6E - 6D95 (0x28 bytes), align: 1
+  Relative segment, address: 60CC - 616B (0xa0 bytes), align: 1
   Segment part 7.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           main                    6D6E            Segment part 27 (?cstart)
+           main                    60CC            Segment part 27 (?cstart)
                calls direct
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 6F34 - 6F35 (0x2 bytes), align: 1
+  Relative segment, address: 6684 - 6685 (0x2 bytes), align: 1
   Segment part 8.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           vApplicationTickHook    6F34            xTaskIncrementTick (tasks)
+           vApplicationTickHook    6684            xTaskIncrementTick (tasks)
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 6DBC - 6DDF (0x24 bytes), align: 1
+  Relative segment, address: 664C - 6657 (0xc bytes), align: 1
   Segment part 6.             Intra module refs:   main
            LOCAL                   ADDRESS         
            =====                   =======         
-           prvSetupHardware        6DBC 
+           prvSetupHardware        664C 
                calls direct
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 6DE0 - 6E01 (0x22 bytes), align: 1
-  Segment part 9.             Intra module refs:   main
-           LOCAL                   ADDRESS         
-           =====                   =======         
-           task_lcd                6DE0 
-               calls direct
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 6C86 - 6CBB (0x36 bytes), align: 1
-  Segment part 10.
+  Relative segment, address: 6512 - 6547 (0x36 bytes), align: 1
+  Segment part 9.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            vApplicationSetupTimerInterrupt
-                                   6C86            vPortSetupTimerInterrupt (port)
+                                   6512            vPortSetupTimerInterrupt (port)
                calls direct
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 6EF8 - 6F01 (0xa bytes), align: 1
-  Segment part 11.
-           ENTRY                   ADDRESS         REF BY
-           =====                   =======         ======
-           vApplicationIdleHook    6EF8            prvIdleTask (tasks)
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 6EE4 - 6EED (0xa bytes), align: 1
+  Relative segment, address: 6662 - 666B (0xa bytes), align: 1
   Segment part 12.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           vApplicationMallocFailedHook
-                                   6EE4            pvPortMalloc (heap_1)
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 6EEE - 6EF7 (0xa bytes), align: 1
-  Segment part 13.
-           ENTRY                   ADDRESS         REF BY
-           =====                   =======         ======
            vApplicationStackOverflowHook
-                                   6EEE            vTaskSwitchContext (tasks)
-    -------------------------------------------------------------------------
-DATA20_C
-  Relative segment, address: 6F38 - 6F3B (0x4 bytes), align: 0
-  Segment part 5.             Intra module refs:   main
+                                   6662            vTaskSwitchContext (tasks)
 
     *************************************************************************
 
@@ -1223,23 +1075,14 @@ DATA20_I
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            usCriticalNesting       1C00            Segment part 0 (portext)
-                                                   prvAddNewTaskToReadyList (tasks)
-                                                   xTaskResumeAll (tasks)
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 6B5A - 6B99 (0x40 bytes), align: 1
-  Segment part 5.
-           ENTRY                   ADDRESS         REF BY
-           =====                   =======         ======
-           pxPortInitialiseStack   6B5A            prvInitialiseNewTask (tasks)
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 6F24 - 6F27 (0x4 bytes), align: 1
+  Relative segment, address: 667C - 667F (0x4 bytes), align: 1
   Segment part 7.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            vPortSetupTimerInterrupt
-                                   6F24            Segment part 0 (portext)
+                                   667C            Segment part 0 (portext)
                calls direct
     -------------------------------------------------------------------------
 ISR_CODE
@@ -1260,7 +1103,7 @@ INTVEC
                                    FFEC 
     -------------------------------------------------------------------------
 DATA20_ID
-  Relative segment, address: 6F42 - 6F43 (0x2 bytes), align: 1
+  Relative segment, address: 66A4 - 66A5 (0x2 bytes), align: 1
   Segment part 4.             Intra module refs:   usCriticalNesting
 
     *************************************************************************
@@ -1275,20 +1118,16 @@ Absolute parts
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 665E - 66F9 (0x9c bytes), align: 1
+  Relative segment, address: 616C - 6207 (0x9c bytes), align: 1
   Segment part 0. ROOT 
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           vPortTickISR            665E            vTickISREntry (port)
-           vPortYield              669E            prvAddNewTaskToReadyList (tasks)
-                                                   prvIdleTask (tasks)
-                                                   prvUSCI_A1_ISR (serial)
-                                                   vTaskDelay (tasks)
-                                                   xTaskResumeAll (tasks)
-           xPortStartScheduler     66DA            vTaskStartScheduler (tasks)
+           vPortTickISR            616C            vTickISREntry (port)
+           vPortYield              61AC            prvUSCI_A1_ISR (serial)
+           xPortStartScheduler     61E8 
            LOCAL                   ADDRESS         
            =====                   =======         
-           SkipContextSwitch       6682 
+           SkipContextSwitch       6190 
 
     *************************************************************************
 
@@ -1298,36 +1137,36 @@ Absolute parts
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 6904 - 6961 (0x5e bytes), align: 1
+  Relative segment, address: 6366 - 63C3 (0x5e bytes), align: 1
   Segment part 11.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            xQueueGenericSendFromISR
-                                   6904            prvUSCI_A1_ISR (serial)
+                                   6366            prvUSCI_A1_ISR (serial)
                calls direct
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 6962 - 69BF (0x5e bytes), align: 1
+  Relative segment, address: 6308 - 6365 (0x5e bytes), align: 1
   Segment part 18.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           xQueueReceiveFromISR    6962            prvUSCI_A1_ISR (serial)
+           xQueueReceiveFromISR    6308            prvUSCI_A1_ISR (serial)
                calls direct
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 63D0 - 6479 (0xaa bytes), align: 1
+  Relative segment, address: 6022 - 60CB (0xaa bytes), align: 1
   Segment part 7.             Intra module refs:   xQueueGenericSendFromISR
            LOCAL                   ADDRESS         
            =====                   =======         
-           prvCopyDataToQueue      63D0 
+           prvCopyDataToQueue      6022 
                calls direct
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 6B9A - 6BD7 (0x3e bytes), align: 1
+  Relative segment, address: 6464 - 64A1 (0x3e bytes), align: 1
   Segment part 13.            Intra module refs:   xQueueReceiveFromISR
            LOCAL                   ADDRESS         
            =====                   =======         
-           prvCopyDataFromQueue    6B9A 
+           prvCopyDataFromQueue    6464 
                calls direct
 
     *************************************************************************
@@ -1354,33 +1193,24 @@ Absolute parts
   ======================
 DATA16_AN
   Relative segment, address: 0380 - 0381 (0x2 bytes), align: 0
-  Segment part 1. ROOT        Intra module refs:   vConfigureTimerForRunTimeStats
-                                                   vTaskSwitchContext (tasks)
+  Segment part 1. ROOT        Intra module refs:   vTaskSwitchContext (tasks)
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            TA1CTL                  0380 
     -------------------------------------------------------------------------
 DATA16_AN
   Relative segment, address: 0382 - 0383 (0x2 bytes), align: 0
-  Segment part 2. ROOT        Intra module refs:   vConfigureTimerForRunTimeStats
+  Segment part 2. ROOT 
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            TA1CCTL0                0382 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1C0A - 1C0D (0x4 bytes), align: 1
+  Relative segment, address: 1C02 - 1C05 (0x4 bytes), align: 1
   Segment part 5.             Intra module refs:   prvRunTimeStatsOverflowISR
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           ulStatsOverflowCount    1C0A            vTaskSwitchContext (tasks)
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 6E02 - 6E21 (0x20 bytes), align: 1
-  Segment part 6.
-           ENTRY                   ADDRESS         REF BY
-           =====                   =======         ======
-           vConfigureTimerForRunTimeStats
-                                   6E02            vTaskStartScheduler (tasks)
+           ulStatsOverflowCount    1C02            vTaskSwitchContext (tasks)
     -------------------------------------------------------------------------
 ISR_CODE
   Relative segment, address: 5C44 - 5C51 (0xe bytes), align: 1
@@ -1467,18 +1297,18 @@ DATA16_AN
            UCA1ICTL_L              061C 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1C0E - 1C11 (0x4 bytes), align: 1
+  Relative segment, address: 1C06 - 1C09 (0x4 bytes), align: 1
   Segment part 9.             Intra module refs:   prvUSCI_A1_ISR
            LOCAL                   ADDRESS         
            =====                   =======         
-           xRxedChars              1C0E 
+           xRxedChars              1C06 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1C12 - 1C15 (0x4 bytes), align: 1
+  Relative segment, address: 1C0A - 1C0D (0x4 bytes), align: 1
   Segment part 10.            Intra module refs:   prvUSCI_A1_ISR
            LOCAL                   ADDRESS         
            =====                   =======         
-           xCharsForTx             1C12 
+           xCharsForTx             1C0A 
     -------------------------------------------------------------------------
 ISR_CODE
   Relative segment, address: 5C52 - 5CB5 (0x64 bytes), align: 1
@@ -1521,253 +1351,121 @@ DATA16_AN
            TA1R                    0390 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1C16 - 1C19 (0x4 bytes), align: 1
-  Segment part 8.             Intra module refs:   prvAddCurrentTaskToDelayedList
-                                                   prvAddNewTaskToReadyList
-                                                   vTaskSwitchContext
+  Relative segment, address: 1C0E - 1C11 (0x4 bytes), align: 1
+  Segment part 8.             Intra module refs:   vTaskSwitchContext
                                                    xTaskIncrementTick
                                                    xTaskRemoveFromEventList
-                                                   xTaskResumeAll
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           pxCurrentTCB            1C16            Segment part 0 (portext)
+           pxCurrentTCB            1C0E            Segment part 0 (portext)
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1C1A - 1C73 (0x5a bytes), align: 1
-  Segment part 9.             Intra module refs:   prvAddNewTaskToReadyList
-                                                   prvIdleTask
-                                                   prvInitialiseTaskLists
-                                                   vTaskSwitchContext
+  Relative segment, address: 1C12 - 1C6B (0x5a bytes), align: 1
+  Segment part 9.             Intra module refs:   vTaskSwitchContext
                                                    xTaskIncrementTick
                                                    xTaskPriorityDisinherit
                                                    xTaskRemoveFromEventList
-                                                   xTaskResumeAll
            LOCAL                   ADDRESS         
            =====                   =======         
-           pxReadyTasksLists       1C1A 
+           pxReadyTasksLists       1C12 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1C74 - 1C85 (0x12 bytes), align: 1
-  Segment part 10.            Intra module refs:   prvInitialiseTaskLists
-           LOCAL                   ADDRESS         
-           =====                   =======         
-           xDelayedTaskList1       1C74 
-    -------------------------------------------------------------------------
-DATA20_Z
-  Relative segment, address: 1C86 - 1C97 (0x12 bytes), align: 1
-  Segment part 11.            Intra module refs:   prvInitialiseTaskLists
-           LOCAL                   ADDRESS         
-           =====                   =======         
-           xDelayedTaskList2       1C86 
-    -------------------------------------------------------------------------
-DATA20_Z
-  Relative segment, address: 1C98 - 1C9B (0x4 bytes), align: 1
-  Segment part 12.            Intra module refs:   prvAddCurrentTaskToDelayedList
-                                                   prvInitialiseTaskLists
-                                                   prvResetNextTaskUnblockTime
+  Relative segment, address: 1C6C - 1C6F (0x4 bytes), align: 1
+  Segment part 12.            Intra module refs:   prvResetNextTaskUnblockTime
                                                    xTaskIncrementTick
            LOCAL                   ADDRESS         
            =====                   =======         
-           pxDelayedTaskList       1C98 
+           pxDelayedTaskList       1C6C 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1C9C - 1C9F (0x4 bytes), align: 1
-  Segment part 13.            Intra module refs:   prvAddCurrentTaskToDelayedList
-                                                   prvInitialiseTaskLists
-                                                   xTaskIncrementTick
+  Relative segment, address: 1C70 - 1C73 (0x4 bytes), align: 1
+  Segment part 13.            Intra module refs:   xTaskIncrementTick
            LOCAL                   ADDRESS         
            =====                   =======         
            pxOverflowDelayedTaskList
-                                   1C9C 
+                                   1C70 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1CA0 - 1CB1 (0x12 bytes), align: 1
-  Segment part 14.            Intra module refs:   prvInitialiseTaskLists
-                                                   xTaskRemoveFromEventList
-                                                   xTaskResumeAll
+  Relative segment, address: 1C74 - 1C85 (0x12 bytes), align: 1
+  Segment part 14.            Intra module refs:   xTaskRemoveFromEventList
            LOCAL                   ADDRESS         
            =====                   =======         
-           xPendingReadyList       1CA0 
+           xPendingReadyList       1C74 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1CB2 - 1CC3 (0x12 bytes), align: 1
-  Segment part 15.            Intra module refs:   prvAddCurrentTaskToDelayedList
-                                                   prvInitialiseTaskLists
+  Relative segment, address: 1C86 - 1C89 (0x4 bytes), align: 1
+  Segment part 17.            Intra module refs:   xTaskIncrementTick
            LOCAL                   ADDRESS         
            =====                   =======         
-           xSuspendedTaskList      1CB2 
+           xTickCount              1C86 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1CC4 - 1CC5 (0x2 bytes), align: 1
-  Segment part 16.            Intra module refs:   prvAddNewTaskToReadyList
-                                                   xTaskResumeAll
-           LOCAL                   ADDRESS         
-           =====                   =======         
-           uxCurrentNumberOfTasks
-                                   1CC4 
-    -------------------------------------------------------------------------
-DATA20_Z
-  Relative segment, address: 1CC6 - 1CC9 (0x4 bytes), align: 1
-  Segment part 17.            Intra module refs:   prvAddCurrentTaskToDelayedList
-                                                   vTaskStartScheduler
-                                                   xTaskIncrementTick
-           LOCAL                   ADDRESS         
-           =====                   =======         
-           xTickCount              1CC6 
-    -------------------------------------------------------------------------
-DATA20_Z
-  Relative segment, address: 1CCA - 1CCB (0x2 bytes), align: 1
-  Segment part 18.            Intra module refs:   prvAddNewTaskToReadyList
-                                                   vTaskSwitchContext
+  Relative segment, address: 1C8A - 1C8B (0x2 bytes), align: 1
+  Segment part 18.            Intra module refs:   vTaskSwitchContext
                                                    xTaskIncrementTick
                                                    xTaskPriorityDisinherit
                                                    xTaskRemoveFromEventList
-                                                   xTaskResumeAll
            LOCAL                   ADDRESS         
            =====                   =======         
-           uxTopReadyPriority      1CCA 
+           uxTopReadyPriority      1C8A 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1CCC - 1CCD (0x2 bytes), align: 1
-  Segment part 19.            Intra module refs:   prvAddNewTaskToReadyList
-                                                   vTaskStartScheduler
-           LOCAL                   ADDRESS         
-           =====                   =======         
-           xSchedulerRunning       1CCC 
-    -------------------------------------------------------------------------
-DATA20_Z
-  Relative segment, address: 1CCE - 1CCF (0x2 bytes), align: 1
+  Relative segment, address: 1C8C - 1C8D (0x2 bytes), align: 1
   Segment part 20.            Intra module refs:   xTaskIncrementTick
-                                                   xTaskResumeAll
            LOCAL                   ADDRESS         
            =====                   =======         
-           uxPendedTicks           1CCE 
+           uxPendedTicks           1C8C 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1CD0 - 1CD1 (0x2 bytes), align: 1
+  Relative segment, address: 1C8E - 1C8F (0x2 bytes), align: 1
   Segment part 21.            Intra module refs:   vTaskSwitchContext
                                                    xTaskIncrementTick
                                                    xTaskRemoveFromEventList
-                                                   xTaskResumeAll
            LOCAL                   ADDRESS         
            =====                   =======         
-           xYieldPending           1CD0 
+           xYieldPending           1C8E 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1CD2 - 1CD3 (0x2 bytes), align: 1
+  Relative segment, address: 1C90 - 1C91 (0x2 bytes), align: 1
   Segment part 22.            Intra module refs:   xTaskIncrementTick
            LOCAL                   ADDRESS         
            =====                   =======         
-           xNumOfOverflows         1CD2 
+           xNumOfOverflows         1C90 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1CD4 - 1CD5 (0x2 bytes), align: 1
-  Segment part 23.            Intra module refs:   prvAddNewTaskToReadyList
-           LOCAL                   ADDRESS         
-           =====                   =======         
-           uxTaskNumber            1CD4 
-    -------------------------------------------------------------------------
-DATA20_Z
-  Relative segment, address: 1CD6 - 1CD9 (0x4 bytes), align: 1
-  Segment part 24.            Intra module refs:   prvAddCurrentTaskToDelayedList
-                                                   prvResetNextTaskUnblockTime
-                                                   vTaskStartScheduler
+  Relative segment, address: 1C92 - 1C95 (0x4 bytes), align: 1
+  Segment part 24.            Intra module refs:   prvResetNextTaskUnblockTime
                                                    xTaskIncrementTick
            LOCAL                   ADDRESS         
            =====                   =======         
-           xNextTaskUnblockTime    1CD6 
+           xNextTaskUnblockTime    1C92 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1CDA - 1CDD (0x4 bytes), align: 1
-  Segment part 25.            Intra module refs:   vTaskStartScheduler
-           LOCAL                   ADDRESS         
-           =====                   =======         
-           xIdleTaskHandle         1CDA 
-    -------------------------------------------------------------------------
-DATA20_Z
-  Relative segment, address: 1CDE - 1CDF (0x2 bytes), align: 1
-  Segment part 26.            Intra module refs:   vTaskSuspendAll
-                                                   vTaskSwitchContext
+  Relative segment, address: 1C96 - 1C97 (0x2 bytes), align: 1
+  Segment part 26.            Intra module refs:   vTaskSwitchContext
                                                    xTaskIncrementTick
                                                    xTaskRemoveFromEventList
-                                                   xTaskResumeAll
            LOCAL                   ADDRESS         
            =====                   =======         
-           uxSchedulerSuspended    1CDE 
+           uxSchedulerSuspended    1C96 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1CE0 - 1CE3 (0x4 bytes), align: 1
+  Relative segment, address: 1C98 - 1C9B (0x4 bytes), align: 1
   Segment part 27.            Intra module refs:   vTaskSwitchContext
            LOCAL                   ADDRESS         
            =====                   =======         
-           ulTaskSwitchedInTime    1CE0 
+           ulTaskSwitchedInTime    1C98 
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1CE4 - 1CE7 (0x4 bytes), align: 1
+  Relative segment, address: 1C9C - 1C9F (0x4 bytes), align: 1
   Segment part 28.            Intra module refs:   vTaskSwitchContext
            LOCAL                   ADDRESS         
            =====                   =======         
-           ulTotalRunTime          1CE4 
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 6806 - 6885 (0x80 bytes), align: 1
-  Segment part 32.            Intra module refs:   vTaskStartScheduler
-           ENTRY                   ADDRESS         REF BY
-           =====                   =======         ======
-           xTaskCreate             6806            main (main)
-               calls direct
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 5F58 - 606F (0x118 bytes), align: 1
-  Segment part 31.            Intra module refs:   xTaskCreate
-           LOCAL                   ADDRESS         
-           =====                   =======         
-           prvInitialiseNewTask    5F58 
-               calls direct
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 6316 - 63CF (0xba bytes), align: 1
-  Segment part 30.            Intra module refs:   xTaskCreate
-           LOCAL                   ADDRESS         
-           =====                   =======         
-           prvAddNewTaskToReadyList
-                                   6316 
-               calls direct
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 6CEC - 6D19 (0x2e bytes), align: 1
-  Segment part 38.
-           ENTRY                   ADDRESS         REF BY
-           =====                   =======         ======
-           vTaskDelay              6CEC            task_lcd (main)
-               calls direct
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 6A18 - 6A6D (0x56 bytes), align: 1
-  Segment part 48.
-           ENTRY                   ADDRESS         REF BY
-           =====                   =======         ======
-           vTaskStartScheduler     6A18            main (main)
-               calls direct
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 6F0A - 6F11 (0x8 bytes), align: 1
-  Segment part 36.            Intra module refs:   vTaskDelay
-           ENTRY                   ADDRESS         REF BY
-           =====                   =======         ======
-           vTaskSuspendAll         6F0A            pvPortMalloc (heap_1)
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 6070 - 6159 (0xea bytes), align: 1
-  Segment part 34.            Intra module refs:   vTaskDelay
-           ENTRY                   ADDRESS         REF BY
-           =====                   =======         ======
-           xTaskResumeAll          6070            pvPortMalloc (heap_1)
-               calls direct
+           ulTotalRunTime          1C9C 
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
   Relative segment, address: 5E20 - 5F57 (0x138 bytes), align: 1
-  Segment part 55.            Intra module refs:   xTaskResumeAll
+  Segment part 55.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            xTaskIncrementTick      5E20            Segment part 0 (portext)
@@ -1782,70 +1480,31 @@ DATA20_Z
                calls direct
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 6784 - 6805 (0x82 bytes), align: 1
+  Relative segment, address: 6208 - 6289 (0x82 bytes), align: 1
   Segment part 58.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            xTaskRemoveFromEventList
-                                   6784            xQueueGenericSendFromISR (queue)
+                                   6208            xQueueGenericSendFromISR (queue)
                                                    xQueueReceiveFromISR (queue)
                calls direct
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 6E78 - 6E91 (0x1a bytes), align: 1
-  Segment part 67.            Intra module refs:   vTaskStartScheduler
-           LOCAL                   ADDRESS         
-           =====                   =======         
-           prvIdleTask             6E78 
-               calls direct
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 6A6E - 6AC1 (0x54 bytes), align: 1
-  Segment part 29.            Intra module refs:   prvAddNewTaskToReadyList
-           LOCAL                   ADDRESS         
-           =====                   =======         
-           prvInitialiseTaskLists
-                                   6A6E 
-               calls direct
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 6F32 - 6F33 (0x2 bytes), align: 1
-  Segment part 66.            Intra module refs:   prvIdleTask
-           LOCAL                   ADDRESS         
-           =====                   =======         
-           prvCheckTasksWaitingTermination
-                                   6F32 
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 6C50 - 6C85 (0x36 bytes), align: 1
+  Relative segment, address: 64DC - 6511 (0x36 bytes), align: 1
   Segment part 33.            Intra module refs:   xTaskIncrementTick
-                                                   xTaskResumeAll
            LOCAL                   ADDRESS         
            =====                   =======         
            prvResetNextTaskUnblockTime
-                                   6C50 
+                                   64DC 
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 6886 - 6903 (0x7e bytes), align: 1
+  Relative segment, address: 628A - 6307 (0x7e bytes), align: 1
   Segment part 73.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
            xTaskPriorityDisinherit
-                                   6886            prvCopyDataToQueue (queue)
+                                   628A            prvCopyDataToQueue (queue)
                calls direct
-    -------------------------------------------------------------------------
-<CODE> 1 (was CODE)
-  Relative segment, address: 647A - 651D (0xa4 bytes), align: 1
-  Segment part 35.            Intra module refs:   vTaskDelay
-           LOCAL                   ADDRESS         
-           =====                   =======         
-           prvAddCurrentTaskToDelayedList
-                                   647A 
-               calls direct
-    -------------------------------------------------------------------------
-DATA20_C
-  Relative segment, address: 6F3C - 6F40 (0x5 bytes), align: 0
-  Segment part 4.             Intra module refs:   vTaskStartScheduler
 
     *************************************************************************
 
@@ -1867,6 +1526,9 @@ DATA20_C
   FILE NAME : C:\Users\83797\work\RTU\RTU-FREERTOS\Debug_Large_Data_Model\Obj\tlv.r43
     *************************************************************************
 
+  FILE NAME : C:\Users\83797\work\RTU\RTU-FREERTOS\Debug_Large_Data_Model\Obj\uart3.r43
+    *************************************************************************
+
   FILE NAME : C:\Users\83797\work\RTU\RTU-FREERTOS\Debug_Large_Data_Model\Obj\ucs.r43
     *************************************************************************
 
@@ -1874,6 +1536,48 @@ DATA20_C
     *************************************************************************
 
   FILE NAME : C:\Users\83797\work\RTU\RTU-FREERTOS\Debug_Large_Data_Model\Obj\usci_a_uart.r43
+  PROGRAM MODULE, NAME : usci_a_uart
+
+  SEGMENTS IN THE MODULE
+  ======================
+<CODE> 1 (was CODE)
+  Relative segment, address: 5F58 - 6021 (0xca bytes), align: 1
+  Segment part 2.
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           USCI_A_UART_init        5F58            main (main)
+    -------------------------------------------------------------------------
+<CODE> 1 (was CODE)
+  Relative segment, address: 659C - 65BF (0x24 bytes), align: 1
+  Segment part 3.
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           USCI_A_UART_transmitData
+                                   659C            main (main)
+    -------------------------------------------------------------------------
+<CODE> 1 (was CODE)
+  Relative segment, address: 6658 - 6661 (0xa bytes), align: 1
+  Segment part 7.
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           USCI_A_UART_getInterruptStatus
+                                   6658            main (main)
+    -------------------------------------------------------------------------
+<CODE> 1 (was CODE)
+  Relative segment, address: 666C - 6673 (0x8 bytes), align: 1
+  Segment part 9.
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           USCI_A_UART_enable      666C            main (main)
+    -------------------------------------------------------------------------
+<CODE> 1 (was CODE)
+  Relative segment, address: 641C - 6463 (0x48 bytes), align: 1
+  Segment part 15.
+           ENTRY                   ADDRESS         REF BY
+           =====                   =======         ======
+           USCI_A_UART_transmitBreak
+                                   641C            main (main)
+
     *************************************************************************
 
   FILE NAME : C:\Users\83797\work\RTU\RTU-FREERTOS\Debug_Large_Data_Model\Obj\usci_b_i2c.r43
@@ -1888,11 +1592,12 @@ DATA20_C
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 6E22 - 6E3F (0x1e bytes), align: 1
+  Relative segment, address: 65C0 - 65DD (0x1e bytes), align: 1
   Segment part 2.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           WDT_A_hold              6E22            prvSetupHardware (main)
+           WDT_A_hold              65C0            main (main)
+                                                   prvSetupHardware (main)
 
     *************************************************************************
 
@@ -1902,11 +1607,11 @@ DATA20_C
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 6F36 - 6F37 (0x2 bytes), align: 1
+  Relative segment, address: 6686 - 6687 (0x2 bytes), align: 1
   Segment part 2.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           __DebugBreak            6F36            __exit (?__exit)
+           __DebugBreak            6686            __exit (?__exit)
 
     -------------------------------------------------------------------------
   LIBRARY MODULE, NAME : ?__exit
@@ -1914,11 +1619,11 @@ DATA20_C
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 6EC2 - 6ED5 (0x14 bytes), align: 1
+  Relative segment, address: 662A - 663D (0x14 bytes), align: 1
   Segment part 2.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           __exit                  6EC2            Segment part 6 (?_exit)
+           __exit                  662A            Segment part 6 (?_exit)
                                                    _exit (?_exit)
                calls direct
 
@@ -1928,14 +1633,14 @@ DATA20_C
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 6F28, align: 1
+  Relative segment, address: 6678, align: 1
   Segment part 0.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           _exit                   6F28            exit (?exit)
+           _exit                   6678            exit (?exit)
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 6F28 - 6F2B (0x4 bytes), align: 1
+  Relative segment, address: 6678 - 667B (0x4 bytes), align: 1
   Segment part 6.             Intra module refs:   _exit
 
     -------------------------------------------------------------------------
@@ -1952,11 +1657,11 @@ CODE_I
   Segment part 5.
     -------------------------------------------------------------------------
 CODE_ID
-  Relative segment, address: 6F44, align: 1
+  Relative segment, address: 66A6, align: 1
   Segment part 6.
     -------------------------------------------------------------------------
 DATA20_Z
-  Relative segment, address: 1CE8, align: 1
+  Relative segment, address: 1CA0, align: 1
   Segment part 7.
     -------------------------------------------------------------------------
 DATA20_I
@@ -1964,15 +1669,15 @@ DATA20_I
   Segment part 8.
     -------------------------------------------------------------------------
 DATA20_ID
-  Relative segment, address: 6F44, align: 1
+  Relative segment, address: 66A6, align: 1
   Segment part 9.
     -------------------------------------------------------------------------
 DATA20_C
-  Relative segment, address: 6F38, align: 1
+  Relative segment, address: 66A4, align: 1
   Segment part 10.
     -------------------------------------------------------------------------
 DATA20_N
-  Relative segment, address: 44E8, align: 1
+  Relative segment, address: 1CA0, align: 1
   Segment part 12.
     -------------------------------------------------------------------------
 CSTART
@@ -1997,31 +1702,21 @@ CSTART
   Segment part 22.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           ?cstart_init_zero20     5C0C            pvPortMalloc::pucAlignedHeap (heap_1)
-                                                   pxCurrentTCB (tasks)
+           ?cstart_init_zero20     5C0C            pxCurrentTCB (tasks)
                                                    pxDelayedTaskList (tasks)
                                                    pxOverflowDelayedTaskList (tasks)
                                                    pxReadyTasksLists (tasks)
-                                                   ucHeap (heap_1)
                                                    ulStatsOverflowCount (RunTimeStatsConfig)
                                                    ulTaskSwitchedInTime (tasks)
                                                    ulTotalRunTime (tasks)
-                                                   uxCurrentNumberOfTasks (tasks)
                                                    uxPendedTicks (tasks)
                                                    uxSchedulerSuspended (tasks)
-                                                   uxTaskNumber (tasks)
                                                    uxTopReadyPriority (tasks)
                                                    xCharsForTx (serial)
-                                                   xDelayedTaskList1 (tasks)
-                                                   xDelayedTaskList2 (tasks)
-                                                   xIdleTaskHandle (tasks)
-                                                   xNextFreeByte (heap_1)
                                                    xNextTaskUnblockTime (tasks)
                                                    xNumOfOverflows (tasks)
                                                    xPendingReadyList (tasks)
                                                    xRxedChars (serial)
-                                                   xSchedulerRunning (tasks)
-                                                   xSuspendedTaskList (tasks)
                                                    xTickCount (tasks)
                                                    xYieldPending (tasks)
     -------------------------------------------------------------------------
@@ -2042,7 +1737,7 @@ CSTART
            ?cstart_end             5C38 
     -------------------------------------------------------------------------
 CODE_ID
-  Relative segment, address: 6F44, align: 1
+  Relative segment, address: 66A6, align: 1
   Segment part 28.            Intra module refs:   Segment part 5
 
     -------------------------------------------------------------------------
@@ -2063,11 +1758,11 @@ RESET
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 6F20 - 6F23 (0x4 bytes), align: 1
+  Relative segment, address: 6674 - 6677 (0x4 bytes), align: 1
   Segment part 2.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           exit                    6F20            Segment part 27 (?cstart)
+           exit                    6674            Segment part 27 (?cstart)
                calls direct
 
     -------------------------------------------------------------------------
@@ -2076,23 +1771,11 @@ RESET
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 6E92 - 6EA9 (0x18 bytes), align: 1
+  Relative segment, address: 65FA - 6611 (0x18 bytes), align: 1
   Segment part 1.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           ?DivMod16u              6E92            vApplicationSetupTimerInterrupt (main)
-
-    -------------------------------------------------------------------------
-  LIBRARY MODULE, NAME : ?DivMod32u
-
-  SEGMENTS IN THE MODULE
-  ======================
-<CODE> 1 (was CODE)
-  Relative segment, address: 6CBC - 6CEB (0x30 bytes), align: 1
-  Segment part 0.
-           ENTRY                   ADDRESS         REF BY
-           =====                   =======         ======
-           ?DivMod32u              6CBC            hal430SetSystemClock (hal_board)
+           ?DivMod16u              65FA            vApplicationSetupTimerInterrupt (main)
 
     -------------------------------------------------------------------------
   LIBRARY MODULE, NAME : ?memcpy
@@ -2100,25 +1783,13 @@ RESET
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 6E40 - 6E5B (0x1c bytes), align: 1
+  Relative segment, address: 65DE - 65F9 (0x1c bytes), align: 1
   Segment part 2.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           memcpy                  6E40            __data20_memcpy (?memzero)
+           memcpy                  65DE            __data20_memcpy (?memzero)
                                                    prvCopyDataFromQueue (queue)
                                                    prvCopyDataToQueue (queue)
-
-    -------------------------------------------------------------------------
-  LIBRARY MODULE, NAME : ?memset
-
-  SEGMENTS IN THE MODULE
-  ======================
-<CODE> 1 (was CODE)
-  Relative segment, address: 6E5C - 6E77 (0x1c bytes), align: 1
-  Segment part 2.
-           ENTRY                   ADDRESS         REF BY
-           =====                   =======         ======
-           memset                  6E5C            prvInitialiseNewTask (tasks)
 
     -------------------------------------------------------------------------
   LIBRARY MODULE, NAME : ?memzero
@@ -2126,18 +1797,18 @@ RESET
   SEGMENTS IN THE MODULE
   ======================
 <CODE> 1 (was CODE)
-  Relative segment, address: 6EAA - 6EC1 (0x18 bytes), align: 1
+  Relative segment, address: 6612 - 6629 (0x18 bytes), align: 1
   Segment part 5.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           __data20_memzero        6EAA            ?cstart_init_zero20 (?cstart)
+           __data20_memzero        6612            ?cstart_init_zero20 (?cstart)
     -------------------------------------------------------------------------
 <CODE> 1 (was CODE)
-  Relative segment, address: 6F2C - 6F2F (0x4 bytes), align: 1
+  Relative segment, address: 6680 - 6683 (0x4 bytes), align: 1
   Segment part 6.
            ENTRY                   ADDRESS         REF BY
            =====                   =======         ======
-           __data20_memcpy         6F2C            ?cstart_init_copy20 (?cstart)
+           __data20_memcpy         6680            ?cstart_init_copy20 (?cstart)
                calls direct
 
 
@@ -2194,15 +1865,15 @@ DATA16_AN                              0102 - 0103               2   rel    0
                                        067C - 067D               2 
 CODE_I                                    1C00                       rel    1
 DATA20_I                               1C00 - 1C01               2   rel    1
-DATA20_Z                               1C02 - 44E7            28E6   rel    1
-DATA20_N                                  44E8                       rel    1
+DATA20_Z                               1C02 - 1C9F              9E   rel    1
+DATA20_N                                  1CA0                       rel    1
 CSTACK                                 5B60 - 5BFF              A0   rel    1
 CSTART                                 5C00 - 5C37              38   rel    1
 ISR_CODE                               5C38 - 5CB5              7E   rel    1
-<CODE> 1                               5CB6 - 6F37            1282   rel    1
-DATA20_C                               6F38 - 6F40               9   rel    1
-DATA20_ID                              6F42 - 6F43               2   rel    1
-CODE_ID                                   6F44                       rel    1
+<CODE> 1                               5CB6 - 6687             9D2   rel    1
+DATA20_C                               6688 - 66A3              1C   rel    1
+DATA20_ID                              66A4 - 66A5               2   rel    1
+CODE_ID                                   66A6                       rel    1
 INTVEC                                 FF80 - FFED              6E   com    1
 RESET                                  FFFE - FFFF               2   rel    1
 
@@ -2212,9 +1883,9 @@ RESET                                  FFFE - FFFF               2   rel    1
                 *                                      *
                 ****************************************
 
-  5 032 bytes of CODE  memory
- 10 632 bytes of DATA  memory (+ 110 absolute )
-     11 bytes of CONST memory
+ 2 808 bytes of CODE  memory
+   320 bytes of DATA  memory (+ 110 absolute )
+    30 bytes of CONST memory
 
 Errors: none
 Warnings: none

@@ -21,7 +21,7 @@ C:\Users\83797\work\RTU\RTU-FREERTOS\Apps
 -I
 C:\Users\83797\work\RTU\RTU-FREERTOS\Drivers
 -I
-C:\Users\83797\work\RTU\RTU-FREERTOS\Driverlib
+C:\Users\83797\work\RTU\RTU-FREERTOS\HALdriverlib
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\430\inc\dlib
 -I
@@ -47,7 +47,7 @@ C:\Users\83797\work\RTU\RTU-FREERTOS\Apps
 -I
 C:\Users\83797\work\RTU\RTU-FREERTOS\Drivers
 -I
-C:\Users\83797\work\RTU\RTU-FREERTOS\Driverlib
+C:\Users\83797\work\RTU\RTU-FREERTOS\HALdriverlib
 -D__CHAR_BITS__=8
 -D__CHAR_MAX__=0xff
 -D__CHAR_MIN__=0
