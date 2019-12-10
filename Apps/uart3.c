@@ -21,14 +21,14 @@ void uart3_init(void){
     //UCBRx = 6, UCBRFx = 13, UCBRSx = 0, UCOS16 = 1
     USCI_A_UART_initParam param = {0};
     param.selectClockSource = USCI_A_UART_CLOCKSOURCE_SMCLK;
-    param.clockPrescalar = 6;
-    param.firstModReg = 13;
-    param.secondModReg = 0;
+    param.clockPrescalar = 9;
+    param.firstModReg = 0;
+    param.secondModReg = 1;
     param.parity = USCI_A_UART_NO_PARITY;
     param.msborLsbFirst = USCI_A_UART_LSB_FIRST;
     param.numberofStopBits = USCI_A_UART_ONE_STOP_BIT;
     param.uartMode = USCI_A_UART_AUTOMATIC_BAUDRATE_DETECTION_MODE;
-    param.overSampling = USCI_A_UART_OVERSAMPLING_BAUDRATE_GENERATION;
+    param.overSampling = USCI_A_UART_LOW_FREQUENCY_BAUDRATE_GENERATION;
     if (STATUS_FAIL == USCI_A_UART_init(USCI_A3_BASE, &param)){
         return;
     }

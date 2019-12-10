@@ -100,15 +100,15 @@
                 </option>
                 <option>
                     <name>GStackHeapOverride</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>GStackSize2</name>
-                    <state>2048</state>
+                    <state>160</state>
                 </option>
                 <option>
                     <name>GHeapSize2</name>
-                    <state>2048</state>
+                    <state>160</state>
                 </option>
                 <option>
                     <name>RadioDataModelType</name>
@@ -415,6 +415,7 @@
                     <state>$PROJ_DIR$\Apps</state>
                     <state>$PROJ_DIR$\Drivers</state>
                     <state>$PROJ_DIR$\Driverlib</state>
+                    <state>$PROJ_DIR$\Oldproject</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -4622,18 +4623,6 @@
     </configuration>
     <group>
         <name>Apps</name>
-        <file>
-            <name>$PROJ_DIR$\Apps\led.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\Apps\led.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\Apps\uart3.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\Apps\uart3.h</name>
-        </file>
     </group>
     <group>
         <name>Common</name>
@@ -4939,11 +4928,197 @@
         </file>
     </group>
     <group>
+        <name>Oldproject</name>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\adc.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\adc.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\BC95.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\BC95.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\blueTooth.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\blueTooth.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\common.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\common.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\Console.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\Console.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\debug.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\debug.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\dtu.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\dtu.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\flash.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\flash.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\flow.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\flow.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\GSM.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\GSM.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\GTM900C.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\GTM900C.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\hydrologycommand.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\hydrologycommand.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\hydrologytask.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\hydrologytask.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\ioDev.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\ioDev.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\led.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\led.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\main.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\message.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\message.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\msp430common.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\old_main.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\packet.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\packet.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\reportbinding .c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\reportbinding.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\rom.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\rom.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\rtc.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\rtc.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\Sampler.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\Sampler.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\store.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\store.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\timer.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\timer.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\uart0.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\uart0.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\uart1.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\uart1.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\uart2.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\uart2.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\uart3.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\uart3.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\uart_config.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\uart_config.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\wifi_config.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\wifi_config.h</name>
+        </file>
+    </group>
+    <group>
         <name>Source</name>
         <group>
             <name>Portable</name>
             <file>
-                <name>$PROJ_DIR$\Source\portable\MemMang\heap_4.c</name>
+                <name>$PROJ_DIR$\Source\portable\MemMang\heap_1.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\Source\portable\IAR\MSP430X\port.c</name>

@@ -46,8 +46,8 @@
 #define configCPU_CLOCK_HZ				( 25000000UL )
 #define configLFXT_CLOCK_HZ       		( 32768L )
 #define configTICK_RATE_HZ				( ( TickType_t ) 1000 )
-#define configMAX_PRIORITIES			( 5 )
-#define configTOTAL_HEAP_SIZE			( ( size_t ) ( 12 * 1024 ) )
+#define configMAX_PRIORITIES			( 20 )
+#define configTOTAL_HEAP_SIZE			( ( size_t ) ( 10 * 1024 ) )
 #define configMAX_TASK_NAME_LEN			( 10 )
 #define configUSE_TRACE_FACILITY		1
 #define configUSE_16_BIT_TICKS			0
@@ -92,7 +92,7 @@ configTICK_VECTOR must also be set in FreeRTOSConfig.h to the correct
 interrupt vector for the chosen tick interrupt source.  This implementation of
 vApplicationSetupTimerInterrupt() generates the tick from timer A0, so in this
 case configTICK__VECTOR is set to TIMER0_A0_VECTOR. */
-#define configTICK_VECTOR				TIMER0_B0_VECTOR
+#define configTICK_VECTOR				TIMER0_A0_VECTOR
 
 /* Prevent the following definitions being included when FreeRTOSConfig.h
 is included from an asm file. */

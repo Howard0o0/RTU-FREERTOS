@@ -43,7 +43,7 @@ bytes are given by ulStatsOverflowCount and the least significant two bytes are
 given by the current timer counter value.  Care must be taken with data
 consistency when combining the two in case a timer overflow occurs as the
 value is being read. */
-volatile unsigned long ulStatsOverflowCount = 0;
+// volatile unsigned long ulStatsOverflowCount = 0;
 
 /*-----------------------------------------------------------*/
 
@@ -69,10 +69,10 @@ void vConfigureTimerForRunTimeStats( void )
 }
 /*-----------------------------------------------------------*/
 
-#pragma vector=TIMER1_A0_VECTOR
-static __interrupt void prvRunTimeStatsOverflowISR( void )
-{
-	ulStatsOverflowCount++;
-}
+// #pragma vector=TIMER1_A0_VECTOR
+// static __interrupt void prvRunTimeStatsOverflowISR( void )
+// {
+// 	ulStatsOverflowCount++;
+// }
 /*-----------------------------------------------------------*/
 
