@@ -12,6 +12,7 @@
 #include "common.h"
 #include "rom.h"
 #include "hydrologytask.h"
+#include "FreeRTOS.h"
 //#define DEBUG
 //#include "ldebug.h"
 
@@ -20,8 +21,8 @@ extern char IsQuery;
 extern char isUARTConfig;
 extern int s_StartIdx;
 extern int s_EndIdx;
-int Extend_Flag = 0;                                                               //À©Õ¹±êÊ¶·û±ê¼Ç£¬0±íÊ¾ÊÇÅäÖÃÔËÐÐ²ÎÊý£¬1±íÊ¾ÊÇÅäÖÃ±àÂëÒªËØ
-extern int s_DPCount ;  //Î´·¢ËÍµÄÊý¾Ý°üÊýÁ¿
+int Extend_Flag = 0;                                                               //ï¿½ï¿½Õ¹ï¿½ï¿½Ê¶ï¿½ï¿½ï¿½ï¿½Ç£ï¿½0ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð²ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½Ã±ï¿½ï¿½ï¿½Òªï¿½ï¿½
+extern int s_DPCount ;  //Î´ï¿½ï¿½ï¿½Íµï¿½ï¿½ï¿½ï¿½Ý°ï¿½ï¿½ï¿½ï¿½ï¿½
 /* USER CODE END Includes */
 
 uint8_t ADCElementCount = 0;
@@ -29,7 +30,7 @@ uint8_t ISR_COUNTElementCount = 0;
 uint8_t IO_STATUSElementCount = 0;
 uint8_t RS485ElementCount = 0;
 
-int UserElementCount=0; //ÓÃ»§ÒªËØÊýÁ¿
+int UserElementCount=0; //ï¿½Ã»ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 int DataPacketLen = 0;
 hydrologyHeader g_HydrologyUpHeader;
 hydrologyHeader g_HydrologyDownHeader;
@@ -40,9 +41,9 @@ hydrologyElement inputPara[MAX_ELEMENT];
 hydrologyElement outputPara[MAX_ELEMENT];
 HydrologyDataPacket g_HydrologyDataPacket;
 
-hydrologyElementInfo Element_table[MAX_ELEMENT+1] ;//²É¼¯ÒªËØ±í
+hydrologyElementInfo Element_table[MAX_ELEMENT+1] ;//ï¿½É¼ï¿½Òªï¿½Ø±ï¿½
 
-/*ÒÔÏÂº¯ÊýÎªÍâ²¿½Ó¿Úº¯Êý£¬ÐèÓÉÓÃ»§¸ù¾ÝÓ²¼þÉè±¸ÊµÏÖ£¬·ñÔòË®ÎÄÐ­ÒéÎÞ·¨ÔËÐÐ*/
+/*ï¿½ï¿½ï¿½Âºï¿½ï¿½ï¿½Îªï¿½â²¿ï¿½Ó¿Úºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ó²ï¿½ï¿½ï¿½è±¸Êµï¿½Ö£ï¿½ï¿½ï¿½ï¿½ï¿½Ë®ï¿½ï¿½Ð­ï¿½ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½ï¿½*/
 /*
 const hydrologyElementInfo Element_table[UserElementCount+1] = {
 //	ELEMENT_REGISTER(0x03,ANALOG,3,1),
@@ -252,31 +253,31 @@ void Hydrology_Printf(char *buff)
   TraceMsg(buff,1);
 }
 
-/*ÒÔÉÏº¯ÊýÎªÍâ²¿½Ó¿Úº¯Êý£¬ÐèÓÉÓÃ»§¸ù¾ÝÓ²¼þÉè±¸ÊµÏÖ£¬·ñÔòË®ÎÄÐ­ÒéÎÞ·¨ÔËÐÐ*/
+/*ï¿½ï¿½ï¿½Ïºï¿½ï¿½ï¿½Îªï¿½â²¿ï¿½Ó¿Úºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ó²ï¿½ï¿½ï¿½è±¸Êµï¿½Ö£ï¿½ï¿½ï¿½ï¿½ï¿½Ë®ï¿½ï¿½Ð­ï¿½ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½ï¿½*/
 
 
 int Hydrology_ReadStartIdx(int *dest)         
 {
     char _temp[4];
     if(s_StartIdx<=HYDROLOGY_DATA_MAX_IDX && s_StartIdx >= HYDROLOGY_DATA_MIN_IDX)
-    {//ÄÚ´æÖµÕýÈ·
+    {//ï¿½Ú´ï¿½Öµï¿½ï¿½È·
         *dest=s_StartIdx;
-        //Ð´Èëflash,±£Ö¤flashÀïµÄÖµµÄÕýÈ·
+        //Ð´ï¿½ï¿½flash,ï¿½ï¿½Ö¤flashï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½È·
         Utility_UintToStr4(s_StartIdx,_temp);
         Hydrology_WriteStoreInfo(HYDROLOGY_DATA_START_INDEX,_temp,HYDROLOGY_DATA_START_INDEX_LEN);
        
         return 0;
     }
     else
-    {//ÄÚ´æÖµ´íÎó
+    {//ï¿½Ú´ï¿½Öµï¿½ï¿½ï¿½ï¿½
         
         Hydrology_ReadStoreInfo(HYDROLOGY_DATA_START_INDEX,_temp,HYDROLOGY_DATA_START_INDEX_LEN);
        
         (*dest) = (_temp[0]-'0')*1000+(_temp[1]-'0')*100+(_temp[2]-'0')*10+(_temp[3]-'0');
         
         if((*dest) <= HYDROLOGY_DATA_MAX_IDX && (*dest) >= HYDROLOGY_DATA_MIN_IDX )
-        {//RTCÖµ¿ÉÄÜÕýÈ· 
-            s_StartIdx=(*dest); //¸üÐÂÄÚ´æÖµ
+        {//RTCÖµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È· 
+            s_StartIdx=(*dest); //ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½Öµ
             
             return 0;
         }
@@ -291,7 +292,7 @@ int Hydrology_ReadStartIdx(int *dest)
 int Hydrology_SetStartIdx(int src)
 {
     char _dest[4];
-    s_StartIdx=src;//¸üÐÂÄÚ´æ
+    s_StartIdx=src;//ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½
     Utility_UintToStr4(src,_dest);
     Hydrology_WriteStoreInfo(HYDROLOGY_DATA_START_INDEX,_dest,HYDROLOGY_DATA_START_INDEX_LEN);
   
@@ -302,21 +303,21 @@ int Hydrology_ReadEndIdx(int *dest)
 {
     char _temp[4];
     if(s_EndIdx <= HYDROLOGY_DATA_MAX_IDX && s_EndIdx >= HYDROLOGY_DATA_MIN_IDX )
-    {//È«¾ÖÖµÕýÈ·
+    {//È«ï¿½ï¿½Öµï¿½ï¿½È·
         *dest=s_EndIdx;
-        //Ð´Èëflash,±£Ö¤flashÀïµÄÖµµÄÕýÈ·
+        //Ð´ï¿½ï¿½flash,ï¿½ï¿½Ö¤flashï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½È·
         Utility_UintToStr4(s_EndIdx,_temp);
         Hydrology_WriteStoreInfo(HYDROLOGY_DATA_END_INDEX,_temp,HYDROLOGY_DATA_END_INDEX_LEN);
         
         return 0;
     }
     else
-    {//È«¾ÖÖµ´íÎó£¬¶ÁÈ¡flash
+    {//È«ï¿½ï¿½Öµï¿½ï¿½ï¿½ó£¬¶ï¿½È¡flash
         Hydrology_ReadStoreInfo(HYDROLOGY_DATA_END_INDEX,_temp,HYDROLOGY_DATA_END_INDEX_LEN);
         (*dest) = (_temp[0]-'0')*1000+(_temp[1]-'0')*100+(_temp[2]-'0')*10+(_temp[3]-'0');
         if((*dest) <= HYDROLOGY_DATA_MAX_IDX && (*dest) >= HYDROLOGY_DATA_MIN_IDX )
         {
-            s_EndIdx=(*dest); //¸üÐÂÈ«¾ÖÖµ
+            s_EndIdx=(*dest); //ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½Öµ
             
             return 0;
         }
@@ -337,7 +338,7 @@ int Hydrology_SetEndIdx(int src)
    
     return 0;
 }  
-/*¶ÁÈ¡»¹ÓÐ¶àÉÙÓÐÐ§Êý¾Ý°üÎ´·¢ËÍ*/
+/*ï¿½ï¿½È¡ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½ï¿½Ý°ï¿½Î´ï¿½ï¿½ï¿½ï¿½*/
 int Hydrology_ReadDataPacketCount(int *dest)
 {
  
@@ -354,11 +355,11 @@ int Hydrology_ReadDataPacketCount(int *dest)
            
             return 0;
        
-  //s_DPCount = (*dest); //¸üÐÂÈ«¾ÖÖµ
+  //s_DPCount = (*dest); //ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½Öµ
 
 }
 
-/*±£´æ£¬¸üÐÂÓÐÐ§Êý¾Ý°üÊýÁ¿*/
+/*ï¿½ï¿½ï¿½æ£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½ï¿½Ý°ï¿½ï¿½ï¿½ï¿½ï¿½*/
 int Hydrology_SetDataPacketCount(int src)
 {
     char _dest[4];
@@ -373,40 +374,40 @@ int Hydrology_SetDataPacketCount(int src)
    
     int _idx=HYDROLOGY_DATA_MIN_IDX; 
     int _ret=0;
-    _ret=Store_CheckDataItemSended(_idx);//È¡µÚÒ»¸ö
+    _ret=Store_CheckDataItemSended(_idx);//È¡ï¿½ï¿½Ò»ï¿½ï¿½
     if(_ret==-2)
     {
        
         return -1;
     }
     if(_ret==1)
-    {//1ÆðÍ·µÄµÚ2ÖÖÇé¿ö
+    {//1ï¿½ï¿½Í·ï¿½Äµï¿½2ï¿½ï¿½ï¿½ï¿½ï¿½
         while(1)
-        {//Óöµ½0ÁË ¾ÍÊÇ_startIdx
+        {//ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½_startIdx
             _ret=Store_CheckDataItemSended(++ _idx); 
             if(_ret==1)
                 continue;
-            if( _ret==-2)//³ö±ß½çÁË
-            {//È«1,ÔòÉè _startIdx = DATA_MIN_IDX   _endIdx = DATA_MIN_IDX
+            if( _ret==-2)//ï¿½ï¿½ï¿½ß½ï¿½ï¿½ï¿½
+            {//È«1,ï¿½ï¿½ï¿½ï¿½ _startIdx = DATA_MIN_IDX   _endIdx = DATA_MIN_IDX
                 Hydrology_SetStartIdx(HYDROLOGY_DATA_MIN_IDX);
                 Hydrology_SetEndIdx(HYDROLOGY_DATA_MIN_IDX);
                 
                 return 0;
             }
             if(_ret==0)
-            {//ÕÒµ½_StartIdxÁË
+            {//ï¿½Òµï¿½_StartIdxï¿½ï¿½
                 Hydrology_SetStartIdx(_idx);
                 break;
             }
         }
-        //´ÓÇ°Ò»¸öÑ­»·Ìø³öÀ´ÁË.ÎÒÃÇÏÖÔÚ¿ªÊ¼Ñ°ÕÒ_endIdx ÕÒ1³öÀ´
+        //ï¿½ï¿½Ç°Ò»ï¿½ï¿½Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¿ï¿½Ê¼Ñ°ï¿½ï¿½_endIdx ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½
         while(1)
-        {//Óöµ½1ÁË ¾ÍÊÇ _endIdx, 
+        {//ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ _endIdx, 
             _ret=Store_CheckDataItemSended(++ _idx);
             if(_ret == 0)
                 continue;
-            if(_ret==-2)//³ö±ß½çÁË
-            {//Ôò_EndIdx ¾ÍÊÇ DATA_MIN_IDX
+            if(_ret==-2)//ï¿½ï¿½ï¿½ß½ï¿½ï¿½ï¿½
+            {//ï¿½ï¿½_EndIdx ï¿½ï¿½ï¿½ï¿½ DATA_MIN_IDX
                 Hydrology_SetEndIdx(HYDROLOGY_DATA_MIN_IDX);
                 
                 return 0;
@@ -420,31 +421,31 @@ int Hydrology_SetDataPacketCount(int src)
         }
     }
     else //_ret==0
-    {//µÀÀíÍ¬ÉÏ 0ÆðÍ· µÚÒ»ÖÖÇé¿ö
+    {//ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½ 0ï¿½ï¿½Í· ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½
         while(1)
-        { //ÕÒ1ÁË ¾ÍÊÇendIdx
+        { //ï¿½ï¿½1ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½endIdx
             _ret=Store_CheckDataItemSended(++ _idx); 
             if(_ret==0)
                 continue;
-            if( _ret==-2)//³ö±ß½çÁË
-            {//È« 0 ,ÔòÉè _startIdx = DATA_MIN_IDX   _endIdx = DATA_MIN_IDX
+            if( _ret==-2)//ï¿½ï¿½ï¿½ß½ï¿½ï¿½ï¿½
+            {//È« 0 ,ï¿½ï¿½ï¿½ï¿½ _startIdx = DATA_MIN_IDX   _endIdx = DATA_MIN_IDX
                 Hydrology_SetStartIdx(HYDROLOGY_DATA_MIN_IDX);
                 Hydrology_SetEndIdx(HYDROLOGY_DATA_MIN_IDX);
                 
                 return 0;
             }
             if(_ret==1)
-            {//ÕÒµ½_endIdxÁË
+            {//ï¿½Òµï¿½_endIdxï¿½ï¿½
                 Hydrology_SetEndIdx(_idx);
                 break;
             }
         }
         while(1)
-        {//Óöµ½0ÔòÎª  _startIdx
+        {//ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½Îª  _startIdx
             _ret=Store_CheckDataItemSended(++ _idx); 
             if(_ret==1)
                 continue; 
-            if(_ret==-2)//³ö±ß½çÁË
+            if(_ret==-2)//ï¿½ï¿½ï¿½ß½ï¿½ï¿½ï¿½
             {
                 Hydrology_SetStartIdx(HYDROLOGY_DATA_MIN_IDX);
                 
@@ -608,7 +609,7 @@ int getEvenNum(int num)
     return num+1;
 }
 
-/*×Ö½Ú¸ß5Î»£¬D±íÊ¾Êý¾Ý×Ö½ÚÊý£¬×Ö½ÚµÍ3Î»£¬d±íÊ¾Ð¡ÊýµãºóÎ»Êý*/
+/*ï¿½Ö½Ú¸ï¿½5Î»ï¿½ï¿½Dï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½Ö½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö½Úµï¿½3Î»ï¿½ï¿½dï¿½ï¿½Ê¾Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½*/
 void getguideid(char* value,char D, char d)
 {
   char high5 = 0;
@@ -619,25 +620,25 @@ void getguideid(char* value,char D, char d)
 
   high5 = evenD/2;
   high5 = high5 << 3;
-  low3 = d; //dµÄ·¶Î§ÊÇ0-7Ö®¼ä£¬²ÅÄÜÓÃ3Î»±íÊ¾
+  low3 = d; //dï¿½Ä·ï¿½Î§ï¿½ï¿½0-7Ö®ï¿½ä£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½3Î»ï¿½ï¿½Ê¾
   *value = high5 | low3;
 }
 
 
 int converToHexElement(double input, int D,int d,char* out)
 {
-  char strInterValue[20] = {0}; //strInterValue±íÊ¾ÕûÊýÖµ
-  char strDeciValue[20] = {0}; 	//strDeciValue±íÊ¾Ð¡ÊýÖµ
-  int integer =0; 							//interger±íÊ¾ÕûÊýÎ»Êý
-  int decimer =0; 							//decimer±íÊ¾Ð¡ÊýÎ»Êý
-  //int intergerValue = 0 ;			// ±íÊ¾ÕûÊýÖµ
-  //int decimerValue = 0 ; 			//±íÊ¾Ð¡ÊýÖµ
-  int total = 0; 								//total ±íÊ¾input×ÜµÄÎ»Êý£¨³ýÈ¥Ð¡Êýµã£©
-  int evenD = 0; 								//Å¼ÊýD
-  int difftotal = 0; 						//±íÊ¾evenDÓëtotal²îÖµ
-  int diffInterger = 0;					//±íÊ¾ÕûÊýÎ»ÐèÒª²¹Æë
-  int diffDecimer = 0;					//±íÊ¾Ð¡ÊýÎ»ÐèÒª²¹Æë
-  //int delDecimer = 0 ;				//±íÊ¾Ð¡ÊýÎ»ÐèÒªÉ¾³ýµÄÎ»Êý
+  char strInterValue[20] = {0}; //strInterValueï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½Öµ
+  char strDeciValue[20] = {0}; 	//strDeciValueï¿½ï¿½Ê¾Ð¡ï¿½ï¿½Öµ
+  int integer =0; 							//intergerï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
+  int decimer =0; 							//decimerï¿½ï¿½Ê¾Ð¡ï¿½ï¿½Î»ï¿½ï¿½
+  //int intergerValue = 0 ;			// ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½Öµ
+  //int decimerValue = 0 ; 			//ï¿½ï¿½Ê¾Ð¡ï¿½ï¿½Öµ
+  int total = 0; 								//total ï¿½ï¿½Ê¾inputï¿½Üµï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¥Ð¡ï¿½ï¿½ï¿½ã£©
+  int evenD = 0; 								//Å¼ï¿½ï¿½D
+  int difftotal = 0; 						//ï¿½ï¿½Ê¾evenDï¿½ï¿½totalï¿½ï¿½Öµ
+  int diffInterger = 0;					//ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½
+  int diffDecimer = 0;					//ï¿½ï¿½Ê¾Ð¡ï¿½ï¿½Î»ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½
+  //int delDecimer = 0 ;				//ï¿½ï¿½Ê¾Ð¡ï¿½ï¿½Î»ï¿½ï¿½ÒªÉ¾ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
   int i = 0;
   int j = 0;
   int m = 0;
@@ -651,16 +652,16 @@ int converToHexElement(double input, int D,int d,char* out)
   evenD = getEvenNum(D);
   total = integer + decimer;
 
-  if ( evenD >= total ) 				//ÓÐÊäÈëÅäÖÃ²ÎÊý±£Ö¤
+  if ( evenD >= total ) 				//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã²ï¿½ï¿½ï¿½ï¿½ï¿½Ö¤
   {
     difftotal = evenD - total;
-    if( d >= decimer ) 					//Õâ¸öÊÇ¿Ï¶¨·¢ÉúµÄ£¬getBCDnums±£Ö¤
+    if( d >= decimer ) 					//ï¿½ï¿½ï¿½ï¿½Ç¿Ï¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½getBCDnumsï¿½ï¿½Ö¤
     {
-      diffDecimer = d - decimer; //Ð¡ÊýÎ»ÐèÒª²¹0µÄÎ»Êý£¬£¬Íùºó²¹0
-      diffInterger = difftotal - diffDecimer;//ÕûÊýÎ»ÐèÒª²¹0 µÄÎ»Êý,¼ÙÉèdifftotal×ÜÊÇ´óÓÚdiffDecimer£¬ÍùÇ°²¹0
+      diffDecimer = d - decimer; //Ð¡ï¿½ï¿½Î»ï¿½ï¿½Òªï¿½ï¿½0ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0
+      diffInterger = difftotal - diffDecimer;//ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½Òªï¿½ï¿½0 ï¿½ï¿½Î»ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½difftotalï¿½ï¿½ï¿½Ç´ï¿½ï¿½ï¿½diffDecimerï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½0
     }
-    /*½«µ±Ç°Ð¡ÊýÎ»ºÍÕûÊýÎ»¶¼ÕûºÏµ½tmpÊý×éÖÐ£¬·ÖÎªÏÂÃæ¼¸¸ö²¿·Ö 0--->diffInterger-1 ÕûÊý²¹0µÄ¸öÊý£¬diffInterger---> diffInterger+ intergerÊÇÕûÊýÎ»¸öÊý£¬
-    diffInter+ interge ---> evenDÊÇÐ¡ÊýÎ»¸öÊý*/
+    /*ï¿½ï¿½ï¿½ï¿½Ç°Ð¡ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½tmpï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½æ¼¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 0--->diffInterger-1 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½diffInterger---> diffInterger+ intergerï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    diffInter+ interge ---> evenDï¿½ï¿½Ð¡ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½*/
     memcpy(&tmp[diffInterger],strInterValue, integer);
     memcpy(&tmp[diffInterger+integer],strDeciValue, decimer);
 
@@ -671,20 +672,20 @@ int converToHexElement(double input, int D,int d,char* out)
       out[j++] = (tmp[i] - '0') * 16 + (tmp[i+1]-'0');
     }
   }
-  else //µ±Ç°ÕâÖÖÇé¿ö²»»á·¢Éú
+  else //ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½á·¢ï¿½ï¿½
   {
     return -1;
   }
   return 0;
 }
-int mallocElement(char element,char D,char d,hydrologyElement* ele)
+int pvPortMallocElement(char element,char D,char d,hydrologyElement* ele)
 {
   ele->guide[0] = element;
   getguideid(&(ele->guide[1]),D,d);
 
   if ( D%2 == 0 )
   {
-    ele->value = (char*)malloc(D/2);
+    ele->value = (char*)pvPortMalloc(D/2);
     
     if (ele->value == 0)
     {
@@ -697,7 +698,7 @@ int mallocElement(char element,char D,char d,hydrologyElement* ele)
   }
   else
   {
-    ele->value = (char*)malloc((D+1)/2);
+    ele->value = (char*)pvPortMalloc((D+1)/2);
     
     if (ele->value == 0)
     {
@@ -873,7 +874,7 @@ int hydrologyJudgeType(char funcode)
 	
 }
 
-void Hydrology_ReadAnalog(float *value,int index)   //index±íÊ¾µÚindex¸öÒªËØµÄÖµ
+void Hydrology_ReadAnalog(float *value,int index)   //indexï¿½ï¿½Ê¾ï¿½ï¿½indexï¿½ï¿½Òªï¿½Øµï¿½Öµ
 {
   long addr = HYDROLOGY_ANALOG1 + index * 4;
   char temp_value[4];
@@ -918,7 +919,7 @@ void Hydrology_CalElementInfo(int *count,char funcode)
   type = hydrologyJudgeType(funcode);
   
   if(type == 1)
-  {/*´ÓÄÚ´æÖÐ¶ÁÈ¡Êý¾ÝinputPara id£¬num£¬value*/
+  {/*ï¿½ï¿½ï¿½Ú´ï¿½ï¿½Ð¶ï¿½È¡ï¿½ï¿½ï¿½ï¿½inputPara idï¿½ï¿½numï¿½ï¿½value*/
     while(Element_table[i].ID != 0)
     {
       switch(Element_table[i].type)
@@ -926,21 +927,21 @@ void Hydrology_CalElementInfo(int *count,char funcode)
         case ANALOG:
         {
           Hydrology_ReadAnalog(&floatvalue,acount++);
-          mallocElement(Element_table[i].ID,Element_table[i].D,Element_table[i].d,&inputPara[i]);  //»ñµÃid £¬num£¬¿ª±ÙvalueµÄ¿Õ¼ä
+          pvPortMallocElement(Element_table[i].ID,Element_table[i].D,Element_table[i].d,&inputPara[i]);  //ï¿½ï¿½ï¿½id ï¿½ï¿½numï¿½ï¿½ï¿½ï¿½ï¿½ï¿½valueï¿½Ä¿Õ¼ï¿½
           converToHexElement((double)floatvalue,Element_table[i].D,Element_table[i].d,inputPara[i].value);
           break;
         }
         case PULSE:
         {
           Hydrology_ReadPulse(&intvalue1,pocunt++);
-          mallocElement(Element_table[i].ID,Element_table[i].D,Element_table[i].d,&inputPara[i]);
+          pvPortMallocElement(Element_table[i].ID,Element_table[i].D,Element_table[i].d,&inputPara[i]);
           converToHexElement((double)intvalue1,Element_table[i].D,Element_table[i].d,inputPara[i].value);
           break;
         }
         case SWITCH:
         {
           Hydrology_ReadSwitch(&intvalue2);
-          mallocElement(Element_table[i].ID,Element_table[i].D,Element_table[i].d,&inputPara[i]);
+          pvPortMallocElement(Element_table[i].ID,Element_table[i].D,Element_table[i].d,&inputPara[i]);
           converToHexElement((double)intvalue2,Element_table[i].D,Element_table[i].d,inputPara[i].value);
           break;
         }
@@ -948,7 +949,7 @@ void Hydrology_CalElementInfo(int *count,char funcode)
         {
           inputPara[i].guide[0] = Element_table[i].ID;
           inputPara[i].guide[1] = Element_table[i].ID;
-          inputPara[i].value = (char*)malloc(SinglePacketSize);
+          inputPara[i].value = (char*)pvPortMalloc(SinglePacketSize);
           if (NULL != inputPara[i].value)
           {
             inputPara[i].num = SinglePacketSize;
@@ -974,7 +975,7 @@ void Hydrology_CalElementInfo(int *count,char funcode)
       memcpy(inputPara[i].guide,(downpbody->element)[i].guide,2);
       
       inputPara[i].num = ((downpbody->element)[i].guide[1] >> 3);
-      inputPara[i].value = (char*) malloc((downpbody->element)[i].num);
+      inputPara[i].value = (char*) pvPortMalloc((downpbody->element)[i].num);
       if (NULL == inputPara[i].value)
         continue;
       HydrologyReadSuiteElement(funcode,inputPara[i].guide,inputPara[i].value);
@@ -1081,12 +1082,12 @@ int hydrologyMakeUpBody(int count,char* src)
 {
   hydrologyUpBody* pbody = (hydrologyUpBody*) (g_HydrologyMsg.upbody);
   int i;
-  int index = 5;   //++++++++srcÇ°Îå¸ö×Ö½ÚÊÇÊ±¼ä
+  int index = 5;   //++++++++srcÇ°ï¿½ï¿½ï¿½ï¿½Ö½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
   pbody->count = count;
   for(i = 0;i < pbody->count;i++)
   {
     memcpy((pbody->element)[i].guide, inputPara[i].guide,2);
-    (pbody->element)[i].value = (char*) malloc(inputPara[i].num);
+    (pbody->element)[i].value = (char*) pvPortMalloc(inputPara[i].num);
     if(NULL == (pbody->element)[i].value)
        return -1;
    // memcpy((pbody->element)[i].value,inputPara[i].value, inputPara[i].num);
@@ -1439,7 +1440,7 @@ int hydrologyMakeDownBody(char* input,int len,int position)
   while(len != 0)
   {
     
-    if(input[position]==0xFF)       //*********À©Õ¹±êÊ¶·û£¬FFxxxx£¬ºóÁ½¸ö×Ö½Úxx±íÊ¾ÊÇÊ²Ã´ÒªËØ£¬xx±íÊ¾ºóÃæ¸úµÄdata³¤¶È£¬¸ß5Î»±íÊ¾×Ö½ÚÊý£¬µÍÈýÎ»±íÊ¾Ð¡ÊýµãºóÎ»Êý****************
+    if(input[position]==0xFF)       //*********ï¿½ï¿½Õ¹ï¿½ï¿½Ê¶ï¿½ï¿½ï¿½ï¿½FFxxxxï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö½ï¿½xxï¿½ï¿½Ê¾ï¿½ï¿½Ê²Ã´Òªï¿½Ø£ï¿½xxï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½dataï¿½ï¿½ï¿½È£ï¿½ï¿½ï¿½5Î»ï¿½ï¿½Ê¾ï¿½Ö½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½Ê¾Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½****************
     {
           position += 1;
           Extend_Flag = 1;
@@ -1453,7 +1454,7 @@ int hydrologyMakeDownBody(char* input,int len,int position)
     (pbody->element)[pbody->count].num = ((pbody->element)[pbody->count].guide[1] >> 3);
     
     
-    (pbody->element)[pbody->count].value = (char*) malloc((pbody->element)[pbody->count].num);                                           //¸ù¾Ýnum¿ª±Ùdata¿Õ¼ä
+    (pbody->element)[pbody->count].value = (char*) pvPortMalloc((pbody->element)[pbody->count].num);                                           //ï¿½ï¿½ï¿½ï¿½numï¿½ï¿½ï¿½ï¿½dataï¿½Õ¼ï¿½
     
     if (NULL == (pbody->element)[pbody->count].value)
       return -1;
@@ -1463,7 +1464,7 @@ int hydrologyMakeDownBody(char* input,int len,int position)
     
     len -= (pbody->element)[pbody->count].num;
     
-    pbody->count ++;                                                                                                                     //ÕýÎÄÒªËØ¼ÆÊý
+    pbody->count ++;                                                                                                                     //ï¿½ï¿½ï¿½ï¿½Òªï¿½Ø¼ï¿½ï¿½ï¿½
     if(len < 0)
       return -2;
   }
@@ -1566,13 +1567,13 @@ void hydrologyInitSend()
    
    g_HydrologyMsg.header = (void*)&g_HydrologyUpHeader;
 
-   g_HydrologyMsg.upbody = (void*)malloc(sizeof(hydrologyUpBody));
+   g_HydrologyMsg.upbody = (void*)pvPortMalloc(sizeof(hydrologyUpBody));
 
    hydrologyUpBody* uppbody = (hydrologyUpBody*) (g_HydrologyMsg.upbody);
    uppbody->count = 0;
    
    if (0 == g_HydrologyMsg.upbody)
-      Hydrology_Printf("g_HydrologyMsg.upbody malloc failed");
+      Hydrology_Printf("g_HydrologyMsg.upbody pvPortMalloc failed");
    
    for(int i = 0; i < UserElementCount; ++i)     //?????
    {
@@ -1611,16 +1612,16 @@ void hydrologyExitSend()
   {
     if((uppbody->element)[i].value != NULL)
     {
-      free((uppbody->element)[i].value);
+      vPortFree((uppbody->element)[i].value);
       (uppbody->element)[i].value = NULL;
     }
     if(inputPara[i].value != NULL)
     {
-      free(inputPara[i].value);
+      vPortFree(inputPara[i].value);
       inputPara[i].value = NULL;
     }
   }
-  free(uppbody );
+  vPortFree(uppbody );
   uppbody = NULL;//+++
 }
 
@@ -1843,13 +1844,13 @@ void hydrologyInitReceieve()
 {
    memset(&g_HydrologyDownHeader,0,sizeof(hydrologyHeader));
 
-   g_HydrologyMsg.downbody = (void*)malloc(sizeof(hydrologyDownBody));
+   g_HydrologyMsg.downbody = (void*)pvPortMalloc(sizeof(hydrologyDownBody));
 
    hydrologyDownBody* downpbody = (hydrologyDownBody*) (g_HydrologyMsg.downbody);
    downpbody->count = 0;
    
    if (0 == g_HydrologyMsg.downbody)
-      Hydrology_Printf("g_HydrologyMsg.downbody malloc failed");
+      Hydrology_Printf("g_HydrologyMsg.downbody pvPortMalloc failed");
 }
 
 void hydrologyExitReceieve()
@@ -1861,11 +1862,11 @@ void hydrologyExitReceieve()
   {
     if((downpbody->element)[i].value != NULL)
     {
-      free((downpbody->element)[i].value);
+      vPortFree((downpbody->element)[i].value);
       (downpbody->element)[i].value = NULL;
     }
   }
-  free(downpbody);
+  vPortFree(downpbody);
   downpbody = NULL; //+++
 }
 
@@ -1875,7 +1876,7 @@ int hydrologyProcessReceieve(char* input,int inputlen)
     
   hydrologyInitReceieve();
   
-  if(hydrologyMakeDownHeader(input,inputlen,&i,&bodylen) != 0)     //iÊÇpostion  £»bodylen£¬±¨ÎÄÕýÎÄ³¤¶È
+  if(hydrologyMakeDownHeader(input,inputlen,&i,&bodylen) != 0)     //iï¿½ï¿½postion  ï¿½ï¿½bodylenï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½ï¿½
     return -1;
   
   hydrologyMakeDownBody(input,bodylen,i);                               

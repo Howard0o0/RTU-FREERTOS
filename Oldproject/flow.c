@@ -9,22 +9,21 @@
 #include "Sampler.h"
 #include "flow.h"
 #include "debug.h"
-//#include "hydrology.h"
-//#include "GPRS.h"
 #include "message.h"
 #include "hydrologycommand.h"
+#include "FreeRTOS.h"
 
 int FlowCheckSampleData(int* pstart,int* pend)
 {
-    //¼ì²éÊý¾Ý´æ´¢ÉÏ±êºÍ ÏÂ±ê 
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý´æ´¢ï¿½Ï±ï¿½ï¿½ ï¿½Â±ï¿½ 
     int _startIdx=*pstart;
     int _endIdx=*pend;
     
     if(Hydrology_ReadStartIdx(&_startIdx)<0 || Hydrology_ReadEndIdx(&_endIdx)<0 )
-    {//Èç¹û¶Á³öÊý¾ÝË÷Òý±ê¼ÇÊ§°Ü
+    {//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½
         TraceMsg("read idx error ,reGenerate .",1);
         
-        if(Hydrology_RetrieveIndex()<0)                                        //¶Á³öË÷Òý±ê¼ÇÊ§°Ü£¬ÔòÒªÉú³ÉË÷Òý±ê¼Ç++++++++++++++++++++++
+        if(Hydrology_RetrieveIndex()<0)                                        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½Ü£ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½++++++++++++++++++++++
         {
             TraceMsg("reGen failed .",1);
             Hydrology_SetStartIdx(HYDROLOGY_DATA_MIN_IDX);
@@ -34,10 +33,10 @@ int FlowCheckSampleData(int* pstart,int* pend)
         TraceInt4(_startIdx,1);
         TraceMsg("EndIdx:",0);
         TraceInt4(_endIdx,1);
-        Hydrology_ReadStartIdx(&_startIdx);//ÖØÐÂ¶Á³ö
-        Hydrology_ReadEndIdx(&_endIdx);//ÖØÐÂ¶Á³ö
+        Hydrology_ReadStartIdx(&_startIdx);//ï¿½ï¿½ï¿½Â¶ï¿½ï¿½ï¿½
+        Hydrology_ReadEndIdx(&_endIdx);//ï¿½ï¿½ï¿½Â¶ï¿½ï¿½ï¿½
     }
-    //ÏÂ±êÕýÈ·ÐÔ
+    //ï¿½Â±ï¿½ï¿½ï¿½È·ï¿½ï¿½
     if( _endIdx<HYDROLOGY_DATA_MIN_IDX || _endIdx >HYDROLOGY_DATA_MAX_IDX || _startIdx<HYDROLOGY_DATA_MIN_IDX || _startIdx >HYDROLOGY_DATA_MAX_IDX)
     {
         TraceMsg("Idx bad .",1);
@@ -54,19 +53,19 @@ int FlowCheckSampleData(int* pstart,int* pend)
     return 0;
 }
 
-int FlowProcess()    //Î´Ê¹ÓÃ  
+int FlowProcess()    //Î´Ê¹ï¿½ï¿½  
 {
-    //¼ì²éÊý¾Ý´æ´¢ÉÏ±êºÍÏÂ±ê 
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý´æ´¢ï¿½Ï±ï¿½ï¿½ï¿½Â±ï¿½ 
     int _startIdx=0;
     int _endIdx=0;
-    char _effect_endIdx=0;//ky,Ç°ÃæµÄ_endIdxµÄµØÖ·ÄÚµÄÄÚÈÝÊÇÒÑ¾­¶Á¹ýÁËµÄ£¬ÕâÀïÔÙ¶¨ÒåÒ»¸öµØÖ·£¬ÊÇ±£´æÓÐÐ§Êý¾ÝµÄ×îºóÒ»¸öµØÖ·
+    char _effect_endIdx=0;//ky,Ç°ï¿½ï¿½ï¿½_endIdxï¿½Äµï¿½Ö·ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ËµÄ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½Ç±ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½ï¿½Ýµï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ö·
     char _send[120] = {0}; 
     char _specSend[200] = {0};
     int  _ret=0;   
-    int  _seek_num=0;//·ÀÖ¹ËÀÑ­»·
+    int  _seek_num=0;//ï¿½ï¿½Ö¹ï¿½ï¿½Ñ­ï¿½ï¿½
     int sendlen = 0;
    
-    _ret = FlowCheckSampleData(&_startIdx,&_endIdx);           //»ñµÃstartidx endidx
+    _ret = FlowCheckSampleData(&_startIdx,&_endIdx);           //ï¿½ï¿½ï¿½startidx endidx
     if (_ret !=0 )
     {
         return -1;   
@@ -85,60 +84,60 @@ int FlowProcess()    //Î´Ê¹ÓÃ
     {
         TraceMsg("read data in :",0);
         TraceInt4(_startIdx,1);
-        if(_seek_num > DATA_ITEM_LEN)//Ñ°ÕÒµÄÊý¾ÝÌõÊýÒÑ¾­³¬¹ý×î´óÖµ¾ÍÍË³ö     //+++Òª¸ÄÎªµØÖ·±ß½çÅÐ¶Ï
+        if(_seek_num > DATA_ITEM_LEN)//Ñ°ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½Ë³ï¿½     //+++Òªï¿½ï¿½Îªï¿½ï¿½Ö·ï¿½ß½ï¿½ï¿½Ð¶ï¿½
         {
             TraceMsg("seek num out of range",1);
-			//hydrologHEXfree();
+			//hydrologHEXvPortFree();
                         System_Delayms(2000);
 			System_Reset();
             //break;
         }
 
-        //Êý¾Ý
-        _ret = Store_ReadDataItem(_startIdx,_send,0);                           //+++++¶ÁÈ¡Êý¾Ý+++£¬startIDx++++retÎª¶Á³öµÄÊý¾Ý³¤¶È
+        //ï¿½ï¿½ï¿½ï¿½
+        _ret = Store_ReadDataItem(_startIdx,_send,0);                           //+++++ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½+++ï¿½ï¿½startIDx++++retÎªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½
         if(_ret<0)
         {
             TraceMsg("can't read data ! very bad .",1);
-            return -1; //ÎÞ·¨¶ÁÈ¡Êý¾Ý ¾ÍÖ±½ÓÍËÁË.
+            return -1; //ï¿½Þ·ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
         }
         else if(_ret==1)
-        {//Õâ¸öÊÇÒ»¸öÒÑ¾­·¢ËÍ¹ýµÄÊý¾Ý,                                          //+++++++++++
+        {//ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½Í¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,                                          //+++++++++++
             TraceMsg("It's sended data",1);
           //  if(_startIdx == _endIdx)
-           // {//¼ì²éÊÇ·ñµ½ÁË  _endIdx, Èç¹ûÊÇ¾Í²»¼ÌÐøÑ­»·ÁË. 
+           // {//ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½  _endIdx, ï¿½ï¿½ï¿½ï¿½Ç¾Í²ï¿½ï¿½ï¿½ï¿½ï¿½Ñ­ï¿½ï¿½ï¿½ï¿½. 
                // _ret = hydrologHEXProcess(_send,42,TimerReport,_specSend,0);
 				
                // break;
            // }
-            //¼ÌÐøÏÂÒ»¸öÎ»ÖÃ
-            if(_startIdx >= HYDROLOGY_DATA_MAX_IDX)                     //+++++Èç¹û¶ÁÈ¡µÄstartidx³¬¹ý¿É´æµÄ×î´óindex£¬ÔòÖØÐÂÖÃÁã
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Î»ï¿½ï¿½
+            if(_startIdx >= HYDROLOGY_DATA_MAX_IDX)                     //+++++ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½startidxï¿½ï¿½ï¿½ï¿½ï¿½É´ï¿½ï¿½ï¿½ï¿½ï¿½indexï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 _startIdx=HYDROLOGY_DATA_MIN_IDX;
             else   
-                ++ _startIdx;//ÏÂÒ»Êý¾Ý
+                ++ _startIdx;//ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½
 
             ++_seek_num;
 			
-                                                              //·¢ËÍÍêºó,Òª¸üÐÂ_startIdx.          
+                                                              //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,Òªï¿½ï¿½ï¿½ï¿½_startIdx.          
 			Hydrology_SetStartIdx(_startIdx);
 			
 			TraceInt4(_startIdx, 1);
 			TraceInt4(_endIdx, 1);
 			
-			hydrologHEXfree();
+			hydrologHEXvPortFree();
 
             //continue;
         }
-        //ÊÇÕý³£µÄ·¢ËÍÊý¾Ý,¾ÍÔö¼Ó_idx
-        //Ôö¼ÓÏÂÒ»´ÎµÄ _startIdx   
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½_idx
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½Îµï¿½ _startIdx   
 
-	else //Î´·¢ËÍµÄÊý¾Ý //Ã¿ÌõÊý¾Ý¶¼ÒªÏÈÏò¿Í»§¶Ë·þÎñÆ÷·¢Èý±é£¬ÔÚ·¢ËÍ¸ø±¾µØ·þÎñÆ÷ 
+	else //Î´ï¿½ï¿½ï¿½Íµï¿½ï¿½ï¿½ï¿½ï¿½ //Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½Ý¶ï¿½Òªï¿½ï¿½ï¿½ï¿½Í»ï¿½ï¿½Ë·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é£¬ï¿½Ú·ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½Ø·ï¿½ï¿½ï¿½ï¿½ï¿½ 
 		{
 	        sendlen = _ret;
 
-	        if (_startIdx == _effect_endIdx)   //·¢ËÍÊ§°Ü¾ÍÌø³öÑ­»·    
+	        if (_startIdx == _effect_endIdx)   //ï¿½ï¿½ï¿½ï¿½Ê§ï¿½Ü¾ï¿½ï¿½ï¿½ï¿½ï¿½Ñ­ï¿½ï¿½    
 	        {
 				Store_MarkDataItemSended(_startIdx);      
-				_ret = hydrologHEXProcess(_send,_ret,TimerReport,_specSend,0);//·¢ËÍ×îºóÒ»ÌõÊý¾Ý£¬ÏÈÏò¿Í»§¶Ë·¢£¬ÔÙÏò±¾µØ·¢++++++++++++++++
+				_ret = hydrologHEXProcess(_send,_ret,TimerReport,_specSend,0);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ï¿½ï¿½Í»ï¿½ï¿½Ë·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ò±¾µØ·ï¿½++++++++++++++++
 
 				if(_ret !=0)
 				{
@@ -148,7 +147,7 @@ int FlowProcess()    //Î´Ê¹ÓÃ
 			
 	        else
 	        { 
-				_ret = hydrologHEXProcess(_send,_ret,TimerReport,_specSend,1);//·¢ËÍÒ»ÌõÊý¾Ý£¬Ïò¿Í»§¶Ë·¢+++++++++++++
+				_ret = hydrologHEXProcess(_send,_ret,TimerReport,_specSend,1);//ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½Í»ï¿½ï¿½Ë·ï¿½+++++++++++++
 				
 				if(_ret !=0)
 	            {
@@ -156,25 +155,25 @@ int FlowProcess()    //Î´Ê¹ÓÃ
 	            }	
 	        }
 
-	        //²¢ÉèÖÃ¸ÃÊý¾ÝÒÑ·¢ËÍ
+	        //ï¿½ï¿½ï¿½ï¿½ï¿½Ã¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ·ï¿½ï¿½ï¿½
 	        Store_MarkDataItemSended(_startIdx);
 
 	        if(_startIdx>=HYDROLOGY_DATA_MAX_IDX) 
 	            _startIdx=HYDROLOGY_DATA_MIN_IDX;
 	        else   
-	            ++ _startIdx;//ÏÂÒ»Êý¾Ý
+	            ++ _startIdx;//ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½
 
 	        ++_seek_num;
 
 	        TraceMsg(_send, 1);
 
-	        //·¢ËÍÍêºó,Òª¸üÐÂ_startIdx. 
+	        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,Òªï¿½ï¿½ï¿½ï¿½_startIdx. 
 	        Hydrology_SetStartIdx(_startIdx);
 
 	        TraceInt4(_startIdx, 1);
 	        TraceInt4(_endIdx, 1);
 
-	        hydrologHEXfree();
+	        hydrologHEXvPortFree();
 
 		}
     }

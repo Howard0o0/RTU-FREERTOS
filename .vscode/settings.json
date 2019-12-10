@@ -7,6 +7,7 @@
         "hal_buttons.h": "c",
         "driverlib.h": "c",
         "timer.h": "c",
-        "uart0.h": "c"
+        "uart0.h": "c",
+        "task.h": "c"
     }
 }

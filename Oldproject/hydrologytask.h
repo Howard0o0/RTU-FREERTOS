@@ -43,6 +43,7 @@ extern int hydrologyJudgeType(char funcode);
 extern void UART1_Open_9600(int _type);
 
 void task_hydrology_init(void *pvParameters);
+void task_hydrology_run(void *pvParameters);
 // void task_hydrology_check_time(void *pvParameters);
 
 // void task_hydrology_sample(void *pvParameters);

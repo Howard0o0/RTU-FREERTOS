@@ -1,4 +1,5 @@
 #include "hydrologytask.h"
+#include "GSM.h"
 #include "Sampler.h"
 #include "adc.h"
 #include "common.h"
@@ -9,7 +10,7 @@
 #include "rtc.h"
 #include "stdint.h"
 #include "store.h"
-#include "GSM.h"
+
 
 //#include "convertsampledata.h"
 //#include "hydrology.h"
@@ -121,8 +122,8 @@ void HydrologyDataPacketInit() {
     packet_len += HYDROLOGY_DATA_SEND_FLAG_LEN;
     packet_len += HYDROLOGY_DATA_TIME_LEN;
     while (Element_table[i].ID != 0) {
-        mallocElement(Element_table[i].ID, Element_table[i].D,
-                      Element_table[i].d, &inputPara[i]);
+        pvPortMallocElement(Element_table[i].ID, Element_table[i].D,
+                            Element_table[i].d, &inputPara[i]);
         packet_len += inputPara[i].num;
         i++;
     }
@@ -249,8 +250,8 @@ int HydrologySample(char *_saveTime) {
 }
 
 int HydrologyOnline() {
-    //if (time_10min >= 1)
-        // hydrologyProcessSend(LinkMaintenance);
+    // if (time_10min >= 1)
+    // hydrologyProcessSend(LinkMaintenance);
 
     return 0;
 }
@@ -293,25 +294,25 @@ int HydrologySaveData(char *_saveTime, char funcode)   // char *_saveTime
             switch (Element_table[i].type) {
             case ANALOG: {
                 Hydrology_ReadAnalog(&floatvalue, acount++);
-                mallocElement(Element_table[i].ID, Element_table[i].D,
-                              Element_table[i].d,
-                              &inputPara[i]);   //???id ??num??????value????
+                pvPortMallocElement(
+                    Element_table[i].ID, Element_table[i].D, Element_table[i].d,
+                    &inputPara[i]);   //???id ??num??????value????
                 converToHexElement((double)floatvalue, Element_table[i].D,
                                    Element_table[i].d, inputPara[i].value);
                 break;
             }
             case PULSE: {
                 Hydrology_ReadPulse(&intvalue1, pocunt++);
-                mallocElement(Element_table[i].ID, Element_table[i].D,
-                              Element_table[i].d, &inputPara[i]);
+                pvPortMallocElement(Element_table[i].ID, Element_table[i].D,
+                                    Element_table[i].d, &inputPara[i]);
                 converToHexElement((double)intvalue1, Element_table[i].D,
                                    Element_table[i].d, inputPara[i].value);
                 break;
             }
             case SWITCH: {
                 Hydrology_ReadSwitch(&intvalue2);
-                mallocElement(Element_table[i].ID, Element_table[i].D,
-                              Element_table[i].d, &inputPara[i]);
+                pvPortMallocElement(Element_table[i].ID, Element_table[i].D,
+                                    Element_table[i].d, &inputPara[i]);
                 converToHexElement((double)intvalue2, Element_table[i].D,
                                    Element_table[i].d, inputPara[i].value);
                 break;
@@ -319,7 +320,7 @@ int HydrologySaveData(char *_saveTime, char funcode)   // char *_saveTime
             case STORE: {
                 inputPara[i].guide[0] = Element_table[i].ID;
                 inputPara[i].guide[1] = Element_table[i].ID;
-                inputPara[i].value    = (char *)malloc(SinglePacketSize);
+                inputPara[i].value    = (char *)pvPortMalloc(SinglePacketSize);
                 if (NULL != inputPara[i].value) {
                     inputPara[i].num = SinglePacketSize;
                     // Hydrology_ReadRom(RomElementBeginAddr,inputPara[i].value,SinglePacketSendCount++);
@@ -340,7 +341,7 @@ int HydrologySaveData(char *_saveTime, char funcode)   // char *_saveTime
 	for(i = 0;i < cnt;i++)
 	{
 		memcpy((g_HydrologyDataPacket.element)[i].guide, inputPara[i].guide,2);
-		(g_HydrologyDataPacket.element)[i].value = (char*) malloc(inputPara[i].num);
+		(g_HydrologyDataPacket.element)[i].value = (char*) pvPortMalloc(inputPara[i].num);
 		if(NULL == (g_HydrologyDataPacket.element)[i].value)
 			 return -1;
 		memcpy((g_HydrologyDataPacket.element)[i].value,inputPara[i].value, inputPara[i].num);
@@ -359,7 +360,7 @@ int HydrologySaveData(char *_saveTime, char funcode)   // char *_saveTime
         memcpy(&_data[len], inputPara[i].value, inputPara[i].num);
         len += inputPara[i].num;
         if (inputPara[i].value != NULL) {
-            free(inputPara[i].value);
+            vPortFree(inputPara[i].value);
             inputPara[i].value = NULL;
         }
     }
@@ -420,7 +421,7 @@ int HydrologyInstantWaterLevel(char *_saveTime)   //??ú€??????§Ø????¡À??÷l?????
             HYDROLOGY_DATA_MAX_IDX)   //??????????????????????????????????????
         {
             TraceMsg("seek num out of range", 1);
-            // hydrologHEXfree();
+            // hydrologHEXvPortFree();
             System_Delayms(2000);
             System_Reset();
         }
@@ -547,21 +548,23 @@ int Hydrology_TimeCheck() {
 }
 int HydrologyTask() {
     char rtc_nowTime[6];
-    TimerB_Clear();
-    WatchDog_Clear();
-    Hydrology_ProcessUARTReceieve();
+    // TimerB_Clear();
+    // WatchDog_Clear();
+    // Hydrology_ProcessUARTReceieve();
 
-    Hydrology_TimeCheck();
+    // Hydrology_TimeCheck();
 
-    if (!IsDebug) {
-        if (time_1min)
-            time_1min = 0;
-        else
-            return -1;
-    }
+    // if (!IsDebug) {
+    //     if (time_1min)
+    //         time_1min = 0;
+    //     else
+    //         return -1;
+    // }
+	while (RTC_IsBadTime(g_rtc_nowTime, 1) != 0) {
+		vTaskDelay(100 / portTICK_PERIOD_MS);
+	}
 
     RTC_ReadTimeBytes5(g_rtc_nowTime);
-
     RTC_ReadTimeBytes6(rtc_nowTime);
 
     HydrologySample(rtc_nowTime);
@@ -571,36 +574,35 @@ int HydrologyTask() {
     return 0;
 }
 
-void task_hydrology_init(void *pvParameters) {
+void task_hydrology_run(void *pvParameters) {
     while (1) {
+
         HydrologyTask();
-		vTaskDelay(100 / portTICK_PERIOD_MS);
+        vTaskDelay(100 / portTICK_PERIOD_MS);
     }
 }
 
-// void task_hydrology_init(void *pvParameters) {
+void task_hydrology_init(void *pvParameters) {
 
-// 		char rtc_nowTime[6];
+    char rtc_nowTime[6];
 
-// 		while (1){
-// 			TimerB_Clear();
-// 			WatchDog_Clear();
-// 			Hydrology_ProcessUARTReceieve();
+    while (1) {
 
-// 			Hydrology_TimeCheck();
+        printf("time check ! \r\n");
+        TimerB_Clear();
+        WatchDog_Clear();
+        Hydrology_ProcessUARTReceieve();
 
-// 			if (!IsDebug) {
-// 				if (time_1min)
-// 						time_1min = 0;
-// 				else
-// 						return;
-// 			}
+        Hydrology_TimeCheck();
 
-// 			RTC_ReadTimeBytes5(g_rtc_nowTime);
-// 			RTC_ReadTimeBytes6(rtc_nowTime);
-// 		}
+        printf("stack remained : %d \r\n",
+               (int)uxTaskGetStackHighWaterMark(NULL));
+        vTaskDelay(100 / portTICK_PERIOD_MS);
 
-// }
+        // RTC_ReadTimeBytes5(g_rtc_nowTime);
+        // RTC_ReadTimeBytes6(rtc_nowTime);
+    }
+}
 
 // void task_hydrology_sample(void *pvParameters) {
 // 	while (1){

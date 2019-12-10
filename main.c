@@ -59,20 +59,31 @@ void main(void) {
     configuring the joystick input select button to generate interrupts. */
     prvSetupHardware();
 
+    // printf("at start xPortGetFreeHeapSize : %d \r\n",xPortGetFreeHeapSize());
+
+    // char *cc = NULL;
+    // cc  = (char *)pvPortMalloc(400);
+    // if (cc == NULL) {
+    //     printf("cc malloc failed \r\n");
+    // } else {
+    //     printf("cc malloc success \r\n");
+    //     vPortFree(cc);
+    //     cc = NULL;
+    // }
+
+    // printf("at second xPortGetFreeHeapSize : %d
+    // \r\n",xPortGetFreeHeapSize());
+
     Hydrology_InitWaitConfig();
     HydrologyUpdateElementTable();
     HydrologyDataPacketInit();
 
-    // char *cc = NULL;
-    // cc  = (char *)malloc(400);
-    // if (cc == NULL) {
-    //     printf("cc malloc failed \r\n");
-    // } else {
-    //     free(cc);
-    //     cc = NULL;
-    // }
+    printf("hydrology init done \r\n");
 
-    xTaskCreate(task_hydrology_init, "LCD", configMINIMAL_STACK_SIZE * 8, NULL,
+    xTaskCreate(task_hydrology_init, "task_hydrology_init",
+                (configMINIMAL_STACK_SIZE * 8 - 530 / 2) * 1.5, NULL,
+                configMAX_PRIORITIES - 2, NULL);
+    xTaskCreate(task_hydrology_run, "LCD", configMINIMAL_STACK_SIZE * 80, NULL,
                 configMAX_PRIORITIES - 2, NULL);
     // xTaskCreate(task_hydrology_sample, "LCD2", configMINIMAL_STACK_SIZE * 10,
     //             NULL, configMAX_PRIORITIES - 2, NULL);
@@ -89,6 +100,7 @@ void main(void) {
     then it is likely that there was insufficient (FreeRTOS) heap memory space
     to create the idle task.  This may have been trapped by the malloc() failed
     hook function, if one is configured. */
+    printf("hoops you shouldn't have seen this, see line 102 in main() \r\n");
     while (1)
         ;
 }
@@ -119,12 +131,13 @@ static void prvSetupHardware(void) {
 static void task_print_1(void *pvParameters) {
     static int cnt = 0;
     char *buffer   = NULL;
+
     while (1) {
-        buffer = (char *)malloc(1000);
+        buffer = (char *)pvPortMalloc(100);
         printf("haha p1: %d \r\n", cnt++);
-        free(buffer);
+        vPortFree(buffer);
         buffer = NULL;
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        vTaskDelay(100 / portTICK_PERIOD_MS);
     }
 }
 
@@ -132,7 +145,7 @@ static void task_print_2(void *pvParameters) {
     static int cnt_2 = 0;
     while (1) {
         printf("p2: %d \r\n", cnt_2++);
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        vTaskDelay(100 / portTICK_PERIOD_MS);
     }
 }
 /*-----------------------------------------------------------*/
@@ -172,6 +185,7 @@ void vApplicationSetupTimerInterrupt(void) {
 void vApplicationIdleHook(void) {
     /* Called on each iteration of the idle task.  In this case the idle task
     just enters a low power mode. */
+    // printf("enter vApplicationIdleHook \r\n");
     __bis_SR_register(LPM3_bits + GIE);
 }
 /*-----------------------------------------------------------*/
@@ -183,6 +197,7 @@ void vApplicationMallocFailedHook(void) {
     semaphores. */
     taskDISABLE_INTERRUPTS();
     printf("vApplicationMallocFailedHook triggerd ! \r\n");
+    printf("xPortGetFreeHeapSize : %d \r\n", xPortGetFreeHeapSize());
     for (;;)
         ;
 }

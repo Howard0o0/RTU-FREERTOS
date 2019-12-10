@@ -1,10 +1,10 @@
 //////////////////////////////////////////////////////
-//     ÎÄ¼þÃû: Console.c
-//   ÎÄ¼þ°æ±¾: 1.0.0  
-//   ´´½¨Ê±¼ä: 09Äê 11ÔÂ3ÈÕ
-//   ¸üÐÂÄÚÈÝ:  
-//       ×÷Õß: ÁÖÖÇ
-//       ¸½×¢: 
+//     ï¿½Ä¼ï¿½ï¿½ï¿½: Console.c
+//   ï¿½Ä¼ï¿½ï¿½æ±¾: 1.0.0  
+//   ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½: 09ï¿½ï¿½ 11ï¿½ï¿½3ï¿½ï¿½
+//   ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:  
+//       ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½
+//       ï¿½ï¿½×¢: 
 // 
 //
 //////////////////////////////////////////////////////
@@ -16,13 +16,15 @@
 #include "main.h"
 #include "wifi_config.h"
 #include <string.h>
+#include "stdio.h"
+#include "FreeRTOS.h"
 
-static int Opened=0;//ÊÇ·ñ´ò¿ª
+static int Opened=0;//ï¿½Ç·ï¿½ï¿½
 
 extern int g_wifi_connetflag;
 extern int WIFI_Inited_Flag;
 
-//´ò¿ªÉè±¸
+//ï¿½ï¿½ï¿½è±¸
 int Console_Open() 
 {    
     UART3_Open(UART3_CONSOLE_TYPE);
@@ -41,11 +43,12 @@ int Console_WriteHexCharln(char * _str,int len)
     int i = 0;
     char* dst = NULL;
 
-    dst = (char*)malloc(len*2);
+    dst = (char*)pvPortMalloc(len*2);
 
     if(dst == 0)
     {
-        Console_WriteStringln("Console_WriteHexCharln malloc failed");
+        Console_WriteStringln("Console_WriteHexCharln pvPortMalloc failed");
+        printf("pvPortMalloc(%d) failed \r\n",len*2);
     }
 
     memset(dst,0,len*2);
@@ -57,8 +60,8 @@ int Console_WriteHexCharln(char * _str,int len)
 
     Console_WriteBytesln(dst,len*2);
 
-    free(dst);
-    dst = NULL; //ly ±ÜÃâÒ°Ö¸Õë  ++++
+    vPortFree(dst);
+    dst = NULL; //ly ï¿½ï¿½ï¿½ï¿½Ò°Ö¸ï¿½ï¿½  ++++
     
     return 0;
 }

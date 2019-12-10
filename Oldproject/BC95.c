@@ -9,32 +9,33 @@
 #include "console.h"
 #include <stdlib.h>
 #include "uart0.h"
+#include "FreeRTOS.h"
 
-//Ïà¹ØATÖ¸Áî
+//ï¿½ï¿½ï¿½ATÖ¸ï¿½ï¿½
 
 #define AT_BC95_NCONFIG "AT+NCONFIG?"
-#define AT_BC95_SCRAMB_1 "AT+NCONFIG=CR_0354_0338_SCRAMBLING,TRUE" //¿ªÆôÈÅÂë¹¦ÄÜ
+#define AT_BC95_SCRAMB_1 "AT+NCONFIG=CR_0354_0338_SCRAMBLING,TRUE" //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë¹¦ï¿½ï¿½
 #define AT_BC95_SCRAMB_2 "AT+NCONFIG=CR_0859_SI_AVOID,TURE"
-#define AT_BC95_AUTOCONFIG "AT+NCONFIG=AUTOCONNECT,TRUE" //ÉèÖÃ³É×Ô¶¯Ä£Ê½
-#define AT_BC95_SIM "AT+CIMI"							 //Ñ¯ÎÊsim¿¨
-#define AT_BC95_CFUN "AT+CFUN?"							 //Ñ¯ÎÊÊÇ·ñÊÇÈ«¹¦ÄÜÄ£Ê½
-#define AT_BC95_SFUN "AT+CFUN=1"						 //ÉèÖÃÈ«¹¦ÄÜÄ£Ê½
-#define AT_BC95_CSQ "AT+CSQ"							 //²éÑ¯ÐÅºÅ
-#define AT_BC95_CGATT "AT+CGATT?"						 //²éÑ¯ÍøÂç×´Ì¬
-#define AT_BC95_NNMI "AT+NNMI=1"						 //½«½ÓÊÕµ½µÄÊý¾Ý´òÓ¡µ½´®¿Ú
-#define AT_BC95_CPSMS "AT+CPSMS?"						 //²éÑ¯ÊÇ·ñÊÇË¯ÃßÄ£Ê½
-#define AT_BC95_SPSMS "AT+CPSMS=0"						 //¹Ø±ÕË¯ÃßÄ£Ê½£¬²ÅÄÜÏÔÊ¾½ÓÊÕµ½µÄÊý¾Ý
-#define AT_BC95_ATE0 "ATE0"								 //¹Ø±Õ»ØÏÔ
-#define AT_BC95_NSMI "AT+NSMI=1"						 //ÉèÖÃ·¢ËÍÏûÏ¢ºó·µ»ØÊÇ·ñ·¢ËÍ³É¹¦
+#define AT_BC95_AUTOCONFIG "AT+NCONFIG=AUTOCONNECT,TRUE" //ï¿½ï¿½ï¿½Ã³ï¿½ï¿½Ô¶ï¿½Ä£Ê½
+#define AT_BC95_SIM "AT+CIMI"							 //Ñ¯ï¿½ï¿½simï¿½ï¿½
+#define AT_BC95_CFUN "AT+CFUN?"							 //Ñ¯ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½È«ï¿½ï¿½ï¿½ï¿½Ä£Ê½
+#define AT_BC95_SFUN "AT+CFUN=1"						 //ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½ï¿½ï¿½Ä£Ê½
+#define AT_BC95_CSQ "AT+CSQ"							 //ï¿½ï¿½Ñ¯ï¿½Åºï¿½
+#define AT_BC95_CGATT "AT+CGATT?"						 //ï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½ï¿½×´Ì¬
+#define AT_BC95_NNMI "AT+NNMI=1"						 //ï¿½ï¿½ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý´ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define AT_BC95_CPSMS "AT+CPSMS?"						 //ï¿½ï¿½Ñ¯ï¿½Ç·ï¿½ï¿½ï¿½Ë¯ï¿½ï¿½Ä£Ê½
+#define AT_BC95_SPSMS "AT+CPSMS=0"						 //ï¿½Ø±ï¿½Ë¯ï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define AT_BC95_ATE0 "ATE0"								 //ï¿½Ø±Õ»ï¿½ï¿½ï¿½
+#define AT_BC95_NSMI "AT+NSMI=1"						 //ï¿½ï¿½ï¿½Ã·ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ó·µ»ï¿½ï¿½Ç·ï¿½ï¿½Í³É¹ï¿½
 
 #define BC95_WAITTIME 300 //30S
 #define BC95_DELAY_MS 1000
 #define BC95_REPEAT_TIMES 10
 #define BC95_RETRY_TIMES 3
 
-int g_autoconfigState = 0; //ÈÅÂë¹¦ÄÜ
-int g_scrambState = 0;	 ////×Ô¶¯Ä£Ê½
-int g_cfunstate = 0;	   //È«¹¦ÄÜÄ£Ê½
+int g_autoconfigState = 0; //ï¿½ï¿½ï¿½ë¹¦ï¿½ï¿½
+int g_scrambState = 0;	 ////ï¿½Ô¶ï¿½Ä£Ê½
+int g_cfunstate = 0;	   //È«ï¿½ï¿½ï¿½ï¿½Ä£Ê½
 char g_BC95RcvBuf[400];
 
 int BC95_Char_to_Hex(char chr)
@@ -62,7 +63,7 @@ int BC95_Extract_DownData(char *inputData, int inputDataLen, char *outputData)
 		i++;
 	}
 
-	temp = (char *)malloc(sizeof(char) * (inputDataLen - i));
+	temp = (char *)pvPortMalloc(sizeof(char) * (inputDataLen - i));
 
 	for (j = i + 1, k = 0; j < inputDataLen; j++)
 	{
@@ -74,7 +75,7 @@ int BC95_Extract_DownData(char *inputData, int inputDataLen, char *outputData)
 
 	data_len = inputDataLen / 2;
 
-	free(temp);
+	vPortFree(temp);
         temp = NULL; //++++
 
 	return data_len;
@@ -98,25 +99,25 @@ int BC95_UintToStr4(unsigned int _src, char *_dest)
 }
 
 /********
-Function£º¸øBC95Ä£¿éÉÏµç
-Description£º VBAT:P10.7  RST:P10.3  ( in msp2418: VBAT[P4.2]  IGT[P1.0] )
+Functionï¿½ï¿½ï¿½ï¿½BC95Ä£ï¿½ï¿½ï¿½Ïµï¿½
+Descriptionï¿½ï¿½ VBAT:P10.7  RST:P10.3  ( in msp2418: VBAT[P4.2]  IGT[P1.0] )
 ********/
 int BC95_Open()
 {
 	int _repeat = 0;
 	int _dataLen = 0;
-	int second_time_MAX = 10; //µÈ´ý10s
+	int second_time_MAX = 10; //ï¿½È´ï¿½10s
 	char _data[UART1_MAXBUFFLEN] = {0};
 
 	/* BC95 connect cpu via uart0 */
 	UART0_Open_9600(UART0_GSM_TYPE);
 
-	// ÎªÄ£¿éÉÏµç
-	P10DIR |= BIT7; // P10.7 Îª BATT,¸ø¸ßµçÆ½
+	// ÎªÄ£ï¿½ï¿½ï¿½Ïµï¿½
+	P10DIR |= BIT7; // P10.7 Îª BATT,ï¿½ï¿½ï¿½ßµï¿½Æ½
 	P10OUT &= ~BIT7;
 	P10OUT |= BIT7;
 
-	System_Delayms(100); // ÐèÒªÑÓÊ±
+	System_Delayms(100); // ï¿½ï¿½Òªï¿½ï¿½Ê±
 
 	P10DIR |= BIT3; //  p3.0 Îª /IGT
 	P10OUT &= ~BIT3;
@@ -126,7 +127,7 @@ int BC95_Open()
 
 	while (_repeat < second_time_MAX)
 	{
-		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ÓÐÊý¾Ý
+		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
 			printf("BC95 response: %s \r\n", _data);
 			if (strstr(_data, "OK"))
@@ -144,17 +145,17 @@ int BC95_Open()
 }
 
 /********
-Function£º¸øBC95Ä£¿é¶Ïµç
+Functionï¿½ï¿½ï¿½ï¿½BC95Ä£ï¿½ï¿½Ïµï¿½
 ********/
 void BC95_Close()
 {
-	P10OUT &= ~BIT7; //P4.2Êä³öµÍµçÆ½
+	P10OUT &= ~BIT7; //P4.2ï¿½ï¿½ï¿½ï¿½Íµï¿½Æ½
 	P10OUT &= ~BIT3;
 	UART0_Close();
 }
 
 /********
-Function£ºBC95·¢ËÍÊý¾Ý
+Functionï¿½ï¿½BC95ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 ********/
 
 int BC95_Send(char *data)
@@ -174,7 +175,7 @@ char *BC95_QueryMsg(void)
 
 	while (_repeat < BC95_REPEAT_TIMES)
 	{
-		if (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ÓÐÊý¾Ý
+		if (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
 			// printf("[BC95 Response] %s \r\n",_data);
 			Console_WriteStringln(_data);
@@ -188,7 +189,7 @@ char *BC95_QueryMsg(void)
 }
 
 /********
-Function£º²éÑ¯Ä£¿é×´Ì¬
+Functionï¿½ï¿½ï¿½ï¿½Ñ¯Ä£ï¿½ï¿½×´Ì¬
 ********/
 void BC95_QueryState()
 {
@@ -202,7 +203,7 @@ void BC95_QueryState()
 
 	while (_repeat < BC95_REPEAT_TIMES)
 	{
-		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ÓÐÊý¾Ý
+		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
 			Console_WriteStringln(_data);
 
@@ -225,7 +226,7 @@ void BC95_QueryState()
 }
 
 /********
-Function£º²éÑ¯Ê±¼ä
+Functionï¿½ï¿½ï¿½ï¿½Ñ¯Ê±ï¿½ï¿½
 ********/
 //int BC95_QueryTime(char *newtime)
 //{
@@ -240,7 +241,7 @@ Function£º²éÑ¯Ê±¼ä
 //
 //	while (_repeat < BC95_REPEAT_TIMES)
 //	{
-//		if (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ÓÐÊý¾Ý
+//		if (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //		{
 //			Console_WriteStringln(_data);
 //			if(strstr(_data,"+CCLK:") != NULL)
@@ -322,7 +323,7 @@ int BC95_QueryTime(char *year,char *month,char *date,char *hour,char *min,char *
 
 	while (_repeat < BC95_REPEAT_TIMES)
 	{
-		if (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ÓÐÊý¾Ý
+		if (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
 			Console_WriteStringln(_data);
 			if(strstr(_data,"+CCLK:") != NULL)
@@ -388,7 +389,7 @@ int BC95_QueryTime(char *year,char *month,char *date,char *hour,char *min,char *
 }
 
 /********
-Function£ºÉèÖÃÈÅÂë¹¦ÄÜ
+Functionï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë¹¦ï¿½ï¿½
 ********/
 
 void BC95_SetScramb()
@@ -403,7 +404,7 @@ void BC95_SetScramb()
 }
 
 /********
-Function£ºÉèÖÃ×Ô¶¯Ä£Ê½
+Functionï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½Ä£Ê½
 ********/
 void BC95_SetAutoConfig()
 {
@@ -413,7 +414,7 @@ void BC95_SetAutoConfig()
 }
 
 /********
-Function£ºÑ¯ÎÊSIM¿¨
+Functionï¿½ï¿½Ñ¯ï¿½ï¿½SIMï¿½ï¿½
 ********/
 BC95State BC95_QuerySimState()
 {
@@ -427,7 +428,7 @@ BC95State BC95_QuerySimState()
 
 	while (_repeat < BC95_REPEAT_TIMES)
 	{
-		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ÓÐÊý¾Ý
+		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
 			Console_WriteStringln(_data);
 			if (strstr(_data, "OK"))
@@ -507,7 +508,7 @@ BC95State BC95_SendUdpMsg(char *ipAddr, char *port, char *msg)
 }
 
 /********
-Function£ºÑ¯ÎÊÊÇ·ñÊÇÈ«¹¦ÄÜÄ£Ê½
+Functionï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½È«ï¿½ï¿½ï¿½ï¿½Ä£Ê½
 ********/
 
 BC95State BC95_QueryFunState()
@@ -544,7 +545,7 @@ BC95State BC95_QueryFunState()
 }
 
 /********
-Function£ºÉèÖÃ³ÉÈ«¹¦ÄÜÄ£Ê½
+Functionï¿½ï¿½ï¿½ï¿½ï¿½Ã³ï¿½È«ï¿½ï¿½ï¿½ï¿½Ä£Ê½
 ********/
 void BC95_SetCFun()
 {
@@ -554,7 +555,7 @@ void BC95_SetCFun()
 }
 
 /********
-Function£º²éÑ¯ÐÅºÅ
+Functionï¿½ï¿½ï¿½ï¿½Ñ¯ï¿½Åºï¿½
 ********/
 BC95State BC95_QueryCSQState()
 {
@@ -568,7 +569,7 @@ BC95State BC95_QueryCSQState()
 
 	while (_repeat < BC95_REPEAT_TIMES)
 	{
-		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ÓÐÊý¾Ý
+		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
 			Console_WriteStringln(_data);
 
@@ -601,7 +602,7 @@ BC95State BC95_QueryCGATTState()
 
 	while (_repeat < BC95_REPEAT_TIMES)
 	{
-		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ÓÐÊý¾Ý
+		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
 			Console_WriteStringln(_data);
 
@@ -622,7 +623,7 @@ BC95State BC95_QueryCGATTState()
 	return BC95ErrorCFUN;
 }
 
-//²éÑ¯ÊÇ·ñÁ¢¼´Ïò´®¿ÚÏÔÊ¾½ÓÊÕµ½µÄÏûÏ¢
+//ï¿½ï¿½Ñ¯ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ò´®¿ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
 BC95State BC95_SetNNMI()
 {
 	int _repeat = 0;
@@ -634,11 +635,11 @@ BC95State BC95_SetNNMI()
 
 	while (_repeat < BC95_REPEAT_TIMES)
 	{
-		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ÓÐÊý¾Ý
+		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
 			Console_WriteStringln(_data);
 
-			if (strstr(_data, "OK")) //ÉèÖÃ³É¹¦
+			if (strstr(_data, "OK")) //ï¿½ï¿½ï¿½Ã³É¹ï¿½
 			{
 				return BC95StateOK;
 			}
@@ -655,7 +656,7 @@ BC95State BC95_SetNNMI()
 	return BC95ErrorNNMI;
 }
 
-//²éÑ¯ÊÇ·ñÊÇµÍ¹¦ºÄÄ£Ê½
+//ï¿½ï¿½Ñ¯ï¿½Ç·ï¿½ï¿½ÇµÍ¹ï¿½ï¿½ï¿½Ä£Ê½
 BC95State BC95_QueryIsPSMS()
 {
 	int _repeat = 0;
@@ -667,16 +668,16 @@ BC95State BC95_QueryIsPSMS()
 
 	while (_repeat < BC95_REPEAT_TIMES)
 	{
-		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ÓÐÊý¾Ý
+		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
 			Console_WriteStringln(_data);
 
-			if (strstr(_data, "+CPSMS:0")) //²»ÊÇË¯ÃßÄ£Ê½
+			if (strstr(_data, "+CPSMS:0")) //ï¿½ï¿½ï¿½ï¿½Ë¯ï¿½ï¿½Ä£Ê½
 			{
 				return BC95StateOK;
 			}
 
-			if (strstr(_data, "+CGATT:1")) //Ë¯ÃßÄ£Ê½
+			if (strstr(_data, "+CGATT:1")) //Ë¯ï¿½ï¿½Ä£Ê½
 			{
 				return BC95ErrorCPSMS;
 			}
@@ -689,7 +690,7 @@ BC95State BC95_QueryIsPSMS()
 }
 
 /********
-Function£º¹Ø±ÕµÍ¹¦ºÄÄ£Ê½£¬´®¿Ú²ÅÄÜÏÔÊ¾½ÓÊÕµ½µÄÏÂÐÐÊý¾Ý
+Functionï¿½ï¿½ï¿½Ø±ÕµÍ¹ï¿½ï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 ********/
 void BC95_SetCpsms()
 {
@@ -698,7 +699,7 @@ void BC95_SetCpsms()
 	System_Delayms(BC95_DELAY_MS);
 }
 
-//¹Ø±Õ»ØÏÔ
+//ï¿½Ø±Õ»ï¿½ï¿½ï¿½
 BC95State BC95_CloseATE()
 {
 	int _repeat = 0;
@@ -710,11 +711,11 @@ BC95State BC95_CloseATE()
 
 	while (_repeat < BC95_REPEAT_TIMES)
 	{
-		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ÓÐÊý¾Ý
+		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
 			Console_WriteStringln(_data);
 
-			if (strstr(_data, "OK")) //ÉèÖÃ³É¹¦
+			if (strstr(_data, "OK")) //ï¿½ï¿½ï¿½Ã³É¹ï¿½
 			{
 				return BC95StateOK;
 			}
@@ -742,11 +743,11 @@ BC95State BC95_SetSendMsgIndications(void)
 
 	while (_repeat < BC95_REPEAT_TIMES)
 	{
-		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ÓÐÊý¾Ý
+		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
 			Console_WriteStringln(_data);
 
-			if (strstr(_data, "OK")) //ÉèÖÃ³É¹¦
+			if (strstr(_data, "OK")) //ï¿½ï¿½ï¿½Ã³É¹ï¿½
 			{
 				return BC95StateOK;
 			}
@@ -763,24 +764,24 @@ BC95State BC95_SetSendMsgIndications(void)
 	return BC95ErrorNNMI;
 }
 
-BC95State BC95_ConfigProcess() //Èç¹û²éÑ¯Ê§°Ü£¬ÐèÒª´¦Àí
+BC95State BC95_ConfigProcess() //ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¯Ê§ï¿½Ü£ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½
 {
 	BC95State state = BC95StateOK;
 	int retrytimes = 0;
 
 	BC95_QueryState();
 
-	if (g_scrambState == 0) //ÈÅÂë¹¦ÄÜÃ»ÓÐ¿ªÆô£¬¿ªÆôÈÅÂë¹¦ÄÜ
+	if (g_scrambState == 0) //ï¿½ï¿½ï¿½ë¹¦ï¿½ï¿½Ã»ï¿½Ð¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë¹¦ï¿½ï¿½
 	{
 		BC95_SetScramb();
 	}
 
-	if (g_autoconfigState == 0) //×Ô¶¯Ä£Ê½Ã»ÓÐ¿ªÆô£¬¿ªÆô×Ô¶¯Ä£Ê½
+	if (g_autoconfigState == 0) //ï¿½Ô¶ï¿½Ä£Ê½Ã»ï¿½Ð¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½Ä£Ê½
 	{
 		BC95_SetAutoConfig();
 	}
 
-	//²éÑ¯ÊÇ·ñ¼ì²âµ½SIM¿¨
+	//ï¿½ï¿½Ñ¯ï¿½Ç·ï¿½ï¿½âµ½SIMï¿½ï¿½
 	while (retrytimes < BC95_REPEAT_TIMES)
 	{
 		state = BC95_QuerySimState();
@@ -797,7 +798,7 @@ BC95State BC95_ConfigProcess() //Èç¹û²éÑ¯Ê§°Ü£¬ÐèÒª´¦Àí
 		return state;
 	}
 
-	//²éÑ¯ÊÇ·ñÈ«¹¦ÄÜÄ£Ê½
+	//ï¿½ï¿½Ñ¯ï¿½Ç·ï¿½È«ï¿½ï¿½ï¿½ï¿½Ä£Ê½
 	retrytimes = 0;
 	while (retrytimes < BC95_REPEAT_TIMES)
 	{
@@ -819,7 +820,7 @@ BC95State BC95_ConfigProcess() //Èç¹û²éÑ¯Ê§°Ü£¬ÐèÒª´¦Àí
 		return state;
 	}
 
-	//²éÑ¯ÐÅºÅ
+	//ï¿½ï¿½Ñ¯ï¿½Åºï¿½
 	retrytimes = 0;
 	while (retrytimes < BC95_REPEAT_TIMES)
 	{
@@ -837,7 +838,7 @@ BC95State BC95_ConfigProcess() //Èç¹û²éÑ¯Ê§°Ü£¬ÐèÒª´¦Àí
 		return state;
 	}
 
-	//²éÑ¯¸½×ÅÍøÂç×´¿ö
+	//ï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´ï¿½ï¿½
 	retrytimes = 0;
 	while (retrytimes < BC95_REPEAT_TIMES * 2)
 	{
@@ -850,12 +851,12 @@ BC95State BC95_ConfigProcess() //Èç¹û²éÑ¯Ê§°Ü£¬ÐèÒª´¦Àí
 		retrytimes++;
 		System_Delayms(1500);
 	}
-	if (retrytimes == BC95_REPEAT_TIMES * 2) //Ñ¯ÎÊCGATT StateÊ§°Ü
+	if (retrytimes == BC95_REPEAT_TIMES * 2) //Ñ¯ï¿½ï¿½CGATT StateÊ§ï¿½ï¿½
 	{
 		return state;
 	}
 
-	//ÉèÖÃÁ¢¼´Ïò´®¿Ú´òÓ¡Êý¾ÝµÄ¹¦ÄÜ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ò´®¿Ú´ï¿½Ó¡ï¿½ï¿½ï¿½ÝµÄ¹ï¿½ï¿½ï¿½
 	retrytimes = 0;
 	while (retrytimes < BC95_REPEAT_TIMES)
 	{
@@ -875,7 +876,7 @@ BC95State BC95_ConfigProcess() //Èç¹û²éÑ¯Ê§°Ü£¬ÐèÒª´¦Àí
 		return state;
 	}
 
-	//ÊÇ·ñÊÇË¯ÃßÄ£Ê½
+	//ï¿½Ç·ï¿½ï¿½ï¿½Ë¯ï¿½ï¿½Ä£Ê½
 	retrytimes = 0;
 	while (retrytimes < BC95_REPEAT_TIMES)
 	{
@@ -897,7 +898,7 @@ BC95State BC95_ConfigProcess() //Èç¹û²éÑ¯Ê§°Ü£¬ÐèÒª´¦Àí
 		return state;
 	}
 
-	//¹Ø±Õ»ØÏÔ
+	//ï¿½Ø±Õ»ï¿½ï¿½ï¿½
 	retrytimes = 0;
 	while (retrytimes < BC95_REPEAT_TIMES)
 	{
@@ -933,7 +934,7 @@ BC95State BC95_ConfigProcess() //Èç¹û²éÑ¯Ê§°Ü£¬ÐèÒª´¦Àí
 	// 	return state;
 	// }
 
-	//ÉèÖÃÉè±¸¶Ô½ÓµÄIoTÆ½Ì¨(»ªÎªÔÆ)µÄIPµØÖ·ºÍ¶Ë¿ÚºÅ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½Ô½Óµï¿½IoTÆ½Ì¨(ï¿½ï¿½Îªï¿½ï¿½)ï¿½ï¿½IPï¿½ï¿½Ö·ï¿½Í¶Ë¿Úºï¿½
 	retrytimes = 0;
 	while (retrytimes < BC95_REPEAT_TIMES)
 	{
@@ -963,7 +964,7 @@ BC95State BC95_ConnectToIotCloud(char *serverIp, char *serverPort)
 	char *comma = ",";
 	int _dataLen = 0;
 	char _data[UART1_MAXBUFFLEN] = {0};
-	char *head_ip_comma_port_end = (char *)malloc(40);
+	char *head_ip_comma_port_end = (char *)pvPortMalloc(40);
 
 	strcat(head_ip_comma_port_end, at_head);
 	strcat(head_ip_comma_port_end, serverIp);
@@ -975,7 +976,7 @@ BC95State BC95_ConnectToIotCloud(char *serverIp, char *serverPort)
 
 	while (_repeat < BC95_REPEAT_TIMES)
 	{
-		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ÓÐÊý¾Ý
+		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
 			Console_WriteStringln(_data);
 
@@ -998,12 +999,12 @@ BC95State BC95_ConnectToIotCloud(char *serverIp, char *serverPort)
 	return BC95ErrorNCDP;
 }
 
-//BC95·¢ËÍÊý¾Ý
+//BC95ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 /*
-*BC95Ä£¿éÏÈ°ÑÊý¾ÝÉÏ´«µ½ÔÆÆ½Ì¨£¨¿ÉÄÜÊÇ»ªÎªÔÆ»òÕßµçÐÅÔÆµÈ£©£¬ÔÙÓÉÔÆÆ½Ì¨×ªµ½ÎÒÃÇ×Ô¼ºµÄ·þÎñÆ÷ÉÏ
-*ÕâÀïÊÇÉÏ´«¿É±ä³¤¶ÈµÄÊý¾Ý£¬Òò´ËÐèÒª¸ù¾ÝÔÆÆ½Ì¨µÄ±à½âÂë²å¼þÀ´Ôö¼ÓÒ»Ð©Í·£¬ÕâÀïÔÚ·¢ËÍµÄÊý¾ÝÖÐÐèÒª¼ÓÒ»¸ö4¸ö×Ö½ÚµÄ16Î»ÎÞ·ûºÅÕûÐÍ×÷ÎªÉÏ´«Êý¾Ý°ü³¤¶È
+*BC95Ä£ï¿½ï¿½ï¿½È°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ï¿½ï¿½ï¿½ï¿½Æ½Ì¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç»ï¿½Îªï¿½Æ»ï¿½ï¿½ßµï¿½ï¿½ï¿½ï¿½ÆµÈ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ½Ì¨×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½Ä·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ï¿½É±ä³¤ï¿½Èµï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ½Ì¨ï¿½Ä±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Ð©Í·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú·ï¿½ï¿½Íµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Ò»ï¿½ï¿½4ï¿½ï¿½ï¿½Ö½Úµï¿½16Î»ï¿½Þ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½Ï´ï¿½ï¿½ï¿½ï¿½Ý°ï¿½ï¿½ï¿½ï¿½ï¿½
 */
-char up_data_len_str[BC95_SOCKET_UP_DATA_LENGTH_LINK] = {0}; //ÉÏ´«Êý¾ÝµÄ¹ØÁª³¤¶È,ÓÉÓÚ4¸ö16Î»ÎÞ·ûºÅÕûÐÍ×ª»¯Î»×Ö·û´®ÊÇ4¸ö×Ö·û£¬ÊÇ2¸ö×Ö½Ú
+char up_data_len_str[BC95_SOCKET_UP_DATA_LENGTH_LINK] = {0}; //ï¿½Ï´ï¿½ï¿½ï¿½ï¿½ÝµÄ¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½4ï¿½ï¿½16Î»ï¿½Þ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½Î»ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½4ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½2ï¿½ï¿½ï¿½Ö½ï¿½
 char _data[UART1_MAXBUFFLEN] = {0};
 char send_data_ascii_mode[BC95_SOCKET_DATA_LEN] = {0};
 char socket_data[BC95_SOCKET_DATA_LEN] = {0};
@@ -1017,35 +1018,35 @@ BC95State BC95_SendSocketData(char *send_data, int send_data_len)
 	int _dataLen = 0;
 
 	
-	//½«ÉÏ´«Êý¾ÝµÄ³¤¶È×ª»¯Îª×Ö·û´®ÐÎÊ½
+	//ï¿½ï¿½ï¿½Ï´ï¿½ï¿½ï¿½ï¿½ÝµÄ³ï¿½ï¿½ï¿½×ªï¿½ï¿½Îªï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½Ê½
 	BC95_UintToStr4(send_data_len, up_data_len_str);
 
-	//½«ÉÏ´«Êý¾Ý×ª»¯ÎªASCII×Ö·û´®ÐÎÊ½
-	ASCII_to_AsciiStr(send_data, send_data_len, send_data_ascii_mode); //×ª³ÉASCII×Ö·û´®
+	//ï¿½ï¿½ï¿½Ï´ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ÎªASCIIï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½Ê½
+	ASCII_to_AsciiStr(send_data, send_data_len, send_data_ascii_mode); //×ªï¿½ï¿½ASCIIï¿½Ö·ï¿½ï¿½ï¿½
 
-	//×é°ü
+	//ï¿½ï¿½ï¿½
 	data_len = send_data_len + BC95_SOCKET_UP_DATA_LENGTH_LINK / 2;
-	sprintf(socket_data, "AT+NMGS=%d,", data_len); //¼ÓÈë¶ººÅÖ®Ç°µÄÊý¾Ý£¬°üÀ¨¶ººÅ
+	sprintf(socket_data, "AT+NMGS=%d,", data_len); //ï¿½ï¿½ï¿½ë¶ºï¿½ï¿½Ö®Ç°ï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-	//¼ÓÈëÊý¾Ý¹ØÁª³¤¶ÈµÄ×Ö·û´®
-	// data_len = send_data_len + BC95_SOCKET_UP_DATA_LENGTH_LINK+1;//¼Ó1Ìø¹ý¶ººÅ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Èµï¿½ï¿½Ö·ï¿½ï¿½ï¿½
+	// data_len = send_data_len + BC95_SOCKET_UP_DATA_LENGTH_LINK+1;//ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	for (i = Utility_Strlen(socket_data), j = 0; j < BC95_SOCKET_UP_DATA_LENGTH_LINK; j++)
 	{
 		socket_data[i] = up_data_len_str[j];
 		i++;
 	}
 
-	//i = Utility_Strlen(socket_data);//¼ÓÈëµÚ¶þ¸ö¶ººÅ
+	//i = Utility_Strlen(socket_data);//ï¿½ï¿½ï¿½ï¿½Ú¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	//socket_data[i] = ',';
 
-	data_len = Utility_Strlen(socket_data) + Utility_Strlen(send_data_ascii_mode); //¼ÓÈëÉÏÐÐÊý¾ÝASCII×Ö·û´®
+	data_len = Utility_Strlen(socket_data) + Utility_Strlen(send_data_ascii_mode); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ASCIIï¿½Ö·ï¿½ï¿½ï¿½
 	for (i = Utility_Strlen(socket_data), j = 0; i < data_len; i++)
 	{
 		socket_data[i] = send_data_ascii_mode[j];
 		j++;
 	}
 
-	//·¢ËÍ
+	//ï¿½ï¿½ï¿½ï¿½
 	BC95_Send(socket_data);
 
 	Console_WriteStringln("BC95 send data:");
@@ -1056,11 +1057,11 @@ BC95State BC95_SendSocketData(char *send_data, int send_data_len)
 
 	while (retrytimes < BC95_REPEAT_TIMES)
 	{
-		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ÓÐÊý¾Ý
+		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
 			Console_WriteStringln(_data);
 
-			if (strstr(_data, "OK")) //·¢ËÍÊý¾Ý³É¹¦
+			if (strstr(_data, "OK")) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý³É¹ï¿½
 			{
 				return BC95StateOK;
 			}
@@ -1108,13 +1109,13 @@ void BC95_RecvSocketData(char *recv_data, int *recv_data_len)
 
 	while (_repeat < BC95_WAITTIME)
 	{
-		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ÓÐÊý¾Ý
+		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
 			Console_WriteStringln("BC95 recv data:");
 
 			Console_WriteStringln(_data);
 
-			if (strstr(_data, "+NNMI:")) //ÅÐ¶ÏÊÇ·ñÎª½ÓÊÕµ½µÄÊý¾Ý
+			if (strstr(_data, "+NNMI:")) //ï¿½Ð¶ï¿½ï¿½Ç·ï¿½Îªï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			{
 				BC95_AnalysisRecvSocketData(_data, _dataLen, recv_data, recv_data_len);
 
@@ -1138,17 +1139,17 @@ void BC95_RecvDataFromCloud(char *recv_data, int *recv_data_len)
 	recv_data++;
 	recv_data++;
 	recv_data++;
-	if (*recv_data_len > 0)  // ÏÂÐÐ±¨ÎÄ¾­¹ýÔÆÆ½Ì¨µÄÊ±ºò×Ü»á¶à³öÈý¸ö×Ö½ÚµÄ±¨Í·(ÔÆÆ½Ì¨×Ô¶¯Ìí¼ÓµÄ)£¬Ó¦¸ÃºÍÔÆÆ½Ì¨µÄ²å¼þ²¿ÊðÓÐ¹Ø
+	if (*recv_data_len > 0)  // ï¿½ï¿½ï¿½Ð±ï¿½ï¿½Ä¾ï¿½ï¿½ï¿½ï¿½ï¿½Æ½Ì¨ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ü»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö½ÚµÄ±ï¿½Í·(ï¿½ï¿½Æ½Ì¨ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½Óµï¿½)ï¿½ï¿½Ó¦ï¿½Ãºï¿½ï¿½ï¿½Æ½Ì¨ï¿½Ä²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¹ï¿½
 	{
 		*recv_data_len = *recv_data_len - 3;
 	}
 	
 }
 
-//BC95·¢ËÍÓë½ÓÊÕÊý¾Ý
+//BC95ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 /*
-*BC95Ä£¿éÏÈ°ÑÊý¾ÝÉÏ´«µ½ÔÆÆ½Ì¨£¨¿ÉÄÜÊÇ»ªÎªÔÆ»òÕßµçÐÅÔÆµÈ£©£¬ÔÙÓÉÔÆÆ½Ì¨×ªµ½ÎÒÃÇ×Ô¼ºµÄ·þÎñÆ÷ÉÏ
-*ÕâÀïÊÇÉÏ´«¿É±ä³¤¶ÈµÄÊý¾Ý£¬Òò´ËÐèÒª¸ù¾ÝÔÆÆ½Ì¨µÄ±à½âÂë²å¼þÀ´Ôö¼ÓÒ»Ð©Í·£¬ÕâÀïÔÚ·¢ËÍµÄÊý¾ÝÖÐÐèÒª¼ÓÒ»¸ö4¸ö×Ö½ÚµÄ16Î»ÎÞ·ûºÅÕûÐÍ×÷ÎªÉÏ´«Êý¾Ý°ü³¤¶È
+*BC95Ä£ï¿½ï¿½ï¿½È°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ï¿½ï¿½ï¿½ï¿½Æ½Ì¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç»ï¿½Îªï¿½Æ»ï¿½ï¿½ßµï¿½ï¿½ï¿½ï¿½ÆµÈ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ½Ì¨×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½Ä·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ï¿½É±ä³¤ï¿½Èµï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ½Ì¨ï¿½Ä±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Ð©Í·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú·ï¿½ï¿½Íµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Ò»ï¿½ï¿½4ï¿½ï¿½ï¿½Ö½Úµï¿½16Î»ï¿½Þ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½Ï´ï¿½ï¿½ï¿½ï¿½Ý°ï¿½ï¿½ï¿½ï¿½ï¿½
 */
 BC95State BC95_SendAndRecvData(char *send_data, int send_data_len, char *recv_data, int *recv_data_len)
 {
@@ -1158,57 +1159,57 @@ BC95State BC95_SendAndRecvData(char *send_data, int send_data_len, char *recv_da
 	int retrytimes = 0;
 	int _dataLen = 0;
 
-	char up_data_len_str[BC95_SOCKET_UP_DATA_LENGTH_LINK] = {0}; //ÉÏ´«Êý¾ÝµÄ¹ØÁª³¤¶È,ÓÉÓÚ4¸ö16Î»ÎÞ·ûºÅÕûÐÍ×ª»¯Î»×Ö·û´®ÊÇ4¸ö×Ö·û£¬ÊÇ2¸ö×Ö½Ú
+	char up_data_len_str[BC95_SOCKET_UP_DATA_LENGTH_LINK] = {0}; //ï¿½Ï´ï¿½ï¿½ï¿½ï¿½ÝµÄ¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½4ï¿½ï¿½16Î»ï¿½Þ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½Î»ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½4ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½2ï¿½ï¿½ï¿½Ö½ï¿½
 	char _data[UART1_MAXBUFFLEN] = {0};
 	char send_data_ascii_mode[BC95_SOCKET_DATA_LEN] = {0};
 	char socket_data[BC95_SOCKET_DATA_LEN] = {0};
 
-	//½«ÉÏ´«Êý¾ÝµÄ³¤¶È×ª»¯Îª×Ö·û´®ÐÎÊ½
+	//ï¿½ï¿½ï¿½Ï´ï¿½ï¿½ï¿½ï¿½ÝµÄ³ï¿½ï¿½ï¿½×ªï¿½ï¿½Îªï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½Ê½
 	BC95_UintToStr4(send_data_len, up_data_len_str);
 
-	//½«ÉÏ´«Êý¾Ý×ª»¯ÎªASCII×Ö·û´®ÐÎÊ½
+	//ï¿½ï¿½ï¿½Ï´ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ÎªASCIIï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½Ê½
 	Console_WriteStringln(send_data);
-	ASCII_to_AsciiStr(send_data, send_data_len, send_data_ascii_mode); //×ª³ÉASCII×Ö·û´®
+	ASCII_to_AsciiStr(send_data, send_data_len, send_data_ascii_mode); //×ªï¿½ï¿½ASCIIï¿½Ö·ï¿½ï¿½ï¿½
 
-	//×é°ü
+	//ï¿½ï¿½ï¿½
 	data_len = send_data_len + BC95_SOCKET_UP_DATA_LENGTH_LINK / 2;
-	sprintf(socket_data, "AT+NMGS=%d,", data_len); //¼ÓÈë¶ººÅÖ®Ç°µÄÊý¾Ý£¬°üÀ¨¶ººÅ
+	sprintf(socket_data, "AT+NMGS=%d,", data_len); //ï¿½ï¿½ï¿½ë¶ºï¿½ï¿½Ö®Ç°ï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-	//¼ÓÈëÊý¾Ý¹ØÁª³¤¶ÈµÄ×Ö·û´®
-	// data_len = send_data_len + BC95_SOCKET_UP_DATA_LENGTH_LINK+1;//¼Ó1Ìø¹ý¶ººÅ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Èµï¿½ï¿½Ö·ï¿½ï¿½ï¿½
+	// data_len = send_data_len + BC95_SOCKET_UP_DATA_LENGTH_LINK+1;//ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	for (i = Utility_Strlen(socket_data), j = 0; j < BC95_SOCKET_UP_DATA_LENGTH_LINK; j++)
 	{
 		socket_data[i] = up_data_len_str[j];
 		i++;
 	}
 
-	//i = Utility_Strlen(socket_data);//¼ÓÈëµÚ¶þ¸ö¶ººÅ
+	//i = Utility_Strlen(socket_data);//ï¿½ï¿½ï¿½ï¿½Ú¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	//socket_data[i] = ',';
 
-	data_len = Utility_Strlen(socket_data) + Utility_Strlen(send_data_ascii_mode); //¼ÓÈëÉÏÐÐÊý¾ÝASCII×Ö·û´®
+	data_len = Utility_Strlen(socket_data) + Utility_Strlen(send_data_ascii_mode); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ASCIIï¿½Ö·ï¿½ï¿½ï¿½
 	for (i = Utility_Strlen(socket_data), j = 0; i < data_len; i++)
 	{
 		socket_data[i] = send_data_ascii_mode[j];
 		j++;
 	}
 
-	//·¢ËÍ
+	//ï¿½ï¿½ï¿½ï¿½
 	BC95_Send(socket_data);
 
 	Console_WriteStringln("BC95 send data:");
 
 	Console_WriteStringln(socket_data);
 
-	//½ÓÊÕÊý¾Ý
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	retrytimes = 0;
 
 	while (retrytimes < BC95_REPEAT_TIMES)
 	{
-		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ÓÐÊý¾Ý
+		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
 			Console_WriteStringln(_data);
 
-			if (strstr(_data, "+NNMI:")) //ÅÐ¶ÏÊÇ·ñÎª½ÓÊÕµ½µÄÊý¾Ý
+			if (strstr(_data, "+NNMI:")) //ï¿½Ð¶ï¿½ï¿½Ç·ï¿½Îªï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			{
 
 				*recv_data_len = BC95_Extract_DownData(_data, _dataLen, recv_data);
@@ -1226,11 +1227,11 @@ BC95State BC95_SendAndRecvData(char *send_data, int send_data_len, char *recv_da
 	return BC95ErrorSEND;
 }
 
-//½âÎö½ÓÊÕµÄÊý¾Ý
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ï¿½
 void BC95_AnalysisRecvSocketData(char *revc_data, int revc_data_len, char *down_Stream_data, int *down_Stream_data_len)
 {
 	int i = 0;
-	int comma_count = 0; //¶ººÅ¼ÆÊý
+	int comma_count = 0; //ï¿½ï¿½ï¿½Å¼ï¿½ï¿½ï¿½
 	int down_Stream_data_ascii_len = 0;
 	char down_Stream_data_ascii[BC95_SOCKET_DATA_LEN] = {0};
 
@@ -1239,7 +1240,7 @@ void BC95_AnalysisRecvSocketData(char *revc_data, int revc_data_len, char *down_
 		if (revc_data[i] == ',')
 		{
 			comma_count++;
-			if (comma_count == 1) //·µ»ØµÄÊý¾ÝÖÐÓÐ1¸ö¶ººÅ£¬¶ººÅºóÃæµÄÊý¾ÝÎªÏÂÐÐÊý¾Ý
+			if (comma_count == 1) //ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½ï¿½Å£ï¿½ï¿½ï¿½ï¿½Åºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			{
 				i++;
 				break;
@@ -1248,7 +1249,7 @@ void BC95_AnalysisRecvSocketData(char *revc_data, int revc_data_len, char *down_
 		i++;
 	}
 
-	while (revc_data[i] != '\0') //»ñÈ¡Êý¾Ý
+	while (revc_data[i] != '\0') //ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½
 	{
 		down_Stream_data_ascii[down_Stream_data_ascii_len] = revc_data[i];
 		down_Stream_data_ascii_len++;
@@ -1309,7 +1310,7 @@ char *BC95_Receive(void)
 	return NULL;
 }
 
-//¸öÈË²âÊÔº¯ÊýÓÃ£¬ÎûÎûÎû
+//ï¿½ï¿½ï¿½Ë²ï¿½ï¿½Ôºï¿½ï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void BC95_AtTest(void)
 {
 	while (1)

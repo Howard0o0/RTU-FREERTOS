@@ -4807,7 +4807,7 @@
         <group>
             <name>Portable</name>
             <file>
-                <name>$PROJ_DIR$\Source\portable\MemMang\heap_1.c</name>
+                <name>$PROJ_DIR$\Source\portable\MemMang\heap_4.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\Source\portable\IAR\MSP430X\port.c</name>

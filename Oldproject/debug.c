@@ -6,22 +6,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void printch(char ch) //Êä³ö×Ö·û
+void printch(char ch) //ï¿½ï¿½ï¿½ï¿½Ö·ï¿½
 {
     Console_WriteBytes(&ch,1);
 }
 
-void printint(int dec) //Êä³öÕûÊý
+void printint(int dec) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 {
     TraceInt4(dec,1);
 }
 
-void printstr(char* ptr) //Êä³ö×Ö·û´®
+void printstr(char* ptr) //ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½
 {
    TraceMsg(ptr,1);
 }
 
-void printfloat(float flt) //Êä³ö¸¡µãÊý£¬Ð¡ÊýµãµÚ5Î»ËÄÉáÎåÈë
+void printfloat(float flt) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½5Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 {
     int interpart = (int)flt;
     int fltpart = (int)(100000*(flt - interpart));
@@ -107,6 +107,6 @@ void print_stacktrace()
     {
         Console_WriteStringln(stacktrace[i]);
     }
-    free(stacktrace);
+    vPortFree(stacktrace);
 #endif 
 }
