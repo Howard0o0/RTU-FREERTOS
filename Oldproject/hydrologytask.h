@@ -4,7 +4,7 @@
 #include "stdint.h"
 
 
-#define G_SAMPLE_SAVE_MAX_NUM   3    //ky,²ÉÑù´ÎÊý
+#define G_SAMPLE_SAVE_MAX_NUM   3    //ky,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 int HydrologySample(char* _saveTime);
 
 int HydrologyOnline();
@@ -41,4 +41,15 @@ extern void Hydrology_ReadPulse(long *value,int index);
 extern void Hydrology_ReadAnalog(float *value,int index);
 extern int hydrologyJudgeType(char funcode);
 extern void UART1_Open_9600(int _type);
+
+void task_hydrology_init(void *pvParameters);
+// void task_hydrology_check_time(void *pvParameters);
+
+// void task_hydrology_sample(void *pvParameters);
+
+// void task_hydrology_save_data(void *pvParameters);
+
+// void task_hydrology_instant_waterlevel(void *pvParameters);
+
+
 #endif /* _HYDROLOGYTASK_H_ */

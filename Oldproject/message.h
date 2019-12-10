@@ -218,7 +218,7 @@ int Hydrology_ReadDataPacketCount(int *dest);
 
 int Hydrology_SetDataPacketCount(int src) ;
 
-//int mallocElement(char element,char D,char d,hydrologyElement* ele);
+int mallocElement(char element,char D,char d,hydrologyElement* ele);
 extern int  Store_CheckDataItemSended(int _index);
 extern hydrologyHeader g_HydrologyUpHeader;
 extern hydrologyHeader g_HydrologyDownHeader;

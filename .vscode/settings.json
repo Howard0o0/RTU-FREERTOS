@@ -5,6 +5,8 @@
         "queue.h": "c",
         "msp430.h": "c",
         "hal_buttons.h": "c",
-        "driverlib.h": "c"
+        "driverlib.h": "c",
+        "timer.h": "c",
+        "uart0.h": "c"
     }
 }

@@ -4724,9 +4724,6 @@
             <name>$PROJ_DIR$\Oldproject\msp430common.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\Oldproject\old_main.c</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\Oldproject\packet.c</name>
         </file>
         <file>
