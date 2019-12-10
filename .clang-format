@@ -1,0 +1,14 @@
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterEnum: true
+  AfterStruct: false
+  SplitEmptyFunction: false
+AlignConsecutiveAssignments: true
+AlignOperands: true
+AllowShortLoopsOnASingleLine   : true
+AlwaysBreakBeforeMultilineStrings : false
+AlwaysBreakTemplateDeclarations : true
+SpaceBeforeAssignmentOperators : true
+SpacesBeforeTrailingComments : 3
+TabWidth : 4
+IndentWidth:     4
