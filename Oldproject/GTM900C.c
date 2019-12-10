@@ -105,187 +105,187 @@ void GPRS_Print_Error(int errorCode)
 {
     switch(errorCode)
     {
-        // 1:ÊäÈë²ÎÊý´íÎó
+        // 1:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         case 1:
         {
             Console_WriteStringln("Wrong AT Command Parameter!");
             break;
         }
-        // 2:Ò»¸öÄÚ²¿µÄ´íÎó²úÉú
+        // 2:Ò»ï¿½ï¿½ï¿½Ú²ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         case 2:
         {
             Console_WriteStringln("An internel error in GTM900 Module!");
             break;
         }
-        // 3:IP µØÖ·»òÕß¶Ë¿ÚºÅÕýÔÚ±»Ê¹ÓÃ
+        // 3:IP ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ß¶Ë¿Úºï¿½ï¿½ï¿½ï¿½Ú±ï¿½Ê¹ï¿½ï¿½
         case 3:
         {
             Console_WriteStringln("IP Address or Port is already used!");
             break;
         }
-        // 4:ÄÚ´æÉêÇëÊ§°Ü»òÕß BUFFER ÒÑ¾­±»Ê¹ÓÃÍê
+        // 4:ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½Ü»ï¿½ï¿½ï¿½ BUFFER ï¿½Ñ¾ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ï¿½
         case 4:
         {
             Console_WriteStringln("Memory apply failed or buffer run out!");
             break;
         }
-        // 5:¸Ã socket ²»Ö§³Ö´ËÖÖ²Ù×÷
+        // 5:ï¿½ï¿½ socket ï¿½ï¿½Ö§ï¿½Ö´ï¿½ï¿½Ö²ï¿½ï¿½ï¿½
         case 5:
         {
             Console_WriteStringln("Unsupported operation of socket!");
             break;
         }
-        // 6:²»ÄÜÁ´½Óµ½¸ÃÖ÷»ú
+        // 6:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         case 6:
         {
             Console_WriteStringln("Connot connect to host, please check host!");
             break;
         }
-        // 7:Á´½Ó±»¶Ô·½¾Ü¾ø
+        // 7:ï¿½ï¿½ï¿½Ó±ï¿½ï¿½Ô·ï¿½ï¿½Ü¾ï¿½
         case 7:
         {
             Console_WriteStringln("Connection being refused by host, please check host fireware");
             break;
         }
-        // 8:Á´½Ó³¬Ê±
+        // 8:ï¿½ï¿½ï¿½Ó³ï¿½Ê±
         case 8:
         {
             Console_WriteStringln("Connection time out");
             break;
         }
-        // 9:¸ÃÁ´½ÓÒÑ¾­½¨Á¢
+        // 9:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½
         case 9:
         {
             Console_WriteStringln("Link already exists");
             break;
         }
-        // 10:ÔÚ DNSR ·þÎñÆ÷ÖÐÕÒ²»µ½¸ÃÖ÷»úµØÖ·
+        // 10:ï¿½ï¿½ DNSR ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·
         case 10:
         {
             Console_WriteStringln("Can not find host IP in DNSR");
             break;
         }
-        // 11:³öÏÖÒ»¸öÔÝÊ±µÄ DNS ´íÎó£¬ÉÔºó¿ÉÒÔÖØÐÂÖ´ÐÐ
+        // 11:ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ DNS ï¿½ï¿½ï¿½ï¿½ï¿½Ôºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½
         case 11:
         {
             Console_WriteStringln("Temporary DSN Error");
             break;
         }
-        // 12:³öÏÖÒ»¸öÓÀ¾ÃµÄ DNS ´íÎó
+        // 12:ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½ DNS ï¿½ï¿½ï¿½ï¿½
         case 12:
         {
             Console_WriteStringln("Permanent DSN Error");
             break;
         }
-        // 13:ÔÚ DNSR ·þÎñÆ÷ÕÒµ½¸ÃÖ÷»úµØÖ·£¬µ«ÊÇ IP µØÖ·ÎÞÐ§
+        // 13:ï¿½ï¿½ DNSR ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ IP ï¿½ï¿½Ö·ï¿½ï¿½Ð§
         case 13:
         {
             Console_WriteStringln("Invalid IP in DNSR");
             break;
         }
-        // 14:¸Ã socket Á´½Ó»¹Ã»ÓÐ½¨Á¢
+        // 14:ï¿½ï¿½ socket ï¿½ï¿½ï¿½Ó»ï¿½Ã»ï¿½Ð½ï¿½ï¿½ï¿½
         case 14:
         {
             Console_WriteStringln("Socket not exist");
             break;
         }
-        // 15:´«ÊäµÄÊý¾Ý³¤¶ÈÌ«´ó
+        // 15:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½Ì«ï¿½ï¿½
         case 15:
         {
             Console_WriteStringln("Data out of length");
             break;
         }
-        // 16:¸ÃÁ´½Ó±»¶Ô¶Ë¸´Î»
+        // 16:ï¿½ï¿½ï¿½ï¿½ï¿½Ó±ï¿½ï¿½Ô¶Ë¸ï¿½Î»
         case 16:
         {
             Console_WriteStringln("Host reset Link");
             break;
         }
-        // 17:¸ÃÁ´½ÓÓÐ´íÎó²úÉú
+        // 17:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         case 17:
         {
             Console_WriteStringln("Error occurs on Link");
             break;
         }
-        // 18:Ã»ÓÐÊ£Óà»º´æÀ´±£´æÐÅÏ¢
+        // 18:Ã»ï¿½ï¿½Ê£ï¿½à»ºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
         case 18:
         {
             Console_WriteStringln("No Cache to save information");
             break;
         }
-        // 19:Ã»ÓÐÍøÂç£¬»òÕßÒ»¸ö´íÎó²úÉúµ¼ÖÂ TCPIP ¶Ï¿ª
+        // 19:Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ç£¬ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ TCPIP ï¿½Ï¿ï¿½
         case 19:
         {
             Console_WriteStringln("No net exists or TCP/IP function failed");
             break;
         }
-        // 20:PDP ÉÏÏÂÎÄÃ»ÓÐ¼¤»î
+        // 20:PDP ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ð¼ï¿½ï¿½ï¿½
         case 20:
         {
             Console_WriteStringln("PDP not activitied");
             break;
         }  
-        // 21:GPRS attach Ã»ÓÐ³É¹¦
+        // 21:GPRS attach Ã»ï¿½Ð³É¹ï¿½
         case 21:
         {
             Console_WriteStringln("GPRS attach failed");
             break;
         }
-        // 22:ÀàËÆµÄ²Ù×÷ÕýÔÚÖ´ÐÐ
+        // 22:ï¿½ï¿½ï¿½ÆµÄ²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½
         case 22:
         {
             Console_WriteStringln("Similar operation already being excuted");
             break;
         }
-        // 23:PDP ÉÏÏÂÎÄÒÑ¾­¼¤»î
+        // 23:PDP ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½
         case 23:
         {
             Console_WriteStringln("PDP already activitied");
             break;
         }
-        // 24:µ±Ç°Îª¶àÁ´½ÓÄ£Ê½
+        // 24:ï¿½ï¿½Ç°Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£Ê½
         case 24:
         {
             Console_WriteStringln("Tcp is on multi-link mode!");
             break;
         }
-        // 25:µ±Ç°Îªµ¥Á´½ÓÄ£Ê½
+        // 25:ï¿½ï¿½Ç°Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£Ê½
         case 25:
         {
             Console_WriteStringln("Tcp is on single-link mode!");
             break;
         }
-        // 26:ÊäÈëµÄ index ºÅÂë²»´æÔÚ
+        // 26:ï¿½ï¿½ï¿½ï¿½ï¿½ index ï¿½ï¿½ï¿½ë²»ï¿½ï¿½ï¿½ï¿½
         case 26:
         {
             Console_WriteStringln("Index number not exist !");
             break;
         }
-        // 27:ÎÞÐ§µÄÉ¾³ýÄ£Ê½
+        // 27:ï¿½ï¿½Ð§ï¿½ï¿½É¾ï¿½ï¿½Ä£Ê½
         case 27:
         {
             Console_WriteStringln("Invalid delete mode!");
             break;
         }
-        // 28:µ±Ç°²»¿ÉÒÔÊ¹ÓÃ¸ÃÃüÁî
+        // 28:ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½Ã¸ï¿½ï¿½ï¿½ï¿½ï¿½
         case 28:
         {
             Console_WriteStringln("Can not use this command at present!");
             break;
         }
-        // 29:·¢ËÍ´°¿ÚÒÑÂú
+        // 29:ï¿½ï¿½ï¿½Í´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         case 29:
         {
             Console_WriteStringln("Sending window full!");
             break;
         }
-        // 30:µ±Ç°ÕýÔÚÍ¨»°ÖÐ£¬ÇëÉÔºóÖ´ÐÐ PDP ¼¤»îºÍ TCPIP ³õÊ¼»¯µÄ²Ù×÷
+        // 30:ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½Ôºï¿½Ö´ï¿½ï¿½ PDP ï¿½ï¿½ï¿½ï¿½ï¿½ TCPIP ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½Ä²ï¿½ï¿½ï¿½
         case 30:
         {
             Console_WriteStringln("Phone on line, please excuted PDP activite and TCP Initialize later");
             break;
         }
-        // 31:ÆäËü´íÎó
+        // 31:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         case 31:
         {
             Console_WriteStringln("Unexpected error");
@@ -315,9 +315,9 @@ int GPRS_AT_CheckSimStat_Response(char *_recv,int *_retErrorCode)
             retValue = FALSE;
         }
     }
-    else if(Utility_Strncmp(_recv,"ERROR",5)==0)//ERROR: 14  Ã°ºÅºÍ14ÖÐ¼äÓÐ¿Õ¸ñ
+    else if(Utility_Strncmp(_recv,"ERROR",5)==0)//ERROR: 14  Ã°ï¿½Åºï¿½14ï¿½Ð¼ï¿½ï¿½Ð¿Õ¸ï¿½
     {
-        char bufErrorTmp[3] = {0};//µ÷ÓÃatoiº¯Êý£¬ÐèÒªÓÐ×Ö·û´®½áÊø·û£¬2Î»´íÎóÂë£¬1Î»½áÊø·û
+        char bufErrorTmp[3] = {0};//ï¿½ï¿½ï¿½ï¿½atoiï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½2Î»ï¿½ï¿½ï¿½ï¿½ï¿½ë£¬1Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
         bufErrorTmp[0] = _recv[7];	
         if(_recv[8] != 0)
@@ -341,9 +341,9 @@ int GPRS_AT_QueryOperater_Response(char *_recv,int *_retErrorCode)
         TelecomOperater = CHINA_MOBILE;
         retValue = TRUE;
     }
-    else if(Utility_Strncmp(_recv,"ERROR",5)==0)//ERROR: 14  Ã°ºÅºÍ14ÖÐ¼äÓÐ¿Õ¸ñ
+    else if(Utility_Strncmp(_recv,"ERROR",5)==0)//ERROR: 14  Ã°ï¿½Åºï¿½14ï¿½Ð¼ï¿½ï¿½Ð¿Õ¸ï¿½
     {
-        char bufErrorTmp[3] = {0};//µ÷ÓÃatoiº¯Êý£¬ÐèÒªÓÐ×Ö·û´®½áÊø·û£¬2Î»´íÎóÂë£¬1Î»½áÊø·û
+        char bufErrorTmp[3] = {0};//ï¿½ï¿½ï¿½ï¿½atoiï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½2Î»ï¿½ï¿½ï¿½ï¿½ï¿½ë£¬1Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
         bufErrorTmp[0] = _recv[7];	
         if(_recv[8] != 0)
@@ -366,9 +366,9 @@ int GPRS_AT_QueryIP_Response(char *_recv,int *_retErrorCode)
         {
             retValue = FALSE;
         }	
-    }else if(Utility_Strncmp(_recv,"ERROR",5)==0)//ERROR: 14  Ã°ºÅºÍ14ÖÐ¼äÓÐ¿Õ¸ñ
+    }else if(Utility_Strncmp(_recv,"ERROR",5)==0)//ERROR: 14  Ã°ï¿½Åºï¿½14ï¿½Ð¼ï¿½ï¿½Ð¿Õ¸ï¿½
     {
-        char bufErrorTmp[3] = {0};//µ÷ÓÃatoiº¯Êý£¬ÐèÒªÓÐ×Ö·û´®½áÊø·û£¬2Î»´íÎóÂë£¬1Î»½áÊø·û
+        char bufErrorTmp[3] = {0};//ï¿½ï¿½ï¿½ï¿½atoiï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½2Î»ï¿½ï¿½ï¿½ï¿½ï¿½ë£¬1Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
         bufErrorTmp[0] = _recv[7];	
         if(_recv[8] != 0)
@@ -382,7 +382,7 @@ int GPRS_AT_QueryIP_Response(char *_recv,int *_retErrorCode)
     return retValue;
 }
 
-//´ò¿ªÁ´½ÓºÍÆäËüÃüÁîÏìÓ¦ÓÐÒ»¶¨²»Ò»ÖÂ£¬ÒòÎªÖ»·µ»ØÒ»¸öconnect»òÕßerror
+//ï¿½ï¿½ï¿½ï¿½ï¿½Óºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ò»ï¿½Â£ï¿½ï¿½ï¿½ÎªÖ»ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½connectï¿½ï¿½ï¿½ï¿½error
 int GPRS_AT_OpenTCPLink_Response(char *_recv)
 {
     return TRUE;
@@ -398,9 +398,9 @@ int GPRS_AT_QueryTCPLink_Response(char *_recv,int *_retErrorCode)
             retValue = FALSE;
         }			        
     }
-    else if(Utility_Strncmp(_recv,"ERROR",5)==0)//ERROR: 14  Ã°ºÅºÍ14ÖÐ¼äÓÐ¿Õ¸ñ
+    else if(Utility_Strncmp(_recv,"ERROR",5)==0)//ERROR: 14  Ã°ï¿½Åºï¿½14ï¿½Ð¼ï¿½ï¿½Ð¿Õ¸ï¿½
     {
-        char bufErrorTmp[3] = {0};//µ÷ÓÃatoiº¯Êý£¬ÐèÒªÓÐ×Ö·û´®½áÊø·û£¬2Î»´íÎóÂë£¬1Î»½áÊø·û
+        char bufErrorTmp[3] = {0};//ï¿½ï¿½ï¿½ï¿½atoiï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½2Î»ï¿½ï¿½ï¿½ï¿½ï¿½ë£¬1Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
         bufErrorTmp[0] = _recv[7];	
         if(_recv[8] != 0)
@@ -414,18 +414,18 @@ int GPRS_AT_QueryTCPLink_Response(char *_recv,int *_retErrorCode)
     return retValue;
 }
 
-//ÕâÀïÃ»¿¼ÂÇ³ö´í£¬ºóÃæÒª´¦Àí
+//ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Ç³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½
 int GPRS_AT_CloseTCPLink_Response(char *_recv,int *_retErrorCode)
 {
     int retValue = FALSE;
-    //IPCLOSEÈç¹ûÓÐIPÁ´½Ó£¬»áÏÈ·µ»Ø%IPCLOSE,È»ºóÔÙ·µ»ØOK,Èç¹ûÃ»ÓÐÁ´½Ó£¬Ö»»á·µ»ØÒ»¸öÃüÁîÏìÓ¦³É¹¦ OK
+    //IPCLOSEï¿½ï¿½ï¿½ï¿½ï¿½IPï¿½ï¿½ï¿½Ó£ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½%IPCLOSE,È»ï¿½ï¿½ï¿½Ù·ï¿½ï¿½ï¿½OK,ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ó£ï¿½Ö»ï¿½á·µï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½É¹ï¿½ OK
     if((Utility_Strncmp(_recv,"%IPCLOSE",8) ==0) || (Utility_Strncmp(_recv,"OK",2) ==0))
     {
         retValue =  TRUE;
     }
-    else if(Utility_Strncmp(_recv,"ERROR",5)==0)//ERROR: 14  Ã°ºÅºÍ14ÖÐ¼äÓÐ¿Õ¸ñ
+    else if(Utility_Strncmp(_recv,"ERROR",5)==0)//ERROR: 14  Ã°ï¿½Åºï¿½14ï¿½Ð¼ï¿½ï¿½Ð¿Õ¸ï¿½
     {
-        char bufErrorTmp[3] = {0};//µ÷ÓÃatoiº¯Êý£¬ÐèÒªÓÐ×Ö·û´®½áÊø·û£¬2Î»´íÎóÂë£¬1Î»½áÊø·û
+        char bufErrorTmp[3] = {0};//ï¿½ï¿½ï¿½ï¿½atoiï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½2Î»ï¿½ï¿½ï¿½ï¿½ï¿½ë£¬1Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
         bufErrorTmp[0] = _recv[7];	
         if(_recv[8] != 0)
@@ -439,18 +439,18 @@ int GPRS_AT_CloseTCPLink_Response(char *_recv,int *_retErrorCode)
     return retValue;
 }
 
-//ÕâÀïÃ»¿¼ÂÇ³ö´í£¬ºóÃæÒª´¦Àí
+//ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Ç³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½
 int GPRS_AT_QuitGPRSNet_Response(char *_recv,int *_retErrorCode)
 {
     int retValue = FALSE;
-    //IPCLOSEÈç¹ûÓÐIPÁ´½Ó£¬»áÏÈ·µ»Ø%IPCLOSE,È»ºóÔÙ·µ»ØOK,Èç¹ûÃ»ÓÐÁ´½Ó£¬Ö»»á·µ»ØÒ»¸öÃüÁîÏìÓ¦³É¹¦ OK
+    //IPCLOSEï¿½ï¿½ï¿½ï¿½ï¿½IPï¿½ï¿½ï¿½Ó£ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½%IPCLOSE,È»ï¿½ï¿½ï¿½Ù·ï¿½ï¿½ï¿½OK,ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ó£ï¿½Ö»ï¿½á·µï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½É¹ï¿½ OK
     if((Utility_Strncmp(_recv,"%IPCLOSE",8) ==0) || (Utility_Strncmp(_recv,"OK",2) ==0))
     {
         retValue =  TRUE;
     }
-    else if(Utility_Strncmp(_recv,"ERROR",5)==0)//ERROR: 14  Ã°ºÅºÍ14ÖÐ¼äÓÐ¿Õ¸ñ
+    else if(Utility_Strncmp(_recv,"ERROR",5)==0)//ERROR: 14  Ã°ï¿½Åºï¿½14ï¿½Ð¼ï¿½ï¿½Ð¿Õ¸ï¿½
     {
-        char bufErrorTmp[3] = {0};//µ÷ÓÃatoiº¯Êý£¬ÐèÒªÓÐ×Ö·û´®½áÊø·û£¬2Î»´íÎóÂë£¬1Î»½áÊø·û
+        char bufErrorTmp[3] = {0};//ï¿½ï¿½ï¿½ï¿½atoiï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½2Î»ï¿½ï¿½ï¿½ï¿½ï¿½ë£¬1Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
         bufErrorTmp[0] = _recv[7];	
         if(_recv[8] != 0)
@@ -464,11 +464,11 @@ int GPRS_AT_QuitGPRSNet_Response(char *_recv,int *_retErrorCode)
     return retValue;
 }
 
-//Ê¹ÓÃASCiiÂë»¹ÊÇHexÂë·¢ËÍÏûÏ¢£¬0,1,1---ASCii£¬ 1,1,0---Hex
+//Ê¹ï¿½ï¿½ASCiiï¿½ë»¹ï¿½ï¿½Hexï¿½ë·¢ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½0,1,1---ASCiiï¿½ï¿½ 1,1,0---Hex
 int GPRS_AT_SetIOMode_Response(char *_recv)
 {
     int retValue = TRUE;
-    //SetIOModeÈç¹ûÓÐIPÁ´½Ó£¬»áÏÈ·µ»ØOK,Ã»ÓÐIP£¬¾Í»á·µ»Ø EXT: I
+    //SetIOModeï¿½ï¿½ï¿½ï¿½ï¿½IPï¿½ï¿½ï¿½Ó£ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½OK,Ã»ï¿½ï¿½IPï¿½ï¿½ï¿½Í»á·µï¿½ï¿½ EXT: I
     if(Utility_Strncmp(_recv, "EXT:", 4) == 0)
     {
         retValue = FALSE;	
@@ -482,7 +482,7 @@ int GRPS_AT_Send_Response(char *_recv,int *_retErrorCode)
     int retValue = FALSE;
     if(Utility_Strncmp(_recv, "%IPSEND:", 8) == 0)
     {
-        char bufLeftTmp[3] = {0};//µ÷ÓÃatoiº¯Êý£¬ÐèÒªÓÐ×Ö·û´®½áÊø·û
+        char bufLeftTmp[3] = {0};//ï¿½ï¿½ï¿½ï¿½atoiï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         bufLeftTmp[0] = _recv[8];
         if(_recv[9] != 0)
         {
@@ -491,9 +491,9 @@ int GRPS_AT_Send_Response(char *_recv,int *_retErrorCode)
         _GTM900SendBufLeft = atoi(bufLeftTmp);
         retValue = TRUE;
     }
-    else if(Utility_Strncmp(_recv,"ERROR",5)==0)//ERROR: 14  Ã°ºÅºÍ14ÖÐ¼äÓÐ¿Õ¸ñ
+    else if(Utility_Strncmp(_recv,"ERROR",5)==0)//ERROR: 14  Ã°ï¿½Åºï¿½14ï¿½Ð¼ï¿½ï¿½Ð¿Õ¸ï¿½
     {
-        char bufErrorTmp[3] = {0};//µ÷ÓÃatoiº¯Êý£¬ÐèÒªÓÐ×Ö·û´®½áÊø·û£¬2Î»´íÎóÂë£¬1Î»½áÊø·û
+        char bufErrorTmp[3] = {0};//ï¿½ï¿½ï¿½ï¿½atoiï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½2Î»ï¿½ï¿½ï¿½ï¿½ï¿½ë£¬1Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
         bufErrorTmp[0] = _recv[7];	
         if(_recv[8] != 0)
@@ -517,9 +517,9 @@ int GPRS_AT_QueryRemainData_Response(char *_recv,int *_retErrorCode)
     {
         RemainingData = atoi(&_recv[7]);
     }
-    else if(Utility_Strncmp(_recv,"ERROR",5)==0)//ERROR: 14  Ã°ºÅºÍ14ÖÐ¼äÓÐ¿Õ¸ñ
+    else if(Utility_Strncmp(_recv,"ERROR",5)==0)//ERROR: 14  Ã°ï¿½Åºï¿½14ï¿½Ð¼ï¿½ï¿½Ð¿Õ¸ï¿½
     {
-        char bufErrorTmp[3] = {0};//µ÷ÓÃatoiº¯Êý£¬ÐèÒªÓÐ×Ö·û´®½áÊø·û£¬2Î»´íÎóÂë£¬1Î»½áÊø·û
+        char bufErrorTmp[3] = {0};//ï¿½ï¿½ï¿½ï¿½atoiï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½2Î»ï¿½ï¿½ï¿½ï¿½ï¿½ë£¬1Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
         bufErrorTmp[0] = _recv[7];	
         if(_recv[8] != 0)
@@ -565,13 +565,13 @@ int GRPS_AT_Receive_Response(char *_recv,int *_retErrorCode)
             psrc++;
         }
         Utility_Strncpy(_ReceiveData, psrc+1, _ReceiveDataLen*2);
-        free(_ReceiveData);  //+++
-        _ReceiveData = NULL;
+        // free(_ReceiveData);  //+++
+        // _ReceiveData = NULL;
         retValue = TRUE;
     }
-    else if(Utility_Strncmp(_recv,"ERROR",5)==0)//ERROR: 14  Ã°ºÅºÍ14ÖÐ¼äÓÐ¿Õ¸ñ
+    else if(Utility_Strncmp(_recv,"ERROR",5)==0)//ERROR: 14  Ã°ï¿½Åºï¿½14ï¿½Ð¼ï¿½ï¿½Ð¿Õ¸ï¿½
     {
-        char bufErrorTmp[3] = {0};//µ÷ÓÃatoiº¯Êý£¬ÐèÒªÓÐ×Ö·û´®½áÊø·û£¬2Î»´íÎóÂë£¬1Î»½áÊø·û
+        char bufErrorTmp[3] = {0};//ï¿½ï¿½ï¿½ï¿½atoiï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½2Î»ï¿½ï¿½ï¿½ï¿½ï¿½ë£¬1Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
         bufErrorTmp[0] = _recv[7];	
         if(_recv[8] != 0)
@@ -595,10 +595,10 @@ int GPRS_SubProc_AT_ResponseOne(char *_recv, int *_retMsgNum, int cmdType, int *
 {
     int retValue=FALSE;
 
-    if(Utility_Strncmp(_recv,"RING",4)==0)//Èç¹ûÊÇµç»°À´ÁË£¬Ö±½Ó¹Òµô£¬ÖØÐÂµÈ´ý½ÓÊÜ¡£
+    if(Utility_Strncmp(_recv,"RING",4)==0)//ï¿½ï¿½ï¿½ï¿½Çµç»°ï¿½ï¿½ï¿½Ë£ï¿½Ö±ï¿½Ó¹Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÂµÈ´ï¿½ï¿½ï¿½ï¿½Ü¡ï¿½
     {
         GPRS_AT_OFF_CALL();
-        retValue = FALSE;//³öÏÖµç»°
+        retValue = FALSE;//ï¿½ï¿½ï¿½Öµç»°
         return retValue;
     }
     
@@ -626,7 +626,7 @@ int GPRS_SubProc_AT_ResponseOne(char *_recv, int *_retMsgNum, int cmdType, int *
         }
         case QUERY_IP:
         {
-            retValue = GPRS_AT_QueryIP_Response(_recv, _retErrorCode);//Èç¹ûµÚÒ»²½µÄ"%ETCPIP:0"±êÊ¶ÖµÎª0£¬Ö±½Ó·µ»Ø£¬ºóÃæ²»ÓÃ½øÐÐÁË
+            retValue = GPRS_AT_QueryIP_Response(_recv, _retErrorCode);//ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½"%ETCPIP:0"ï¿½ï¿½Ê¶ÖµÎª0ï¿½ï¿½Ö±ï¿½Ó·ï¿½ï¿½Ø£ï¿½ï¿½ï¿½ï¿½æ²»ï¿½Ã½ï¿½ï¿½ï¿½ï¿½ï¿½
             break;
         }
         case OPEN_TCP_LINK:
@@ -636,7 +636,7 @@ int GPRS_SubProc_AT_ResponseOne(char *_recv, int *_retMsgNum, int cmdType, int *
         }
         case QUERY_TCP_LINK:
         {
-            retValue = GPRS_AT_QueryTCPLink_Response(_recv, _retErrorCode);//Èç¹ûµÚÒ»²½µÄ"%ETCPIP:0"±êÊ¶ÖµÎª0£¬Ö±½Ó·µ»Ø£¬ºóÃæ²»ÓÃ½øÐÐÁË
+            retValue = GPRS_AT_QueryTCPLink_Response(_recv, _retErrorCode);//ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½"%ETCPIP:0"ï¿½ï¿½Ê¶ÖµÎª0ï¿½ï¿½Ö±ï¿½Ó·ï¿½ï¿½Ø£ï¿½ï¿½ï¿½ï¿½æ²»ï¿½Ã½ï¿½ï¿½ï¿½ï¿½ï¿½
             break;
         }
         case CLOSE_TCP_LINK:
@@ -684,7 +684,7 @@ int GPRS_SubProc_AT_ResponseOne(char *_recv, int *_retMsgNum, int cmdType, int *
 }
 
 
-//Ö»Òª²»ÊÇERROR»òÕßOK,ÆäËüÏìÓ¦Ö´ÐÐÍêÁË£¬»¹Òª¼ÌÐø´¦Àí¡£ÕâÀïÓÐÎÊÌâ£¬Ã÷Ìì¼ÌÐø´¦Àí!!!!!!!!!!! 17-08-21
+//Ö»Òªï¿½ï¿½ï¿½ï¿½ERRORï¿½ï¿½ï¿½ï¿½OK,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦Ö´ï¿½ï¿½ï¿½ï¿½ï¿½Ë£ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½!!!!!!!!!!! 17-08-21
 int GPRS_SubProc_AT_ResponseTwo(char *_recv, int *_retErrorCode)
 {
     int retValue = FALSE;
@@ -695,9 +695,9 @@ int GPRS_SubProc_AT_ResponseTwo(char *_recv, int *_retErrorCode)
     else if(Utility_Strncmp(_recv,"CONNECT",7) ==0 )
     {
         retValue = TRUE;
-    }else if(Utility_Strncmp(_recv,"ERROR",5)==0)//ERROR: 14  Ã°ºÅºÍ14ÖÐ¼äÓÐ¿Õ¸ñ
+    }else if(Utility_Strncmp(_recv,"ERROR",5)==0)//ERROR: 14  Ã°ï¿½Åºï¿½14ï¿½Ð¼ï¿½ï¿½Ð¿Õ¸ï¿½
     {
-        char bufErrorTmp[3] = {0};//µ÷ÓÃatoiº¯Êý£¬ÐèÒªÓÐ×Ö·û´®½áÊø·û£¬2Î»´íÎóÂë£¬1Î»½áÊø·û
+        char bufErrorTmp[3] = {0};//ï¿½ï¿½ï¿½ï¿½atoiï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½2Î»ï¿½ï¿½ï¿½ï¿½ï¿½ë£¬1Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
         bufErrorTmp[0] = _recv[7];	
         if(_recv[8] != 0)
@@ -719,9 +719,9 @@ int GPRS_Proc_AT_Response(char *_recv, int *_retMsgNum, int cmdType, int  *error
 {
     int _recvTryTimes1 = 0;
     int _retValue = FALSE;
-    int _okFlag;//Éè¶¨ÓÃÀ´ÅÐ¶ÏÐè²»ÐèÒªÊÕ2ÐÐÏìÓ¦
+    int _okFlag;//ï¿½è¶¨ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½è²»ï¿½ï¿½Òªï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½Ó¦
 
-    //Ö»·µ»ØÒ»¸öOKµÄ£¬okFlag³õÊ¼ÎªTRUE,·µ»Ø2ÐÐµÄ£¬³õÊ¼ÎªFALSE
+    //Ö»ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½OKï¿½Ä£ï¿½okFlagï¿½ï¿½Ê¼ÎªTRUE,ï¿½ï¿½ï¿½ï¿½2ï¿½ÐµÄ£ï¿½ï¿½ï¿½Ê¼ÎªFALSE
     switch(cmdType)
     {
         case SET_APN:
@@ -808,24 +808,24 @@ int GPRS_Proc_AT_Response(char *_recv, int *_retMsgNum, int cmdType, int  *error
         {
             _recvTryTimes1 += 1;
             if(cmdType == ACTIVE_GPRS)
-                System_Delayms(700);//Ô­±¾´òËã×î´óÑÓÊ±30s£¬ºóÀ´·¢ÏÖ£¬Èç¹û·¢ÍøÂçÖ¸Áî£¬¸ÕºÃµç»°ÔÚÇ°Ãæ½øÀ´£¬Ä£¿é»á¿¨×¡£¬Ò²²»»áÓÐring½øÀ´£¬Ö±µ½²¦ºÅ½áÊø£¬ÁªÍ¨ÊÇ45s×Ô¶¯¹Ò¶Ï£¬ÒÆ¶¯ÊÇ65s×Ô¶¯¹Ò¶Ï
+                System_Delayms(700);//Ô­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±30sï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½î£¬ï¿½ÕºÃµç»°ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½á¿¨×¡ï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ringï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½Å½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½45sï¿½Ô¶ï¿½ï¿½Ò¶Ï£ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½65sï¿½Ô¶ï¿½ï¿½Ò¶ï¿½
             else if(cmdType == QUERY_REMAIN_DATA)
                 System_Delayms(100);
             else 
-                System_Delayms(500);//Ö»ÓÐ¼¤»îGPRS»á¿¨³¤Ê±¼ä£¬ÆäËüÃüÁî¿¨¶ÙÊ±¼ä²»³¬¹ý30s
+                System_Delayms(500);//Ö»ï¿½Ð¼ï¿½ï¿½ï¿½GPRSï¿½á¿¨ï¿½ï¿½Ê±ï¿½ä£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½î¿¨ï¿½ï¿½Ê±ï¿½ä²»ï¿½ï¿½ï¿½ï¿½30s
             continue;
         }
         else
         {
-            if(_okFlag == FALSE)//Èç¹û·µ»ØµÄµÚÒ»ÐÐ²»ÊÇOK,ÔòÐèÒª´¦ÀíµÚÒ»ÐÐ£»·ñÔòÖ±½Ó´¦ÀíµÚ¶þÐÐ
+            if(_okFlag == FALSE)//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ØµÄµï¿½Ò»ï¿½Ð²ï¿½ï¿½ï¿½OK,ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Ó´ï¿½ï¿½ï¿½ï¿½Ú¶ï¿½ï¿½ï¿½
             {
                 int respRet ;
                 respRet = GPRS_SubProc_AT_ResponseOne(_recv,_retMsgNum,cmdType, errorCode);
-                if(respRet == TRUE)//Èç¹ûµÚÒ»²½´¦ÀíÓÐ·µ»Ø½á¹û£¬¾Í¼ÌÐø´¦Àí£¬²»ÕýÈ·Ò²»á¼ÌÐøÊÕµ½Ò»¸öOK,Ö»ÒªµÚÒ»²½²»³öÏÖ´íÎó±êÖ¾£¬ÊÕµ½ÏûÏ¢¾ÍÍùÏÂÒ»²½×ß£¬ÓÉÏÂÒ»²½´¦Àí
+                if(respRet == TRUE)//ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð·ï¿½ï¿½Ø½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È·Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õµï¿½Ò»ï¿½ï¿½OK,Ö»Òªï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ß£ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 {
                     _okFlag = TRUE;
                 }
-                else//Èç¹ûµÚÒ»²½·µ»Ø½á¹û²»ÎªTRUE£¬ºóÃæ²»ÐèÒª´¦ÀíÁË¡£
+                else//ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ø½ï¿½ï¿½ï¿½ï¿½ÎªTRUEï¿½ï¿½ï¿½ï¿½ï¿½æ²»ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Ë¡ï¿½
                 {
                     _retValue = FALSE;
                     break;
@@ -839,7 +839,7 @@ int GPRS_Proc_AT_Response(char *_recv, int *_retMsgNum, int cmdType, int  *error
                 }
                 else
                 {
-                    if(errorCode!=0)//Ö»ÓÐ³öÏÖ´íÎó²ÅÍË³ö£¬·ñÔò²»·µ»Ø
+                    if(errorCode!=0)//Ö»ï¿½Ð³ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½Ë³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ò²»·ï¿½ï¿½ï¿½
                         break;
                 }
             }
@@ -876,9 +876,9 @@ int GPRS_AT_SetAPN()
     _send[_cmdLen] = '\"';
     _cmdLen += 1;
   
-  //¸ÃATÖ¸Áî»á·µ»Ø:
+  //ï¿½ï¿½ATÖ¸ï¿½ï¿½á·µï¿½ï¿½:
   //OK
-  //×¢Òâ£¬ÐèÒªÏÈ¹Ø±Õ»ØÏÔ£¬ÒÔÃâÔì³ÉÂé·³
+  //×¢ï¿½â£¬ï¿½ï¿½Òªï¿½È¹Ø±Õ»ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é·³
     GPRS_PrepareForSend();
     GPRS_WriteBytes(_send,_cmdLen);
     _retValue = GPRS_Proc_AT_Response(_recv, &_retMsgNum, SET_APN, &errorCode);
@@ -907,9 +907,9 @@ int GPRS_AT_ActiveGPRSNet()
     _cmdLen += 9;
 
 
-    //¸ÃATÖ¸Áî»á·µ»Ø:
+    //ï¿½ï¿½ATÖ¸ï¿½ï¿½á·µï¿½ï¿½:
     //OK
-    //×¢Òâ£¬ÐèÒªÏÈ¹Ø±Õ»ØÏÔ£¬ÒÔÃâÔì³ÉÂé·³
+    //×¢ï¿½â£¬ï¿½ï¿½Òªï¿½È¹Ø±Õ»ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é·³
     GPRS_PrepareForSend();
     GPRS_WriteBytes(_send,_cmdLen);
     _retValue = GPRS_Proc_AT_Response(_recv, &_retMsgNum, ACTIVE_GPRS, &errorCode);
@@ -939,9 +939,9 @@ int GPRS_AT_CheckSimStat()
     _cmdLen += 7;
 
 
-    //¸ÃATÖ¸Áî»á·µ»Ø:
+    //ï¿½ï¿½ATÖ¸ï¿½ï¿½á·µï¿½ï¿½:
     //OK
-    //×¢Òâ£¬ÐèÒªÏÈ¹Ø±Õ»ØÏÔ£¬ÒÔÃâÔì³ÉÂé·³
+    //×¢ï¿½â£¬ï¿½ï¿½Òªï¿½È¹Ø±Õ»ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é·³
     GPRS_PrepareForSend();
     GPRS_WriteBytes(_send,_cmdLen);
     _retValue = GPRS_Proc_AT_Response(_recv, &_retMsgNum, CHECK_SIM_STATUS, errorCode);
@@ -968,9 +968,9 @@ int GPRS_AT_QueryOperater()
     char _recv[100] = {0};
     _cmdLen += 8;
 
-    //¸ÃATÖ¸Áî»á·µ»Ø:
+    //ï¿½ï¿½ATÖ¸ï¿½ï¿½á·µï¿½ï¿½:
     //OK
-    //×¢Òâ£¬ÐèÒªÏÈ¹Ø±Õ»ØÏÔ£¬ÒÔÃâÔì³ÉÂé·³
+    //×¢ï¿½â£¬ï¿½ï¿½Òªï¿½È¹Ø±Õ»ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é·³
     GPRS_PrepareForSend();
     GPRS_WriteBytes(_send,_cmdLen);
     _retValue = GPRS_Proc_AT_Response(_recv, &_retMsgNum, QUERY_OPERATER, &errorCode);
@@ -1002,15 +1002,15 @@ int GPRS_AT_QueryIP()
     char _recv[100] = {0};
     _cmdLen += 10;
 
-    //¸ÃATÖ¸Áî»á·µ»Ø:
+    //ï¿½ï¿½ATÖ¸ï¿½ï¿½á·µï¿½ï¿½:
     //OK
-    //×¢Òâ£¬ÐèÒªÏÈ¹Ø±Õ»ØÏÔ£¬ÒÔÃâÔì³ÉÂé·³
+    //×¢ï¿½â£¬ï¿½ï¿½Òªï¿½È¹Ø±Õ»ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é·³
     GPRS_PrepareForSend();
     GPRS_WriteBytes(_send,_cmdLen);
     _retValue = GPRS_Proc_AT_Response(_recv, &_retMsgNum, QUERY_IP, &errorCode);
-    // ²éÑ¯Ö¸Áî»áÏÈ·µ»ØÒ»ÐÐ%ETCPIP:1,"10.101.53.141",,"114.114.114.114","211.138.156.146", 
-    //×¢Òâ£¬Ö»·µ»Ø±¾µØIP»¹²»ÐÐ£¬»¹ÒªÓÐÍø¹ØºÍDNS£¬·ñÔòºóÃæ´ò¿ªÁ¬Á´½Ó»á³öÎÊÌâ
-    // ÔÙ·µ»ØÒ»ÐÐ OK
+    // ï¿½ï¿½Ñ¯Ö¸ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½Ò»ï¿½ï¿½%ETCPIP:1,"10.101.53.141",,"114.114.114.114","211.138.156.146", 
+    //×¢ï¿½â£¬Ö»ï¿½ï¿½ï¿½Ø±ï¿½ï¿½ï¿½IPï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Øºï¿½DNSï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    // ï¿½Ù·ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ OK
 
     if(_retValue == TRUE)
     {
@@ -1205,14 +1205,14 @@ int GPRS_AT_OpenTCPLink(int center)
     
     TraceMsg(centerPort,1);
 
-    //¸ÃATÖ¸Áî»á·µ»Ø:
+    //ï¿½ï¿½ATÖ¸ï¿½ï¿½á·µï¿½ï¿½:
     //OK
-    //×¢Òâ£¬ÐèÒªÏÈ¹Ø±Õ»ØÏÔ£¬ÒÔÃâÔì³ÉÂé·³
+    //×¢ï¿½â£¬ï¿½ï¿½Òªï¿½È¹Ø±Õ»ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é·³
 
     GPRS_PrepareForSend();
     GPRS_WriteBytes(_send,_cmdLen);
     _retValue = GPRS_Proc_AT_Response(_recv, &_retMsgNum, OPEN_TCP_LINK, &errorCode);
-    //¿ªÆô³É¹¦»á·µ»Ø"CONNECT"
+    //ï¿½ï¿½ï¿½ï¿½ï¿½É¹ï¿½ï¿½á·µï¿½ï¿½"CONNECT"
 
     if(_retValue == TRUE)
     {
@@ -1230,7 +1230,7 @@ int GPRS_AT_OpenTCPLink(int center)
 }
 
 
-//´Ëº¯ÊýÔÝÊ±Î´ÓÃµ½
+//ï¿½Ëºï¿½ï¿½ï¿½ï¿½ï¿½Ê±Î´ï¿½Ãµï¿½
 int GPRS_AT_QueryTCPLink(int * errorCode)
 {
     int _retMsgNum = 0;//
@@ -1240,17 +1240,17 @@ int GPRS_AT_QueryTCPLink(int * errorCode)
     char _recv[100] = {0};
     _cmdLen += 10;
 
-    //¸ÃATÖ¸Áî»á·µ»Ø:
+    //ï¿½ï¿½ATÖ¸ï¿½ï¿½á·µï¿½ï¿½:
     //OK
-    //×¢Òâ£¬ÐèÒªÏÈ¹Ø±Õ»ØÏÔ£¬ÒÔÃâÔì³ÉÂé·³
+    //×¢ï¿½â£¬ï¿½ï¿½Òªï¿½È¹Ø±Õ»ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é·³
     GPRS_PrepareForSend();
     GPRS_WriteBytes(_send,_cmdLen);
     _retValue = GPRS_Proc_AT_Response(_recv, &_retMsgNum, QUERY_TCP_LINK, errorCode);
-    // ²éÑ¯Ö¸Áî»áÏÈ·µ»ØÒ»ÐÐ%ETCPIP:1,"10.101.53.141",,"114.114.114.114","211.138.156.146", 
-    //×¢Òâ£¬Ö»·µ»Ø±¾µØIP»¹²»ÐÐ£¬»¹ÒªÓÐÍø¹ØºÍDNS£¬·ñÔòºóÃæ´ò¿ªÁ¬Á´½Ó»á³öÎÊÌâ
-    // ÔÙ·µ»ØÒ»ÐÐ OK
+    // ï¿½ï¿½Ñ¯Ö¸ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½Ò»ï¿½ï¿½%ETCPIP:1,"10.101.53.141",,"114.114.114.114","211.138.156.146", 
+    //×¢ï¿½â£¬Ö»ï¿½ï¿½ï¿½Ø±ï¿½ï¿½ï¿½IPï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Øºï¿½DNSï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    // ï¿½Ù·ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ OK
 
-    if(_retValue == FALSE)//0£¬Ö¤Ã÷Ã»ÓÐ¼¤»îGPRSÍøÂç
+    if(_retValue == FALSE)//0ï¿½ï¿½Ö¤ï¿½ï¿½Ã»ï¿½Ð¼ï¿½ï¿½ï¿½GPRSï¿½ï¿½ï¿½ï¿½
     {
         Console_WriteStringln("No Tcp Connection error");
         return NO_TCP_CONNECT;
@@ -1275,10 +1275,10 @@ int GPRS_AT_CloseTCPLink(int * errorCode)
     char _send[50] = " AT%IPCLOSE=1";
     _cmdLen += 12;
 
-    //¸ÃATÖ¸Áî»á·µ»Ø:
+    //ï¿½ï¿½ATÖ¸ï¿½ï¿½á·µï¿½ï¿½:
     //%IPCLOSE:
     //OK
-    //×¢Òâ£¬ÐèÒªÏÈ¹Ø±Õ»ØÏÔ£¬ÒÔÃâÔì³ÉÂé·³
+    //×¢ï¿½â£¬ï¿½ï¿½Òªï¿½È¹Ø±Õ»ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é·³
     GPRS_PrepareForSend();
     GPRS_WriteBytes(_send,_cmdLen);
     _retValue = GPRS_Proc_AT_Response(_recv, &_retMsgNum, CLOSE_TCP_LINK, errorCode);
@@ -1305,14 +1305,14 @@ int GPRS_AT_QuitGPRSNet(int * errorCode)
     char _send[50] = "AT%IPCLOSE=5";
     _cmdLen += 12;
 
-    //¸ÃATÖ¸Áî»á·µ»Ø:
+    //ï¿½ï¿½ATÖ¸ï¿½ï¿½á·µï¿½ï¿½:
     //%IPCLOSE:
     //OK
-    //×¢Òâ£¬ÐèÒªÏÈ¹Ø±Õ»ØÏÔ£¬ÒÔÃâÔì³ÉÂé·³
+    //×¢ï¿½â£¬ï¿½ï¿½Òªï¿½È¹Ø±Õ»ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é·³
     GPRS_PrepareForSend();
     GPRS_WriteBytes(_send,_cmdLen);
     _retValue = GPRS_Proc_AT_Response(_recv, &_retMsgNum, QUIT_GPRS_NET, errorCode);
-    //¿ªÆô³É¹¦»á·µ»Ø"CONNECT"
+    //ï¿½ï¿½ï¿½ï¿½ï¿½É¹ï¿½ï¿½á·µï¿½ï¿½"CONNECT"
 
     if(_retValue == TRUE)
     {
@@ -1328,7 +1328,7 @@ int GPRS_AT_QuitGPRSNet(int * errorCode)
 }
 
 int gprsConfigSuccess = FALSE;
-//Ê¹ÓÃASCiiÂë»¹ÊÇHexÂë·¢ËÍÏûÏ¢£¬0,1,1---ASCii£¬ 1,1,0---Hex
+//Ê¹ï¿½ï¿½ASCiiï¿½ë»¹ï¿½ï¿½Hexï¿½ë·¢ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½0,1,1---ASCiiï¿½ï¿½ 1,1,0---Hex
 int GPRS_AT_SetIOMode()
 {
     int errorCode=0;
@@ -1339,9 +1339,9 @@ int GPRS_AT_SetIOMode()
     char _recv[30] = { 0 };
     _cmdLen += 15;
 
-    //¸ÃATÖ¸Áî»á·µ»Ø:
+    //ï¿½ï¿½ATÖ¸ï¿½ï¿½á·µï¿½ï¿½:
     //OK
-    //×¢Òâ£¬ÐèÒªÏÈ¹Ø±Õ»ØÏÔ£¬ÒÔÃâÔì³ÉÂé·³
+    //×¢ï¿½â£¬ï¿½ï¿½Òªï¿½È¹Ø±Õ»ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é·³
     GPRS_PrepareForSend();
     GPRS_WriteBytes(_send,_cmdLen);
     _retValue = GPRS_Proc_AT_Response(_recv, &_retMsgNum, SETIO_MODE, &errorCode);
@@ -1362,7 +1362,7 @@ int GPRS_AT_SetIOMode()
 int GRPS_AT_Send()
 {
 #if 0
-    if(_GTM900SendBufLeft == 0 )//Èç¹û·¢ËÍ»º´æ=0£¬Ôò²»·¢ËÍ¡£
+    if(_GTM900SendBufLeft == 0 )//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í»ï¿½ï¿½ï¿½=0ï¿½ï¿½ï¿½ò²»·ï¿½ï¿½Í¡ï¿½
     {
         return MSG_SEND_FAILED;
     }
@@ -1389,14 +1389,14 @@ int GRPS_AT_Send()
     _send[_cmdLen] = '\"';
     _cmdLen += 1;
 
-    //¸ÃATÖ¸Áî»á·µ»Ø:
+    //ï¿½ï¿½ATÖ¸ï¿½ï¿½á·µï¿½ï¿½:
     //OK
-    //×¢Òâ£¬ÐèÒªÏÈ¹Ø±Õ»ØÏÔ£¬ÒÔÃâÔì³ÉºóÐøÊý¾Ý½ÓÊÕ¸ÉÈÅ
+    //×¢ï¿½â£¬ï¿½ï¿½Òªï¿½È¹Ø±Õ»ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Éºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý½ï¿½ï¿½Õ¸ï¿½ï¿½ï¿½
     GPRS_PrepareForSend();
     GPRS_WriteBytes(_send,_cmdLen);
     _retValue = GPRS_Proc_AT_Response(_recv, &_retMsgNum, SEND_DATA, &errorCode);
-    // ·¢ËÍÖ¸Áî»áÏÈ·µ»ØÒ»ÐÐ %IPSEND:1,15
-    // ÔÙ·µ»ØÒ»ÐÐ OK
+    // ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ %IPSEND:1,15
+    // ï¿½Ù·ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ OK
     free(_send);
     _send = NULL;
 
@@ -1423,14 +1423,14 @@ int GRPS_AT_QueryRemainData()
     char _recv[200] = {0};
     
     _cmdLen += 7;
-    //¸ÃATÖ¸Áî»á·µ»Ø:
+    //ï¿½ï¿½ATÖ¸ï¿½ï¿½á·µï¿½ï¿½:
     //OK
-    //×¢Òâ£¬ÐèÒªÏÈ¹Ø±Õ»ØÏÔ£¬ÒÔÃâÔì³ÉºóÐøÊý¾Ý½ÓÊÕ¸ÉÈÅ
+    //×¢ï¿½â£¬ï¿½ï¿½Òªï¿½È¹Ø±Õ»ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Éºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý½ï¿½ï¿½Õ¸ï¿½ï¿½ï¿½
     GPRS_PrepareForSend();
     GPRS_WriteBytes(_send,_cmdLen);
     _retValue = GPRS_Proc_AT_Response(_recv, &_retMsgNum, QUERY_REMAIN_DATA, &errorCode);
-    // ·¢ËÍÖ¸Áî»áÏÈ·µ»ØÒ»ÐÐ %IPDQ:
-    // ÔÙ·µ»ØÒ»ÐÐ OK
+    // ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ %IPDQ:
+    // ï¿½Ù·ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ OK
 
     if(_retValue == TRUE)
     {
@@ -1454,14 +1454,14 @@ int GRPS_AT_Receive()
     char _recv[200] = {0};
     
     _cmdLen += 7;
-    //¸ÃATÖ¸Áî»á·µ»Ø:
+    //ï¿½ï¿½ATÖ¸ï¿½ï¿½á·µï¿½ï¿½:
     //OK
-    //×¢Òâ£¬ÐèÒªÏÈ¹Ø±Õ»ØÏÔ£¬ÒÔÃâÔì³ÉºóÐøÊý¾Ý½ÓÊÕ¸ÉÈÅ
+    //×¢ï¿½â£¬ï¿½ï¿½Òªï¿½È¹Ø±Õ»ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Éºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý½ï¿½ï¿½Õ¸ï¿½ï¿½ï¿½
     GPRS_PrepareForSend();
     GPRS_WriteBytes(_send,_cmdLen);
     _retValue = GPRS_Proc_AT_Response(_recv, &_retMsgNum, RECEIVE_DATA, &errorCode);
-    // ·¢ËÍÖ¸Áî»áÏÈ·µ»ØÒ»ÐÐ %IPDR:1,1,87,"7E7E"
-    // ÔÙ·µ»ØÒ»ÐÐ OK
+    // ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ %IPDR:1,1,87,"7E7E"
+    // ï¿½Ù·ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ OK
 
     if(_retValue == TRUE)
     {
@@ -1481,9 +1481,9 @@ int GPRS_OFF_CALL()
     int _retNum;
     char _ath[]="ATH";
     char _recv[50];
-    //¸ÃÖ¸ÁîÈç¹û¹Ò¶ÏÁËµç»°,·µ»ØOK,ÎÞµç»°×´Ì¬Ê±,Ò²·µ»ØOK,OKÖ»±íÊ¾Ä£¿éÊÕµ½ÁËÖ¸Áî
+    //ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò¶ï¿½ï¿½Ëµç»°,ï¿½ï¿½ï¿½ï¿½OK,ï¿½Þµç»°×´Ì¬Ê±,Ò²ï¿½ï¿½ï¿½ï¿½OK,OKÖ»ï¿½ï¿½Ê¾Ä£ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½Ö¸ï¿½ï¿½
     //OK  
-    UART0_Send(_ath,3,1);//Á½¸öringÖ®¼äÊ±¼ä²î´óÓÚringºÍOK³öÏÖÊ±¼ä²î£¬Òò´Ë£¬OK¿Ï¶¨»áÏÈ³öÀ´?    if(UART0_RecvLineWait(_recv,50,&_retNum)==-1)
+    UART0_Send(_ath,3,1);//ï¿½ï¿½ï¿½ï¿½ringÖ®ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ringï¿½ï¿½OKï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½î£¬ï¿½ï¿½Ë£ï¿½OKï¿½Ï¶ï¿½ï¿½ï¿½ï¿½È³ï¿½ï¿½ï¿½?    if(UART0_RecvLineWait(_recv,50,&_retNum)==-1)
     if(UART0_RecvLineWait(_recv,50,&_retNum)==-1)
     {
         return 0;
@@ -1504,9 +1504,9 @@ int GPRS_AT_OFF_CALL()
     int _retNum = 0;
     char _ath[]="ATH";
     char _recv[50];
-    //¸ÃÖ¸ÁîÈç¹û¹Ò¶ÏÁËµç»°,·µ»ØOK,ÎÞµç»°×´Ì¬Ê±,Ò²·µ»ØOK,OKÖ»±íÊ¾Ä£¿éÊÕµ½ÁËÖ¸Áî
+    //ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò¶ï¿½ï¿½Ëµç»°,ï¿½ï¿½ï¿½ï¿½OK,ï¿½Þµç»°×´Ì¬Ê±,Ò²ï¿½ï¿½ï¿½ï¿½OK,OKÖ»ï¿½ï¿½Ê¾Ä£ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½Ö¸ï¿½ï¿½
     //OK  
-    UART0_Send(_ath,3,1);//Á½¸öringÖ®¼äÊ±¼ä²î´óÓÚringºÍOK³öÏÖÊ±¼ä²î£¬Òò´Ë£¬OK¿Ï¶¨»áÏÈ³öÀ´?    
+    UART0_Send(_ath,3,1);//ï¿½ï¿½ï¿½ï¿½ringÖ®ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ringï¿½ï¿½OKï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½î£¬ï¿½ï¿½Ë£ï¿½OKï¿½Ï¶ï¿½ï¿½ï¿½ï¿½È³ï¿½ï¿½ï¿½?    
     if(UART0_RecvLineWait(_recv,50,&_retNum)==-1)
     {
         return 0;
@@ -1534,12 +1534,12 @@ void GPRS_PrepareForSend()
 
     if(UART0_RecvLineTry(_recvBeforeSend,UART0_MAXBUFFLEN,&_retLenghtBeforeSend)==0)
     {
-        if(Utility_Strncmp(_recvBeforeSend,"RING",4)==0)//Èç¹ûÊÇµç»°À´ÁË£¬Á¢¿Ì¹Ø±Õµç»°£¬ÆäËüÏìÓ¦Ò»¸Å²»´¦Àí
+        if(Utility_Strncmp(_recvBeforeSend,"RING",4)==0)//ï¿½ï¿½ï¿½ï¿½Çµç»°ï¿½ï¿½ï¿½Ë£ï¿½ï¿½ï¿½ï¿½Ì¹Ø±Õµç»°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦Ò»ï¿½Å²ï¿½ï¿½ï¿½ï¿½ï¿½
         {
             GPRS_AT_OFF_CALL();
         }
     }
-    GPRS_ClearRecvBuf();//Çå¿Õ»º´æ
+    GPRS_ClearRecvBuf();//ï¿½ï¿½Õ»ï¿½ï¿½ï¿½
 }
 
 int GPRS_Create_TCP_Link(int center)
@@ -1650,13 +1650,13 @@ void GPRS_Close_GSM()
 {
     gprsConfigSuccess = FALSE;
     GSM_Close(1);
-    System_Delayms(1000);//¹Ø»úÑÓÊ±1s
+    System_Delayms(1000);//ï¿½Ø»ï¿½ï¿½ï¿½Ê±1s
 }
 
 int GPRS_Send(char* pSend, int sendDataLen, int isLastPacket, int center)
 {
     int _retvalue;
-    //Ê×ÏÈ²é¿´TCPÁ¬½Ó½¨Á¢Ã»ÓÐ£¬Ã»ÓÐ½¨Á¢£¬ÐèÒªÖØÐÂ½¨Á¢Á¬½Ó?
+    //ï¿½ï¿½ï¿½È²é¿´TCPï¿½ï¿½ï¿½Ó½ï¿½ï¿½ï¿½Ã»ï¿½Ð£ï¿½Ã»ï¿½Ð½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Â½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?
     if(gprsConfigSuccess == FALSE)
     {
         GPRS_Close_GSM();
@@ -1668,7 +1668,7 @@ int GPRS_Send(char* pSend, int sendDataLen, int isLastPacket, int center)
         Console_WriteStringln("Error, Packet exceed 1024, Please Decrease Sending Packet Size!");
     }
 
-    psrc = (char *)malloc(sendDataLen*2+1);//+1ÊÇÒòÎª×ª»»º¯Êýhex_2_ascii×îºóÓÐ¸ö\0,·ñÔò×îºó»á³öÔ½½ç´íÎó
+    psrc = (char *)malloc(sendDataLen*2+1);//+1ï¿½ï¿½ï¿½ï¿½Îª×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½hex_2_asciiï¿½ï¿½ï¿½ï¿½Ð¸ï¿½\0,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô½ï¿½ï¿½ï¿½ï¿½ï¿½
     if(psrc == NULL)
     {
         Console_WriteStringln("Malloc in GPRS_Send Failed");
@@ -1706,7 +1706,7 @@ int GPRS_QueryRemainData()
 
 char* GPRS_Receive()
 {
-    char* hexdata;
+    char* hexdata = NULL;
     
     if(GRPS_AT_Receive() == MSG_RECEIVE_SUCCESS)
     {
