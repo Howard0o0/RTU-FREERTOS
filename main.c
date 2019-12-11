@@ -80,10 +80,10 @@ void main(void) {
 
     printf("hydrology init done \r\n");
 
-    xTaskCreate(task_hydrology_init, "task_hydrology_init",
-                (configMINIMAL_STACK_SIZE * 8 - 530 / 2) * 1.5, NULL,
-                configMAX_PRIORITIES - 2, NULL);
-    xTaskCreate(task_hydrology_run, "LCD", configMINIMAL_STACK_SIZE * 80, NULL,
+    // xTaskCreate(task_hydrology_init, "task_hydrology_init",
+    //             (configMINIMAL_STACK_SIZE * 8 - 530 / 2) * 1.5, NULL,
+    //             configMAX_PRIORITIES - 2, NULL);
+    xTaskCreate(task_hydrology_run, "LCD", configMINIMAL_STACK_SIZE * 25, NULL,
                 configMAX_PRIORITIES - 2, NULL);
     // xTaskCreate(task_hydrology_sample, "LCD2", configMINIMAL_STACK_SIZE * 10,
     //             NULL, configMAX_PRIORITIES - 2, NULL);

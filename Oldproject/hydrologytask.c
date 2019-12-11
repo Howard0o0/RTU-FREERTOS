@@ -10,7 +10,7 @@
 #include "rtc.h"
 #include "stdint.h"
 #include "store.h"
-
+#include <stdio.h>
 
 //#include "convertsampledata.h"
 //#include "hydrology.h"
@@ -65,7 +65,7 @@ float ConvertAnalog(int v, int range) {
 }
 
 void ADC_Element(char *value, int index) {
-    // int range[5] = {1,20,100,5000,4000};     //???????¦¶
+    // int range[5] = {1,20,100,5000,4000};     //?????????
     int range[16]    = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
     float floatvalue = 0;
 
@@ -106,7 +106,7 @@ void HydrologyUpdateElementTable() {
         // Hydrology_ReadStoreInfo(HYDROLOGY_SWITCH1,temp_value,HYDROLOGY_SWITCH_LEN);
         getElementDd(
             Element_table[i].ID, &Element_table[i].D,
-            &Element_table[i].d);   // D,d??????????????????????????????????§Ù?
+            &Element_table[i].d);   // D,d?????????????????????????????????????
     }
     Element_table[i].ID      = NULL;
     Element_table[i].type    = NULL;
@@ -273,7 +273,7 @@ int HydrologySaveData(char *_saveTime, char funcode)   // char *_saveTime
     int cnt           = 0;
     int _effect_count = 0;
     Hydrology_ReadDataPacketCount(
-        &_effect_count);   //????????????¦Ä?????????????
+        &_effect_count);   //???????????????????????????
 
     type = hydrologyJudgeType(funcode);
     char storeinterval;
@@ -351,7 +351,7 @@ int HydrologySaveData(char *_saveTime, char funcode)   // char *_saveTime
     char _data[40] = {0};   //???????40?????
     char observationtime[5];
     int len  = 0;
-    _data[0] = 0x00;   // ¦Ä?????? ???0x00
+    _data[0] = 0x00;   // ???????? ???0x00
     Hydrology_ReadObservationTime(Element_table[0].ID, observationtime,
                                   0);   // or save_time
     memcpy(&_data[1], observationtime, HYDROLOGY_OBSERVATION_TIME_LEN);
@@ -373,18 +373,17 @@ int HydrologySaveData(char *_saveTime, char funcode)   // char *_saveTime
     TraceMsg("Save Data Success", 1);
     return 0;
 }
-int HydrologyInstantWaterLevel(char *_saveTime)   //??ú€??????§Ø????¡À??÷l?????
+int HydrologyInstantWaterLevel(char *_saveTime)   //?????????????????????l?????
 {
 
     static char endtime[6] = {0, 0, 0, 0, 0, 0};
     Utility_Strncpy(endtime, _saveTime, 6);
     int ret = 0;
-    ret     = Utility_Is_A_ReportTime(endtime);   //?????§Ø??????????
+    ret     = Utility_Is_A_ReportTime(endtime);   //?????????????????
 
     if (!ret) {
-        TraceMsg(" Not Send Time!", 1);
-        TraceMsg(" Time is:   ", 1);
-        TraceHexMsg(endtime, 5);
+        printf("Not Send Time, now time is: %d/%d/%d  %d:%d:%d", endtime[0],
+               endtime[1], endtime[2], endtime[3], endtime[4], endtime[5]);
         return -1;
     }
     /*
@@ -397,10 +396,11 @@ int HydrologyInstantWaterLevel(char *_saveTime)   //??ú€??????§Ø????¡À??÷l?????
          return -1;
      }
 */
-    int _effect_count = 0;   //?›¥??flash????§¹¦Ä??????????
-    Hydrology_ReadDataPacketCount(&_effect_count);   //???????????¦Ä?????????????
+    int _effect_count = 0;   //?????flash??????????????????
+    Hydrology_ReadDataPacketCount(
+        &_effect_count);   //??????????????????????????
     TraceInt4(_effect_count, 1);
-    //???????›¥?????¡À?
+    //?????????????????
     int _startIdx = 0;
     int _endIdx   = 0;
 
@@ -447,14 +447,14 @@ int HydrologyInstantWaterLevel(char *_saveTime)   //??ú€??????§Ø????¡À??÷l?????
             TraceInt4(_endIdx, 1);
             // hydrologyExitSend();
 
-        } else   //¦Ä?????????
+        } else   //???????????
         {
             sendlen = _ret;
             hydrologyProcessSend(_send, TimerReport);
             Store_MarkDataItemSended(_startIdx);   //??????????????
             --_effect_count;
             Hydrology_SetDataPacketCount(
-                _effect_count);   //??????????????§¹????cnt
+                _effect_count);   //????????????????????cnt
             if (_startIdx >= HYDROLOGY_DATA_MAX_IDX) {
                 _startIdx = HYDROLOGY_DATA_MIN_IDX;
             } else {
@@ -511,7 +511,7 @@ int HydrologyVoltage() {
     return 0;
 }
 
-/*?????§Ø???????????????????????????????*/
+/*??????????????????????????????????????*/
 int Hydrology_TimeCheck() {
     RTC_ReadTimeBytes5(g_rtc_nowTime);   //??rtc???????g_rtc_nowtime
 
@@ -526,7 +526,7 @@ int Hydrology_TimeCheck() {
         //????????,???
         RTC_ReadTimeBytes5(g_rtc_nowTime);
     }
-    if (_time_error > 0) {   //??§????? ,?????????????????
+    if (_time_error > 0) {   //????????? ,?????????????????
         TraceMsg("Device time is bad !", 1);
         TraceMsg("Waiting for config !", 1);
         char newtime[6] = {0};
@@ -548,21 +548,6 @@ int Hydrology_TimeCheck() {
 }
 int HydrologyTask() {
     char rtc_nowTime[6];
-    // TimerB_Clear();
-    // WatchDog_Clear();
-    // Hydrology_ProcessUARTReceieve();
-
-    // Hydrology_TimeCheck();
-
-    // if (!IsDebug) {
-    //     if (time_1min)
-    //         time_1min = 0;
-    //     else
-    //         return -1;
-    // }
-	while (RTC_IsBadTime(g_rtc_nowTime, 1) != 0) {
-		vTaskDelay(100 / portTICK_PERIOD_MS);
-	}
 
     RTC_ReadTimeBytes5(g_rtc_nowTime);
     RTC_ReadTimeBytes6(rtc_nowTime);
@@ -576,6 +561,22 @@ int HydrologyTask() {
 
 void task_hydrology_run(void *pvParameters) {
     while (1) {
+        TimerB_Clear();
+        WatchDog_Clear();
+        Hydrology_ProcessUARTReceieve();
+        Hydrology_TimeCheck();
+
+        if (RTC_IsBadTime(g_rtc_nowTime, 1) != 0) {
+            vTaskDelay(100 / portTICK_PERIOD_MS);
+            continue;
+        }
+
+        if (!IsDebug) {
+            if (time_1min)
+                time_1min = 0;
+            else
+                continue;
+        }
 
         HydrologyTask();
         vTaskDelay(100 / portTICK_PERIOD_MS);
@@ -588,16 +589,10 @@ void task_hydrology_init(void *pvParameters) {
 
     while (1) {
 
-        printf("time check ! \r\n");
-        TimerB_Clear();
-        WatchDog_Clear();
-        Hydrology_ProcessUARTReceieve();
+        // printf("time check ! \r\n");
 
-        Hydrology_TimeCheck();
-
-        printf("stack remained : %d \r\n",
-               (int)uxTaskGetStackHighWaterMark(NULL));
-        vTaskDelay(100 / portTICK_PERIOD_MS);
+        // printf("stack remained : %d \r\n",
+        //        (int)uxTaskGetStackHighWaterMark(NULL));
 
         // RTC_ReadTimeBytes5(g_rtc_nowTime);
         // RTC_ReadTimeBytes6(rtc_nowTime);
