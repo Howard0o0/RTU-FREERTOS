@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/Source/include",
+                "./**",
+                "C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.0/430/inc",
+                "./MSP-EXP430F5438_HAL",
+                "${workspaceFolder}/Driverlib/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "intelliSenseMode": "msvc-x64"
+            
+        }
+    ],
+    "version": 4
+}
