@@ -137,48 +137,48 @@ be an efficient interrupt implementation.  A real application should make use
 of the DMA.  Or, as a minimum, transmission and reception could use a simple
 RAM ring buffer, and synchronise with a task using a semaphore when a complete
 message has been received or transmitted. */
-#pragma vector=USCI_A1_VECTOR
-static __interrupt void prvUSCI_A1_ISR( void )
-{
-signed char cChar;
-portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+// #pragma vector=USCI_A1_VECTOR
+// static __interrupt void prvUSCI_A1_ISR( void )
+// {
+// signed char cChar;
+// portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 
-	while( ( UCA1IFG & UCRXIFG ) != 0 )
-	{
-		/* Get the character from the UART and post it on the queue of Rxed
-		characters. */
-		cChar = UCA1RXBUF;
-		xQueueSendFromISR( xRxedChars, &cChar, &xHigherPriorityTaskWoken );
-	}
+// 	while( ( UCA1IFG & UCRXIFG ) != 0 )
+// 	{
+// 		/* Get the character from the UART and post it on the queue of Rxed
+// 		characters. */
+// 		cChar = UCA1RXBUF;
+// 		xQueueSendFromISR( xRxedChars, &cChar, &xHigherPriorityTaskWoken );
+// 	}
 	
-	/* If there is a Tx interrupt pending and the tx interrupts are enabled. */
-	if( ( UCA1IFG & UCTXIFG ) != 0 )
-	{
-		/* The previous character has been transmitted.  See if there are any
-		further characters waiting transmission. */
-		if( xQueueReceiveFromISR( xCharsForTx, &cChar, &xHigherPriorityTaskWoken ) == pdTRUE )
-		{
-			/* There was another character queued - transmit it now. */
-			UCA1TXBUF = cChar;
-		}
-		else
-		{
-			/* There were no other characters to transmit - disable the Tx
-			interrupt. */
-			UCA1IE &= ~UCTXIE;
-		}
-	}
+// 	/* If there is a Tx interrupt pending and the tx interrupts are enabled. */
+// 	if( ( UCA1IFG & UCTXIFG ) != 0 )
+// 	{
+// 		/* The previous character has been transmitted.  See if there are any
+// 		further characters waiting transmission. */
+// 		if( xQueueReceiveFromISR( xCharsForTx, &cChar, &xHigherPriorityTaskWoken ) == pdTRUE )
+// 		{
+// 			/* There was another character queued - transmit it now. */
+// 			UCA1TXBUF = cChar;
+// 		}
+// 		else
+// 		{
+// 			/* There were no other characters to transmit - disable the Tx
+// 			interrupt. */
+// 			UCA1IE &= ~UCTXIE;
+// 		}
+// 	}
 
-	__bic_SR_register_on_exit( SCG1 + SCG0 + OSCOFF + CPUOFF );
+// 	__bic_SR_register_on_exit( SCG1 + SCG0 + OSCOFF + CPUOFF );
 	
-	/* If writing to a queue caused a task to unblock, and the unblocked task
-	has a priority equal to or above the task that this interrupt interrupted,
-	then lHigherPriorityTaskWoken will have been set to pdTRUE internally within
-	xQueuesendFromISR(), and portEND_SWITCHING_ISR() will ensure that this
-	interrupt returns directly to the higher priority unblocked task.
+// 	/* If writing to a queue caused a task to unblock, and the unblocked task
+// 	has a priority equal to or above the task that this interrupt interrupted,
+// 	then lHigherPriorityTaskWoken will have been set to pdTRUE internally within
+// 	xQueuesendFromISR(), and portEND_SWITCHING_ISR() will ensure that this
+// 	interrupt returns directly to the higher priority unblocked task.
 	
-	THIS MUST BE THE LAST THING DONE IN THE ISR. */	
-	portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
-}
+// 	THIS MUST BE THE LAST THING DONE IN THE ISR. */	
+// 	portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
+// }
 
 
