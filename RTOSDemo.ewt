@@ -4315,6 +4315,15 @@
     </configuration>
     <group>
         <name>Apps</name>
+        <group>
+            <name>include</name>
+            <file>
+                <name>$PROJ_DIR$\Apps\include\BLE_Task.h</name>
+            </file>
+        </group>
+        <file>
+            <name>$PROJ_DIR$\Apps\BLE_Task.c</name>
+        </file>
     </group>
     <group>
         <name>Common</name>

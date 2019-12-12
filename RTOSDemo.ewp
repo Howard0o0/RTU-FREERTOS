@@ -412,7 +412,7 @@
                     <state>$PROJ_DIR$\Source\include</state>
                     <state>$PROJ_DIR$\Source\portable\IAR\MSP430X</state>
                     <state>$PROJ_DIR$</state>
-                    <state>$PROJ_DIR$\Apps</state>
+                    <state>$PROJ_DIR$\Apps\include</state>
                     <state>$PROJ_DIR$\Drivers</state>
                     <state>$PROJ_DIR$\Driverlib</state>
                     <state>$PROJ_DIR$\Oldproject</state>
@@ -4623,6 +4623,15 @@
     </configuration>
     <group>
         <name>Apps</name>
+        <group>
+            <name>include</name>
+            <file>
+                <name>$PROJ_DIR$\Apps\include\BLE_Task.h</name>
+            </file>
+        </group>
+        <file>
+            <name>$PROJ_DIR$\Apps\BLE_Task.c</name>
+        </file>
     </group>
     <group>
         <name>Common</name>

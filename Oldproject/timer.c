@@ -77,8 +77,8 @@ void TimerB_Init(unsigned int ccr0)
     TB0CCTL1=CCIE;
     TB0CCTL2=CCIE;
     /*2418 P41  5438 P96 systemdebug*/
-    P9DIR |= BIT6;
-    P9OUT |= BIT6;
+    P11DIR |= BIT1;
+    P11OUT |= BIT1;     //P9.6=>P11.1
 }
 
 void TimerB_Clear()

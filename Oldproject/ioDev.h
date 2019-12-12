@@ -11,13 +11,18 @@
 typedef struct IODev
 {
     char *name;
-    int isCanUseFlag;   
-    int (*isCanUse)(void);  //1 canUse, 0 can't use
+    
     int (*init)(void);  // 0 success
     int (*open)(void);  // 0 success
-    void (*getMsg)(char *msgRecv,int *len);
-    int (*sendMsg)(char *msgSend,int len);  // 0 success
+    void (*write)(char *msgRecv,int *len);
+    int (*read)(char *msgSend,int len);  // 0 success
     int (*close)(void); // 0 success
+
+    int (*isConnect)(void);  //1 canUse, 0 can't use
+    void (*restart)(void);
+    int (*isinit)(void);
+    int (*isspp)(void);
+    void (*adv)(void);
 }T_IODev,*PT_IODev;
 
 

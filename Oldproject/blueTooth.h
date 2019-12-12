@@ -1,9 +1,7 @@
-/******************************************/
-//     ÎÄ¼þÃû: bootloader.h
-//      Ê±¼ä£º2018.2.1
-//      ×÷Õß£ºÕÅºâ
-//      °æ±¾£º1.0
-/******************************************/
+
+#ifndef	_BLE_
+#define _BLE_
+
 #pragma once
 
 #define BLESTARTSTRING "AT:SBM14580-Start\r\n"
@@ -14,6 +12,7 @@
 
 #define BLEBUFOF  "AT:BUF-OF\r\n"
 #define BLEBUFON  "AT:BUF-ON\r\n"
+
 
 typedef enum tagBLEResult
 {
@@ -50,34 +49,31 @@ typedef enum tagBLE_STATE
 	BLE_DISABLED
 } BLE_STATE;
 
-///////////½Ó¿Ú
-/*  BLERet:BLE_SUCCESS   BLE_ERROR */
+///////////ï¿½â²¿ï¿½Ó¿ï¿½
+/*  BLERet:BLE_SUCCESS 0  BLE_ERROR 1 */
 void BleDriverInstall();
-BLERet BLE_ADVSTART();                  //¿ªÆô¹ã²¥  
-BLERet BLE_ADVSTOP();                   //½áÊø¹ã²¥                                          
-BLERet BLE_CONNECT();             //ÅÐ¶ÏÀ¶ÑÀÊÇ·ñÁ¬½Ó
-int BLE_MAIN();                 //³õÊ¼»¯À¶ÑÀ-¡·¹ã²¥-¡·µÈ´ýÁ¬½Ó-¡· if 0 connectd , -1 not connected
-BLERet BLE_SLEEP();                     //À¶ÑÀÐÝÃß  ¿ÉÖ±½ÓÓÃBLE_MAIN³õÊ¼»¯                         
-BLERet BLE_RST();                       //ÖØÆôÀ¶ÑÀ
-BLERet BLE_BLESPP();                    //Í¸´«
-BLERet BLE_BLESPPEND();                   //½áÊøÍ¸´«
+BLERet BLE_ADVSTART();                  //ï¿½ï¿½ï¿½ï¿½ï¿½ã²¥  
+BLERet BLE_ADVSTOP();                   //ï¿½Ø±Õ¹ã²¥                                          
+BLERet BLE_CONNECT();             //ï¿½Ð¶ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½
+int BLE_MAIN();                 //ï¿½ï¿½ï¿½ï¿½-ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ if 0 connectd , -1 not connected
+BLERet BLE_SLEEP();                     //ï¿½ï¿½ï¿½ï¿½                         
+BLERet BLE_RST();                       //ï¿½ï¿½ï¿½ï¿½
+BLERet BLE_BLESPP();                    //ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½
+BLERet BLE_BLESPPEND();                   //ï¿½Ø±ï¿½Í¸ï¿½ï¿½
 
-void SPPRX(char * result,int len);           //ÊÖ»úÊÕ
-void SPPTX(char * result,int * len);           //ÊÖ»ú·¢
+void SPPRX(char * result,int len);           //ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½
+void SPPTX(char * result,int * len);           //ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½	Ä©Î²ï¿½ï¿½0D0A ï¿½Ø³ï¿½
+int IsInit();
 
+////////////ï¿½Ú²ï¿½
 
-////////////µ×²ã
-
-void BLE_buffer_Clear();                                         //ÇåBUFF                
-void SPPRX_test();           //ÊÖ»úÊÕ
-void SPPTX_test();           //ÊÖ»ú·¢
-
+void BLE_buffer_Clear();                                         //ï¿½ï¿½BUFF                
 
 void BLE_SendMsg(char *atCmd,int cmdLen);
 BLERet BLE_BLESP();
 BLERet ATTEST();
-void BLE_RecAt(char *result);      //RTU½ÓÊÜÀ¶ÑÀ                                    
-void BLE_SendAtCmd(char *atCmd,int cmdLen);                        //RTU·¢ËÍ¸øÀ¶ÑÀ
+void BLE_RecAt(char *result,int *num);      					//RTUï¿½ï¿½ï¿½ï¿½                                    
+void BLE_SendAtCmd(char *atCmd,int cmdLen);                  //RTUï¿½ï¿½ï¿½ï¿½
 BLERet BLE_SetName ( void );                                    //                              
 BLERet BLE_SERVER();
 BLERet BLE_GATTSSRVCRE();
@@ -85,7 +81,6 @@ BLERet BLE_GATTSSRVSTART();
 BLERet BLE_BLESPPCFG();                                  //                              
 BLERet BLE_INIT();
 BLERet BLE_ATE();
-
 BLERet BLE_Open();
 void BLE_Close();
 int BLE_RecvLineTry ( char* _dest,const int _max, int* _pNum );
@@ -93,3 +88,4 @@ int BLE_RecvLineTry ( char* _dest,const int _max, int* _pNum );
 
 
 
+#endif
