@@ -59,21 +59,11 @@ void main(void) {
     configuring the joystick input select button to generate interrupts. */
     prvSetupHardware();
 
-    // printf("at start xPortGetFreeHeapSize : %d \r\n",xPortGetFreeHeapSize());
-
-    // char *cc = NULL;
-    // cc  = (char *)pvPortMalloc(400);
-    // if (cc == NULL) {
-    //     printf("cc malloc failed \r\n");
-    // } else {
-    //     printf("cc malloc success \r\n");
-    //     vPortFree(cc);
-    //     cc = NULL;
-    // }
-
-    // printf("at second xPortGetFreeHeapSize : %d
-    // \r\n",xPortGetFreeHeapSize());
-
+#if 1
+    Hydrology_SetStartIdx(1);  //������ͺʹ洢���λ
+    Hydrology_SetEndIdx(1);
+     Hydrology_SetDataPacketCount(0);
+#endif
     Hydrology_InitWaitConfig();
     HydrologyUpdateElementTable();
     HydrologyDataPacketInit();

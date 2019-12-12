@@ -382,7 +382,7 @@ int HydrologyInstantWaterLevel(char *_saveTime)   //?????????????????????l?????
     ret     = Utility_Is_A_ReportTime(endtime);   //?????????????????
 
     if (!ret) {
-        printf("Not Send Time, now time is: %d/%d/%d  %d:%d:%d", endtime[0],
+        printf("Not Send Time, now time is: %d/%d/%d  %d:%d:%d \r\n", endtime[0],
                endtime[1], endtime[2], endtime[3], endtime[4], endtime[5]);
         return -1;
     }
