@@ -221,8 +221,8 @@ int  UART3_Send(char * _data ,int _len, int _CR)
         
     }
 
-
-    PT_IODev  ptDevBle =  getIODev();
+    /*******BLE*********/
+    pBLE_Dev  ptDevBle =  getIODev();
     if( ptDevBle->isinit() ){
         if( ptDevBle->isspp() ){
             ptDevBle->read(_data,_len);
@@ -233,7 +233,7 @@ int  UART3_Send(char * _data ,int _len, int _CR)
             }
         }
     }
-    
+    /*******BLE*********/
     return 0;
 }
 

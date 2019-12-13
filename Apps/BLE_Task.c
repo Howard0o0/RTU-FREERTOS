@@ -7,7 +7,7 @@ SemaphoreHandle_t xSemaphore_BLE;
 void BLE_RE()
 {
     xSemaphore_BLE = xSemaphoreCreateMutex();
-    PT_IODev  ptDevBle =  getIODev();
+    pBLE_Dev  ptDevBle =  getIODev();
     while(1){
         xSemaphoreTake(xSemaphore_BLE,portMAX_DELAY);
         if( s_uart1_type==UART1_BT_TYPE ){

@@ -681,7 +681,7 @@ int ble_isinit();
 int ble_sppflag();
 void ble_rst();
 void ble_adv();
-T_IODev T_CommuteDevBLE = 
+pBLE_Dev T_CommuteDevBLE = 
 {
     .name = "BLE",
     .isConnect = ble_isConnect,

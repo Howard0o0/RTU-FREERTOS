@@ -43,6 +43,8 @@
 #include "uart_config.h"
 #include "wifi_config.h"
 #include <string.h>
+
+/* APP */
 #include "BLE_Task.h"
 
 
@@ -69,6 +71,7 @@ void main(void) {
 	xTaskCreate( BLE_RE, "BLE", configMINIMAL_STACK_SIZE * 2, NULL, tskIDLE_PRIORITY + 1, NULL );
 	xSemaphoreGive(xSemaphore_BLE);
 	/*****BLE*************/
+
 
     // Hydrology_InitWaitConfig();
     // HydrologyUpdateElementTable();

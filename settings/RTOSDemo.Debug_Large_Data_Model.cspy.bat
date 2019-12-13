@@ -25,7 +25,7 @@ if not "%~1" == "" goto debugFile
 
 @echo on 
 
-"D:\iar\common\bin\cspybat" -f "C:\Users\waz\Desktop\新建文件夹\RTU-FREERTOS\settings\RTOSDemo.Debug_Large_Data_Model.general.xcl" --backend -f "C:\Users\waz\Desktop\新建文件夹\RTU-FREERTOS\settings\RTOSDemo.Debug_Large_Data_Model.driver.xcl" 
+"D:\iar\common\bin\cspybat" -f "C:\Users\waz\Desktop\freertos_rtu\RTU-FREERTOS\settings\RTOSDemo.Debug_Large_Data_Model.general.xcl" --backend -f "C:\Users\waz\Desktop\freertos_rtu\RTU-FREERTOS\settings\RTOSDemo.Debug_Large_Data_Model.driver.xcl" 
 
 @echo off 
 goto end 
@@ -34,7 +34,7 @@ goto end
 
 @echo on 
 
-"D:\iar\common\bin\cspybat" -f "C:\Users\waz\Desktop\新建文件夹\RTU-FREERTOS\settings\RTOSDemo.Debug_Large_Data_Model.general.xcl" "--debug_file=%~1" --backend -f "C:\Users\waz\Desktop\新建文件夹\RTU-FREERTOS\settings\RTOSDemo.Debug_Large_Data_Model.driver.xcl" 
+"D:\iar\common\bin\cspybat" -f "C:\Users\waz\Desktop\freertos_rtu\RTU-FREERTOS\settings\RTOSDemo.Debug_Large_Data_Model.general.xcl" "--debug_file=%~1" --backend -f "C:\Users\waz\Desktop\freertos_rtu\RTU-FREERTOS\settings\RTOSDemo.Debug_Large_Data_Model.driver.xcl" 
 
 @echo off 
 :end

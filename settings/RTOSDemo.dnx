@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <settings>
     <DebugChecksum>
-        <Checksum>2017869270</Checksum>
+        <Checksum>309484702</Checksum>
     </DebugChecksum>
     <DisAssemblyWindow>
         <NumStates>_ 1</NumStates>
@@ -159,7 +159,10 @@
         <File_name />
     </Memory_Dump>
     <Aliases>
-        <Count>0</Count>
-        <SuppressDialog>0</SuppressDialog>
+        <A0>_ "C:\Users\waz\Desktop\RTU-FREERTOS-develope\RTU-FREERTOS-develope\Oldproject\led.c" ""</A0>
+        <A1>_ "C:\Users\waz\Desktop\RTU-FREERTOS-develope\RTU-FREERTOS-develope\Oldproject\rom.c" ""</A1>
+        <A2>_ "C:\Users\waz\Desktop\RTU-FREERTOS-develope\RTU-FREERTOS-develope\Source\portable\IAR\MSP430X\port.c" ""</A2>
+        <Count>3</Count>
+        <SuppressDialog>1</SuppressDialog>
     </Aliases>
 </settings>

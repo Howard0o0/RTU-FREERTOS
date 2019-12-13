@@ -42,7 +42,7 @@ void Hydrology_InitWaitConfig()
      /* 蓝牙接收 */
   char buffer[300];
   int count = 0;
-  PT_IODev  ptDevBle =  getIODev();
+  pBLE_Dev  ptDevBle =  getIODev();
   // if(ptDevBle->isCanUse() && (ptDevBle->open() == 0))
   if(ptDevBle->isspp())
   {
@@ -61,4 +61,5 @@ void Hydrology_InitWaitConfig()
       isUARTConfig = 1;
       hydrologyProcessReceieve(buffer, count);
     }
+    /* 蓝牙接收 */
 }

@@ -1,9 +1,9 @@
 #include "ioDev.h"
 #include "string.h"
 
-static PT_IODev g_ptIODevHead;
+static pBLE_Dev g_ptIODevHead;
 
-int RegisterIODev(PT_IODev ptIODev)
+int RegisterIODev(pBLE_Dev ptIODev)
 {
 	if( ptIODev == NULL)
 	{
@@ -16,11 +16,11 @@ int RegisterIODev(PT_IODev ptIODev)
 
 void ShowIODevs(void)
 {
-	PT_IODev ptTmp = g_ptIODevHead;
+	pBLE_Dev ptTmp = g_ptIODevHead;
 	printf("IODevs : %s\n", ptTmp->name);
 }
 
-PT_IODev getIODev(void)
+pBLE_Dev getIODev(void)
 {
     return g_ptIODevHead;
 }
