@@ -11,31 +11,31 @@
 #include "uart0.h"
 #include "FreeRTOS.h"
 
-//���ATָ��
+//相关AT指令
 
 #define AT_BC95_NCONFIG "AT+NCONFIG?"
-#define AT_BC95_SCRAMB_1 "AT+NCONFIG=CR_0354_0338_SCRAMBLING,TRUE" //�������빦��
+#define AT_BC95_SCRAMB_1 "AT+NCONFIG=CR_0354_0338_SCRAMBLING,TRUE" //开启扰码功能
 #define AT_BC95_SCRAMB_2 "AT+NCONFIG=CR_0859_SI_AVOID,TURE"
-#define AT_BC95_AUTOCONFIG "AT+NCONFIG=AUTOCONNECT,TRUE" //���ó��Զ�ģʽ
-#define AT_BC95_SIM "AT+CIMI"							 //ѯ��sim��
-#define AT_BC95_CFUN "AT+CFUN?"							 //ѯ���Ƿ���ȫ����ģʽ
-#define AT_BC95_SFUN "AT+CFUN=1"						 //����ȫ����ģʽ
-#define AT_BC95_CSQ "AT+CSQ"							 //��ѯ�ź�
-#define AT_BC95_CGATT "AT+CGATT?"						 //��ѯ����״̬
-#define AT_BC95_NNMI "AT+NNMI=1"						 //�����յ������ݴ�ӡ������
-#define AT_BC95_CPSMS "AT+CPSMS?"						 //��ѯ�Ƿ���˯��ģʽ
-#define AT_BC95_SPSMS "AT+CPSMS=0"						 //�ر�˯��ģʽ��������ʾ���յ�������
-#define AT_BC95_ATE0 "ATE0"								 //�رջ���
-#define AT_BC95_NSMI "AT+NSMI=1"						 //���÷�����Ϣ�󷵻��Ƿ��ͳɹ�
+#define AT_BC95_AUTOCONFIG "AT+NCONFIG=AUTOCONNECT,TRUE" //设置成自动模式
+#define AT_BC95_SIM "AT+CIMI"							 //询问sim卡
+#define AT_BC95_CFUN "AT+CFUN?"							 //询问是否是全功能模式
+#define AT_BC95_SFUN "AT+CFUN=1"						 //设置全功能模式
+#define AT_BC95_CSQ "AT+CSQ"							 //查询信号
+#define AT_BC95_CGATT "AT+CGATT?"						 ///查询网络状态
+#define AT_BC95_NNMI "AT+NNMI=1"						 //将接收到的数据打印到串口
+#define AT_BC95_CPSMS "AT+CPSMS?"						 //查询是否是睡眠模式
+#define AT_BC95_SPSMS "AT+CPSMS=0"						 //关闭睡眠模式，才能显示接收到的数据
+#define AT_BC95_ATE0 "ATE0"								 //关闭回显
+#define AT_BC95_NSMI "AT+NSMI=1"						 //设置发送消息后返回是否发送成功
 
 #define BC95_WAITTIME 300 //30S
 #define BC95_DELAY_MS 1000
 #define BC95_REPEAT_TIMES 10
 #define BC95_RETRY_TIMES 3
 
-int g_autoconfigState = 0; //���빦��
-int g_scrambState = 0;	 ////�Զ�ģʽ
-int g_cfunstate = 0;	   //ȫ����ģʽ
+int g_autoconfigState = 0; //扰码功能
+int g_scrambState = 0;	 ////自动模式
+int g_cfunstate = 0;	   //全功能模式
 char g_BC95RcvBuf[400];
 
 int BC95_Char_to_Hex(char chr)
@@ -99,25 +99,25 @@ int BC95_UintToStr4(unsigned int _src, char *_dest)
 }
 
 /********
-Function����BC95ģ���ϵ�
-Description�� VBAT:P10.7  RST:P10.3  ( in msp2418: VBAT[P4.2]  IGT[P1.0] )
+Function：给BC95模块上电
+Description： VBAT:P10.7  RST:P10.3  ( in msp2418: VBAT[P4.2]  IGT[P1.0] )
 ********/
 int BC95_Open()
 {
 	int _repeat = 0;
 	int _dataLen = 0;
-	int second_time_MAX = 10; //�ȴ�10s
+	int second_time_MAX = 10; //等待10s
 	char _data[UART1_MAXBUFFLEN] = {0};
 
 	/* BC95 connect cpu via uart0 */
 	UART0_Open_9600(UART0_GSM_TYPE);
 
-	// Ϊģ���ϵ�
-	P10DIR |= BIT7; // P10.7 Ϊ BATT,���ߵ�ƽ
+	// 为模块上电
+	P10DIR |= BIT7; // P10.7 为 BATT,给高电平
 	P10OUT &= ~BIT7;
 	P10OUT |= BIT7;
 
-	System_Delayms(100); // ��Ҫ��ʱ
+	System_Delayms(100); // 需要延时
 
 	P10DIR |= BIT3; //  p3.0 Ϊ /IGT
 	P10OUT &= ~BIT3;
@@ -127,7 +127,7 @@ int BC95_Open()
 
 	while (_repeat < second_time_MAX)
 	{
-		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //������
+		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //有数据
 		{
 			printf("BC95 response: %s \r\n", _data);
 			if (strstr(_data, "OK"))
@@ -145,17 +145,17 @@ int BC95_Open()
 }
 
 /********
-Function����BC95ģ��ϵ�
+Function：给BC95模块断电
 ********/
 void BC95_Close()
 {
-	P10OUT &= ~BIT7; //P4.2����͵�ƽ
+	P10OUT &= ~BIT7; //P4.2输出低电平
 	P10OUT &= ~BIT3;
 	UART0_Close();
 }
 
 /********
-Function��BC95��������
+Function：BC95发送数据
 ********/
 
 int BC95_Send(char *data)
@@ -175,7 +175,7 @@ char *BC95_QueryMsg(void)
 
 	while (_repeat < BC95_REPEAT_TIMES)
 	{
-		if (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //������
+		if (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //有数据
 		{
 			// printf("[BC95 Response] %s \r\n",_data);
 			Console_WriteStringln(_data);
@@ -189,7 +189,7 @@ char *BC95_QueryMsg(void)
 }
 
 /********
-Function����ѯģ��״̬
+Function：查询模块状态
 ********/
 void BC95_QueryState()
 {
@@ -203,7 +203,7 @@ void BC95_QueryState()
 
 	while (_repeat < BC95_REPEAT_TIMES)
 	{
-		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //������
+		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //有数据
 		{
 			Console_WriteStringln(_data);
 
@@ -226,7 +226,7 @@ void BC95_QueryState()
 }
 
 /********
-Function����ѯʱ��
+Function：查询时间
 ********/
 //int BC95_QueryTime(char *newtime)
 //{
@@ -241,7 +241,7 @@ Function����ѯʱ��
 //
 //	while (_repeat < BC95_REPEAT_TIMES)
 //	{
-//		if (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //������
+//		if (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //有数据
 //		{
 //			Console_WriteStringln(_data);
 //			if(strstr(_data,"+CCLK:") != NULL)
@@ -323,7 +323,7 @@ int BC95_QueryTime(char *year,char *month,char *date,char *hour,char *min,char *
 
 	while (_repeat < BC95_REPEAT_TIMES)
 	{
-		if (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //������
+		if (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //有数据
 		{
 			Console_WriteStringln(_data);
 			if(strstr(_data,"+CCLK:") != NULL)
@@ -389,7 +389,7 @@ int BC95_QueryTime(char *year,char *month,char *date,char *hour,char *min,char *
 }
 
 /********
-Function���������빦��
+Function：设置扰码功能
 ********/
 
 void BC95_SetScramb()
@@ -404,7 +404,7 @@ void BC95_SetScramb()
 }
 
 /********
-Function�������Զ�ģʽ
+Function：设置自动模式
 ********/
 void BC95_SetAutoConfig()
 {
@@ -414,7 +414,7 @@ void BC95_SetAutoConfig()
 }
 
 /********
-Function��ѯ��SIM��
+Function：询问SIM卡
 ********/
 BC95State BC95_QuerySimState()
 {
@@ -508,7 +508,7 @@ BC95State BC95_SendUdpMsg(char *ipAddr, char *port, char *msg)
 }
 
 /********
-Function��ѯ���Ƿ���ȫ����ģʽ
+Function：询问是否是全功能模式
 ********/
 
 BC95State BC95_QueryFunState()
@@ -545,7 +545,7 @@ BC95State BC95_QueryFunState()
 }
 
 /********
-Function�����ó�ȫ����ģʽ
+Function：设置成全功能模式
 ********/
 void BC95_SetCFun()
 {
@@ -555,7 +555,7 @@ void BC95_SetCFun()
 }
 
 /********
-Function����ѯ�ź�
+Function：查询信号
 ********/
 BC95State BC95_QueryCSQState()
 {
@@ -623,7 +623,7 @@ BC95State BC95_QueryCGATTState()
 	return BC95ErrorCFUN;
 }
 
-//��ѯ�Ƿ������򴮿���ʾ���յ�����Ϣ
+//查询是否立即向串口显示接收到的消息
 BC95State BC95_SetNNMI()
 {
 	int _repeat = 0;
@@ -635,11 +635,11 @@ BC95State BC95_SetNNMI()
 
 	while (_repeat < BC95_REPEAT_TIMES)
 	{
-		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //������
+		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //有数据
 		{
 			Console_WriteStringln(_data);
 
-			if (strstr(_data, "OK")) //���óɹ�
+			if (strstr(_data, "OK")) //设置成功
 			{
 				return BC95StateOK;
 			}
@@ -656,7 +656,7 @@ BC95State BC95_SetNNMI()
 	return BC95ErrorNNMI;
 }
 
-//��ѯ�Ƿ��ǵ͹���ģʽ
+//查询是否是低功耗模式
 BC95State BC95_QueryIsPSMS()
 {
 	int _repeat = 0;
@@ -668,16 +668,16 @@ BC95State BC95_QueryIsPSMS()
 
 	while (_repeat < BC95_REPEAT_TIMES)
 	{
-		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //������
+		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //有数据
 		{
 			Console_WriteStringln(_data);
 
-			if (strstr(_data, "+CPSMS:0")) //����˯��ģʽ
+			if (strstr(_data, "+CPSMS:0")) //不是睡眠模式
 			{
 				return BC95StateOK;
 			}
 
-			if (strstr(_data, "+CGATT:1")) //˯��ģʽ
+			if (strstr(_data, "+CGATT:1")) //睡眠模式
 			{
 				return BC95ErrorCPSMS;
 			}
@@ -690,7 +690,7 @@ BC95State BC95_QueryIsPSMS()
 }
 
 /********
-Function���رյ͹���ģʽ�����ڲ�����ʾ���յ�����������
+Function：关闭低功耗模式，串口才能显示接收到的下行数据
 ********/
 void BC95_SetCpsms()
 {
@@ -699,7 +699,7 @@ void BC95_SetCpsms()
 	System_Delayms(BC95_DELAY_MS);
 }
 
-//�رջ���
+//关闭回显
 BC95State BC95_CloseATE()
 {
 	int _repeat = 0;
@@ -711,11 +711,11 @@ BC95State BC95_CloseATE()
 
 	while (_repeat < BC95_REPEAT_TIMES)
 	{
-		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //������
+		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0)  //有数据
 		{
 			Console_WriteStringln(_data);
 
-			if (strstr(_data, "OK")) //���óɹ�
+			if (strstr(_data, "OK")) //设置成功
 			{
 				return BC95StateOK;
 			}
@@ -743,11 +743,11 @@ BC95State BC95_SetSendMsgIndications(void)
 
 	while (_repeat < BC95_REPEAT_TIMES)
 	{
-		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //������
+		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //有数据
 		{
 			Console_WriteStringln(_data);
 
-			if (strstr(_data, "OK")) //���óɹ�
+			if (strstr(_data, "OK")) //设置成功
 			{
 				return BC95StateOK;
 			}
@@ -764,24 +764,24 @@ BC95State BC95_SetSendMsgIndications(void)
 	return BC95ErrorNNMI;
 }
 
-BC95State BC95_ConfigProcess() //�����ѯʧ�ܣ���Ҫ����
+BC95State BC95_ConfigProcess() //如果查询失败，需要处理
 {
 	BC95State state = BC95StateOK;
 	int retrytimes = 0;
 
 	BC95_QueryState();
 
-	if (g_scrambState == 0) //���빦��û�п������������빦��
+	if (g_scrambState == 0) //扰码功能没有开启，开启扰码功能
 	{
 		BC95_SetScramb();
 	}
 
-	if (g_autoconfigState == 0) //�Զ�ģʽû�п����������Զ�ģʽ
+	if (g_autoconfigState == 0) //自动模式没有开启，开启自动模式
 	{
 		BC95_SetAutoConfig();
 	}
 
-	//��ѯ�Ƿ��⵽SIM��
+	//查询是否检测到SIM卡
 	while (retrytimes < BC95_REPEAT_TIMES)
 	{
 		state = BC95_QuerySimState();
@@ -798,7 +798,7 @@ BC95State BC95_ConfigProcess() //�����ѯʧ�ܣ���Ҫ����
 		return state;
 	}
 
-	//��ѯ�Ƿ�ȫ����ģʽ
+	//查询是否全功能模式
 	retrytimes = 0;
 	while (retrytimes < BC95_REPEAT_TIMES)
 	{
@@ -820,7 +820,7 @@ BC95State BC95_ConfigProcess() //�����ѯʧ�ܣ���Ҫ����
 		return state;
 	}
 
-	//��ѯ�ź�
+	//查询信号
 	retrytimes = 0;
 	while (retrytimes < BC95_REPEAT_TIMES)
 	{
@@ -838,7 +838,7 @@ BC95State BC95_ConfigProcess() //�����ѯʧ�ܣ���Ҫ����
 		return state;
 	}
 
-	//��ѯ��������״��
+	//查询附着网络状况
 	retrytimes = 0;
 	while (retrytimes < BC95_REPEAT_TIMES * 2)
 	{
@@ -851,12 +851,12 @@ BC95State BC95_ConfigProcess() //�����ѯʧ�ܣ���Ҫ����
 		retrytimes++;
 		System_Delayms(1500);
 	}
-	if (retrytimes == BC95_REPEAT_TIMES * 2) //ѯ��CGATT Stateʧ��
+	if (retrytimes == BC95_REPEAT_TIMES * 2) //询问CGATT State失败
 	{
 		return state;
 	}
 
-	//���������򴮿ڴ�ӡ���ݵĹ���
+	//设置立即向串口打印数据的功能
 	retrytimes = 0;
 	while (retrytimes < BC95_REPEAT_TIMES)
 	{
@@ -876,7 +876,7 @@ BC95State BC95_ConfigProcess() //�����ѯʧ�ܣ���Ҫ����
 		return state;
 	}
 
-	//�Ƿ���˯��ģʽ
+	//是否是睡眠模式
 	retrytimes = 0;
 	while (retrytimes < BC95_REPEAT_TIMES)
 	{
@@ -898,7 +898,7 @@ BC95State BC95_ConfigProcess() //�����ѯʧ�ܣ���Ҫ����
 		return state;
 	}
 
-	//�رջ���
+	//关闭回显
 	retrytimes = 0;
 	while (retrytimes < BC95_REPEAT_TIMES)
 	{
@@ -934,7 +934,7 @@ BC95State BC95_ConfigProcess() //�����ѯʧ�ܣ���Ҫ����
 	// 	return state;
 	// }
 
-	//�����豸�Խӵ�IoTƽ̨(��Ϊ��)��IP��ַ�Ͷ˿ں�
+	//设置设备对接的IoT平台(华为云)的IP地址和端口号
 	retrytimes = 0;
 	while (retrytimes < BC95_REPEAT_TIMES)
 	{
@@ -976,7 +976,7 @@ BC95State BC95_ConnectToIotCloud(char *serverIp, char *serverPort)
 
 	while (_repeat < BC95_REPEAT_TIMES)
 	{
-		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //������
+		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //有数据
 		{
 			Console_WriteStringln(_data);
 
@@ -999,12 +999,14 @@ BC95State BC95_ConnectToIotCloud(char *serverIp, char *serverPort)
 	return BC95ErrorNCDP;
 }
 
-//BC95��������
+//BC95发送数据
 /*
-*BC95ģ���Ȱ������ϴ�����ƽ̨�������ǻ�Ϊ�ƻ��ߵ����Ƶȣ���������ƽ̨ת�������Լ��ķ�������
-*�������ϴ��ɱ䳤�ȵ����ݣ������Ҫ������ƽ̨�ı������������һЩͷ�������ڷ��͵���������Ҫ��һ��4���ֽڵ�16λ�޷���������Ϊ�ϴ����ݰ�����
+*BC95模块先把数据上传到云平台（可能是华为云或者电信云等），再由云平台转到我们自己的服务器上
+*这里是上传可变长度的数据，因此需要根据云平台的编解码插件来增加一些头，这里在发送的数据中需要加一个4个字节的16位无符号整型作为上传数据包长度
 */
-char up_data_len_str[BC95_SOCKET_UP_DATA_LENGTH_LINK] = {0}; //�ϴ����ݵĹ�������,����4��16λ�޷�������ת��λ�ַ�����4���ַ�����2���ֽ�
+char up_data_len_str[BC95_SOCKET_UP_DATA_LENGTH_LINK] = {0}; 
+		//上传数据的关联长度,由于4个16位无符号整型转化位字符串是4个字符，是2个字节
+
 char _data[UART1_MAXBUFFLEN] = {0};
 char send_data_ascii_mode[BC95_SOCKET_DATA_LEN] = {0};
 char socket_data[BC95_SOCKET_DATA_LEN] = {0};
@@ -1018,35 +1020,36 @@ BC95State BC95_SendSocketData(char *send_data, int send_data_len)
 	int _dataLen = 0;
 
 	
-	//���ϴ����ݵĳ���ת��Ϊ�ַ�����ʽ
+	//将上传数据的长度转化为字符串形式
 	BC95_UintToStr4(send_data_len, up_data_len_str);
 
-	//���ϴ�����ת��ΪASCII�ַ�����ʽ
-	ASCII_to_AsciiStr(send_data, send_data_len, send_data_ascii_mode); //ת��ASCII�ַ���
+	//将上传数据转化为ASCII字符串形式
+	ASCII_to_AsciiStr(send_data, send_data_len, send_data_ascii_mode); //转成ASCII字符串
 
-	//���
+	//组包
 	data_len = send_data_len + BC95_SOCKET_UP_DATA_LENGTH_LINK / 2;
-	sprintf(socket_data, "AT+NMGS=%d,", data_len); //���붺��֮ǰ�����ݣ���������
+	sprintf(socket_data, "AT+NMGS=%d,", data_len); //加入逗号之前的数据，包括逗号
 
-	//�������ݹ������ȵ��ַ���
-	// data_len = send_data_len + BC95_SOCKET_UP_DATA_LENGTH_LINK+1;//��1��������
+	//加入数据关联长度的字符串
+	// data_len = send_data_len + BC95_SOCKET_UP_DATA_LENGTH_LINK+1;//加1跳过逗号
 	for (i = Utility_Strlen(socket_data), j = 0; j < BC95_SOCKET_UP_DATA_LENGTH_LINK; j++)
 	{
 		socket_data[i] = up_data_len_str[j];
 		i++;
 	}
 
-	//i = Utility_Strlen(socket_data);//����ڶ�������
+	//i = Utility_Strlen(socket_data);//加入第二个逗号
 	//socket_data[i] = ',';
 
-	data_len = Utility_Strlen(socket_data) + Utility_Strlen(send_data_ascii_mode); //������������ASCII�ַ���
+	data_len = Utility_Strlen(socket_data) + Utility_Strlen(send_data_ascii_mode);  
+											//加入上行数据ASCII字符串
 	for (i = Utility_Strlen(socket_data), j = 0; i < data_len; i++)
 	{
 		socket_data[i] = send_data_ascii_mode[j];
 		j++;
 	}
 
-	//����
+	//发送
 	BC95_Send(socket_data);
 
 	Console_WriteStringln("BC95 send data:");
@@ -1057,11 +1060,11 @@ BC95State BC95_SendSocketData(char *send_data, int send_data_len)
 
 	while (retrytimes < BC95_REPEAT_TIMES)
 	{
-		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //������
+		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //有数据
 		{
 			Console_WriteStringln(_data);
 
-			if (strstr(_data, "OK")) //�������ݳɹ�
+			if (strstr(_data, "OK")) //发送数据成功
 			{
 				return BC95StateOK;
 			}
@@ -1109,13 +1112,13 @@ void BC95_RecvSocketData(char *recv_data, int *recv_data_len)
 
 	while (_repeat < BC95_WAITTIME)
 	{
-		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //������
+		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //有数据
 		{
 			Console_WriteStringln("BC95 recv data:");
 
 			Console_WriteStringln(_data);
 
-			if (strstr(_data, "+NNMI:")) //�ж��Ƿ�Ϊ���յ�������
+			if (strstr(_data, "+NNMI:")) //判断是否为接收到的数据
 			{
 				BC95_AnalysisRecvSocketData(_data, _dataLen, recv_data, recv_data_len);
 
@@ -1139,17 +1142,19 @@ void BC95_RecvDataFromCloud(char *recv_data, int *recv_data_len)
 	recv_data++;
 	recv_data++;
 	recv_data++;
-	if (*recv_data_len > 0)  // ���б��ľ�����ƽ̨��ʱ���ܻ��������ֽڵı�ͷ(��ƽ̨�Զ����ӵ�)��Ӧ�ú���ƽ̨�Ĳ�������й�
+	if (*recv_data_len > 0)  
+		// 下行报文经过云平台的时候总会多出三个字节的报头(云平台自动添加的)，应该和云平台的插件部署有关
 	{
 		*recv_data_len = *recv_data_len - 3;
 	}
 	
 }
 
-//BC95�������������
+
+//BC95发送与接收数据
 /*
-*BC95ģ���Ȱ������ϴ�����ƽ̨�������ǻ�Ϊ�ƻ��ߵ����Ƶȣ���������ƽ̨ת�������Լ��ķ�������
-*�������ϴ��ɱ䳤�ȵ����ݣ������Ҫ������ƽ̨�ı������������һЩͷ�������ڷ��͵���������Ҫ��һ��4���ֽڵ�16λ�޷���������Ϊ�ϴ����ݰ�����
+*BC95模块先把数据上传到云平台（可能是华为云或者电信云等），再由云平台转到我们自己的服务器上
+*这里是上传可变长度的数据，因此需要根据云平台的编解码插件来增加一些头，这里在发送的数据中需要加一个4个字节的16位无符号整型作为上传数据包长度
 */
 BC95State BC95_SendAndRecvData(char *send_data, int send_data_len, char *recv_data, int *recv_data_len)
 {
@@ -1159,57 +1164,59 @@ BC95State BC95_SendAndRecvData(char *send_data, int send_data_len, char *recv_da
 	int retrytimes = 0;
 	int _dataLen = 0;
 
-	char up_data_len_str[BC95_SOCKET_UP_DATA_LENGTH_LINK] = {0}; //�ϴ����ݵĹ�������,����4��16λ�޷�������ת��λ�ַ�����4���ַ�����2���ֽ�
+	char up_data_len_str[BC95_SOCKET_UP_DATA_LENGTH_LINK] = {0}; 
+				//上传数据的关联长度,由于4个16位无符号整型转化位字符串是4个字符，是2个字节
 	char _data[UART1_MAXBUFFLEN] = {0};
 	char send_data_ascii_mode[BC95_SOCKET_DATA_LEN] = {0};
 	char socket_data[BC95_SOCKET_DATA_LEN] = {0};
 
-	//���ϴ����ݵĳ���ת��Ϊ�ַ�����ʽ
+	//将上传数据的长度转化为字符串形式
 	BC95_UintToStr4(send_data_len, up_data_len_str);
 
-	//���ϴ�����ת��ΪASCII�ַ�����ʽ
+	//将上传数据转化为ASCII字符串形式
 	Console_WriteStringln(send_data);
-	ASCII_to_AsciiStr(send_data, send_data_len, send_data_ascii_mode); //ת��ASCII�ַ���
+	ASCII_to_AsciiStr(send_data, send_data_len, send_data_ascii_mode); //转成ASCII字符串
 
-	//���
+	//组包
 	data_len = send_data_len + BC95_SOCKET_UP_DATA_LENGTH_LINK / 2;
-	sprintf(socket_data, "AT+NMGS=%d,", data_len); //���붺��֮ǰ�����ݣ���������
+	sprintf(socket_data, "AT+NMGS=%d,", data_len); //加入逗号之前的数据，包括逗号
 
-	//�������ݹ������ȵ��ַ���
-	// data_len = send_data_len + BC95_SOCKET_UP_DATA_LENGTH_LINK+1;//��1��������
+	//加入数据关联长度的字符串
+	// data_len = send_data_len + BC95_SOCKET_UP_DATA_LENGTH_LINK+1;//加1跳过逗号
 	for (i = Utility_Strlen(socket_data), j = 0; j < BC95_SOCKET_UP_DATA_LENGTH_LINK; j++)
 	{
 		socket_data[i] = up_data_len_str[j];
 		i++;
 	}
 
-	//i = Utility_Strlen(socket_data);//����ڶ�������
+	//i = Utility_Strlen(socket_data);//加入第二个逗号
 	//socket_data[i] = ',';
 
-	data_len = Utility_Strlen(socket_data) + Utility_Strlen(send_data_ascii_mode); //������������ASCII�ַ���
+	data_len = Utility_Strlen(socket_data) + Utility_Strlen(send_data_ascii_mode);
+					//加入上行数据ASCII字符串
 	for (i = Utility_Strlen(socket_data), j = 0; i < data_len; i++)
 	{
 		socket_data[i] = send_data_ascii_mode[j];
 		j++;
 	}
 
-	//����
+	//发送
 	BC95_Send(socket_data);
 
 	Console_WriteStringln("BC95 send data:");
 
 	Console_WriteStringln(socket_data);
 
-	//��������
+	//接收数据
 	retrytimes = 0;
 
 	while (retrytimes < BC95_REPEAT_TIMES)
 	{
-		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //������
+		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //有数据
 		{
 			Console_WriteStringln(_data);
 
-			if (strstr(_data, "+NNMI:")) //�ж��Ƿ�Ϊ���յ�������
+			if (strstr(_data, "+NNMI:")) //判断是否为接收到的数据
 			{
 
 				*recv_data_len = BC95_Extract_DownData(_data, _dataLen, recv_data);
@@ -1227,11 +1234,11 @@ BC95State BC95_SendAndRecvData(char *send_data, int send_data_len, char *recv_da
 	return BC95ErrorSEND;
 }
 
-//�������յ�����
+//解析接收的数据
 void BC95_AnalysisRecvSocketData(char *revc_data, int revc_data_len, char *down_Stream_data, int *down_Stream_data_len)
 {
 	int i = 0;
-	int comma_count = 0; //���ż���
+	int comma_count = 0; //逗号计数
 	int down_Stream_data_ascii_len = 0;
 	char down_Stream_data_ascii[BC95_SOCKET_DATA_LEN] = {0};
 
@@ -1240,7 +1247,7 @@ void BC95_AnalysisRecvSocketData(char *revc_data, int revc_data_len, char *down_
 		if (revc_data[i] == ',')
 		{
 			comma_count++;
-			if (comma_count == 1) //���ص���������1�����ţ����ź��������Ϊ��������
+			if (comma_count == 1)//返回的数据中有1个逗号，逗号后面的数据为下行数据
 			{
 				i++;
 				break;
@@ -1249,7 +1256,7 @@ void BC95_AnalysisRecvSocketData(char *revc_data, int revc_data_len, char *down_
 		i++;
 	}
 
-	while (revc_data[i] != '\0') //��ȡ����
+	while (revc_data[i] != '\0')  //获取数据
 	{
 		down_Stream_data_ascii[down_Stream_data_ascii_len] = revc_data[i];
 		down_Stream_data_ascii_len++;
@@ -1310,7 +1317,7 @@ char *BC95_Receive(void)
 	return NULL;
 }
 
-//���˲��Ժ����ã�������
+//个人测试函数用，嘻嘻嘻
 void BC95_AtTest(void)
 {
 	while (1)

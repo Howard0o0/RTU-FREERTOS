@@ -1,10 +1,10 @@
 //////////////////////////////////////////////////////
-//     ÎÄ¼şÃû: common.h
-//   ÎÄ¼ş°æ±¾: 1.0.0
-//   ´´½¨Ê±¼ä: 09Äê 11ÔÂ30ÈÕ
-//   ¸üĞÂÄÚÈİ:  
-//       ×÷Õß: ÁÖÖÇ
-//       ¸½×¢: ÎŞ
+//     æ–‡ä»¶å: common.h
+//   æ–‡ä»¶ç‰ˆæœ¬: 1.0.0
+//   åˆ›å»ºæ—¶é—´: 09å¹´ 11æœˆ30æ—¥
+//   æ›´æ–°å†…å®¹:  
+//       ä½œè€…: æ—æ™º
+//       é™„æ³¨: æ— 
 //
 //////////////////////////////////////////////////////
 
@@ -36,12 +36,12 @@ void TracePulseValue(char * str,int _ln);
 
 int hex_2_ascii(char *data, char *buffer, int len);
 
-void System_Delayms(unsigned int nValue);//  ÑÓÊ±º¯Êı 
+void System_Delayms(unsigned int nValue);//  å»¶æ—¶å‡½æ•° 
 void System_Delayus( unsigned int nValue);
-void System_Reset();//  ÖØÆôº¯Êı
+void System_Reset();//  é‡å¯å‡½æ•°
 
-void DownInt();  //¹ØÖĞ¶Ï
-void UpInt();    //¿ªÖĞ¶Ï
+void DownInt();  //å…³ä¸­æ–­
+void UpInt();    //å¼€ä¸­æ–­
 void DsP2Int(int i);//0~7
 void EnP2Int(int i);
 void DsInt();
@@ -51,22 +51,22 @@ void IntTo0xInt(unsigned int num,int count);
 char ConvertHexChar(char ch);
 char ConvertAscIItoHex(char* ascii,char* hex,int asciilen);
 
-//  Ê±ÖÓÉèÖÃº¯Êı 
+//  æ—¶é’Ÿè®¾ç½®å‡½æ•° 
 void Clock_Init(); 
 void Clock_Use8MHZ(); 
-void Clock_ACLK_DIV(int i);//ACLK·ÖÆµº¯Êı 
+void Clock_ACLK_DIV(int i);//ACLKåˆ†é¢‘å‡½æ•° 
 void Set_Vcore(unsigned int level);
 
-//232µçÆ½×ª»»µçÂ·
+//232ç”µå¹³è½¬æ¢ç”µè·¯
 void Max3222_Open();
 void Max3222_Close();
 
 void Select_Debug_Mode(int type);
    
-//  ×Ö·û´®¸¨Öúº¯Êı 
+//  å­—ç¬¦ä¸²è¾…åŠ©å‡½æ•° 
 int  Utility_Strlen(char *); 
-void Utility_Strncpy(char * _dest,char * _src, int _len); //²»¸ºÔğ×Ö·û´®½áÎ²
-int  Utility_Strncmp(const char * _src,const  char * _dest ,int _len);  //²»¸ºÔğ×Ö·û´®½áÎ² 
+void Utility_Strncpy(char * _dest,char * _src, int _len); //ä¸è´Ÿè´£å­—ç¬¦ä¸²ç»“å°¾
+int  Utility_Strncmp(const char * _src,const  char * _dest ,int _len);  //ä¸è´Ÿè´£å­—ç¬¦ä¸²ç»“å°¾ 
 int  Utility_CheckDigital(const char * _str,int _start ,int _end);
 int  Utility_CheckAlphabet(const char * _str,int _start ,int _end);
 int  Utility_CheckHexChar(const char * _str,int _start ,int _end);
@@ -80,36 +80,36 @@ int  Utility_UintToStr3(unsigned int _src, char *_dest);
 int  Utility_UintToStr2(unsigned int _src, char *_dest);
 int  Utility_UintToStr1(unsigned int _src, char *_dest);
 int Utility_atoi(char *str, int len);
-int AsciiStr_to_ASCII(char *input_buffer, int input_buffer_len, char *output_buffer);  //½«×Ö·û´®ÖĞÃ¿Á½¸ö×Ö·ûÆ´³ÉÒ»¸ö×Ö·ûµÄASCIIĞÎÊ½£¬×îÖÕ×ª³ÉĞÂµÄ³¤¶ÈÎªÔ­À´µÄÒ»°ëµÄ×Ö·û´®
+int AsciiStr_to_ASCII(char *input_buffer, int input_buffer_len, char *output_buffer);  //å°†å­—ç¬¦ä¸²ä¸­æ¯ä¸¤ä¸ªå­—ç¬¦æ‹¼æˆä¸€ä¸ªå­—ç¬¦çš„ASCIIå½¢å¼ï¼Œæœ€ç»ˆè½¬æˆæ–°çš„é•¿åº¦ä¸ºåŸæ¥çš„ä¸€åŠçš„å­—ç¬¦ä¸²
 int ASCII_to_AsciiStr(char *input_buffer, int input_buffer_len, char *output_buffer);
 char Char_to_Hex(char input_chr);
 
-//   Ê±¼ä¸¨Öúº¯Êı
-//   ±£Ö¤Òª´«µİÒ»¸öÕıÈ·µÄÊ±¼äÖµ
-//   ÄêÔÂÈÕÊ±·Ö char[5] ÊıÖµ 
-void Utility_Time_AddSecond(char *dest, int second);// second²»¿ÉÒÔ´óÓÚ60Ãë
-void Utility_Time_AddMinute(char *dest, int minute);//minute²»¿ÉÒÔ´óÓÚ60·ÖÖÓ 
-void Utility_Time_AddHour(char *dest, int hour);//hour²»¿ÉÒÔ´óÓÚ24Ğ¡Ê±
-void Utility_Time_AddDay(char *dest,int Day);//Day²»¿ÉÒÔ´óÓÚ28
-void Utility_Time_AddMonth(char *dest,int Month);//Month²»¿ÉÒÔ´óÓÚ12
+//   æ—¶é—´è¾…åŠ©å‡½æ•°
+//   ä¿è¯è¦ä¼ é€’ä¸€ä¸ªæ­£ç¡®çš„æ—¶é—´å€¼
+//   å¹´æœˆæ—¥æ—¶åˆ† char[5] æ•°å€¼ 
+void Utility_Time_AddSecond(char *dest, int second);// secondä¸å¯ä»¥å¤§äº60ç§’
+void Utility_Time_AddMinute(char *dest, int minute);//minuteä¸å¯ä»¥å¤§äº60åˆ†é’Ÿ 
+void Utility_Time_AddHour(char *dest, int hour);//hourä¸å¯ä»¥å¤§äº24å°æ—¶
+void Utility_Time_AddDay(char *dest,int Day);//Dayä¸å¯ä»¥å¤§äº28
+void Utility_Time_AddMonth(char *dest,int Month);//Monthä¸å¯ä»¥å¤§äº12
 
-//    ¹¦ÄÜ: ¼ÆËãÏÂÒ»´Î±¨¸æÊ±¼ä  
+//    åŠŸèƒ½: è®¡ç®—ä¸‹ä¸€æ¬¡æŠ¥å‘Šæ—¶é—´    
 void Utility_CalculateNextReportTimeBytes(char *dest);
 
-//   ¹¦ÄÜ: ¼ÆËãÏÂÒ»´ÎÅÄÕÕÊ±¼ä
+//   åŠŸèƒ½: è®¡ç®—ä¸‹ä¸€æ¬¡æ‹ç…§æ—¶é—´
 void Utility_CalculateNextCameraGoTimes(char *dest);
 
-//    ¹¦ÄÜ: ¼ÆËãÏÂÒ»´Î±£´æÊ±¼ä
+//   åŠŸèƒ½: è®¡ç®—ä¸‹ä¸€æ¬¡ä¿å­˜æ—¶é—´
 void Utility_CalculateNextSaveTimeBytes(char *dest);
 
-//    ¹¦ÄÜ: ¼ÆËãÏÂÒ»´Î¼ì²éÊ±¼ä
+//    åŠŸèƒ½: è®¡ç®—ä¸‹ä¸€æ¬¡æ£€æŸ¥æ—¶é—´
 void Utility_CalculateNextCheckTimeBytes(char *dest);
 
-//   ÅĞ¶ÏÒ»¸öÊ±¼ä°´µ±Ç°Ä£Ê½ ÊÇ·ñÊÇ¼ì²éÊ±¼ä 
+//   åˆ¤æ–­ä¸€ä¸ªæ—¶é—´æŒ‰å½“å‰æ¨¡å¼ æ˜¯å¦æ˜¯æ£€æŸ¥æ—¶é—´ 
 int  Utility_Is_A_CheckTime(char * _time);
-//   ÅĞ¶ÏÒ»¸öÊ±¼ä°´µ±Ç°Ä£Ê½ ÊÇ·ñÊÇ±£´æÊ±¼ä
+//   åˆ¤æ–­ä¸€ä¸ªæ—¶é—´æŒ‰å½“å‰æ¨¡å¼ æ˜¯å¦æ˜¯ä¿å­˜æ—¶é—´
 int  Utility_Is_A_SaveTime(char * _time); 
-//   ÅĞ¶ÏÒ»¸öÊ±¼ä°´µ±Ç°Ä£Ê½ ÊÇ·ñÊÇ±¨¸æÊ±¼ä
+//   åˆ¤æ–­ä¸€ä¸ªæ—¶é—´æŒ‰å½“å‰æ¨¡å¼ æ˜¯å¦æ˜¯ä¿å­˜æ—¶é—´
 int  Utility_Is_A_ReportTime(char *  _time);
 
 int  Utility_PackRuestTimeMsg(char *data);

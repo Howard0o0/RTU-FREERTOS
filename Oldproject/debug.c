@@ -6,22 +6,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void printch(char ch) //����ַ�
+void printch(char ch) //输出字符
 {
     Console_WriteBytes(&ch,1);
 }
 
-void printint(int dec) //�������
+void printint(int dec) //输出整数
 {
     TraceInt4(dec,1);
 }
 
-void printstr(char* ptr) //����ַ���
+void printstr(char* ptr) //输出字符串
 {
    TraceMsg(ptr,1);
 }
 
-void printfloat(float flt) //�����������С�����5λ��������
+void printfloat(float flt) //输出浮点数，小数点第5位四舍五入
 {
     int interpart = (int)flt;
     int fltpart = (int)(100000*(flt - interpart));

@@ -1,10 +1,10 @@
 //////////////////////////////////////////////////////
-//     �ļ���: adc.c
-//   �ļ��汾: 2.0.0
-//   ����ʱ��: 2010�� 3��4��
-//   ��������: ����
-//       ����: ����
-//       ��ע: ��
+//     文件名: adc.c
+//   文件版本: 2.0.0
+//   创建时间: 2010年 3月4日
+//   更新内容: 精简
+//       作者: 林智
+//       附注: 无
 // 
 //////////////////////////////////////////////////////
 
@@ -15,16 +15,16 @@
 
 #define AD_NUM 16
 
-unsigned int A[16]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}; //  A0Ϊ ��Դ�� 1/2 ��ѹ
+unsigned int A[16]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}; //  A0为 电源的 1/2 分压
 
 void ADC_Open()
 { 
-    P6SEL = 0xFF;            //����P6.0~P6.7 Ϊģ������A0~A7 û��
+    P6SEL = 0xFF;            //设置P6.0~P6.7 为模拟输入A0~A7 没变
     
-    ADC12CTL0 &= ~(ADC12ENC);     //����ENCΪ0���Ӷ��޸�ADC12�Ĵ�������ֵ
-    ADC12CTL1 |= ADC12CSTARTADD_0;//ת������ʼ��ַΪ��ADCMEM0	 
-    ADC12CTL1 |= ADC12CONSEQ_1;   //ת��ģʽΪ������ͨ��,����ת�� 
-    //���ø���ͨ��
+    ADC12CTL0 &= ~(ADC12ENC);     //设置ENC为0，从而修改ADC12寄存器的值
+    ADC12CTL1 |= ADC12CSTARTADD_0;//转换的起始地址为：ADCMEM0	 
+    ADC12CTL1 |= ADC12CONSEQ_1;   //转换模式为：序列通道,单次转换 
+    //设置各个通道
 //    ADC12MCTL0 = ADC12INCH_0 + ADC12SREF0 + ADC12SREF1;
 //    ADC12MCTL1 = ADC12INCH_1 + ADC12SREF0;
 //    ADC12MCTL2 = ADC12INCH_2 + ADC12SREF0;
@@ -50,22 +50,22 @@ void ADC_Open()
     ADC12MCTL15 = ADC12INCH_15+ ADC12EOS;
 // ADC12MCTL7 = ADC12INCH_7 + ADC12SREF0 + ADC12EOS;
   
-    ADC12CTL0 |= ADC12ON + ADC12SHT00;    //��ת������
-    ADC12CTL0 |= ADC12REFON;      //�򿪲ο���ѹ
-    ADC12CTL0 |= ADC12REF2_5V;    //ʹ��2.5V�Ĳο���ѹ
+    ADC12CTL0 |= ADC12ON + ADC12SHT00;    //打开转换核心
+    ADC12CTL0 |= ADC12REFON;      //打开参考电压
+    ADC12CTL0 |= ADC12REF2_5V;    //使用2.5V的参考电压
     ADC12CTL0 |= ADC12MSC;        ///* ADC12 Multiple SampleConversion 
   
-    ADC12CTL1 |= ADC12SSEL_1; //�õ���ACLK, Խ��Խ��
-    ADC12CTL1 |= ADC12DIV_7;  // 8��Ƶ
-    ADC12CTL1 |= (ADC12SHP);      //ת��ʱ��������ת����ʱ��
+    ADC12CTL1 |= ADC12SSEL_1; //用的是ACLK, 越慢越好
+    ADC12CTL1 |= ADC12DIV_7;  // 8分频
+    ADC12CTL1 |= (ADC12SHP);      //转换时钟来自于转换定时器
     
-    //�������,ʹ��ADת��
+    //设置完毕,使能AD转换
     ADC12CTL0 |= ADC12ENC;
-    System_Delayms(100); //��ADģ������
+    System_Delayms(100); //待AD模块启动
     return;
 }
 int ADC_ReadAnalogStr(int _index, char *_dest)
-{//ת������, _index��1��
+{//转换数字, _index从1起
     if(_index <1 || _index>8)
         return -2;
     int _tempInt = A[--_index];
@@ -78,8 +78,8 @@ void ADC_Sample()
     P5SEL |= BIT1;
     P5OUT |= BIT0;
     P5OUT |= BIT1;
-    int _repeats=0;   //ʧ�ܳ��Դ���
-    A[0]=0;A[1]=0;A[2]=0;A[3]=0;A[4]=0;A[5]=0;A[6]=0;A[7]=0;//ÿ�β���ǰҪ���A[I]
+    int _repeats=0;   //失败尝试次数
+    A[0]=0;A[1]=0;A[2]=0;A[3]=0;A[4]=0;A[5]=0;A[6]=0;A[7]=0;//每次采样前要清空A[I]
     A[8]=0;A[9]=0;A[10]=0;A[11]=0;A[12]=0;A[13]=0;A[14]=0;A[15]=0;
  
     unsigned int max00=0; 
@@ -133,8 +133,8 @@ void ADC_Sample()
     unsigned int temp14=0;
     unsigned int temp15=0;
     
-    //�ܹ�10��, ȥ��1�����ֵ,1����Сֵ,Ȼ�����8.
-    //ʵ��ֻɾ��2����ֵ �Բ��Ǻ��� 
+    //总共10次, 去掉1个最大值,1个最小值,然后除以8.
+    //实际只删除2个极值 仍不是很稳 
     for(int j=0;j<10;++j)
     {
         for(int i=0;i<AD_NUM;++i)
@@ -144,16 +144,16 @@ void ADC_Sample()
             for(int j=1000;j>1;--j);
         }
         _repeats=0;
-        //�ȴ�ת����� 
+        //等待转换完成 
         while( (ADC12CTL1 & ADC12BUSY)==1)
-        {//���ֻ�ȴ�1��
+        {//最多只等待1秒
             System_Delayms(100);  
             ++ _repeats;
             if(_repeats>10)
                 break;
         }
-        temp0=ADC12MEM0; //�������ݼĴ��� �и�����,
-        temp1=ADC12MEM1; // �Ȼ��� ����
+        temp0=ADC12MEM0; //操作数据寄存器 有副作用,
+        temp1=ADC12MEM1; // 先缓存 操作
         temp2=ADC12MEM2;
         temp3=ADC12MEM3;
         temp4=ADC12MEM4;
@@ -169,7 +169,7 @@ void ADC_Sample()
         temp14=ADC12MEM14;
         temp15=ADC12MEM15;
         
-        //���������Сֵ
+        //更新最大最小值
         
         if(max00<temp0)  
             max00=temp0; 
@@ -236,13 +236,13 @@ void ADC_Sample()
         if(min150>temp15)
             min150=temp15;
         
-        //�ۼ�
+        //累加
         A[0]+=temp0;A[1]+=temp1;A[2]+=temp2;A[3]+=temp3;
         A[4]+=temp4;A[5]+=temp5;A[6]+=temp6;A[7]+=temp7;
          A[8]+=temp8;A[9]+=temp9;A[10]+=temp10;A[11]+=temp11;
         A[12]+=temp12;A[13]+=temp13;A[14]+=temp14;A[15]+=temp15;
     }
-    //ȥ�����ֵ ��Сֵ
+    //去掉最大值 最小值
     A[0]-=(max00 + min00); A[1]-=(max10 + min10);
     A[2]-=(max20 + min20); A[3]-=(max30 + min30);
     A[4]-=(max40 + min40); A[5]-=(max50 + min50);
@@ -313,6 +313,6 @@ void ADC_Sample()
 
 void ADC_Close()
 {
-    ADC12CTL0 &=~(ADC12ENC);               //��ֹת��
-    ADC12CTL0 &=~ ( ADC12ON + ADC12REFON); //�ر�ת������ �� �ڲ��ο���ѹ
+    ADC12CTL0 &=~(ADC12ENC);               //禁止转换
+    ADC12CTL0 &=~ ( ADC12ON + ADC12REFON); //关闭转换核心 和 内部参考电压
 }

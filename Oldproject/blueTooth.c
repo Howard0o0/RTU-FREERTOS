@@ -1,6 +1,6 @@
 /******************************************/
 //      author: zh
-//      date��2019.10.18
+//      date:2019.10.18
 
 /******************************************/
 
@@ -23,14 +23,14 @@
 int BLEINIT=0;
 int sppflag=0;
 
-void BLE_buffer_Clear() //��BUFF
+void BLE_buffer_Clear() //清除BUFF
 {
 	UART1_ClearBuffer();
 }
 
 
 
-void SPPRX(char * result,int len) //�ֻ�����
+void SPPRX(char * result,int len) //透传模式下RTU发送信息给蓝牙模块
 {   
   printf("BLETX:");
   for(int i=0;i<len;i++)
@@ -41,14 +41,14 @@ void SPPRX(char * result,int len) //�ֻ�����
       
 }
 
-void SPPTX(char * result,int * len) //�ֻ�����
+void SPPTX(char * result,int * len) //透传模式下RTU接收蓝牙模块信息
 {
   int time=0;
   printf("30s\r\n");
 
   while(UART1_RecvLineWait(result,100,len)<0)
   {
-      if(time>30)//30s 100
+      if(time>30)//30s time:100
         return;
       time++;
   }
@@ -62,11 +62,11 @@ void SPPTX(char * result,int * len) //�ֻ�����
 }
 
 
-void BLE_SendAtCmd(char *atCmd,int cmdLen)  //RTU����
+void BLE_SendAtCmd(char *atCmd,int cmdLen)  //RTU发送指令给蓝牙模块
 {
   BLE_buffer_Clear();
   char end[]={0x0D,0x0A};
-  UART1_Send(atCmd,cmdLen,0);     //��һ��OK�ղ���
+  UART1_Send(atCmd,cmdLen,0);     //第一次发送的指令容易丢失回复
   UART1_Send(end,sizeof(end),0);
   System_Delayms(100);
   UART1_Send(atCmd,cmdLen,0); 
@@ -80,7 +80,7 @@ void BLE_SendMsg(char *atCmd,int cmdLen)
 }
 
 
-void BLE_RecAt(char *result,int *num)   //RTU����
+void BLE_RecAt(char *result,int *num)   //RTU接收蓝牙模块的消息
 {
   int _repeat = 0;
   *num=0;
@@ -97,7 +97,7 @@ void BLE_RecAt(char *result,int *num)   //RTU����
   }
 }
 
-BLERet BLE_ATE()        //ATE0����
+BLERet BLE_ATE()        //使蓝牙模块返回消息不回显发送的指令
 {
   // char cmd[] = {0x41,0x54,0x45,0x30 };
   char cmd[] = "ATE0";
@@ -116,7 +116,7 @@ BLERet BLE_ATE()        //ATE0����
   // System_Delayms(500);
 }
 
-BLERet ATTEST()  // AT
+BLERet ATTEST()  // 测试蓝牙模块
 {
       
   // char cmd[] = {0x41 ,0x54  };
@@ -142,7 +142,7 @@ BLERet ATTEST()  // AT
 }
 
 
-BLERet BLE_SetName ( void )//    AT+BLENAME : RTU
+BLERet BLE_SetName ( void )//    AT+BLENAME : RTU 设置蓝牙名称RTU
 {
 
   // char cmd[]={0x41,0x54,0x2B,0x42,0x4C,0x45,0x41,0x44,0x56,0x44,0x41,0x54,0x41,0x3D,0x22,0x30,0x32,0x30,0x31,0x30,0x36,0x30,0x34,0x30,0x39,0x35,0x32,0x35,0x34,0x35,0x35,0x30,0x33,0x30,0x33,0x30,0x32,0x41,0x30,0x22};
@@ -165,7 +165,7 @@ BLERet BLE_SetName ( void )//    AT+BLENAME : RTU
           
 }
 
-BLERet BLE_SERVER()  // //AT+BLEINIT=2  ��ʼ��Ϊ�����???
+BLERet BLE_SERVER()  // //AT+BLEINIT=2  使蓝牙模块为服务端
 {
   char cmd[]="AT+BLEINIT=2";
   // char cmd[]={0x41,0x54,0x2B,0x42,0x4C,0x45,0x49,0x4E,0x49,0x54,0x3D,0x32 };
@@ -186,7 +186,7 @@ BLERet BLE_SERVER()  // //AT+BLEINIT=2  ��ʼ��Ϊ�����???
 
 
 
-BLERet BLE_GATTSSRVCRE()// AT+BLEGATTSSRVCRE GATTS ��������
+BLERet BLE_GATTSSRVCRE()// AT+BLEGATTSSRVCRE 初始化蓝牙模块GATTS服务 
 {
   char cmd[]="AT+BLEGATTSSRVCRE";
   // char cmd[]={0x41,0x54,0x2B,0x42,0x4C,0x45,0x47,0x41,0x54,0x54,0x53,0x53,0x52,0x56,0x43,0x52,0x45 };
@@ -215,7 +215,7 @@ BLERet BLE_GATTSSRVCRE()// AT+BLEGATTSSRVCRE GATTS ��������
 }
 
 
-BLERet BLE_GATTSSRVSTART() //AT+BLEGATTSSRVSTART��GATTS ��������
+BLERet BLE_GATTSSRVSTART() //AT+BLEGATTSSRVSTART 开启蓝牙模块GATTS服务
 {
   char cmd[]="AT+BLEGATTSSRVSTART";
   // char cmd[]={0x41,0x54,0x2B,0x42,0x4C,0x45,0x47,0x41,0x54,0x54,0x53,0x53,0x52,0x56,0x53,0x54,0x41,0x52,0x54  };
@@ -235,7 +235,7 @@ BLERet BLE_GATTSSRVSTART() //AT+BLEGATTSSRVSTART��GATTS �������
 }
 
 
-BLERet BLE_ADVSTART()  //AT+BLEADVSTART �����㲥  
+BLERet BLE_ADVSTART()  //AT+BLEADVSTART 蓝牙模块广播 
 {
   char cmd[]="AT+BLEADVSTART";
   // char cmd[]={0x41,0x54,0x2B,0x42,0x4C,0x45,0x41,0x44,0x56,0x53,0x54,0x41,0x52,0x54  };
@@ -255,7 +255,7 @@ BLERet BLE_ADVSTART()  //AT+BLEADVSTART �����㲥
 }
 
 
-BLERet BLE_BLESPPCFG()//AT+BLESPPCFG=1,1,7,1,5  ����͸��
+BLERet BLE_BLESPPCFG()//AT+BLESPPCFG=1,1,7,1,5  设置蓝牙模块透传参数
 {
   char cmd[]="AT+BLESPPCFG=1,1,7,1,5";
   // char cmd[]={0x41,0x54,0x2B,0x42,0x4C,0x45,0x53,0x50,0x50,0x43,0x46,0x47,0x3D,0x31,0x2C,0x31,0x2C,0x37,0x2C,0x31,0x2C,0x35  };
@@ -274,21 +274,21 @@ BLERet BLE_BLESPPCFG()//AT+BLESPPCFG=1,1,7,1,5  ����͸��
     return BLE_ERROR;
 }
 
-BLERet BLE_BLESP()//AT+BLESPP  
+BLERet BLE_BLESP()//AT+BLESPP  开启透传
 {
-  // System_Delayms ( 100 );     //����
+  // System_Delayms ( 100 );     
   char cmd[]="AT+BLESPP";
 	// char cmd[]={0x41,0x54,0x2B,0x42,0x4C,0x45,0x53,0x50,0x50  };
   int num;
 	char result[100]=" ";
 
-  BLE_BLESPPCFG();    //����
+  BLE_BLESPPCFG();    //必须
 
 	// BLE_SendAtCmd(cmd,sizeof(cmd)-1);
   BLE_buffer_Clear();
   char end[]={0x0D,0x0A};
 
-  // UART1_Send("AT",2,0);     //��һ��OK�ղ���
+  // UART1_Send("AT",2,0);     
   // UART1_Send(end,sizeof(end),0);
   // System_Delayms ( 100 );
   UART1_Send(cmd,sizeof(cmd)-1,0);     
@@ -315,7 +315,7 @@ BLERet BLE_BLESP()//AT+BLESPP
 
 }
 
-BLERet BLE_BLESPP() //����͸��
+BLERet BLE_BLESPP() //开启透传模式5次
 {
   int time=0;
   sppflag=1;
@@ -335,7 +335,7 @@ BLERet BLE_BLESPP() //����͸��
   return BLE_SUCCESS;
 }
 
-BLERet BLE_BLESPPEND()//+++ �ر�͸��     
+BLERet BLE_BLESPPEND()//+++ 退出透传   
 {
     char cmd[]="+++";
     // char cmd[]={0x2B,0x2B,0x2B};
@@ -343,7 +343,7 @@ BLERet BLE_BLESPPEND()//+++ �ر�͸��
     BLE_buffer_Clear();
     char result[100]=" ";
 
-    System_Delayms(1000);   //����
+    System_Delayms(1000);   
     UART1_Send(cmd,sizeof(cmd)-1,0);
     BLE_RecAt(result,&num);
     // printf("REC:%s\r\n",result);
@@ -356,7 +356,7 @@ BLERet BLE_BLESPPEND()//+++ �ر�͸��
     return ret;
 }
 
-BLERet BLE_INIT()       //��ʼ������
+BLERet BLE_INIT()       
 {
     P10OUT |= BIT1;
     P10DIR |= BIT1;         //MCU-P101=1
@@ -390,7 +390,7 @@ BLERet BLE_INIT()       //��ʼ������
     return BLE_ERROR;
 }
 
-BLERet BLE_Open()
+BLERet BLE_Open()     
 {
       BLERet ret = BLE_ERROR;
       System_Delayms ( 100 );
@@ -430,7 +430,7 @@ BLERet BLE_Open()
       return ret;
 }
 
-BLERet BLE_CONNECT()    //�ж��Ƿ�����
+BLERet BLE_CONNECT()    //查询蓝牙是否连接
 {
   System_Delayms ( 100 );
   BLE_buffer_Clear();
@@ -452,7 +452,7 @@ BLERet BLE_CONNECT()    //�ж��Ƿ�����
     return BLE_ERROR;
 }
 
-BLERet BLE_ADVSTOP()    //�رչ㲥
+BLERet BLE_ADVSTOP()    //关闭广播
 {
   char cmd[]="AT+BLEADVSTOP";
   // char cmd[]={0x41,0x54,0x2B,0x42,0x4C,0x45,0x41,0x44,0x56,0x53,0x54,0x4F,0x50 };
@@ -472,7 +472,7 @@ BLERet BLE_ADVSTOP()    //�رչ㲥
 }
 
 
-BLERet BLE_RST()    //����
+BLERet BLE_RST()    //蓝牙模块重启
 {
   BLEINIT=0;
 
@@ -494,7 +494,7 @@ BLERet BLE_RST()    //����
 
 }
 
-BLERet BLE_SLEEP()      //����
+BLERet BLE_SLEEP()      //蓝牙模块进入休眠
 {
   char cmd[]="AT+CWMODE=0";
   // char cmd[]={0x41,0x54,0x2B,0x43,0x57,0x4D,0x4F,0x44,0x45,0x3D,0x30  };
@@ -534,7 +534,7 @@ void BLE_Close()
 }
 
 
-int BLE_RecvLineTry ( char* _dest,const int _max, int* _pNum )  ////10.16
+int BLE_RecvLineTry ( char* _dest,const int _max, int* _pNum )  
 {
 	if ( 0 == UART1_RecvLineWait ( _dest, _max,  _pNum ) )
 	{
@@ -548,7 +548,7 @@ int BLE_RecvLineTry ( char* _dest,const int _max, int* _pNum )  ////10.16
 }
 
 
-int BLE_MAIN()  //����-����ʼ��-������ -������͸�� if 0 connectd , -1 not connected
+int BLE_MAIN()  // if 0 connectd , -1 not connected
 {
         if(BLE_INIT()!=BLE_SUCCESS)
           return -1;
@@ -577,8 +577,8 @@ int BLE_MAIN()  //����-����ʼ��-������ -���
           time++;
           printf( "CONNECT...\r\n" );
           System_Delayms ( 1000 );
-          // if(time>30)
-          if(0)
+          if(time>10)
+          // if(0)
           {
             printf("failed to connect\r\n");
             return -1;
@@ -681,7 +681,7 @@ int ble_isinit();
 int ble_sppflag();
 void ble_rst();
 void ble_adv();
-pBLE_Dev T_CommuteDevBLE = 
+BLE_Dev T_CommuteDevBLE = 
 {
     .name = "BLE",
     .isConnect = ble_isConnect,

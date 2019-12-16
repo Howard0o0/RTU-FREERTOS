@@ -11,6 +11,7 @@
 #include "msp430common.h"
 #include "common.h"
 #include "uart3.h"
+#include "uart1.h"
 #include "uart0.h"
 #include "led.h"
 #include "stdio.h"
@@ -222,8 +223,9 @@ int  UART3_Send(char * _data ,int _len, int _CR)
     }
 
     /*******BLE*********/
+    extern int s_uart1_type;
     pBLE_Dev  ptDevBle =  getIODev();
-    if( ptDevBle->isinit() ){
+    if( s_uart1_type == UART1_BT_TYPE ){
         if( ptDevBle->isspp() ){
             ptDevBle->read(_data,_len);
             if(_CR)//����һ������

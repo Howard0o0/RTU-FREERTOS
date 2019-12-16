@@ -10,26 +10,26 @@ void BLE_RE()
     pBLE_Dev  ptDevBle =  getIODev();
     while(1){
         xSemaphoreTake(xSemaphore_BLE,portMAX_DELAY);
-        if( s_uart1_type==UART1_BT_TYPE ){
+        if ( s_uart1_type==UART1_BT_TYPE ){
             // printf("1\r\n");
-            if( ptDevBle->isinit() ){
+            if ( ptDevBle->isinit() ){
                 // printf("2 \r\n");
-                if( ptDevBle->isspp() == 0 ){
+                if ( ptDevBle->isspp() == 0 ){
                     // printf("3 \r\n");
                     if( !ptDevBle->isConnect() ){
                         // printf("4 \r\n");
                         ptDevBle->adv();
-                    } 
-                    else
-                    {
+                    }else{
                         // printf("5 \r\n");
                         if( ptDevBle->open() ){
-                            ptDevBle->close();
-                            if( ptDevBle->open() )
-                                ptDevBle->init();
+                            ptDevBle->init();
                         }
                     }
+                }else{
+                    vTaskDelay(10000 / portTICK_PERIOD_MS);
+                    ptDevBle->close();
                 }
+                
             }
             else 
             {
