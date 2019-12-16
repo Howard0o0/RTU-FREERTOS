@@ -66,7 +66,7 @@ float ConvertAnalog(int v, int range) {
 }
 
 void ADC_Element(char *value, int index) {
-    // int range[5] = {1,20,100,5000,4000};     //???????��
+    // int range[5] = {1,20,100,5000,4000};     //模拟量范围
     int range[16]    = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
     float floatvalue = 0;
 
@@ -107,7 +107,7 @@ void HydrologyUpdateElementTable() {
         // Hydrology_ReadStoreInfo(HYDROLOGY_SWITCH1,temp_value,HYDROLOGY_SWITCH_LEN);
         getElementDd(
             Element_table[i].ID, &Element_table[i].D,
-            &Element_table[i].d);   // D,d??????????????????????????????????��?
+            &Element_table[i].d);   //D,d存了取还是直接取，可以先测直接取的，看可行否
     }
     Element_table[i].ID      = NULL;
     Element_table[i].type    = NULL;
@@ -132,7 +132,7 @@ void HydrologyDataPacketInit() {
     Hydrology_WriteStoreInfo(HYDROLOGY_DATA_PACKET_LEN, &packet_len,
                              HYDROLOGY_DATA_PACKET_LEN_LEN);
 
-    /*??????????????????????????*/
+    /*初始化的时候更新下时间*/
     char newtime[6] = {0};
     GSM_Open();
     GSM_AT_QueryTime(&newtime[0], &newtime[1], &newtime[2], &newtime[3],

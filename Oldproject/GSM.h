@@ -1,10 +1,10 @@
 //////////////////////////////////////////////////////
-//     ÎÄ¼şÃû: gsm.h
-//   ÎÄ¼ş°æ±¾: 1.0.0
-//   ´´½¨Ê±¼ä: 09Äê 11ÔÂ30ÈÕ
-//   ¸üĞÂÄÚÈİ: 
-//       ×÷Õß: ÁÖÖÇ
-//       ¸½×¢: ÎŞ
+//     æ–‡ä»¶å: gsm.h
+//   æ–‡ä»¶ç‰ˆæœ¬: 1.0.0
+//   åˆ›å»ºæ—¶é—´: 09å¹´ 11æœˆ30æ—¥
+//   æ›´æ–°å†…å®¹: 
+//       ä½œè€…: æ—æ™º
+//       é™„æ³¨: æ— 
 // 
 //////////////////////////////////////////////////////
 
@@ -12,12 +12,12 @@
 
 int GSM_Open();   //called by others
 int GSM_Close(int _type); //called by others
-int GSM_Init(); // ¹Ø±Õ»ØÏÔ,²¢ÉèÖÃ¶ÌĞÅÎªtxtÄ£Ê½   //called by others
+int GSM_Init(); // å…³é—­å›æ˜¾,å¹¶è®¾ç½®çŸ­ä¿¡ä¸ºtxtæ¨¡å¼   //called by others
 int GSM_CheckOK();  //called by others
 int GSM_Waiting_Process(int type);  
 int GSM_Report_Process();  
 int GSM_Alert_Process();
-int GSM_CheckLive();// ¼ì²âGSMÊÇ·ñÕı³£¹¤×÷
+int GSM_CheckLive();// æ£€æµ‹GSMæ˜¯å¦æ­£å¸¸å·¥ä½œ
 int GSM_SendReportMsg();
 int GSM_ProcMessageTxt(int index);
 int GSM_StartCheckSIM();
@@ -28,19 +28,19 @@ int GSM_SendMsgTxt(char * phoneNum, char * data,int dataLen);
 
 int GSM_ProcMsgData(char * data,char* rePhone,int dataLen);
 
-int GSM_GetMsgStore(char *recv); //´ÓÏìÓ¦ÖĞÈ¡µÃ¶ÌĞÅÊıÁ¿ 
+int GSM_GetMsgStore(char *recv); //ä»å“åº”ä¸­å–å¾—çŸ­ä¿¡æ•°é‡  
 
-int GSM_GetRePhone(char *src, char *dest);//»ñµÃ¶ÌĞÅµÄ»Ø¸´ºÅÂë 
+int GSM_GetRePhone(char *src, char *dest);//è·å¾—çŸ­ä¿¡çš„å›å¤å·ç  
  
 int GSM_ProcMessageTxt(int _index);
  
 int GSM_ProcMsgArray();   
-int GSM_CallLeader(char *phone); //¸ø¸ºÔğÈË´òµç»°  
+int GSM_CallLeader(char *phone); //ç»™è´Ÿè´£äººæ‰“ç”µè¯  
 
 int GSM_DealData(char * _recv, int _dataLen);
 int GSM_DealAllData();
 
-//ATº¯Êı
+//ATå‡½æ•°
 int  GSM_AT_QuerySim();
 int GSM_AT_QueryStore();     
 int GSM_AT_QueryNet();   

@@ -1,10 +1,10 @@
   //////////////////////////////////////////////////////
-//     �ļ���: uart3.c
-//   �ļ��汾: 1.0.0
-//   ����ʱ��: 09��11��30��
-//   ��������:  
-//       ����: ����
-//       ��ע: ��
+//     文件名: uart3.c
+//   文件版本: 1.0.0
+//   创建时间: 09年11月30日
+//   更新内容:  
+//       作者: 林智
+//       附注: 无
 //
 //////////////////////////////////////////////////////
 
@@ -24,25 +24,25 @@ char testbuf[2];
 int testcount=0;
 
 char * UART3_Tx_Buf=NULL; 
-char UART3_Rx_Buffer[UART3_MAXIndex][UART3_MAXBUFFLEN]; //  ���ݴ洢�� 
-int  UART3_Rx_BufLen[UART3_MAXIndex];                   //  ÿ�н��յ������ݳ���  
-int  UART3_Rx_INTIndex=0;                               //  �жϸ�д����λ��
-int  UART3_Rx_INTLen=0;                                 //  �жϸ�д���еĵڼ����ַ� 
-int  UART3_Rx_RecvIndex=0;                              //  ��ǰ�ö�����λ�� 
+char UART3_Rx_Buffer[UART3_MAXIndex][UART3_MAXBUFFLEN]; //  数据存储区 
+int  UART3_Rx_BufLen[UART3_MAXIndex];                   //  每行接收到的数据长度  
+int  UART3_Rx_INTIndex=0;                               //  中断该写的行位置
+int  UART3_Rx_INTLen=0;                                 //  中断该写该行的第几个字符 
+int  UART3_Rx_RecvIndex=0;                              //  当前该读的行位置 
 
 unsigned int UART3_Tx_Flag=0;
 unsigned int UART3_Tx_Len=0;
 extern int WIFI_Inited_Flag;
 
 
-//ָʾ��ǰ���͵�
+//指示当前类型的
 static int s_uart3_type=0;  
 
 int UART3_Open(int  _type)
 {
     s_uart3_type = _type;
     
-    //����rs232  ��ƽת����·
+    //开启rs232  电平转换电路
  //   P4DIR |= BIT0;
  //   P4OUT |= BIT0;
     
@@ -58,20 +58,20 @@ int UART3_Open(int  _type)
      
  //   UART3_ClearBuffer();
         
- //   ME2 |= UTXE1+URXE1;   //ʹ��UART3��TXD��RXD  
- //   IE2 |= URXIE1+UTXIE1; //ʹ��UART3��RX��TX�ж�  
+ //   ME2 |= UTXE1+URXE1;   //使能UART3的TXD和RXD  
+ //   IE2 |= URXIE1+UTXIE1; //使能UART3的RX和TX中断 
     
- //   P3SEL |= BIT6;//����P3.6ΪUART3��TXD 
- //   P3SEL |= BIT7;//����P3.7ΪUART3��RXD
- //   P3DIR |= BIT6;//P3.6Ϊ����ܽ�   
+ //   P3SEL |= BIT6;//设置P3.6为UART3的TXD 
+ //   P3SEL |= BIT7;//设置P3.7为UART3的RXD
+ //   P3DIR |= BIT6;//P3.6为输出管脚    
 //     if(s_uart3_type==1)
 ////    {
-//        P10DIR |= BIT0;             //ly P100���ߣ�uart3���ڵ��ԣ��͵Ļ�P104��,105����485��
+//        P10DIR |= BIT0;              //ly P100拉高，uart3用于调试，低的话P104，,105就是485口
 //        P10OUT |= BIT0;  
 ////    }
 ////    else
 ////    {
-//        P10DIR |= BIT0;             //ly P100���ߣ�uart3���ڵ��ԣ��͵Ļ�P104��,105����485��
+//        P10DIR |= BIT0;              //ly P100拉高，uart3用于调试，低的话P104，,105就是485口
 //        P10OUT &=~ BIT0;
 ////    }
    
@@ -90,7 +90,7 @@ int UART3_Open(int  _type)
   P10SEL |= TXD3 + RXD3;
   
   /*2418 UC1IE UCA1RXIE 5438 UCA1IE UCRXIE*/
-  UCA3IE |= UCRXIE;//���ܴ��ڽ����ж�          
+  UCA3IE |= UCRXIE;//是能串口接收中断          
 
   return 0;
 }
@@ -98,7 +98,7 @@ void UART3_Open_9600(int _type)
 {
   s_uart3_type = _type;
     
-    //����rs232  ��ƽת����·
+    //开启rs232  电平转换电路
  //   P4DIR |= BIT0;
  //   P4OUT |= BIT0;
     
@@ -106,7 +106,7 @@ void UART3_Open_9600(int _type)
  //   UCTL1 &=~ SWRST; 
  //   UCTL1 |= CHAR;
  //   UTCTL1 = 0X00;	
-    //115200��  XT2=8000000   SMCLK
+    //115200,  XT2=8000000   SMCLK
     //UTCTL1=SSEL1; UBR0_1 = 0x45; UBR1_1 = 0x00; UMCTL1 = 0x4A;
     
     //  9600,    XT2=8000000   SMCLK
@@ -114,16 +114,16 @@ void UART3_Open_9600(int _type)
      
   //  UART3_ClearBuffer();
         
-  //  ME2 |= UTXE1+URXE1;   //ʹ��UART3��TXD��RXD  
- //   IE2 |= URXIE1+UTXIE1; //ʹ��UART3��RX��TX�ж�  
+  //  ME2 |= UTXE1+URXE1;   //使能UART3的TXD和RXD  
+ //   IE2 |= URXIE1+UTXIE1; //使能UART3的RX和TX中断  
     
- //   P3SEL |= BIT6;//����P3.6ΪUART3��TXD 
- //   P3SEL |= BIT7;//����P3.7ΪUART3��RXD
- //   P3DIR |= BIT6;//P3.6Ϊ����ܽ�    
+ //   P3SEL |= BIT6;//设置P3.6为UART3的TXD 
+ //   P3SEL |= BIT7;//设置P3.7为UART3的RXD
+ //   P3DIR |= BIT6;//P3.6为输出管脚     
   UCA3CTL1 |= UCSWRST;
   UCA3CTL1 |= UCSSEL1;   //smclk 1M 
   
-  //104��Ӧ9600�����ʣ�52��Ӧ19200? 8��Ӧ115200
+  //104对应9600波特率，52对应19200? 8对应115200
   UCA3BR0 = 104;
   UCA3BR1 = 0;
   UCA3MCTL |= UCBRF_0+UCBRS_6;//
@@ -140,12 +140,12 @@ void UART3_Open_9600(int _type)
 }
 void UART3_Close()
 { 
-   //�ر�RS232��ƽת����·
+   //关闭RS232电平转换电路
   //P4DIR |= BIT0;
   //P4OUT &= ~BIT0; 
    
    UART3_ClearBuffer(); 
-   //�رմ���1
+   //关闭串口1
    
 /*2418 UC1IE UCA1RXIE 5438 UCA1IE UCRXIE*/
    UCA3IE &= ~UCRXIE;	 
@@ -154,7 +154,7 @@ void UART3_Close()
 
 void UART3_ClearBuffer()
 {
-    DownInt();//���ж�
+    DownInt();//关中断
     
     UART3_Tx_Buf=0;
     UART3_Rx_INTIndex=0;
@@ -168,23 +168,23 @@ void UART3_ClearBuffer()
       UART3_Rx_BufLen[i]=0;
     }
     
-    UpInt();//���ж�
+    UpInt();//开中断
 }
 int  UART3_Send(char * _data ,int _len, int _CR)
 {
 
-    if(UART3_Tx_Flag!=0)//�ȴ���һ�η��ͽ���
-    {//�͵�500ms 
+    if(UART3_Tx_Flag!=0)//等待上一次发送结束
+    {//就等500ms 
         System_Delayms(500);
    
-        UART3_Tx_Flag=0;//ǿ������Ϊ0;
+        UART3_Tx_Flag=0;//强制设置为0;
     }
     if(_len>1)
     {
-        //��ȫ�ֱ�����ֵ
-        UART3_Tx_Buf=_data; //�����һ�������ж� ����Ϊ0
-        UART3_Tx_Len=_len; //�����һ�������ж� ����Ϊ0,�෢���һ����������
-        UART3_Tx_Flag=1; //���������������һ�����ݵ��ж���������Ϊ0��  
+        //给全局变量赋值
+        UART3_Tx_Buf=_data; //由最后一次数据中断 设置为0
+        UART3_Tx_Len=_len; //由最后一次数据中断 设置为0,多发最后一个结束符号
+        UART3_Tx_Flag=1; //这个变量最后由最后一个数据的中断重新设置为0; 
        for(int i=0;i<UART3_Tx_Len;i++)
        {
          
@@ -194,7 +194,7 @@ int  UART3_Send(char * _data ,int _len, int _CR)
        }
         UART3_Tx_Flag=0;
     }
-    if(_len==1)//1���ַ���ʱ�� ���жϷ��� �޷��ɹ�.��ʱ�Ȼ��ɲ�ѯ����.�Ժ���о�
+    if(_len==1)//1个字符的时候 用中断发送 无法成功.暂时先换成查询发送.以后待研究
     {
       /*2418 UC1IFG UCA1TXIFG 5438 UCA1IFG UCTXIFG*/
         while (!(UCA3IFG&UCTXIFG));
@@ -202,7 +202,7 @@ int  UART3_Send(char * _data ,int _len, int _CR)
         
     }
     if(_CR)
-    {//����һ������
+    {//补发一个换行
       /*2418 UC1IFG UCA1TXIFG 5438 UCA1IFG UCTXIFG*/
         while (!(UCA3IFG&UCTXIFG));
         UCA3TXBUF=13;
@@ -212,7 +212,7 @@ int  UART3_Send(char * _data ,int _len, int _CR)
         
     }
     if(_CR)
-    {//����һ������
+    {//补发一个换行
       /*2418 UC1IFG UCA1TXIFG 5438 UCA1IFG UCTXIFG*/
         while (!(UCA3IFG&UCTXIFG));
         UCA3TXBUF=13;
@@ -228,9 +228,9 @@ int  UART3_Send(char * _data ,int _len, int _CR)
     if( s_uart1_type == UART1_BT_TYPE ){
         if( ptDevBle->isspp() ){
             ptDevBle->read(_data,_len);
-            if(_CR)//����һ������
+            if(_CR)//补发一个换行
             {
-                System_Delayms(1000);    //ptDevBle->read�ļ������̫�̣�esp32�ᷴӦ������
+                System_Delayms(1000);    
                 ptDevBle->read("\r\n",2);
             }
         }
@@ -239,7 +239,7 @@ int  UART3_Send(char * _data ,int _len, int _CR)
     return 0;
 }
 
-//����
+//调试
 int  UART3_SendtoInt(int num)
 {
 /*2418 UC1IFG UCA1TXIFG 5438 UCA1IFG UCTXIFG*/
@@ -252,18 +252,18 @@ int  UART3_SendtoInt(int num)
 int  UART3_RecvLine(char * _dest ,int _max, int * _pNum)
 {
     int i=0;
-    //�ö���λ�ó���Ϊ0, ��ѭ���ȴ� 
+    //该读的位置长度为0, 则循环等待 
     while(UART3_Rx_BufLen[UART3_Rx_RecvIndex]==0);
-    //�������ˣ��Ͱ����ݸ��Ƴ���, 
+    //有数据了，就把数据复制出来, 
     for(i=0; ( i< _max) && ( i<UART3_Rx_BufLen[UART3_Rx_RecvIndex]); ++i)
     {
         _dest[i]=UART3_Rx_Buffer[UART3_Rx_RecvIndex][i];
     }
     *_pNum = UART3_Rx_BufLen[UART3_Rx_RecvIndex];
-    //������Ϻ�,�ͰѸ�λ�õĳ�������Ϊ0,�����жϿ��Ը�����.
+    //复制完毕后,就把该位置的长度设置为0,告诉中断可以覆盖了
     UART3_Rx_BufLen[UART3_Rx_RecvIndex]=0;
-    //��λ����һ��
-    // ��� ����9 �ͼ�ȥ9 ,�ӵ�һ�п�ʼ,����ͼ�������.
+    //定位到下一行
+    // 如果 等于9 就减去9 ,从第一行开始,否则就继续自增.
     if( UART3_Rx_RecvIndex >= UART3_MAXIndex -1)
         UART3_Rx_RecvIndex=0;
     else
@@ -274,7 +274,7 @@ int  UART3_RecvLine(char * _dest ,int _max, int * _pNum)
 int  UART3_RecvLineTry(char * _dest,const int _max, int * _pNum)
 {
     int i=0;
-    //�ö���λ�ó���Ϊ0, ��ѭ���ȴ� 
+    //该读的位置长度为0, 则循环等待
 
     if(UART3_Rx_BufLen[UART3_Rx_RecvIndex]==0)
     {
@@ -283,16 +283,16 @@ int  UART3_RecvLineTry(char * _dest,const int _max, int * _pNum)
 
     TraceInt4(UART3_Rx_RecvIndex,1);
     TraceInt4(UART3_Rx_BufLen[UART3_Rx_RecvIndex],1);
-    //�������ˣ��Ͱ����ݸ��Ƴ���, 
+    //有数据了,就把数据复制出来,  
     for(i=0; ( i< _max) && ( i<UART3_Rx_BufLen[UART3_Rx_RecvIndex]); ++i)
     {
         _dest[i]=UART3_Rx_Buffer[UART3_Rx_RecvIndex][i];
     }
     *_pNum =UART3_Rx_BufLen[UART3_Rx_RecvIndex];
-    //������Ϻ�,�ͰѸ�λ�õĳ�������Ϊ0,�����жϿ��Ը�����.
+    //复制完毕后,就把该位置的长度设置为0,告诉中断可以覆盖了.
     UART3_Rx_BufLen[UART3_Rx_RecvIndex]=0;
-    //��λ����һ��
-    // ��� ����9 �ͼ�ȥ9 ,�ӵ�һ�п�ʼ,����ͼ�������.
+    //定位到下一行
+    // 如果 等于9 就减去9 ,从第一行开始,否则就继续自增.
     if( UART3_Rx_RecvIndex >= UART3_MAXIndex -1)
         UART3_Rx_RecvIndex=0;
     else
@@ -302,7 +302,7 @@ int  UART3_RecvLineTry(char * _dest,const int _max, int * _pNum)
 int  UART3_RecvLineWait(char *_dest ,const int _max, int * _pNum)
 {
     int i=0; 
-    //�ö���λ�ó���Ϊ0, ��ѭ���ȴ� 
+    //该读的位置长度为0, 则循环等待 
     while(UART3_Rx_BufLen[UART3_Rx_RecvIndex]==0)
     {
         System_Delayms(30);
@@ -310,16 +310,16 @@ int  UART3_RecvLineWait(char *_dest ,const int _max, int * _pNum)
         if(i>10) 
             return -1;
     }
-    //�������ˣ��Ͱ����ݸ��Ƴ���, 
+    //有数据了，就把数据复制出来,  
     for(i=0; ( i< _max) && ( i<UART3_Rx_BufLen[UART3_Rx_RecvIndex]); ++i)
     {
         _dest[i]=UART3_Rx_Buffer[UART3_Rx_RecvIndex][i];
     }
     *_pNum = UART3_Rx_BufLen[UART3_Rx_RecvIndex];
-    //������Ϻ�,�ͰѸ�λ�õĳ�������Ϊ0,�����жϿ��Ը�����.
+    //复制完毕后,就把该位置的长度设置为0,告诉中断可以覆盖了.
     UART3_Rx_BufLen[UART3_Rx_RecvIndex]=0;
-    //��λ����һ��
-    // ��� ����9 �ͼ�ȥ9 ,�ӵ�һ�п�ʼ,����ͼ�������.
+    ///定位到下一行
+    // 如果 等于9 就减去9 ,从第一行开始,否则就继续自增
     if( UART3_Rx_RecvIndex >= UART3_MAXIndex -1)
         UART3_Rx_RecvIndex=0;
     else
@@ -329,24 +329,24 @@ int  UART3_RecvLineWait(char *_dest ,const int _max, int * _pNum)
 int  UART3_RecvLineLongWait(char *_dest,int _max, int * _pNum)
 {
     int i=0;
-    //�ö���λ�ó���Ϊ0, ��ѭ���ȴ� 
+    //该读的位置长度为0, 则循环等待 
     while(UART3_Rx_BufLen[UART3_Rx_RecvIndex]==0)
-    {//�ȴ�5��.
+    {//等待5秒.
         System_Delayms(50);
         ++i;
         if(i>100)
             return -1;        
     }
-    //�������ˣ��Ͱ����ݸ��Ƴ���, 
+    //有数据了,就把数据复制出来, 
     for(i=0; ( i< _max) && ( i<UART3_Rx_BufLen[UART3_Rx_RecvIndex]); ++i)
     {
         _dest[i]=UART3_Rx_Buffer[UART3_Rx_RecvIndex][i];
     }
     *_pNum = UART3_Rx_BufLen[UART3_Rx_RecvIndex];
-    //������Ϻ�,�ͰѸ�λ�õĳ�������Ϊ0,�����жϿ��Ը�����.
+    //复制完毕后,就把该位置的长度设置为0,告诉中断可以覆盖了.
     UART3_Rx_BufLen[UART3_Rx_RecvIndex]=0;
-    //��λ����һ��
-    // ��� ����9 �ͼ�ȥ9 ,�ӵ�һ�п�ʼ,����ͼ�������.
+    //定位到下一行
+    // 如果 等于9 就减去9 ,从第一行开始,否则就继续自增.
     if( UART3_Rx_RecvIndex >= UART3_MAXIndex -1)
         UART3_Rx_RecvIndex=0;
     else
@@ -369,19 +369,19 @@ int  UART3_RecvLineLongWait(char *_dest,int _max, int * _pNum)
 
 
 //
-//    ���ܵ�һ���ַ�.
+//    接受到一个字符.
 //    
-//    װ�ص�UART3_Rx_Buffer[UART3_Rx_INTIndex][UART3_Rx_INTLen]��.
-//    ������UART3_Rx_INTLen ;���UART3_Rx_INTLen�Ѿ������һ�������ַ�Ϊ����
-//    ��д���л���ĳ���Ϊ UART3_Rx_INTLen+1;
-//    ����UART3_Rx_INTIndex,ָ����һ��������. �����һ����������������δ������.
-//    ��ô�Ͳ�����,������д��ǰ�Ļ�����.
+//    装载到UART3_Rx_Buffer[UART3_Rx_INTIndex][UART3_Rx_INTLen]中.
+//    并递增UART3_Rx_INTLen ;如果UART3_Rx_INTLen已经是最后一个或者字符为换行
+//    填写本行缓存的长度为 UART3_Rx_INTLen+1;
+//    递增UART3_Rx_INTIndex,指向下一个缓冲区. 如果下一个缓存区的数据仍未被处理.
+//    那么就不递增,覆盖填写当前的缓冲区.
 //    
 //    
 //    
 /*************VECTOR*/
 #pragma vector=USCI_A3_VECTOR 
-__interrupt void UART3_RX_ISR(void)   //�����յ����ַ���ʾ���������
+__interrupt void UART3_RX_ISR(void)   //将接收到的字符显示到串口输出
 {
    //_DINT();
    char _temp; 
@@ -397,17 +397,17 @@ __interrupt void UART3_RX_ISR(void)   //�����յ����ַ���
       
         if(((_temp==0x0A) && (UART3_Rx_INTLen!=0) && (UART3_Rx_Buffer[UART3_Rx_INTIndex][UART3_Rx_INTLen-2]==0x0D)) || (_temp == ')'))
         {
-            //�����ͷ���յ���������з���,ֱ������
+            //如果是头部收到的这个换行符号,直接抛弃
             if(UART3_Rx_INTLen==1)
             {
-                UART3_Rx_INTLen=0; //���¿�ʼ���� 
+                UART3_Rx_INTLen=0; //重新开始接收 
                 return ;
             }
             else
             {
-                //   ��λ����һ�� 
-                //UART3_Rx_Buffer[UART3_Rx_INTIndex][UART3_Rx_INTLen-1]=13; //������ø�13
-                UART3_Rx_BufLen[UART3_Rx_INTIndex] = UART3_Rx_INTLen - 2;//���������з�
+                //   定位到下一行 
+                //UART3_Rx_Buffer[UART3_Rx_INTIndex][UART3_Rx_INTLen-1]=13; //随便设置个13
+                UART3_Rx_BufLen[UART3_Rx_INTIndex] = UART3_Rx_INTLen - 2;//不包括换行符
                 UART3_Rx_INTLen=0;
                 if(UART3_Rx_INTIndex >= UART3_MAXIndex-1)
                     UART3_Rx_INTIndex=0;
@@ -433,7 +433,7 @@ __interrupt void UART3_RX_ISR(void)   //�����յ����ַ���
 //    }
     
     if(UART3_Rx_INTLen >= UART3_MAXBUFFLEN-1)
-    {//�г���������, ����ֱ�ӽضϳ�һ��.
+    {//行长度满出了, 我们直接截断成一行.
         UART3_Rx_BufLen[UART3_Rx_INTIndex] = UART3_Rx_INTLen + 1;
         UART3_Rx_INTLen=0;
         if(UART3_Rx_INTIndex >= UART3_MAXIndex-1)
@@ -442,15 +442,15 @@ __interrupt void UART3_RX_ISR(void)   //�����յ����ַ���
             ++UART3_Rx_INTIndex;
     }
     
-    //�жϻ������Ƿ�����:UART3_Rx_INTIndex��¼�´α�����������´������Ѿ��д洢��˵������������
+    //判断缓冲区是否已满:UART3_Rx_INTIndex记录下次保存的行数，下次行数已经有存储，说明缓冲器满了
     if( UART3_Rx_BufLen[UART3_Rx_INTIndex]!=0)
     {
-        //��һ�л�δ���������Ǿ͸������������һ��
+        //下一行还未被处理，那就覆盖最后处理的这一行
         if(UART3_Rx_INTIndex <= 0)
             UART3_Rx_INTIndex = UART3_MAXIndex-1;
         else
             --UART3_Rx_INTIndex;
-        //�Ѹ��г�������Ϊ0,���ж�ռ��
+        //把该行长度设置为0,由中断占用
         UART3_Rx_BufLen[UART3_Rx_INTIndex]=0;
     }
 
