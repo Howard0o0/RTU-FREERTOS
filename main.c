@@ -44,7 +44,12 @@
 #include "wifi_config.h"
 #include <string.h>
 
+
+/* APP */
+#include "BLE_Task.h"
+
 int IsDebug = 0;
+extern SemaphoreHandle_t xSemaphore_BLE;
 
 /*
  * Every init coperation here.
@@ -60,19 +65,25 @@ void main(void) {
 	interrupts. */
 	prvSetupHardware();
 
-#if 1
-	Hydrology_SetStartIdx(1);  //������ͺʹ洢���λ
-	Hydrology_SetEndIdx(1);
-	Hydrology_SetDataPacketCount(0);
-#endif
-	Hydrology_InitWaitConfig();
-	HydrologyUpdateElementTable();
-	HydrologyDataPacketInit();
+    
+    /*****BLE*************/
+	xTaskCreate( BLE_RE, "BLE", configMINIMAL_STACK_SIZE * 2, NULL, tskIDLE_PRIORITY + 1, NULL );
+	xSemaphoreGive(xSemaphore_BLE);
+	/*****BLE*************/
 
-	printf("hydrology init done \r\n");
+// #if 1
+// 	Hydrology_SetStartIdx(1);  //������ͺʹ洢���λ
+// 	Hydrology_SetEndIdx(1);
+// 	Hydrology_SetDataPacketCount(0);
+// #endif
+// 	Hydrology_InitWaitConfig();
+// 	HydrologyUpdateElementTable();
+// 	HydrologyDataPacketInit();
 
-	xTaskCreate(task_hydrology_run, "task_hydrology_run", configMINIMAL_STACK_SIZE * 25, NULL,
-		    configMAX_PRIORITIES - 2, NULL);
+// 	printf("hydrology init done \r\n");
+
+//	xTaskCreate(task_hydrology_run, "task_hydrology_run", configMINIMAL_STACK_SIZE * 25, NULL,
+// 		    configMAX_PRIORITIES - 2, NULL);
 
 	vTaskStartScheduler();
 
@@ -91,6 +102,9 @@ void vApplicationTickHook(void) {}
 
 static void prvSetupHardware(void) {
 	halBoardInit();
+
+    BleDriverInstall();
+	UART1_Open(1);
 
 	WDT_A_hold(WDT_A_BASE);
 

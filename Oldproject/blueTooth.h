@@ -49,31 +49,31 @@ typedef enum tagBLE_STATE
 	BLE_DISABLED
 } BLE_STATE;
 
-///////////�ⲿ�ӿ�
+///////////接口
 /*  BLERet:BLE_SUCCESS 0  BLE_ERROR 1 */
-void BleDriverInstall();
-BLERet BLE_ADVSTART();                  //�����㲥  
-BLERet BLE_ADVSTOP();                   //�رչ㲥                                          
-BLERet BLE_CONNECT();             //�ж��Ƿ�����
-int BLE_MAIN();                 //����-����ʼ��-������-������͸�� if 0 connectd , -1 not connected
-BLERet BLE_SLEEP();                     //����                         
-BLERet BLE_RST();                       //����
-BLERet BLE_BLESPP();                    //����͸��
-BLERet BLE_BLESPPEND();                   //�ر�͸��
+void BleDriverInstall();			//注册蓝牙驱动
+BLERet BLE_ADVSTART();                  //开启广播  
+BLERet BLE_ADVSTOP();                   //关闭广播                                         
+BLERet BLE_CONNECT();             //检测蓝牙是否连接
+int BLE_MAIN();                 //初始化蓝牙，开启广播，等待连接 if 0 connectd , -1 not connected
+BLERet BLE_SLEEP();                     //休眠模式                         
+BLERet BLE_RST();                       //重启蓝牙
+BLERet BLE_BLESPP();                    //进入透传模式
+BLERet BLE_BLESPPEND();                   //退出透传模式
 
-void SPPRX(char * result,int len);           //�ֻ�����
-void SPPTX(char * result,int * len);           //�ֻ�����	ĩβ��0D0A �س�
+void SPPRX(char * result,int len);           //透传模式下RTU发送信息给蓝牙模块
+void SPPTX(char * result,int * len);           //透传模式下RTU接收蓝牙模块信息
 int IsInit();
 
-////////////�ڲ�
+////////////内部
 
-void BLE_buffer_Clear();                                         //��BUFF                
+void BLE_buffer_Clear();                                         //清除BUFF                
 
 void BLE_SendMsg(char *atCmd,int cmdLen);
 BLERet BLE_BLESP();
 BLERet ATTEST();
-void BLE_RecAt(char *result,int *num);      					//RTU����                                    
-void BLE_SendAtCmd(char *atCmd,int cmdLen);                  //RTU����
+void BLE_RecAt(char *result,int *num);      					////RTU接收蓝牙模块的消息                                   
+void BLE_SendAtCmd(char *atCmd,int cmdLen);                  //RTU发送指令给蓝牙模块
 BLERet BLE_SetName ( void );                                    //                              
 BLERet BLE_SERVER();
 BLERet BLE_GATTSSRVCRE();

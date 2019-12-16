@@ -1,10 +1,10 @@
 //////////////////////////////////////////////////////
-//     �ļ���: Console.c
-//   �ļ��汾: 1.0.0  
-//   ����ʱ��: 09�� 11��3��
-//   ��������:  
-//       ����: ����
-//       ��ע: 
+//     文件名: Console.c
+//   文件版本: 1.0.0  
+//   创建时间: 09年 11月3日
+//   更新内容:  
+//       作者: 林智
+//       附注: 
 // 
 //
 //////////////////////////////////////////////////////
@@ -19,12 +19,12 @@
 #include "stdio.h"
 #include "FreeRTOS.h"
 
-static int Opened=0;//�Ƿ��
+static int Opened=0;//是否打开
 
 extern int g_wifi_connetflag;
 extern int WIFI_Inited_Flag;
 
-//���豸
+//打开设备
 int Console_Open() 
 {    
     UART3_Open(UART3_CONSOLE_TYPE);
@@ -61,7 +61,7 @@ int Console_WriteHexCharln(char * _str,int len)
     Console_WriteBytesln(dst,len*2);
 
     vPortFree(dst);
-    dst = NULL; //ly ����Ұָ��  ++++
+    dst = NULL; //ly 避免野指针  ++++
     
     return 0;
 }

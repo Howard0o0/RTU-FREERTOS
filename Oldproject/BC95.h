@@ -10,7 +10,7 @@
 */
 
 #define BC95_SOCKET_DATA_LEN 500
-#define BC95_SOCKET_UP_DATA_LENGTH_LINK 4   //ÕâÊÇBC95ÉÏ´«±ä³¤Êı¾İÊ±ĞèÒªÔÚÊı¾İÇ°ÃæÖ¸¶¨ÉÏ´«µÄÊı¾İ³¤¶È
+#define BC95_SOCKET_UP_DATA_LENGTH_LINK 4   //è¿™æ˜¯BC95ä¸Šä¼ å˜é•¿æ•°æ®æ—¶éœ€è¦åœ¨æ•°æ®å‰é¢æŒ‡å®šä¸Šä¼ çš„æ•°æ®é•¿åº¦
 
 typedef enum tagBC95State
 {
@@ -65,9 +65,10 @@ void BC95_AnalysisRecvSocketData(char *revc_data, int revc_data_len, char *down_
 BC95State BC95_SendAndRecvData(char *send_data, int send_data_len, char *recv_data, int *recv_data_len);
 int BC95_Extract_DownData(char *inputData, int inputDataLen, char *outputData);
 BC95State BC95_ConnectToIotCloud(char *serverIp, char *serverPort);
-BC95State BC95_SendUdpMsg(char *ipAddr,char *port, char *msg);   // invalid when loaded with µçĞÅ¿¨
+BC95State BC95_SendUdpMsg(char *ipAddr,char *port, char *msg);   // invalid when loaded with ç”µä¿¡å¡
 void BC95_AtTest(void);
-char *makeUDPBody(char *socket,char *ipAddr,char *port,char *len,char *data);  // invalid when loaded with µçĞÅ¿¨
+char *makeUDPBody(char *socket,char *ipAddr,char *port,char *len,char *data);  
+											// invalid when loaded with ç”µä¿¡å¡
 
 void BC95_Communication_test();
 

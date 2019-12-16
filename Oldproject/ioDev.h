@@ -8,7 +8,7 @@
 #ifndef __IO_MANAGER_H
 #define __IO_MANAGER_H
 
-typedef struct IODev
+typedef struct BLEDev
 {
     char *name;
     
@@ -23,8 +23,7 @@ typedef struct IODev
     int (*isinit)(void);
     int (*isspp)(void);
     void (*adv)(void);
-}T_IODev,*PT_IODev;
-
+}BLE_Dev,*pBLE_Dev;
 
 /******Interfaces for up class **************************/
 
@@ -35,7 +34,7 @@ typedef struct IODev
  *
  * @retval zero -> Success / other value -> Error.
  */
-int RegisterIODev(PT_IODev ptIODev);
+int RegisterIODev(pBLE_Dev ptIODev);
 
 /*!
  * @brief : show IO device available
@@ -47,7 +46,7 @@ void ShowIODevs(void);
  *
  * @retval NULL -> appointed device is not registed / other value -> address of device's handler.
  */
-PT_IODev getIODev(void);
+pBLE_Dev getIODev(void);
 
 
 #endif

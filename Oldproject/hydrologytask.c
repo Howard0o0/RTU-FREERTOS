@@ -23,6 +23,7 @@
 #include "task.h"
 #include "timer.h"
 #include "uart3.h"
+#include "uart1.h"
 #include "uart_config.h"
 
 extern int UserElementCount;
@@ -171,7 +172,7 @@ int HydrologySample(char *_saveTime) {
     }
 
     TraceMsg(" Start Sample:   ", 0);
-    UART1_Open_9600(UART3_U485_TYPE);
+    UART1_Open_9600(UART1_U485_TYPE);
 
     while (Element_table[i].ID != 0) {
         memset(value, 0, sizeof(value));
@@ -245,6 +246,7 @@ int HydrologySample(char *_saveTime) {
         i++;
     }
     UART3_Open(UART3_CONSOLE_TYPE);
+    UART1_Open(UART1_BT_TYPE);
     TraceMsg("Sample Done!  ", 0);
     return 0;
 }
