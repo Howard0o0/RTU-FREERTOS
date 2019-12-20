@@ -4,7 +4,8 @@
 #include "FreeRTOS.h"
 #include "semphr.h"
 
-void hydrology_sample_and_save(void* pvParameters);
+void hydrology_sample(void* pvParameters);
+void hydrology_save(void* pvParameters);
 void hydrology_report(void* pvParameters);
 void hydrology_init();
 void hydrology_run();

@@ -22,6 +22,7 @@
 #include "message.h"
 #include "string.h"
 #include "task.h"
+#include "semphr.h"
 #include "timer.h"
 #include "uart1.h"
 #include "uart3.h"
@@ -34,6 +35,8 @@ extern int		DataPacketLen;
 extern hydrologyElement inputPara[ MAX_ELEMENT ];
 extern hydrologyElement outputPara[ MAX_ELEMENT ];
 uint16_t		time_10min = 0, time_5min = 0, time_1min = 1, time_1s = 0;
+
+SemaphoreHandle_t sample_switch_save;
 
 void HydrologyTimeBase() {
 	time_1min++;
@@ -165,7 +168,8 @@ int HydrologySample(char* _saveTime) {
 
 	int tmp = sampletime[ 4 ] % (interval / 60);
 	if (tmp != 0) {
-		TraceMsg("Not Sample Time!", 1);
+                printf("Not Sample Time! now time is: %d/%d/%d  %d:%d:%d \r\n", sampletime[ 0 ],
+		       sampletime[ 1 ], sampletime[ 2 ], sampletime[ 3 ], sampletime[ 4 ], sampletime[ 5 ]);
 		return -1;
 	}
 
@@ -241,6 +245,9 @@ int HydrologySample(char* _saveTime) {
 	UART3_Open(UART3_CONSOLE_TYPE);
 	UART1_Open(UART1_BT_TYPE);
 	TraceMsg("Sample Done!  ", 0);
+
+        xSemaphoreGive(sample_switch_save);
+
 	return 0;
 }
 
@@ -260,6 +267,9 @@ int HydrologyOffline() {
 
 int HydrologySaveData(char* _saveTime, char funcode)  // char *_saveTime
 {
+        
+        xSemaphoreTake(sample_switch_save,portMAX_DELAY);
+
 	int   i = 0, acount = 0, pocunt = 0;
 	float floatvalue    = 0;
 	long  intvalue1     = 0;
@@ -275,12 +285,13 @@ int HydrologySaveData(char* _saveTime, char funcode)  // char *_saveTime
 	Hydrology_ReadStoreInfo(HYDROLOGY_WATERLEVEL_STORE_INTERVAL, &storeinterval,
 				HYDROLOGY_WATERLEVEL_STORE_INTERVAL_LEN);  // ly
 	storeinterval = _BCDtoDEC(storeinterval);
-	Utility_Strncpy(storetime, _saveTime, 6);
-	int tmp = storetime[ 4 ] % (storeinterval);
-	if (tmp != 0) {
-		TraceMsg("Not Save Time!", 1);
-		return -1;
-	}
+	// Utility_Strncpy(storetime, _saveTime, 6);
+	// int tmp = storetime[ 4 ] % (storeinterval);
+	// if (tmp != 0) {
+	// 	printf("Not Save Time! now time is: %d/%d/%d  %d:%d:%d \r\n", storetime[ 0 ],
+	// 	       storetime[ 1 ], storetime[ 2 ], storetime[ 3 ], storetime[ 4 ], storetime[ 5 ]);
+	// 	return -1;
+	// }
 
 	TraceMsg("Start Store:   ", 0);
 	if (type == 1) {
@@ -544,7 +555,8 @@ int Hydrology_TimeCheck() {
 	return 0;
 }
 int HydrologyTask() {
-	char rtc_nowTime[ 6 ];
+	// char rtc_nowTime[ 6 ];
+
 	// TimerB_Clear();
 	// WatchDog_Clear();
 	// Hydrology_ProcessUARTReceieve();
@@ -597,7 +609,7 @@ void task_hydrology_run(void* pvParameters) {
 
 void task_hydrology_init(void* pvParameters) {
 
-	char rtc_nowTime[ 6 ];
+	// char rtc_nowTime[ 6 ];
 
 	while (1) {
 

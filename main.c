@@ -141,7 +141,8 @@ static void task_print_1(void* pvParameters) {
 	while (1) {
 		printf("P1 START\r\n");
 		buffer = ( char* )pvPortMalloc(100);
-		printf("haha p1: %d \r\n", cnt++);
+                for(int i=0;i<10;i++)
+		        printf("haha p1: %d \r\n", cnt++);
 		vPortFree(buffer);
 		buffer = NULL;
 		// printf("P1 HWM left:%d\r\n", uxTaskGetStackHighWaterMark(NULL));
@@ -156,7 +157,8 @@ static void task_print_2(void* pvParameters) {
 	while (1) {
 		printf("P2 START\r\n");
 		buffer = ( char* )pvPortMalloc(100);
-		printf("haha p2: %d \r\n", cnt++);
+                for(int i=0;i<10;i++)
+		        printf("haha p2: %d \r\n", cnt++);
 		vPortFree(buffer);
 		buffer = NULL;
 		// printf("P2 HWM left:%d\r\n", uxTaskGetStackHighWaterMark(NULL));

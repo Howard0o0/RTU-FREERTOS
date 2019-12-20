@@ -27,6 +27,7 @@ extern uint16_t time_1s;
 extern uint16_t time_10min;
 extern char Picture_Flag;
 
+
 void HydrologyUpdateElementTable() ;
 void HydrologyDataPacketInit();
 int HydrologySaveData(char *_saveTime,char funcode);
