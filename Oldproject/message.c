@@ -4,6 +4,7 @@
 #include "string.h"
 #include "stdlib.h"
 #include "stdio.h" 
+// #include "Console.h"
 
 /* USER CODE BEGIN Includes */
 #include "rtc.h"
@@ -682,13 +683,22 @@ int pvPortMallocElement(char element,char D,char d,hydrologyElement* ele)
 {
   ele->guide[0] = element;
   getguideid(&(ele->guide[1]),D,d);
+  
+  //test
+  size_t t;
+  t=xPortGetFreeHeapSize();
+  printf("\r\nt:%d\r\n",t);
 
   if ( D%2 == 0 )
   {
+    if(Debug){
+      TraceMsg("message.c pvPortMallocElement malloc ", 1);
+      printf("D:%d\r\n",D);
+    }
     ele->value = (char*)pvPortMalloc(D/2);
-    
-    if (ele->value == 0)
+    if (ele->value == NULL)
     {
+      Console_WriteStringln("message.c pvPortMallocElement Malloc Failed");
       return -1;
     }
 
@@ -698,10 +708,15 @@ int pvPortMallocElement(char element,char D,char d,hydrologyElement* ele)
   }
   else
   {
+    if(Debug){
+      TraceMsg("message.c pvPortMallocElement malloc ", 1);
+      printf("D:%d\r\n",D);
+    }
+        
     ele->value = (char*)pvPortMalloc((D+1)/2);
-    
-    if (ele->value == 0)
+    if (ele->value == NULL)
     {
+      Console_WriteStringln("message.c pvPortMallocElement Malloc Failed");
       return -1;
     }
 
@@ -949,10 +964,14 @@ void Hydrology_CalElementInfo(int *count,char funcode)
         {
           inputPara[i].guide[0] = Element_table[i].ID;
           inputPara[i].guide[1] = Element_table[i].ID;
+
+          if(Debug)
+            TraceMsg("message.c Hydrology_CalElementInfo malloc ", 1);
           inputPara[i].value = (char*)pvPortMalloc(SinglePacketSize);
           if (NULL != inputPara[i].value)
           {
             inputPara[i].num = SinglePacketSize;
+            Console_WriteStringln("message.c Hydrology_CalElementInfo Malloc Failed");
             Hydrology_ReadRom(RomElementBeginAddr,inputPara[i].value,SinglePacketSendCount++);
           }
           break;
@@ -1567,13 +1586,18 @@ void hydrologyInitSend()
    
    g_HydrologyMsg.header = (void*)&g_HydrologyUpHeader;
 
+   
+  if(Debug)
+      TraceMsg("message.c hydrologyInitSend malloc", 1);
    g_HydrologyMsg.upbody = (void*)pvPortMalloc(sizeof(hydrologyUpBody));
+   if (0 == g_HydrologyMsg.upbody)
+      Console_WriteStringln("message.c hydrologyInitSend Malloc Failed");
+
 
    hydrologyUpBody* uppbody = (hydrologyUpBody*) (g_HydrologyMsg.upbody);
    uppbody->count = 0;
    
-   if (0 == g_HydrologyMsg.upbody)
-      Hydrology_Printf("g_HydrologyMsg.upbody pvPortMalloc failed");
+   
    
    for(int i = 0; i < UserElementCount; ++i)     //?????
    {
@@ -1844,13 +1868,18 @@ void hydrologyInitReceieve()
 {
    memset(&g_HydrologyDownHeader,0,sizeof(hydrologyHeader));
 
+
+  if(Debug)
+      TraceMsg("message.c hydrologyInitReceieve malloc", 1);
    g_HydrologyMsg.downbody = (void*)pvPortMalloc(sizeof(hydrologyDownBody));
+   if (0 == g_HydrologyMsg.downbody)
+      Console_WriteStringln("message.c hydrologyInitReceieve Malloc in Failed");
 
    hydrologyDownBody* downpbody = (hydrologyDownBody*) (g_HydrologyMsg.downbody);
    downpbody->count = 0;
    
-   if (0 == g_HydrologyMsg.downbody)
-      Hydrology_Printf("g_HydrologyMsg.downbody pvPortMalloc failed");
+   
+
 }
 
 void hydrologyExitReceieve()

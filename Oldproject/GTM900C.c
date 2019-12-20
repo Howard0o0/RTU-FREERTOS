@@ -12,6 +12,8 @@
 #include "message.h"
 #include "uart0.h"
 #include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
 
 enum AtCmdType
 {
@@ -549,22 +551,27 @@ int GRPS_AT_Receive_Response(char *_recv,int *_retErrorCode)
             psrc++;
         }
         psrc = _recv + 10;
+
+        if(Debug)
+		    TraceMsg("GTM900C GSM.c  GSM_AT_QueryTime malloc ", 1);
         pdata = (char*)pvPortMalloc(_datalensize);
         if(pdata == NULL)
         {
-            Console_WriteStringln("Malloc in GRPS_AT_Receive_Response failed");
-            printf("pvPortMalloc(%d) failed \r\n",_datalensize);
+            Console_WriteStringln("GTM900C GRPS_AT_Receive_Response malloc failed");
             return MSG_SEND_FAILED;
         }
+
         Utility_Strncpy(pdata, _recv + 10, _datalensize);
         _ReceiveDataLen = Utility_atoi(pdata, _datalensize);
         vPortFree(pdata);
         pdata = NULL;//
+
+        if(Debug)
+		    TraceMsg("GTM900C GSM.c  GSM_AT_QueryTime malloc", 1);
         _ReceiveData = (char*)pvPortMalloc(_ReceiveDataLen*2);
         if(_ReceiveData == NULL)
         {
-            Console_WriteStringln("Malloc in GRPS_AT_Receive_Response failed");
-            printf("pvPortMalloc(%d) failed \r\n",_ReceiveDataLen*2);
+            Console_WriteStringln("GTM900C GRPS_AT_Receive_Response malloc failed");
             return MSG_SEND_FAILED;
         }
         
@@ -1382,11 +1389,12 @@ int GRPS_AT_Send()
     int _retValue = 0;
     char _recv[30] = {0};
 
+    if(Debug)
+		    TraceMsg("GTM900C.c  GRPS_AT_Send malloc ", 1);
     char *_send = (char *)pvPortMalloc(dataLen+12);
     if(_send == NULL)
     {
-        Console_WriteStringln("Malloc in GPRS_AT_Send failed");
-        printf("pvPortMalloc(%d) failed \r\n",dataLen+12);
+        Console_WriteStringln("GTM900C.c GRPS_AT_Send Malloc failed");
         return MSG_SEND_FAILED;
     }
     Utility_Strncpy(_send,"AT%IPSEND=\"",11);
@@ -1677,11 +1685,12 @@ int GPRS_Send(char* pSend, int sendDataLen, int isLastPacket, int center)
         Console_WriteStringln("Error, Packet exceed 1024, Please Decrease Sending Packet Size!");
     }
 
+    if(Debug)
+		    TraceMsg("GTM900C.c  GRPS_Send malloc ", 1);
     psrc = (char *)pvPortMalloc(sendDataLen*2+1);//+1����Ϊת������hex_2_ascii����и�\0,���������Խ�����
     if(psrc == NULL)
     {
-        Console_WriteStringln("Malloc in GPRS_Send Failed");
-        printf(" pvPortMalloc(%d) failed \r\n",sendDataLen*2+1);
+        Console_WriteStringln("GTM900C GPRS_Send malloc Failed");
         return FALSE;
     }
     hex_2_ascii(pSend, psrc, sendDataLen);
@@ -1720,10 +1729,12 @@ char* GPRS_Receive()
     
     if(GRPS_AT_Receive() == MSG_RECEIVE_SUCCESS)
     {
+        if(Debug)
+		    TraceMsg("GTM900C.c  GPRS_Receive malloc ", 1);
         hexdata = (char*)pvPortMalloc(_ReceiveDataLen);
         if(hexdata == 0)
         {
-            printf("pvPortMalloc(%d) failed \r\n",_ReceiveDataLen);
+            Console_WriteStringln("GTM900C GPRS_Receive Malloc Failed");
         }
         ConvertAscIItoHex(_ReceiveData, hexdata, _ReceiveDataLen*2);
         vPortFree(_ReceiveData);
@@ -1731,10 +1742,12 @@ char* GPRS_Receive()
     }
     else if(GRPS_AT_Receive() == MSG_RECEIVE_SUCCESS)
     {
+        if(Debug)
+		    TraceMsg("GTM900C.c  GPRS_Receive malloc ", 1);
         hexdata = (char*)pvPortMalloc(_ReceiveDataLen);
         if(hexdata == 0)
         {
-            printf("pvPortMalloc(%d) failed \r\n",_ReceiveDataLen);
+            Console_WriteStringln("GTM900C GPRS_Receive Malloc Failed");
         }
         ConvertAscIItoHex(_ReceiveData, hexdata, _ReceiveDataLen*2);
         vPortFree(_ReceiveData);
@@ -1742,10 +1755,12 @@ char* GPRS_Receive()
     }
     else if(GRPS_AT_Receive() == MSG_RECEIVE_SUCCESS)
     {
+        if(Debug)
+		    TraceMsg("GTM900C.c  GPRS_Receive malloc ", 1);
         hexdata = (char*)pvPortMalloc(_ReceiveDataLen);
         if(hexdata == 0)
         {
-            printf("pvPortMalloc(%d) failed \r\n",_ReceiveDataLen);
+            Console_WriteStringln("GTM900C GPRS_Receive Malloc Failed");
         }
         ConvertAscIItoHex(_ReceiveData, hexdata, _ReceiveDataLen*2);
         vPortFree(_ReceiveData);
@@ -1800,8 +1815,13 @@ int Hydrology_ProcessGPRSReceieve()
 }
 
 
-
-
+SemaphoreHandle_t GPRS_Lock;
+void GPRS_lock_init()
+{
+        
+        vSemaphoreCreateBinary(GPRS_Lock);
+        xSemaphoreGive(GPRS_Lock);
+}
 
 
 

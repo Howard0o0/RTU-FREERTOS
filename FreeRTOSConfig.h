@@ -45,7 +45,7 @@
 #define configUSE_TICK_HOOK				1
 #define configCPU_CLOCK_HZ				( 25000000UL )
 #define configLFXT_CLOCK_HZ       		( 32768L )
-#define configTICK_RATE_HZ				( ( TickType_t ) 1000 )
+#define configTICK_RATE_HZ				( ( TickType_t ) 20 )
 #define configMAX_PRIORITIES			( 10 )
 #define configTOTAL_HEAP_SIZE			( ( size_t ) ( 11 * 1024 ) )
 #define configMAX_TASK_NAME_LEN			( 50 )
@@ -79,7 +79,7 @@ to exclude the API function. */
 #define INCLUDE_vTaskSuspend			1
 #define INCLUDE_vTaskDelayUntil			1
 #define INCLUDE_vTaskDelay				1
-#define INCLUDE_uxTaskGetStackHighWaterMark 1
+#define INCLUDE_uxTaskGetStackHighWaterMark 	1
 
 /* This demo makes use of one or more example stats formatting functions.  These
 format the raw data provided by the uxTaskGetSystemState() function in to human

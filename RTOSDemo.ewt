@@ -4320,9 +4320,21 @@
             <file>
                 <name>$PROJ_DIR$\Apps\include\BLE_Task.h</name>
             </file>
+            <file>
+                <name>$PROJ_DIR$\Apps\include\Hydrolody_Task.h</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\Apps\include\RTC_Task.h</name>
+            </file>
         </group>
         <file>
             <name>$PROJ_DIR$\Apps\BLE_Task.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Apps\Hydrolody_Task.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Apps\RTC_Task.c</name>
         </file>
     </group>
     <group>

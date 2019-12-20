@@ -3,7 +3,7 @@
 
 
 
-
+void GPRS_lock_init();
 
 void GPRS_PrepareForSend();
 

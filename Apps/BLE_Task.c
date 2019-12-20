@@ -1,15 +1,33 @@
 #include "BLE_Task.h"
 
+#include "FreeRTOS.h"
+#include "task.h"
+#include "ParTest.h"
+#include "semphr.h"
 
-SemaphoreHandle_t xSemaphore_BLE;
+#include "ioDev.h"
+#include "uart1.h"
+#include "msp430common.h"
+#include "blueTooth.h"
+#include "uart3.h"
+// #include "Console.h"
+#include "common.h"
+#include <string.h>
+#include <stdio.h>
+#include <stdint.h>
 
 
-void BLE_RE()
+
+void BLE_RE(void* pvParameters)
 {
-    xSemaphore_BLE = xSemaphoreCreateMutex();
+
+    BleDriverInstall();
     pBLE_Dev  ptDevBle =  getIODev();
+    
     while(1){
-        xSemaphoreTake(xSemaphore_BLE,portMAX_DELAY);
+
+        printf("BLE HWM:%d\r\n",uxTaskGetStackHighWaterMark(NULL)); 
+
         if ( s_uart1_type==UART1_BT_TYPE ){
             // printf("1\r\n");
             if ( ptDevBle->isinit() ){
@@ -36,10 +54,12 @@ void BLE_RE()
                 // printf("6 \r\n");
                 ptDevBle->init();
             }
-                
-        
         }
-        xSemaphoreGive(xSemaphore_BLE);
+
+        
         vTaskDelay(100 / portTICK_PERIOD_MS);
+
     }
 }
+
+

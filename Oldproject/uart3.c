@@ -223,7 +223,6 @@ int  UART3_Send(char * _data ,int _len, int _CR)
     }
 
     /*******BLE*********/
-    extern int s_uart1_type;
     pBLE_Dev  ptDevBle =  getIODev();
     if( s_uart1_type == UART1_BT_TYPE ){
         if( ptDevBle->isspp() ){

@@ -8,7 +8,7 @@
 #include "blueTooth.h"
 #include "uart1.h"
 #include "uart3.h"
-#include "console.h"
+// #include "Console.h"
 #include "common.h"
 #include <string.h>
 #include <stdio.h>
@@ -128,9 +128,9 @@ BLERet ATTEST()  // 测试蓝牙模块
   {
       BLE_buffer_Clear(); 
       BLE_SendAtCmd(cmd,sizeof(cmd)-1);
-      printf("AT SEND: %s \r\n",cmd);//
+      // printf("AT SEND: %s \r\n",cmd);//
       BLE_RecAt(result,&num);
-      printf("REC:%s\r\n",result); //
+      // printf("REC:%s\r\n",result); //
       if(strstr(result,"K") != 0)
       {
         // printf("ATTEST OK!\r\n");//

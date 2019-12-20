@@ -13,6 +13,7 @@
 
 //串口1 主要为3方面使用.这3方面是互相排斥的.PC串口通信,DTU串口通信,485串口通信
 //   
+extern int s_uart1_type;
 
 #define UART1_CONSOLE_TYPE 1
 #define UART1_U485_TYPE    2

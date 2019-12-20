@@ -14,8 +14,8 @@ typedef struct BLEDev
     
     int (*init)(void);  // 0 success
     int (*open)(void);  // 0 success
-    void (*write)(char *msgRecv,int *len);
-    int (*read)(char *msgSend,int len);  // 0 success
+    void (*write)(char *msgRecv,int *len);      //getmsg >> write
+    int (*read)(char *msgSend,int len);  // 0 success   sendmsg >> read
     int (*close)(void); // 0 success
 
     int (*isConnect)(void);  //1 canUse, 0 can't use

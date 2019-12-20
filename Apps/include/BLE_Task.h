@@ -1,8 +1,6 @@
-#include "FreeRTOS.h"
-#include "ParTest.h"
-#include "semphr.h"
-#include "ioDev.h"
-#include "uart1.h"
+#ifndef _BLETASK_
+#define _BLETASK_
 
-extern int s_uart1_type;  
-void BLE_RE();
+void BLE_RE(void* pvParameters);
+
+#endif

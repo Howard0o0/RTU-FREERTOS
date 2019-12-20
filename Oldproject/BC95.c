@@ -63,7 +63,13 @@ int BC95_Extract_DownData(char *inputData, int inputDataLen, char *outputData)
 		i++;
 	}
 
+	if(Debug)
+		TraceMsg("BC95.c  BC95_Extract_DownData malloc ", 1);
 	temp = (char *)pvPortMalloc(sizeof(char) * (inputDataLen - i));
+	if(temp == NULL){
+		TraceMsg("BC95.c  BC95_Extract_DownData malloc failed!", 1);
+	}
+
 
 	for (j = i + 1, k = 0; j < inputDataLen; j++)
 	{
@@ -964,7 +970,12 @@ BC95State BC95_ConnectToIotCloud(char *serverIp, char *serverPort)
 	char *comma = ",";
 	int _dataLen = 0;
 	char _data[UART1_MAXBUFFLEN] = {0};
+	if(Debug)
+		TraceMsg("BC95.c  BC95_ConnectToIotCloud malloc ", 1);
 	char *head_ip_comma_port_end = (char *)pvPortMalloc(40);
+	if(head_ip_comma_port_end == NULL){
+		TraceMsg("BC95.c  BC95_ConnectToIotCloud malloc failed!", 1);
+	}
 
 	strcat(head_ip_comma_port_end, at_head);
 	strcat(head_ip_comma_port_end, serverIp);

@@ -43,12 +43,12 @@ int Console_WriteHexCharln(char * _str,int len)
     int i = 0;
     char* dst = NULL;
 
+    if(Debug)
+		TraceMsg("Console.c  Console_WriteHexCharln malloc ", 1);
     dst = (char*)pvPortMalloc(len*2);
-
     if(dst == 0)
     {
-        Console_WriteStringln("Console_WriteHexCharln pvPortMalloc failed");
-        printf("pvPortMalloc(%d) failed \r\n",len*2);
+        Console_WriteStringln("Console.c Console_WriteHexCharln malloc failed");
     }
 
     memset(dst,0,len*2);

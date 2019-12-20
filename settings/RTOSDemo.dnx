@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <settings>
     <DebugChecksum>
-        <Checksum>1167497924</Checksum>
+        <Checksum>542747800</Checksum>
     </DebugChecksum>
     <DisAssemblyWindow>
         <NumStates>_ 1</NumStates>
@@ -125,7 +125,8 @@
     </DataSample>
     <Breakpoints>
         <Bp0>_ "STD_CODE" "{$PROJ_DIR$}.688.5" 0 0 0 0 "" 0 ""</Bp0>
-        <Count>1</Count>
+        <Bp1>_ "STD_CODE" "{$PROJ_DIR$\Oldproject\message.c}.268.9" 1 0 0 0 "" 0 ""</Bp1>
+        <Count>2</Count>
     </Breakpoints>
     <FET>
         <Clock_mode>14</Clock_mode>

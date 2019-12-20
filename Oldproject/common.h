@@ -17,6 +17,8 @@ extern int trace_open;
 #define XG_FAILED                                1
 
 
+
+
 #define TraceHexMsg(_str, len) \
     TraceHexMsgFuncLine(_str, len,__FUNCTION__,__LINE__)
 
@@ -29,7 +31,7 @@ extern int trace_open;
 #define TraceInt4(_val,_ln) \
     TraceInt4FuncLine(_val, _ln, __FUNCTION__,__LINE__)
 
-
+extern int Debug;
 
 void TraceOpen();
 void TracePulseValue(char * str,int _ln);

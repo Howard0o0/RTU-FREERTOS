@@ -29,6 +29,7 @@
 #include "console.h"
 #include "hydrologycommand.h"
 #include "hydrologytask.h"
+#include "ioDev.h"
 #include "led.h"
 #include "main.h"
 #include "msp430common.h"
@@ -43,13 +44,15 @@
 #include "uart_config.h"
 #include "wifi_config.h"
 #include <string.h>
-
+#include "GTM900C.h"
 
 /* APP */
 #include "BLE_Task.h"
+#include "Hydrolody_Task.h"
+#include "RTC_Task.h"
 
 int IsDebug = 0;
-extern SemaphoreHandle_t xSemaphore_BLE;
+// extern SemaphoreHandle_t xSemaphore_BLE;
 
 /*
  * Every init coperation here.
@@ -59,31 +62,39 @@ static void prvSetupHardware(void);
 static void task_print_1(void* pvParameters);
 static void task_print_2(void* pvParameters);
 
+
+
 void main(void) {
 	/* Configure the peripherals used by this demo application.  This
 	includes configuring the joystick input select button to generate
 	interrupts. */
 	prvSetupHardware();
 
-    
-    /*****BLE*************/
-	xTaskCreate( BLE_RE, "BLE", configMINIMAL_STACK_SIZE * 2, NULL, tskIDLE_PRIORITY + 1, NULL );
-	xSemaphoreGive(xSemaphore_BLE);
+	/**********TEST************/
+
+	// xTaskCreate(task_print_1, "TEST1", configMINIMAL_STACK_SIZE * 2, NULL, tskIDLE_PRIORITY +
+	// 	1, 	    NULL);
+	// xTaskCreate(task_print_2, "TEST2", configMINIMAL_STACK_SIZE * 2, NULL, tskIDLE_PRIORITY +
+	// 	1, 	    NULL);//758	//1442
+	// xTaskCreate(task_print_3, "TEST3", configMINIMAL_STACK_SIZE * 2, NULL, tskIDLE_PRIORITY +
+	// 	1, 	    NULL);
+
+	/**********TEST************/
+
 	/*****BLE*************/
 
-// #if 1
-// 	Hydrology_SetStartIdx(1);  //������ͺʹ洢���λ
-// 	Hydrology_SetEndIdx(1);
-// 	Hydrology_SetDataPacketCount(0);
-// #endif
-// 	Hydrology_InitWaitConfig();
-// 	HydrologyUpdateElementTable();
-// 	HydrologyDataPacketInit();
+	// pBLE_Dev  ptDevBle =  getIODev();
+	// ptDevBle->init();
+	// xTaskCreate(BLE_RE, "BLE", configMINIMAL_STACK_SIZE * 3, NULL, tskIDLE_PRIORITY + 1, NULL);
+	// xSemaphoreGive(xSemaphore_BLE);
 
-// 	printf("hydrology init done \r\n");
+	/*****BLE*************/
 
-//	xTaskCreate(task_hydrology_run, "task_hydrology_run", configMINIMAL_STACK_SIZE * 25, NULL,
-// 		    configMAX_PRIORITIES - 2, NULL);
+	hydrology_run();
+
+	// hydrology_init();
+	// xTaskCreate(task_hydrology_run, "task_hydrology_run", configMINIMAL_STACK_SIZE * 25,
+	// NULL, 	    configMAX_PRIORITIES - 2, NULL);
 
 	vTaskStartScheduler();
 
@@ -95,6 +106,7 @@ void main(void) {
 	while (1)
 		;
 }
+
 /*-----------------------------------------------------------*/
 
 void vApplicationTickHook(void) {}
@@ -103,7 +115,7 @@ void vApplicationTickHook(void) {}
 static void prvSetupHardware(void) {
 	halBoardInit();
 
-    BleDriverInstall();
+	BleDriverInstall();
 	UART1_Open(1);
 
 	WDT_A_hold(WDT_A_BASE);
@@ -127,19 +139,44 @@ static void task_print_1(void* pvParameters) {
 	char*      buffer = NULL;
 
 	while (1) {
+		printf("P1 START\r\n");
 		buffer = ( char* )pvPortMalloc(100);
 		printf("haha p1: %d \r\n", cnt++);
 		vPortFree(buffer);
 		buffer = NULL;
-		vTaskDelay(100 / portTICK_PERIOD_MS);
+		// printf("P1 HWM left:%d\r\n", uxTaskGetStackHighWaterMark(NULL));
+		printf("P1 END\r\n");
+		vTaskDelay(1000 / portTICK_PERIOD_MS);
 	}
 }
 
 static void task_print_2(void* pvParameters) {
-	static int cnt_2 = 0;
+	static int cnt    = 0;
+	char*      buffer = NULL;
 	while (1) {
-		printf("p2: %d \r\n", cnt_2++);
-		vTaskDelay(100 / portTICK_PERIOD_MS);
+		printf("P2 START\r\n");
+		buffer = ( char* )pvPortMalloc(100);
+		printf("haha p2: %d \r\n", cnt++);
+		vPortFree(buffer);
+		buffer = NULL;
+		// printf("P2 HWM left:%d\r\n", uxTaskGetStackHighWaterMark(NULL));
+		printf("P2 END\r\n");
+		vTaskDelay(1000 / portTICK_PERIOD_MS);
+	}
+}
+
+static void task_print_3(void* pvParameters) {
+	static int cnt    = 0;
+	char*      buffer = NULL;
+	while (1) {
+		printf("P3 START\r\n");
+		buffer = ( char* )pvPortMalloc(100);
+		printf("haha p3: %d \r\n", cnt++);
+		vPortFree(buffer);
+		buffer = NULL;
+		// printf("P2 HWM left:%d\r\n", uxTaskGetStackHighWaterMark(NULL));
+		printf("P3 END\r\n");
+		vTaskDelay(1000 / portTICK_PERIOD_MS);
 	}
 }
 /*-----------------------------------------------------------*/
@@ -206,6 +243,7 @@ void vApplicationStackOverflowHook(TaskHandle_t pxTask, char* pcTaskName) {
 	function is called if a stack overflow is detected. */
 	taskDISABLE_INTERRUPTS();
 	printf("vApplicationStackOverflowHook triggerd ! \r\n");
+	printf("Task:%s\r\n", ( char* )pcTaskName);
 	for (;;)
 		;
 }
@@ -255,6 +293,8 @@ void Restart_Init() {
 	//    {
 	//        IsDebug = 0;
 	//    }
+
+        GPRS_lock_init();
 
 	return;
 }

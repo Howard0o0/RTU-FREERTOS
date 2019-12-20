@@ -13,6 +13,7 @@
 //每行长度
 #define MAXBUFFLEN 130 
 
+
 #define Console_WriteErrorStringln(str) \
     Console_WriteErrorStringlnFuncLine(str,__FUNCTION__, __LINE__)
 

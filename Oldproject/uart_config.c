@@ -33,13 +33,8 @@ void Hydrology_InitWaitConfig()
   int trycount = 10000;
   
   TraceMsg("Device is waiting for configing within 10s",1);
-  while(trycount--)
-  {
-    Hydrology_ProcessUARTReceieve();
-    System_Delayms(1);
-  }
-
-     /* 蓝牙接收 */
+  
+ /* 蓝牙接收 */
   char buffer[300];
   int count = 0;
   pBLE_Dev  ptDevBle =  getIODev();
@@ -49,17 +44,23 @@ void Hydrology_InitWaitConfig()
       
       char acBleRcvBuf[200] = {0};
       int iLen = 0;
-      ptDevBle->read("waiting config ... ",sizeof("waiting config ... "));
-      printf("waing msg from phone \r\n");
+      ptDevBle->read("waiting config from phone... ",sizeof("waiting config from phone... "));
       ptDevBle->write(buffer,&count);
       // ptDevBle->close();
+      if(count != 0)
+      {
+        TraceHexMsg(buffer,count);
+        isUARTConfig = 1;
+        hydrologyProcessReceieve(buffer, count);
+      }
   }
-
-  if(count != 0)
-    {
-      TraceHexMsg(buffer,count);
-      isUARTConfig = 1;
-      hydrologyProcessReceieve(buffer, count);
-    }
-    /* 蓝牙接收 */
+  else
+  {/* UART3接收 */
+      while(trycount--)
+      {
+        Hydrology_ProcessUARTReceieve();
+        System_Delayms(1);
+      }
+    
+  }
 }
