@@ -1007,6 +1007,9 @@ BC95State BC95_ConnectToIotCloud(char *serverIp, char *serverPort)
 		System_Delayms(1000);
 	}
 
+        vPortFree(head_ip_comma_port_end);
+        head_ip_comma_port_end = NULL; //++++
+
 	return BC95ErrorNCDP;
 }
 

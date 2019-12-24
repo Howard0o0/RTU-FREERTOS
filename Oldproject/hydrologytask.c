@@ -36,7 +36,6 @@ extern hydrologyElement inputPara[ MAX_ELEMENT ];
 extern hydrologyElement outputPara[ MAX_ELEMENT ];
 uint16_t		time_10min = 0, time_5min = 0, time_1min = 1, time_1s = 0;
 
-SemaphoreHandle_t sample_switch_save;
 
 void HydrologyTimeBase() {
 	time_1min++;
@@ -246,8 +245,6 @@ int HydrologySample(char* _saveTime) {
 	UART1_Open(UART1_BT_TYPE);
 	TraceMsg("Sample Done!  ", 0);
 
-        xSemaphoreGive(sample_switch_save);
-
 	return 0;
 }
 
@@ -267,9 +264,6 @@ int HydrologyOffline() {
 
 int HydrologySaveData(char* _saveTime, char funcode)  // char *_saveTime
 {
-        
-        xSemaphoreTake(sample_switch_save,portMAX_DELAY);
-
 	int   i = 0, acount = 0, pocunt = 0;
 	float floatvalue    = 0;
 	long  intvalue1     = 0;

@@ -9,6 +9,7 @@
 #include "message.h"
 #include "rtc.h"
 
+SemaphoreHandle_t sample_switch_save;
 
 int		  debug = 0;
 
@@ -21,6 +22,9 @@ void hydrology_sample(void* pvParameters) {
 		HydrologySample(rtc_nowTime);
 
 		printf("Sample end\r\n");
+
+                xSemaphoreGive(sample_switch_save);
+
 		if (debug)
 			vTaskDelay(1000 / portTICK_PERIOD_MS);
 		else
@@ -31,6 +35,8 @@ void hydrology_sample(void* pvParameters) {
 void hydrology_save(void* pvParameters) {
 
 	while (1) {
+                xSemaphoreTake(sample_switch_save,portMAX_DELAY);
+
                 printf("Save start\r\n");
 		printf("Save HWM :%d\r\n", uxTaskGetStackHighWaterMark(NULL));
 
@@ -64,7 +70,6 @@ void hydrology_report(void* pvParameters) {
 }
 
 
-extern SemaphoreHandle_t sample_switch_save;
 
 void hydrology_init() {
 #if 1
