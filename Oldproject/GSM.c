@@ -57,7 +57,6 @@ int s_MsgArray[ ARRAY_MAX ];
 int  s_MsgLeft  = 0;
 char s_NetState = '0';
 
-extern SemaphoreHandle_t GPRS_Lock;
 
 
 /*
@@ -158,7 +157,6 @@ int GSM_Open() {
 	//    int _retNum;
 	//    char _recv[30]="AT%TSIM";
 
-        xSemaphoreTake(GPRS_Lock,portMAX_DELAY);
 
 	TraceMsg("GSM Open !", 1);
 	//��ʼ������0,
@@ -241,7 +239,6 @@ int GSM_Close(int _type) {
 
 	UART0_Close();  //�رմ���0
 
-        xSemaphoreGive(GPRS_Lock);
 
 	return 0;
 }

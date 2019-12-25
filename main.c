@@ -62,7 +62,7 @@ static void prvSetupHardware(void);
 static void task_print_1(void* pvParameters);
 static void task_print_2(void* pvParameters);
 
-
+SemaphoreHandle_t lock;
 
 void main(void) {
 	/* Configure the peripherals used by this demo application.  This
@@ -71,11 +71,11 @@ void main(void) {
 	prvSetupHardware();
 
 	/**********TEST************/
-
+        // vSemaphoreCreateBinary(lock);
 	// xTaskCreate(task_print_1, "TEST1", configMINIMAL_STACK_SIZE * 2, NULL, tskIDLE_PRIORITY +
 	// 	1, 	    NULL);
 	// xTaskCreate(task_print_2, "TEST2", configMINIMAL_STACK_SIZE * 2, NULL, tskIDLE_PRIORITY +
-	// 	1, 	    NULL);//758	//1442
+	// 	1, 	    NULL);
 	// xTaskCreate(task_print_3, "TEST3", configMINIMAL_STACK_SIZE * 2, NULL, tskIDLE_PRIORITY +
 	// 	1, 	    NULL);
 
@@ -139,12 +139,13 @@ static void task_print_1(void* pvParameters) {
 	char*      buffer = NULL;
 
 	while (1) {
+                xSemaphoreTake(lock,portMAX_DELAY);
 		printf("P1 START\r\n");
-		buffer = ( char* )pvPortMalloc(100);
-                for(int i=0;i<10;i++)
-		        printf("haha p1: %d \r\n", cnt++);
-		vPortFree(buffer);
-		buffer = NULL;
+		// buffer = ( char* )pvPortMalloc(100);
+                // for(int i=0;i<10;i++)
+		//         printf("haha p1: %d \r\n", cnt++);
+		// vPortFree(buffer);
+		// buffer = NULL;
 		// printf("P1 HWM left:%d\r\n", uxTaskGetStackHighWaterMark(NULL));
 		printf("P1 END\r\n");
 		vTaskDelay(1000 / portTICK_PERIOD_MS);
@@ -155,14 +156,15 @@ static void task_print_2(void* pvParameters) {
 	static int cnt    = 0;
 	char*      buffer = NULL;
 	while (1) {
-		printf("P2 START\r\n");
-		buffer = ( char* )pvPortMalloc(100);
-                for(int i=0;i<10;i++)
-		        printf("haha p2: %d \r\n", cnt++);
-		vPortFree(buffer);
-		buffer = NULL;
-		// printf("P2 HWM left:%d\r\n", uxTaskGetStackHighWaterMark(NULL));
-		printf("P2 END\r\n");
+		// printf("P2 START\r\n");
+		// buffer = ( char* )pvPortMalloc(100);
+                // for(int i=0;i<10;i++)
+		//         printf("haha p2: %d \r\n", cnt++);
+		// vPortFree(buffer);
+		// buffer = NULL;
+		// // printf("P2 HWM left:%d\r\n", uxTaskGetStackHighWaterMark(NULL));
+		// printf("P2 END\r\n");
+                printf("%ds\r\n",cnt++);
 		vTaskDelay(1000 / portTICK_PERIOD_MS);
 	}
 }

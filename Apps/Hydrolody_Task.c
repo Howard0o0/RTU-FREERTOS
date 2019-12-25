@@ -16,14 +16,13 @@ int		  debug = 0;
 void hydrology_sample(void* pvParameters) {
 
 	while (1) {
-                printf("Sample start\r\n");
+                printf("\r\nSample start,freeheap:%d\r\n",xPortGetFreeHeapSize());
 		printf("Sample HWM :%d\r\n", uxTaskGetStackHighWaterMark(NULL));
-
+                
 		HydrologySample(rtc_nowTime);
 
-		printf("Sample end\r\n");
+		printf("\r\nSample end,freeheap:%d\r\n",xPortGetFreeHeapSize());
 
-                xSemaphoreGive(sample_switch_save);
 
 		if (debug)
 			vTaskDelay(1000 / portTICK_PERIOD_MS);
@@ -37,12 +36,12 @@ void hydrology_save(void* pvParameters) {
 	while (1) {
                 xSemaphoreTake(sample_switch_save,portMAX_DELAY);
 
-                printf("Save start\r\n");
+                printf("\r\nSave start,freeheap:%d\r\n",xPortGetFreeHeapSize());
 		printf("Save HWM :%d\r\n", uxTaskGetStackHighWaterMark(NULL));
 
 		HydrologySaveData(rtc_nowTime, TimerReport);
 
-		printf("Save end\r\n");
+		printf("\r\nSave end,freeheap:%d\r\n",xPortGetFreeHeapSize());
 		if (debug)
 			vTaskDelay(1000 / portTICK_PERIOD_MS);
 		else
@@ -54,12 +53,12 @@ void hydrology_save(void* pvParameters) {
 void hydrology_report(void* pvParameters) {
 
 	while (1) {
-                printf("Report start\r\n");
+                printf("\r\nReport start,freeheap:%d\r\n",xPortGetFreeHeapSize());
 		printf("Report HWM:%d\r\n", uxTaskGetStackHighWaterMark(NULL));
 
 		HydrologyInstantWaterLevel(rtc_nowTime);
 
-                printf("Report end\r\n");
+                printf("\r\nReport end,freeheap:%d\r\n",xPortGetFreeHeapSize());
 		
 		if (debug)
 			vTaskDelay(1000 / portTICK_PERIOD_MS);

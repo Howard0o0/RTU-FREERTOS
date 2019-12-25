@@ -684,11 +684,6 @@ int pvPortMallocElement(char element,char D,char d,hydrologyElement* ele)
   ele->guide[0] = element;
   getguideid(&(ele->guide[1]),D,d);
   
-  //test
-  size_t t;
-  t=xPortGetFreeHeapSize();
-  printf("\r\nt:%d\r\n",t);
-
   if ( D%2 == 0 )
   {
     if(Debug){

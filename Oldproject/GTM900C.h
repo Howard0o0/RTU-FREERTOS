@@ -3,6 +3,7 @@
 
 
 
+
 void GPRS_lock_init();
 
 void GPRS_PrepareForSend();
@@ -30,4 +31,5 @@ int Hydrology_ProcessGPRSReceieve();
 extern char* _ReceiveData;
 extern int _ReceiveDataLen;
 extern int gprsConfigSuccess;
+
 #endif /* GTM900C_H_ */

@@ -35,6 +35,7 @@ extern int		DataPacketLen;
 extern hydrologyElement inputPara[ MAX_ELEMENT ];
 extern hydrologyElement outputPara[ MAX_ELEMENT ];
 uint16_t		time_10min = 0, time_5min = 0, time_1min = 1, time_1s = 0;
+extern SemaphoreHandle_t GPRS_Lock;
 
 
 void HydrologyTimeBase() {
@@ -143,6 +144,7 @@ void HydrologyDataPacketInit() {
 		     newtime[ 0 ], 0);
 }
 
+extern SemaphoreHandle_t sample_switch_save;
 int HydrologySample(char* _saveTime) {
 
 	int	  i     = 0;
@@ -245,6 +247,7 @@ int HydrologySample(char* _saveTime) {
 	UART1_Open(UART1_BT_TYPE);
 	TraceMsg("Sample Done!  ", 0);
 
+        xSemaphoreGive(sample_switch_save);
 	return 0;
 }
 
@@ -366,6 +369,7 @@ int HydrologySaveData(char* _saveTime, char funcode)  // char *_saveTime
 			vPortFree(inputPara[ i ].value);
 			inputPara[ i ].value = NULL;
 		}
+                
 	}
 	++_effect_count;  //????????1
 	Hydrology_SetDataPacketCount(_effect_count);
@@ -453,7 +457,12 @@ int HydrologyInstantWaterLevel(char* _saveTime)  //??ï¿½ï¿½??????ï¿½ï¿½????ï¿½ï¿
 		else  //ï¿½ï¿½?????????
 		{
 			sendlen = _ret;
+
+                        xSemaphoreTake(GPRS_Lock,portMAX_DELAY);
 			hydrologyProcessSend(_send, TimerReport);
+                        xSemaphoreGive(GPRS_Lock);
+
+
 			Store_MarkDataItemSended(_startIdx);  //??????????????
 			--_effect_count;
 			Hydrology_SetDataPacketCount(_effect_count);  //??????????????ï¿½ï¿½????cnt
@@ -481,14 +490,22 @@ int HydrologyInstantWaterLevel(char* _saveTime)  //??ï¿½ï¿½??????ï¿½ï¿½????ï¿½ï¿
 
 	if (!IsDebug) {
 		System_Delayms(5000);
+                xSemaphoreTake(GPRS_Lock,portMAX_DELAY);
 		JudgeServerDataArrived();
 		Hydrology_ProcessGPRSReceieve();
+                xSemaphoreGive(GPRS_Lock);
+                xSemaphoreTake(GPRS_Lock,portMAX_DELAY);
 		JudgeServerDataArrived();
 		Hydrology_ProcessGPRSReceieve();
-		JudgeServerDataArrived();
+                xSemaphoreGive(GPRS_Lock);
+		xSemaphoreTake(GPRS_Lock,portMAX_DELAY);
+                JudgeServerDataArrived();
 		Hydrology_ProcessGPRSReceieve();
+                xSemaphoreGive(GPRS_Lock);
+                xSemaphoreTake(GPRS_Lock,portMAX_DELAY);
 		if (GPRS_Close_TCP_Link() != 0)
 			GPRS_Close_GSM();
+                xSemaphoreGive(GPRS_Lock);
 	}
 
 	time_10min = 0;
