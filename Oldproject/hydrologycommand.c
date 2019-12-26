@@ -1270,7 +1270,7 @@ int hydrologySetPara(void)
      Hydrology_WriteStoreInfo(HYDROLOGY_ELEMENT1_MODE+i*HYDROLOGY_ELEMENT_MODE_LEN,&(pbody->element)[i].value[1],HYDROLOGY_ELEMENT_MODE_LEN);
      Hydrology_WriteStoreInfo(HYDROLOGY_ELEMENT1_CHANNEL+i*HYDROLOGY_ELEMENT_CHANNEL_LEN,&(pbody->element)[i].value[2],HYDROLOGY_ELEMENT_CHANNEL_LEN);
       /*根据ID获取D,d*/     
-     getElementDd(Element_table[i].ID,&Element_table[i].D,&Element_table[i].d);   
+     getElementDd(Element_table[i].ID,&Element_table[i].D,&Element_table[i].d);
       if((pbody->element)[i].value[1] == RS485)
       {  
          
