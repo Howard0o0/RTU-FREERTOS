@@ -4632,6 +4632,9 @@
                 <name>$PROJ_DIR$\Apps\include\Hydrolody_Task.h</name>
             </file>
             <file>
+                <name>$PROJ_DIR$\Apps\include\memoryleakcheck.h</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\Apps\include\RTC_Task.h</name>
             </file>
         </group>
@@ -4640,6 +4643,9 @@
         </file>
         <file>
             <name>$PROJ_DIR$\Apps\Hydrolody_Task.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Apps\memoryleakcheck.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\Apps\RTC_Task.c</name>

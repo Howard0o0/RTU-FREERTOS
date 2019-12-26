@@ -18,7 +18,7 @@ void hydrology_sample(void* pvParameters) {
 	while (1) {
                 printf("\r\nSample start,freeheap:%d\r\n",xPortGetFreeHeapSize());
 		printf("Sample HWM :%d\r\n", uxTaskGetStackHighWaterMark(NULL));
-                
+
 		HydrologySample(rtc_nowTime);
 
 		printf("\r\nSample end,freeheap:%d\r\n",xPortGetFreeHeapSize());
@@ -42,6 +42,8 @@ void hydrology_save(void* pvParameters) {
 		HydrologySaveData(rtc_nowTime, TimerReport);
 
 		printf("\r\nSave end,freeheap:%d\r\n",xPortGetFreeHeapSize());
+
+
 		if (debug)
 			vTaskDelay(1000 / portTICK_PERIOD_MS);
 		else
@@ -59,6 +61,8 @@ void hydrology_report(void* pvParameters) {
 		HydrologyInstantWaterLevel(rtc_nowTime);
 
                 printf("\r\nReport end,freeheap:%d\r\n",xPortGetFreeHeapSize());
+
+                show_block();
 		
 		if (debug)
 			vTaskDelay(1000 / portTICK_PERIOD_MS);

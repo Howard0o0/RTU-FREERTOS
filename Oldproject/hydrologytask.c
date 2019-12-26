@@ -11,6 +11,7 @@
 #include "stdint.h"
 #include "store.h"
 #include <stdio.h>
+#include "memoryleakcheck.h"
 
 
 //#include "convertsampledata.h"
@@ -124,7 +125,7 @@ void HydrologyDataPacketInit() {
 	packet_len += HYDROLOGY_DATA_SEND_FLAG_LEN;
 	packet_len += HYDROLOGY_DATA_TIME_LEN;
 	while (Element_table[ i ].ID != 0) {
-		pvPortMallocElement(Element_table[ i ].ID, Element_table[ i ].D,
+		mypvPortMallocElement(Element_table[ i ].ID, Element_table[ i ].D,
 				    Element_table[ i ].d, &inputPara[ i ]);
 		packet_len += inputPara[ i ].num;
 		i++;
@@ -296,7 +297,7 @@ int HydrologySaveData(char* _saveTime, char funcode)  // char *_saveTime
 			switch (Element_table[ i ].type) {
 			case ANALOG: {
 				Hydrology_ReadAnalog(&floatvalue, acount++);
-				pvPortMallocElement(Element_table[ i ].ID, Element_table[ i ].D,
+				mypvPortMallocElement(Element_table[ i ].ID, Element_table[ i ].D,
 						    Element_table[ i ].d,
 						    &inputPara[ i ]);  //???id ??num??????value????
 				converToHexElement(( double )floatvalue, Element_table[ i ].D,
@@ -305,7 +306,7 @@ int HydrologySaveData(char* _saveTime, char funcode)  // char *_saveTime
 			}
 			case PULSE: {
 				Hydrology_ReadPulse(&intvalue1, pocunt++);
-				pvPortMallocElement(Element_table[ i ].ID, Element_table[ i ].D,
+				mypvPortMallocElement(Element_table[ i ].ID, Element_table[ i ].D,
 						    Element_table[ i ].d, &inputPara[ i ]);
 				converToHexElement(( double )intvalue1, Element_table[ i ].D,
 						   Element_table[ i ].d, inputPara[ i ].value);
@@ -313,7 +314,7 @@ int HydrologySaveData(char* _saveTime, char funcode)  // char *_saveTime
 			}
 			case SWITCH: {
 				Hydrology_ReadSwitch(&intvalue2);
-				pvPortMallocElement(Element_table[ i ].ID, Element_table[ i ].D,
+				mypvPortMallocElement(Element_table[ i ].ID, Element_table[ i ].D,
 						    Element_table[ i ].d, &inputPara[ i ]);
 				converToHexElement(( double )intvalue2, Element_table[ i ].D,
 						   Element_table[ i ].d, inputPara[ i ].value);
@@ -325,7 +326,7 @@ int HydrologySaveData(char* _saveTime, char funcode)  // char *_saveTime
 
 				if(Debug)
 		    			TraceMsg("hydrologytask.c  HydrologySaveData malloc ", 1);
-				inputPara[ i ].value      = ( char* )pvPortMalloc(SinglePacketSize);
+				inputPara[ i ].value      = ( char* )mypvPortMalloc(SinglePacketSize);
 				if (NULL != inputPara[ i ].value) {
 					inputPara[ i ].num = SinglePacketSize;
 					Console_WriteStringln("hydrologytask.c HydrologySaveData Malloc Failed");
@@ -347,7 +348,7 @@ int HydrologySaveData(char* _saveTime, char funcode)  // char *_saveTime
 	for(i = 0;i < cnt;i++)
 	{
 		memcpy((g_HydrologyDataPacket.element)[i].guide, inputPara[i].guide,2);
-		(g_HydrologyDataPacket.element)[i].value = (char*) pvPortMalloc(inputPara[i].num);
+		(g_HydrologyDataPacket.element)[i].value = (char*) mypvPortMalloc(inputPara[i].num);
 		if(NULL == (g_HydrologyDataPacket.element)[i].value)
 			 return -1;
 		memcpy((g_HydrologyDataPacket.element)[i].value,inputPara[i].value, inputPara[i].num);
@@ -366,7 +367,7 @@ int HydrologySaveData(char* _saveTime, char funcode)  // char *_saveTime
 		memcpy(&_data[ len ], inputPara[ i ].value, inputPara[ i ].num);
 		len += inputPara[ i ].num;
 		if (inputPara[ i ].value != NULL) {
-			vPortFree(inputPara[ i ].value);
+			myvPortFree(inputPara[ i ].value);
 			inputPara[ i ].value = NULL;
 		}
                 
@@ -426,7 +427,7 @@ int HydrologyInstantWaterLevel(char* _saveTime)  //??ï¿½ï¿½??????ï¿½ï¿½????ï¿½ï¿
 		if (_seek_num > HYDROLOGY_DATA_MAX_IDX)  //??????????????????????????????????????
 		{
 			TraceMsg("seek num out of range", 1);
-			// hydrologHEXvPortFree();
+			// hydrologHEXmyvPortFree();
 			System_Delayms(2000);
 			System_Reset();
 		}

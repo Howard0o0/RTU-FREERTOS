@@ -26,7 +26,7 @@ static int s_clock = 0;       //用来指示当前频率
 static unsigned int _int = 0; //中断禁用DownInt() 的层数static unsigned int s_reset_pin =0;
 static unsigned int s_reset_pin = 0;
 
-int Debug=0;
+int Debug=1;
 
 void TraceOpen()
 { //调试打开

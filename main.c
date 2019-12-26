@@ -50,6 +50,7 @@
 #include "BLE_Task.h"
 #include "Hydrolody_Task.h"
 #include "RTC_Task.h"
+#include "memoryleakcheck.h"
 
 int IsDebug = 0;
 // extern SemaphoreHandle_t xSemaphore_BLE;
@@ -61,7 +62,7 @@ static void prvSetupHardware(void);
 
 static void task_print_1(void* pvParameters);
 static void task_print_2(void* pvParameters);
-
+static void task_print_3(void* pvParameters);
 SemaphoreHandle_t lock;
 
 void main(void) {
@@ -78,6 +79,17 @@ void main(void) {
 	// 	1, 	    NULL);
 	// xTaskCreate(task_print_3, "TEST3", configMINIMAL_STACK_SIZE * 2, NULL, tskIDLE_PRIORITY +
 	// 	1, 	    NULL);
+
+        // while(1)
+        // {
+        //         char *p;
+        //         p=(char *)mypvPortMalloc(sizeof(char)*10);
+        //         p=(char *)mypvPortMalloc(sizeof(char)*10);
+        //         p=(char *)mypvPortMalloc(sizeof(char)*30);
+        //         myvPortFree(p);
+        //         show_block(); 
+        // }
+        
 
 	/**********TEST************/
 
@@ -173,13 +185,10 @@ static void task_print_3(void* pvParameters) {
 	static int cnt    = 0;
 	char*      buffer = NULL;
 	while (1) {
-		printf("P3 START\r\n");
-		buffer = ( char* )pvPortMalloc(100);
-		printf("haha p3: %d \r\n", cnt++);
-		vPortFree(buffer);
-		buffer = NULL;
-		// printf("P2 HWM left:%d\r\n", uxTaskGetStackHighWaterMark(NULL));
-		printf("P3 END\r\n");
+		buffer = (char *)mypvPortMalloc(sizeof(char)*10);
+                myvPortFree(buffer);
+                buffer = (char *)mypvPortMalloc(sizeof(char)*20);
+                show_block();
 		vTaskDelay(1000 / portTICK_PERIOD_MS);
 	}
 }

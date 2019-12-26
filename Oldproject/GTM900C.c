@@ -14,6 +14,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "semphr.h"
+#include "memoryleakcheck.h"
 
 enum AtCmdType
 {
@@ -554,7 +555,7 @@ int GRPS_AT_Receive_Response(char *_recv,int *_retErrorCode)
 
         if(Debug)
 		    TraceMsg("GTM900C GSM.c  GSM_AT_QueryTime malloc ", 1);
-        pdata = (char*)pvPortMalloc(_datalensize);
+        pdata = (char*)mypvPortMalloc(_datalensize);
         if(pdata == NULL)
         {
             Console_WriteStringln("GTM900C GRPS_AT_Receive_Response malloc failed");
@@ -563,12 +564,12 @@ int GRPS_AT_Receive_Response(char *_recv,int *_retErrorCode)
 
         Utility_Strncpy(pdata, _recv + 10, _datalensize);
         _ReceiveDataLen = Utility_atoi(pdata, _datalensize);
-        vPortFree(pdata);
+        myvPortFree(pdata);
         pdata = NULL;//
 
         if(Debug)
 		    TraceMsg("GTM900C GSM.c  GSM_AT_QueryTime malloc", 1);
-        _ReceiveData = (char*)pvPortMalloc(_ReceiveDataLen*2);
+        _ReceiveData = (char*)mypvPortMalloc(_ReceiveDataLen*2);
         if(_ReceiveData == NULL)
         {
             Console_WriteStringln("GTM900C GRPS_AT_Receive_Response malloc failed");
@@ -580,7 +581,7 @@ int GRPS_AT_Receive_Response(char *_recv,int *_retErrorCode)
             psrc++;
         }
         Utility_Strncpy(_ReceiveData, psrc+1, _ReceiveDataLen*2);
-        // vPortFree(_ReceiveData);  //+++
+        // myvPortFree(_ReceiveData);  //+++
         // _ReceiveData = NULL;
         retValue = TRUE;
     }
@@ -1391,7 +1392,7 @@ int GRPS_AT_Send()
 
     if(Debug)
 		    TraceMsg("GTM900C.c  GRPS_AT_Send malloc ", 1);
-    char *_send = (char *)pvPortMalloc(dataLen+12);
+    char *_send = (char *)mypvPortMalloc(dataLen+12);
     if(_send == NULL)
     {
         Console_WriteStringln("GTM900C.c GRPS_AT_Send Malloc failed");
@@ -1414,7 +1415,7 @@ int GRPS_AT_Send()
     _retValue = GPRS_Proc_AT_Response(_recv, &_retMsgNum, SEND_DATA, &errorCode);
     // ����ָ����ȷ���һ�� %IPSEND:1,15
     // �ٷ���һ�� OK
-    vPortFree(_send);
+    myvPortFree(_send);
     _send = NULL;
 
     if(_retValue == TRUE)
@@ -1687,7 +1688,7 @@ int GPRS_Send(char* pSend, int sendDataLen, int isLastPacket, int center)
 
     if(Debug)
 		    TraceMsg("GTM900C.c  GRPS_Send malloc ", 1);
-    psrc = (char *)pvPortMalloc(sendDataLen*2+1);//+1����Ϊת������hex_2_ascii����и�\0,���������Խ�����
+    psrc = (char *)mypvPortMalloc(sendDataLen*2+1);//+1����Ϊת������hex_2_ascii����и�\0,���������Խ�����
     if(psrc == NULL)
     {
         Console_WriteStringln("GTM900C GPRS_Send malloc Failed");
@@ -1698,7 +1699,7 @@ int GPRS_Send(char* pSend, int sendDataLen, int isLastPacket, int center)
     
     _retvalue = GRPS_AT_Send();
 
-    vPortFree(psrc);
+    myvPortFree(psrc);
     psrc = NULL;
     
     if(_retvalue == MSG_SEND_SUCCESS)
@@ -1731,39 +1732,39 @@ char* GPRS_Receive()
     {
         if(Debug)
 		    TraceMsg("GTM900C.c  GPRS_Receive malloc ", 1);
-        hexdata = (char*)pvPortMalloc(_ReceiveDataLen);
+        hexdata = (char*)mypvPortMalloc(_ReceiveDataLen);
         if(hexdata == 0)
         {
             Console_WriteStringln("GTM900C GPRS_Receive Malloc Failed");
         }
         ConvertAscIItoHex(_ReceiveData, hexdata, _ReceiveDataLen*2);
-        vPortFree(_ReceiveData);
+        myvPortFree(_ReceiveData);
         _ReceiveData = NULL;
     }
     else if(GRPS_AT_Receive() == MSG_RECEIVE_SUCCESS)
     {
         if(Debug)
 		    TraceMsg("GTM900C.c  GPRS_Receive malloc ", 1);
-        hexdata = (char*)pvPortMalloc(_ReceiveDataLen);
+        hexdata = (char*)mypvPortMalloc(_ReceiveDataLen);
         if(hexdata == 0)
         {
             Console_WriteStringln("GTM900C GPRS_Receive Malloc Failed");
         }
         ConvertAscIItoHex(_ReceiveData, hexdata, _ReceiveDataLen*2);
-        vPortFree(_ReceiveData);
+        myvPortFree(_ReceiveData);
         _ReceiveData = NULL;
     }
     else if(GRPS_AT_Receive() == MSG_RECEIVE_SUCCESS)
     {
         if(Debug)
 		    TraceMsg("GTM900C.c  GPRS_Receive malloc ", 1);
-        hexdata = (char*)pvPortMalloc(_ReceiveDataLen);
+        hexdata = (char*)mypvPortMalloc(_ReceiveDataLen);
         if(hexdata == 0)
         {
             Console_WriteStringln("GTM900C GPRS_Receive Malloc Failed");
         }
         ConvertAscIItoHex(_ReceiveData, hexdata, _ReceiveDataLen*2);
-        vPortFree(_ReceiveData);
+        myvPortFree(_ReceiveData);
         _ReceiveData = NULL;
     }
       
@@ -1808,7 +1809,7 @@ int Hydrology_ProcessGPRSReceieve()
     HydrologyRecord(ERC17);
   }
   if(dowmhydrologydata != NULL)
-    vPortFree(dowmhydrologydata);
+    myvPortFree(dowmhydrologydata);
   
   GPRSDataArrived = FALSE;
   return 0;

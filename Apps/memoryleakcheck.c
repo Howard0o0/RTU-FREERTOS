@@ -133,6 +133,7 @@ void show_block()
                         pn = pnext;
                 }
                 printf("total memory leak:%dbyte\n", total);
+                head=NULL;
         }
 }
 

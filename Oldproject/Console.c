@@ -18,6 +18,7 @@
 #include <string.h>
 #include "stdio.h"
 #include "FreeRTOS.h"
+#include "memoryleakcheck.h"
 
 static int Opened=0;//是否打开
 
@@ -45,7 +46,7 @@ int Console_WriteHexCharln(char * _str,int len)
 
     if(Debug)
 		TraceMsg("Console.c  Console_WriteHexCharln malloc ", 1);
-    dst = (char*)pvPortMalloc(len*2);
+    dst = (char*)mypvPortMalloc(len*2);
     if(dst == 0)
     {
         Console_WriteStringln("Console.c Console_WriteHexCharln malloc failed");
@@ -60,7 +61,7 @@ int Console_WriteHexCharln(char * _str,int len)
 
     Console_WriteBytesln(dst,len*2);
 
-    vPortFree(dst);
+    myvPortFree(dst);
     dst = NULL; //ly 避免野指针  ++++
     
     return 0;

@@ -33,6 +33,7 @@ void rtc_update(void* pvParameters) {
 
 		printf("\r\nRTC end,freeheap:%d\r\n",xPortGetFreeHeapSize());
 
+
 		vTaskDelay(10000 / portTICK_PERIOD_MS);
 	}
 }

@@ -32,6 +32,7 @@
 #include "task.h"
 #include "uart0.h"
 #include "GTM900C.h"
+#include "memoryleakcheck.h"
 // 短信缓存数组里最多放几条
 #define ARRAY_MAX 15
 #define MSG_MAX_LEN 120
@@ -63,7 +64,7 @@ char s_NetState = '0';
  *@ author : howard
  *@ return : 0��success
 	    -1:��ȡʱ��ʧ��
-	    -2:ȫ���������ռ䲻�㣬pvPortMallocʧ��
+	    -2:ȫ���������ռ䲻�㣬mypvPortMallocʧ��
 */
 int GSM_AT_QueryTime(char* year, char* month, char* date, char* hour, char* min, char* second) {
 	int	  rcvFlag = 0;
@@ -76,7 +77,7 @@ int GSM_AT_QueryTime(char* year, char* month, char* date, char* hour, char* min,
 
 	if (Debug)
 		TraceMsg("GSM.c  GSM_AT_QueryTime malloc", 1);
-	pcRcvAtBuff = ( char* )pvPortMalloc(200 * sizeof(char));
+	pcRcvAtBuff = ( char* )mypvPortMalloc(200 * sizeof(char));
 	if (pcRcvAtBuff == NULL) {
 		TraceMsg("GSM.c  GSM_AT_QueryTime malloc failed!", 1);
 		return -2;
@@ -142,7 +143,7 @@ int GSM_AT_QueryTime(char* year, char* month, char* date, char* hour, char* min,
 		*second = (sec1 - 48) * 10 + (sec2 - 48);
 	}
 
-	vPortFree(pcRcvAtBuff);
+	myvPortFree(pcRcvAtBuff);
 	pcRcvAtBuff = NULL;
 
 	if (rcvFlag == 1) {
