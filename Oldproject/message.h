@@ -60,36 +60,36 @@
 
 typedef enum taghydrologyBodyType
 {
-  LinkMaintenance = 0x2F,		//Ò£²âÕ¾Á´Â·Î¬³Ö±¨
-  Test,											//Ò£²âÕ¾²âÊÔ±¨
-  EvenPeriodInformation,		//¾ùÔÈÊ±¶ÎË®ÎÄĞÅÏ¢±¨
-  TimerReport,							//Ò£²âÕ¾¶¨Ê±±¨
-  AddReport,								//Ò£²âÕ¾¼Ó±¨±¨
-  Hour,											//Ò£²âÕ¾Ğ¡Ê±±¨
-  ArtificialNumber,					//Ò£²âÕ¾ÈË¹¤ÖÃÊı±¨
-  Picture,									//Ò£²âÕ¾Í¼Æ¬±¨
-  Realtime,									//ÖĞĞÄÕ¾²éÑ¯Ò£²âÕ¾ÊµÊ±Êı¾İ
-  Period,										//ÖĞĞÄÕ¾²éÑ¯Ò£²âÕ¾Ê±¶ÎÊı¾İ
-  InquireArtificialNumber,	//ÖĞĞÄÕ¾²éÑ¯Ò£²âÕ¾ÈË¹¤ÖÃÊı
-  SpecifiedElement,					//ÖĞĞÄÕ¾²éÑ¯Ò£²âÕ¾Ö¸¶¨ÒªËØÊµÊ±Êı¾İ
-  ConfigurationModification = 0x40,//Ò£²âÕ¾ÅäÖÃĞŞ¸Ä
-  ConfigurationRead,				//Ò£²âÕ¾ÅäÖÃ¶ÁÈ¡
-  ParameterModification,		//ÖĞĞÄÕ¾ĞŞ¸ÄÒ£²âÕ¾ÔËĞĞ²ÎÊı
-  ParameterRead,						//ÖĞĞÄÕ¾¶ÁÈ¡Ò£²âÕ¾ÔËĞĞ²ÎÊı
-  WaterPumpMotor,						//ÖĞĞÄÕ¾²éÑ¯Ë®±Ãµç»úÊµÊ±¹¤×÷Êı¾İ
-  SoftwareVersion,					//ÖĞĞÄÕ¾²éÑ¯Ò£²âÕ¾²éÑ¯Ò£²âÕ¾Èí¼ş°æ±¾
-  Status,										//ÖĞĞÄÕ¾²éÑ¯Ò£²âÕ¾×´Ì¬ĞÅÏ¢
-  InitializeSolidStorage,		//³õÊ¼»¯¹ÌÌ¬´æ´¢Êı¾İ
-  Reset,										//»Ö¸´Ò£²âÕ¾³ö³§ÉèÖÃ
-  ChangePassword,						//ÖĞĞÄÕ¾ĞŞ¸Ä´«ÊäÃÜÂë
-  SetClock,									//ÖĞĞÄÕ¾ÉèÖÃÒ£²âÕ¾Ê±ÖÓ
-  SetICCard,								//ÖĞĞÄÕ¾ÉèÖÃÒ£²âÕ¾IC¿¨×´Ì¬
-  Pump,											//ÖĞĞÄÕ¾ÉèÖÃÒ£²âÕ¾Ë®±Ã¿ª¹ØÃüÁîÏìÓ¦/ Ë®±Ã×´Ì¬×Ô±¨
-  Valve,										//ÖĞĞÄÕ¾ÉèÖÃÒ£²âÕ¾¿ØÖÆ·§ÃÅ¿ª¹ØÃüÁîÏìÓ¦/ ·§ÃÅ×´Ì¬×Ô±¨
-  Gate,											//ÖĞĞÄÕ¾ÉèÖÃÒ£²âÕ¾¿ØÖÆÕ¢ÃÅ¿ª¹ØÃüÁîÏìÓ¦/ Õ¢ÃÅ×´Ì¬ĞÅÏ¢×Ô±¨
-  WaterSetting,							//ÖĞĞÄÕ¾ÉèÖÃÒ£²âÕ¾Ë®Á¿¶¨Öµ¿ØÖÆÃüÁîÏìÓ¦
-  Record,										//ÖĞĞÄÕ¾²éÑ¯Ò£²âÕ¾ÊÂ¼ş¼ÇÂ¼
-  Time,											//ÖĞĞÄÕ¾²éÑ¯Ò£²âÕ¾Ê±ÖÓ
+  LinkMaintenance = 0x2F,		//Ò£ï¿½ï¿½Õ¾ï¿½ï¿½Â·Î¬ï¿½Ö±ï¿½
+  Test,											//Ò£ï¿½ï¿½Õ¾ï¿½ï¿½ï¿½Ô±ï¿½
+  EvenPeriodInformation,		//ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Ë®ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½
+  TimerReport,							//Ò£ï¿½ï¿½Õ¾ï¿½ï¿½Ê±ï¿½ï¿½
+  AddReport,								//Ò£ï¿½ï¿½Õ¾ï¿½Ó±ï¿½ï¿½ï¿½
+  Hour,											//Ò£ï¿½ï¿½Õ¾Ğ¡Ê±ï¿½ï¿½
+  ArtificialNumber,					//Ò£ï¿½ï¿½Õ¾ï¿½Ë¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  Picture,									//Ò£ï¿½ï¿½Õ¾Í¼Æ¬ï¿½ï¿½
+  Realtime,									//ï¿½ï¿½ï¿½ï¿½Õ¾ï¿½ï¿½Ñ¯Ò£ï¿½ï¿½Õ¾ÊµÊ±ï¿½ï¿½ï¿½ï¿½
+  Period,										//ï¿½ï¿½ï¿½ï¿½Õ¾ï¿½ï¿½Ñ¯Ò£ï¿½ï¿½Õ¾Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  InquireArtificialNumber,	//ï¿½ï¿½ï¿½ï¿½Õ¾ï¿½ï¿½Ñ¯Ò£ï¿½ï¿½Õ¾ï¿½Ë¹ï¿½ï¿½ï¿½ï¿½ï¿½
+  SpecifiedElement,					//ï¿½ï¿½ï¿½ï¿½Õ¾ï¿½ï¿½Ñ¯Ò£ï¿½ï¿½Õ¾Ö¸ï¿½ï¿½Òªï¿½ï¿½ÊµÊ±ï¿½ï¿½ï¿½ï¿½
+  ConfigurationModification = 0x40,//Ò£ï¿½ï¿½Õ¾ï¿½ï¿½ï¿½ï¿½ï¿½Ş¸ï¿½
+  ConfigurationRead,				//Ò£ï¿½ï¿½Õ¾ï¿½ï¿½ï¿½Ã¶ï¿½È¡
+  ParameterModification,		//ï¿½ï¿½ï¿½ï¿½Õ¾ï¿½Ş¸ï¿½Ò£ï¿½ï¿½Õ¾ï¿½ï¿½ï¿½Ğ²ï¿½ï¿½ï¿½
+  ParameterRead,						//ï¿½ï¿½ï¿½ï¿½Õ¾ï¿½ï¿½È¡Ò£ï¿½ï¿½Õ¾ï¿½ï¿½ï¿½Ğ²ï¿½ï¿½ï¿½
+  WaterPumpMotor,						//ï¿½ï¿½ï¿½ï¿½Õ¾ï¿½ï¿½Ñ¯Ë®ï¿½Ãµï¿½ï¿½ÊµÊ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  SoftwareVersion,					//ï¿½ï¿½ï¿½ï¿½Õ¾ï¿½ï¿½Ñ¯Ò£ï¿½ï¿½Õ¾ï¿½ï¿½Ñ¯Ò£ï¿½ï¿½Õ¾ï¿½ï¿½ï¿½ï¿½ï¿½æ±¾
+  Status,										//ï¿½ï¿½ï¿½ï¿½Õ¾ï¿½ï¿½Ñ¯Ò£ï¿½ï¿½Õ¾×´Ì¬ï¿½ï¿½Ï¢
+  InitializeSolidStorage,		//ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½Ì¬ï¿½æ´¢ï¿½ï¿½ï¿½ï¿½
+  Reset,										//ï¿½Ö¸ï¿½Ò£ï¿½ï¿½Õ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  ChangePassword,						//ï¿½ï¿½ï¿½ï¿½Õ¾ï¿½Ş¸Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  SetClock,									//ï¿½ï¿½ï¿½ï¿½Õ¾ï¿½ï¿½ï¿½ï¿½Ò£ï¿½ï¿½Õ¾Ê±ï¿½ï¿½
+  SetICCard,								//ï¿½ï¿½ï¿½ï¿½Õ¾ï¿½ï¿½ï¿½ï¿½Ò£ï¿½ï¿½Õ¾ICï¿½ï¿½×´Ì¬
+  Pump,											//ï¿½ï¿½ï¿½ï¿½Õ¾ï¿½ï¿½ï¿½ï¿½Ò£ï¿½ï¿½Õ¾Ë®ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦/ Ë®ï¿½ï¿½×´Ì¬ï¿½Ô±ï¿½
+  Valve,										//ï¿½ï¿½ï¿½ï¿½Õ¾ï¿½ï¿½ï¿½ï¿½Ò£ï¿½ï¿½Õ¾ï¿½ï¿½ï¿½Æ·ï¿½ï¿½Å¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦/ ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½Ô±ï¿½
+  Gate,											//ï¿½ï¿½ï¿½ï¿½Õ¾ï¿½ï¿½ï¿½ï¿½Ò£ï¿½ï¿½Õ¾ï¿½ï¿½ï¿½ï¿½Õ¢ï¿½Å¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦/ Õ¢ï¿½ï¿½×´Ì¬ï¿½ï¿½Ï¢ï¿½Ô±ï¿½
+  WaterSetting,							//ï¿½ï¿½ï¿½ï¿½Õ¾ï¿½ï¿½ï¿½ï¿½Ò£ï¿½ï¿½Õ¾Ë®ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦
+  Record,										//ï¿½ï¿½ï¿½ï¿½Õ¾ï¿½ï¿½Ñ¯Ò£ï¿½ï¿½Õ¾ï¿½Â¼ï¿½ï¿½ï¿½Â¼
+  Time,											//ï¿½ï¿½ï¿½ï¿½Õ¾ï¿½ï¿½Ñ¯Ò£ï¿½ï¿½Õ¾Ê±ï¿½ï¿½
   BodyTypeEnd
     
 }hydrologyBodyType;
@@ -97,12 +97,12 @@ typedef enum taghydrologyBodyType
 #pragma pack(1)
 
 
-//ÒªËØ»ù±¾¶¨Òå
+//Òªï¿½Ø»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 typedef struct tagHydrologyElement
 {
   char guide[2];
   char num;
-  char* value;
+  char value[20];
 }hydrologyElement;
 
 typedef struct tagHydrologyElementInfo
@@ -115,7 +115,7 @@ typedef struct tagHydrologyElementInfo
   char Channel;    //+++++++++++++++++
 }hydrologyElementInfo;
 
-//Ò£²âÕ¾ÉÏĞĞ±¨ÎÄ±¨Í·½á¹¹
+//Ò£ï¿½ï¿½Õ¾ï¿½ï¿½ï¿½Ğ±ï¿½ï¿½Ä±ï¿½Í·ï¿½á¹¹
 typedef struct taghydrologyHeader
 {
   char framestart[2];
@@ -128,7 +128,7 @@ typedef struct taghydrologyHeader
   char count_seq[3];
 }hydrologyHeader;
 
-//Ò£²âÕ¾ÉÏĞĞ±¨ÎÄÕıÎÄ½á¹¹
+//Ò£ï¿½ï¿½Õ¾ï¿½ï¿½ï¿½Ğ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä½á¹¹
 typedef struct tagHydrologyUpBody
 {
   char streamid[2];
@@ -143,7 +143,7 @@ typedef struct tagHydrologyUpBody
   int len;
 }hydrologyUpBody;
 
-//Ò£²âÕ¾ÏÂĞĞ±¨ÎÄÕıÎÄ½á¹¹
+//Ò£ï¿½ï¿½Õ¾ï¿½ï¿½ï¿½Ğ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä½á¹¹
 typedef struct tagHydrologyDownBody
 {
   char streamid[2];
@@ -164,7 +164,7 @@ typedef struct tagpacket
   short crc16;
   int len;
 }packet;
-//´æ´¢µÄÊı¾İ°ü¶¨Òå                                 //++++++++++++++++++++
+//ï¿½æ´¢ï¿½ï¿½ï¿½ï¿½ï¿½İ°ï¿½ï¿½ï¿½ï¿½ï¿½                                 //++++++++++++++++++++
 typedef struct tagHydrologyDataPacket
 {
   char send_flag;
@@ -203,7 +203,7 @@ int hydrologyProcessReceieve(char* input,int inputlen);
 
 void Hydrology_Printf(char *buff);
 
-/*ÓÃÓÚ´æ´¢±ê¼ÇµÄº¯Êı ly*/
+/*ï¿½ï¿½ï¿½Ú´æ´¢ï¿½ï¿½ÇµÄºï¿½ï¿½ï¿½ ly*/
 int Hydrology_ReadStartIdx(int *dest);
 
 int Hydrology_SetStartIdx(int src);

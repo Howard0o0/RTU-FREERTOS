@@ -326,12 +326,12 @@ int HydrologySaveData(char* _saveTime, char funcode)  // char *_saveTime
 
 				if(Debug)
 		    			TraceMsg("hydrologytask.c  HydrologySaveData malloc ", 1);
-				inputPara[ i ].value      = ( char* )mypvPortMalloc(SinglePacketSize);
-				if (NULL != inputPara[ i ].value) {
+				// inputPara[ i ].value      = ( char* )mypvPortMalloc(SinglePacketSize);
+				// if (NULL != inputPara[ i ].value) {
 					inputPara[ i ].num = SinglePacketSize;
-					Console_WriteStringln("hydrologytask.c HydrologySaveData Malloc Failed");
-					// Hydrology_ReadRom(RomElementBeginAddr,inputPara[i].value,SinglePacketSendCount++);
-				}
+				// 	Console_WriteStringln("hydrologytask.c HydrologySaveData Malloc Failed");
+				// 	// Hydrology_ReadRom(RomElementBeginAddr,inputPara[i].value,SinglePacketSendCount++);
+				// }
 				break;
 			}
 			default:
@@ -366,10 +366,10 @@ int HydrologySaveData(char* _saveTime, char funcode)  // char *_saveTime
 	for (i = 0; i < cnt; i++) {
 		memcpy(&_data[ len ], inputPara[ i ].value, inputPara[ i ].num);
 		len += inputPara[ i ].num;
-		if (inputPara[ i ].value != NULL) {
-			myvPortFree(inputPara[ i ].value);
-			inputPara[ i ].value = NULL;
-		}
+		// if (inputPara[ i ].value != NULL) {
+		// 	myvPortFree(inputPara[ i ].value);
+		// 	inputPara[ i ].value = NULL;
+		// }
                 
 	}
 	++_effect_count;  //????????1

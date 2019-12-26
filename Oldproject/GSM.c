@@ -83,6 +83,7 @@ int GSM_AT_QueryTime(char* year, char* month, char* date, char* hour, char* min,
 		return -2;
 	}
 
+        printf("init RTC,send AT\r\n");
 	UART0_Send(_sendAT, 8, 1);
 
 	while (_repeat < 10) {
@@ -95,6 +96,7 @@ int GSM_AT_QueryTime(char* year, char* month, char* date, char* hour, char* min,
 		_repeat++;
 		System_Delayms(50);
 	}
+        printf("rcv RTC AT%s \r\n ",pcRcvAtBuff);
 
 	/* got AT response contained time */
 	if (rcvFlag == 1) {
