@@ -124,10 +124,8 @@
         <ShowTimeLog>1</ShowTimeLog>
     </DataSample>
     <Breakpoints>
-        <Bp0>_ "STD_CODE" "{$PROJ_DIR$}.688.5" 0 0 0 0 "" 0 ""</Bp0>
-        <Bp1>_ "STD_CODE" "{$PROJ_DIR$\Oldproject\uart_config.c}.25.5" 1 0 0 0 "" 0 ""</Bp1>
-        <Bp2>_ "STD_CODE" "{$PROJ_DIR$\Oldproject\message.c}.1926.3" 1 0 0 0 "" 0 ""</Bp2>
-        <Count>3</Count>
+        <Bp0>_ "STD_CODE" "{$PROJ_DIR$\Oldproject\message.c}.690.17" 0 0 0 0 "" 0 ""</Bp0>
+        <Count>1</Count>
     </Breakpoints>
     <FET>
         <Clock_mode>14</Clock_mode>
@@ -161,17 +159,7 @@
         <LogFile>_ ""</LogFile>
     </TermIOLog>
     <Aliases>
-        <A0>_ "C:\Users\waz\Desktop\RTU-FREERTOS-develope\RTU-FREERTOS-develope\MSP-EXP430F5438_HAL\hal_board.c" ""</A0>
-        <A1>_ "C:\Users\waz\Desktop\RTU-FREERTOS-develope\RTU-FREERTOS-develope\Oldproject\led.c" ""</A1>
-        <A2>_ "C:\Users\waz\Desktop\RTU-FREERTOS-develope\RTU-FREERTOS-develope\Oldproject\rom.c" "C:\Users\waz\Desktop\freertos_rtu\RTU-FREERTOS\Oldproject\rom.c"</A2>
-        <A3>_ "C:\Users\waz\Desktop\RTU-FREERTOS-develope\RTU-FREERTOS-develope\Oldproject\store.c" "C:\Users\waz\Desktop\freertos_rtu\RTU-FREERTOS\Oldproject\store.c"</A3>
-        <A4>_ "C:\Users\waz\Desktop\RTU-FREERTOS-develope\RTU-FREERTOS-develope\Oldproject\uart0.c" "C:\Users\waz\Desktop\freertos_rtu\RTU-FREERTOS\Oldproject\uart0.c"</A4>
-        <A5>_ "C:\Users\waz\Desktop\RTU-FREERTOS-develope\RTU-FREERTOS-develope\Source\list.c" "C:\Users\waz\Desktop\freertos_rtu\RTU-FREERTOS\Source\list.c"</A5>
-        <A6>_ "C:\Users\waz\Desktop\RTU-FREERTOS-develope\RTU-FREERTOS-develope\Source\portable\IAR\MSP430X\port.c" ""</A6>
-        <A7>_ "C:\Users\waz\Desktop\RTU-FREERTOS-develope\RTU-FREERTOS-develope\Source\queue.c" "C:\Users\waz\Desktop\freertos_rtu\RTU-FREERTOS\Source\queue.c"</A7>
-        <A8>_ "C:\Users\waz\Desktop\RTU-FREERTOS-develope\RTU-FREERTOS-develope\Source\tasks.c" "C:\Users\waz\Desktop\freertos_rtu\RTU-FREERTOS\Source\tasks.c"</A8>
-        <A9>_ "C:\Users\waz\Desktop\新建文件夹\RTU-FREERTOS\Oldproject\timer.c" "C:\Users\waz\Desktop\freertos_rtu\RTU-FREERTOS\Oldproject\timer.c"</A9>
-        <Count>10</Count>
-        <SuppressDialog>1</SuppressDialog>
+        <Count>0</Count>
+        <SuppressDialog>0</SuppressDialog>
     </Aliases>
 </settings>

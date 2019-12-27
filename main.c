@@ -24,6 +24,7 @@
 /* Old project */
 #include "BC95.h"
 #include "DTU.h"
+#include "GTM900C.h"
 #include "Sampler.h"
 #include "common.h"
 #include "console.h"
@@ -44,12 +45,12 @@
 #include "uart_config.h"
 #include "wifi_config.h"
 #include <string.h>
-#include "GTM900C.h"
 
 /* APP */
 #include "BLE_Task.h"
 #include "Hydrolody_Task.h"
 #include "RTC_Task.h"
+#include "gprs.h"
 #include "memoryleakcheck.h"
 
 int IsDebug = 0;
@@ -60,9 +61,9 @@ int IsDebug = 0;
  */
 static void prvSetupHardware(void);
 
-static void task_print_1(void* pvParameters);
-static void task_print_2(void* pvParameters);
-static void task_print_3(void* pvParameters);
+static void       task_print_1(void* pvParameters);
+static void       task_print_2(void* pvParameters);
+static void       task_print_3(void* pvParameters);
 SemaphoreHandle_t lock;
 
 void main(void) {
@@ -71,8 +72,20 @@ void main(void) {
 	interrupts. */
 	prvSetupHardware();
 
+	/* gprs test */
+	if (gprs_power_on() == OK) {
+		printf("gprs boot done \r\n");
+	}
+	else {
+		printf("gprs boot failed \r\n");
+	}
+	while (1)
+		;
+
+	/* end of gprs test */
+
 	/**********TEST************/
-        // vSemaphoreCreateBinary(lock);
+	// vSemaphoreCreateBinary(lock);
 	// xTaskCreate(task_print_1, "TEST1", configMINIMAL_STACK_SIZE * 2, NULL, tskIDLE_PRIORITY +
 	// 	1, 	    NULL);
 	// xTaskCreate(task_print_2, "TEST2", configMINIMAL_STACK_SIZE * 2, NULL, tskIDLE_PRIORITY +
@@ -80,16 +93,15 @@ void main(void) {
 	// xTaskCreate(task_print_3, "TEST3", configMINIMAL_STACK_SIZE * 2, NULL, tskIDLE_PRIORITY +
 	// 	1, 	    NULL);
 
-        // while(1)
-        // {
-        //         char *p;
-        //         p=(char *)mypvPortMalloc(sizeof(char)*10);
-        //         p=(char *)mypvPortMalloc(sizeof(char)*10);
-        //         p=(char *)mypvPortMalloc(sizeof(char)*30);
-        //         myvPortFree(p);
-        //         show_block(); 
-        // }
-        
+	// while(1)
+	// {
+	//         char *p;
+	//         p=(char *)mypvPortMalloc(sizeof(char)*10);
+	//         p=(char *)mypvPortMalloc(sizeof(char)*10);
+	//         p=(char *)mypvPortMalloc(sizeof(char)*30);
+	//         myvPortFree(p);
+	//         show_block();
+	// }
 
 	/**********TEST************/
 
@@ -97,8 +109,8 @@ void main(void) {
 
 	// pBLE_Dev  ptDevBle =  getIODev();
 	// ptDevBle->init();
-	// xTaskCreate(BLE_RE, "BLE", configMINIMAL_STACK_SIZE * 3, NULL, tskIDLE_PRIORITY + 1, NULL);
-	// xSemaphoreGive(xSemaphore_BLE);
+	// xTaskCreate(BLE_RE, "BLE", configMINIMAL_STACK_SIZE * 3, NULL, tskIDLE_PRIORITY + 1,
+	// NULL); xSemaphoreGive(xSemaphore_BLE);
 
 	/*****BLE*************/
 
@@ -151,10 +163,10 @@ static void task_print_1(void* pvParameters) {
 	char*      buffer = NULL;
 
 	while (1) {
-                xSemaphoreTake(lock,portMAX_DELAY);
+		xSemaphoreTake(lock, portMAX_DELAY);
 		printf("P1 START\r\n");
 		// buffer = ( char* )pvPortMalloc(100);
-                // for(int i=0;i<10;i++)
+		// for(int i=0;i<10;i++)
 		//         printf("haha p1: %d \r\n", cnt++);
 		// vPortFree(buffer);
 		// buffer = NULL;
@@ -170,13 +182,13 @@ static void task_print_2(void* pvParameters) {
 	while (1) {
 		// printf("P2 START\r\n");
 		// buffer = ( char* )pvPortMalloc(100);
-                // for(int i=0;i<10;i++)
+		// for(int i=0;i<10;i++)
 		//         printf("haha p2: %d \r\n", cnt++);
 		// vPortFree(buffer);
 		// buffer = NULL;
 		// // printf("P2 HWM left:%d\r\n", uxTaskGetStackHighWaterMark(NULL));
 		// printf("P2 END\r\n");
-                printf("%ds\r\n",cnt++);
+		printf("%ds\r\n", cnt++);
 		vTaskDelay(1000 / portTICK_PERIOD_MS);
 	}
 }
@@ -185,10 +197,10 @@ static void task_print_3(void* pvParameters) {
 	static int cnt    = 0;
 	char*      buffer = NULL;
 	while (1) {
-		buffer = (char *)mypvPortMalloc(sizeof(char)*10);
-                myvPortFree(buffer);
-                buffer = (char *)mypvPortMalloc(sizeof(char)*20);
-                show_block();
+		buffer = ( char* )mypvPortMalloc(sizeof(char) * 10);
+		myvPortFree(buffer);
+		buffer = ( char* )mypvPortMalloc(sizeof(char) * 20);
+		show_block();
 		vTaskDelay(1000 / portTICK_PERIOD_MS);
 	}
 }
@@ -307,7 +319,7 @@ void Restart_Init() {
 	//        IsDebug = 0;
 	//    }
 
-        GPRS_lock_init();
+	GPRS_lock_init();
 
 	return;
 }

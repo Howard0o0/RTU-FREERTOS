@@ -10,13 +10,24 @@
 
 #pragma once 
 
+#include <stdio.h>
+#include <string.h>
+
 //#define __CONSOLE__DEBUG__ 1
 extern int trace_open;
 
 #define XG_SUCCESS                               0
 #define XG_FAILED                                1
 
+#define __DEBUG__
+#define filename(x) strrchr(x,'\\')?strrchr(x,'\\')+1:x
 
+#define __DEBUG__  
+#ifdef __DEBUG__  
+#define debug_printf(format,...) printf("[file: %s, line: %d] "format, filename(__FILE__),__LINE__, ##__VA_ARGS__)  
+#else  
+#define debug_printf(format,...)  
+#endif  
 
 
 #define TraceHexMsg(_str, len) \
