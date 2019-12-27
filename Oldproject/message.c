@@ -1489,7 +1489,6 @@ int hydrologyMakeDownBody(char* input,int len,int position)
 //       return -1;
     
     memcpy((pbody->element)[pbody->count].value,&input[position],(pbody->element)[pbody->count].num);
-    printf("value:%x",(pbody->element)[pbody->count].value[1]);
     
     position += (pbody->element)[pbody->count].num;
     

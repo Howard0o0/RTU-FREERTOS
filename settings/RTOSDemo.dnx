@@ -125,9 +125,8 @@
     </DataSample>
     <Breakpoints>
         <Bp0>_ "STD_CODE" "{$PROJ_DIR$}.688.5" 0 0 0 0 "" 0 ""</Bp0>
-        <Bp1>_ "STD_CODE" "{$PROJ_DIR$\Oldproject\uart_config.c}.25.5" 1 0 0 0 "" 0 ""</Bp1>
-        <Bp2>_ "STD_CODE" "{$PROJ_DIR$\Oldproject\message.c}.1926.3" 1 0 0 0 "" 0 ""</Bp2>
-        <Count>3</Count>
+        <Bp1>_ "STD_CODE" "{$PROJ_DIR$\Oldproject\message.c}.1497.5" 1 0 0 0 "" 0 ""</Bp1>
+        <Count>2</Count>
     </Breakpoints>
     <FET>
         <Clock_mode>14</Clock_mode>

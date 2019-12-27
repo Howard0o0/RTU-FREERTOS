@@ -62,7 +62,7 @@ void hydrology_report(void* pvParameters) {
 
                 printf("\r\nReport end,freeheap:%d\r\n",xPortGetFreeHeapSize());
 
-                show_block();
+                // show_block();
 		
 		if (debug)
 			vTaskDelay(1000 / portTICK_PERIOD_MS);
@@ -92,13 +92,13 @@ void hydrology_init() {
 
 void hydrology_run() {
 	hydrology_init();
-	xTaskCreate(rtc_update, "RTC update", configMINIMAL_STACK_SIZE * 5, NULL,
-		    tskIDLE_PRIORITY + 2, NULL);
-        xTaskCreate(hydrology_sample, "hydrology sample", configMINIMAL_STACK_SIZE * 5, NULL,
-	                tskIDLE_PRIORITY + 2, NULL);
-	xTaskCreate(hydrology_save, "hydrology save", configMINIMAL_STACK_SIZE * 5, NULL,
-	                tskIDLE_PRIORITY + 2, NULL);
-	xTaskCreate(hydrology_report, "hydrology report", configMINIMAL_STACK_SIZE * 5, NULL,
-	                tskIDLE_PRIORITY + 2, NULL);
+	xTaskCreate(rtc_update, "RTC update", configMINIMAL_STACK_SIZE * 4, NULL,
+		    tskIDLE_PRIORITY + 2, NULL);//550 333//660 433//440 266
+        xTaskCreate(hydrology_sample, "hydrology sample", configMINIMAL_STACK_SIZE * 4, NULL,
+	                tskIDLE_PRIORITY + 2, NULL);//550 306//660 396//440 242
+	xTaskCreate(hydrology_save, "hydrology save", configMINIMAL_STACK_SIZE * 4, NULL,
+	                tskIDLE_PRIORITY + 2, NULL);//550 283//660 363//440 203
+	xTaskCreate(hydrology_report, "hydrology report", configMINIMAL_STACK_SIZE * 4, NULL,
+	                tskIDLE_PRIORITY + 2, NULL);//550 198//660 278//440 118             
 
 }

@@ -63,7 +63,7 @@ BLERet BLE_BLESPPEND();                   //退出透传模式
 
 void SPPRX(char * result,int len);           //透传模式下RTU发送信息给蓝牙模块
 void SPPTX(char * result,int * len);           //透传模式下RTU接收蓝牙模块信息
-int IsInit();
+int BLE_isexist();      //1:exist 0:no bluetooth
 
 ////////////内部
 
