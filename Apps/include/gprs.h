@@ -72,7 +72,6 @@ typedef enum RETURN_VALUE
     NEW_SMS_COME,
     GPRS_NO_DATA_RECV,
     GPRS_DATA_RECV,
-    OK,
     ERR
 }gprs_state;
 
@@ -91,13 +90,13 @@ typedef enum tagTelecomOperater
 /*
  * return : OK  ERR
  */
-gprs_state gprs_power_on(void);  
+int gprs_power_on(void);  
 
-gprs_state gprs_power_off(void);
+int gprs_power_off(void);
 
-gprs_state gprs_sleep(void);
+int gprs_sleep(void);
 
-gprs_state gprs_wake_up(void);
+int gprs_wake_up(void);
 
 int GPRS_Send(char* pSend, int sendDataLen, int isLastPacket, int center);
 

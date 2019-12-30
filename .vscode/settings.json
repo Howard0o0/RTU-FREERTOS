@@ -9,6 +9,8 @@
 	"timer.h": "c",
 	"uart0.h": "c",
 	"task.h": "c",
-	"string.h": "c"
+	"string.h": "c",
+	"communication_opr.h": "c",
+	"common.h": "c"
 }
 }

@@ -1,5 +1,6 @@
-#ifndef __COMMUNICATION_OPR_H
-#define __COMMUNICATION_OPR_H
+#ifndef __MODULE_CONFIG_H
+#define __MODULE_CONFIG_H
+
 
 #define GPRS 1
 

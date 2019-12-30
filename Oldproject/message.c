@@ -11,7 +11,6 @@
 #include "rtc.h"
 //#include "usart.h"
 #include "FreeRTOS.h"
-#include "GTM900C.h"
 #include "common.h"
 #include "hydrologytask.h"
 #include "memoryleakcheck.h"

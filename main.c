@@ -24,7 +24,6 @@
 /* Old project */
 #include "BC95.h"
 #include "DTU.h"
-#include "GTM900C.h"
 #include "Sampler.h"
 #include "common.h"
 #include "console.h"
@@ -52,6 +51,7 @@
 #include "RTC_Task.h"
 #include "gprs.h"
 #include "memoryleakcheck.h"
+#include "communication_opr.h"
 
 int IsDebug = 0;
 // extern SemaphoreHandle_t xSemaphore_BLE;
@@ -72,13 +72,18 @@ void main(void) {
 	interrupts. */
 	prvSetupHardware();
 
-	/* gprs test */
-	if (gprs_power_on() == OK) {
-		printf("gprs boot done \r\n");
+	register_communication_module();
+	lock_communication_dev();
+	communication_dev_t* comm_dev = get_communication_dev();
+	if(comm_dev->power_on() != OK){
+		printf("gprs boot err \r\n");
 	}
-	else {
-		printf("gprs boot failed \r\n");
+	else{
+		printf("gprs boot ok \r\n");
 	}
+	unlock_communication_dev();
+
+
 	while (1)
 		;
 
@@ -318,8 +323,6 @@ void Restart_Init() {
 	//    {
 	//        IsDebug = 0;
 	//    }
-
-	GPRS_lock_init();
 
 	return;
 }

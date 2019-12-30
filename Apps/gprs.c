@@ -21,16 +21,41 @@ static void  pull_up_pin_igt();
 static void  send_at_cmd(char* at_cmd);
 static char* rcv_at_response();
 static int   check_gprs_module_is_normal();
+static int GSM_DealData(char *_recv, int _dataLen);
+static int  GSM_AT_CloseFeedback();
+static int GSM_AT_OffCall();
+static int GSM_DealAllData();
 
 #define BUF_LEN 50
+#define ARRAY_MAX 15 
 
 char  centerIP[ 16 ];   // = "125.220.159.168";
 char  centerPort[ 7 ];  // = "6666";
 char* psrc    = NULL;
 int   dataLen = 0;
-
 char* _ReceiveData    = NULL;
 int   _ReceiveDataLen = 0;
+
+ int g_work_mode;
+ int main_time_error;
+extern int s_alert_flag[8];
+
+//  调试统计计数  
+int  s_TimeOut=0;
+int  s_RING=0;
+int  s_OOPS=0;
+int  s_MsgFail=0;
+int  s_MsgOK=0;
+int  s_MsgDel=0;
+
+int  s_RecvIdx=0;    //注意是指向最后索引的下一个
+int  s_ProcIdx=0;    //注意是指向最后处理的下一个. 
+int  s_MsgNum=0;     //收到短信的总数 
+int  s_MsgArray[ARRAY_MAX];
+
+//函数间交互的变量
+int  s_MsgLeft=0;
+char s_NetState='0';
 
 communication_dev_t gprs_module = {
 	.name      = "gprs",
@@ -44,20 +69,13 @@ communication_dev_t gprs_module = {
 
 int gprs_module_driver_install(void) {
 
-	gprs_module.lock = xSemaphoreCreateMutex();
-	if (xSemaphore == NULL) {
-		debug_printf("insufficient heap memory available,communication's lock init failed! "
-			     "\r\n");
-		return -1;
-	}
-
 	return register_communication_dev_t(&gprs_module);
 }
 
 /*
  * return : OK  ERR
  */
-gprs_state gprs_power_on(void) {
+int gprs_power_on(void) {
 
 	debug_printf("gprs is trying to power on , need to wait 42s ...");
 
@@ -70,19 +88,18 @@ gprs_state gprs_power_on(void) {
 	return check_gprs_module_is_normal();
 }
 
-gprs_state gprs_power_off(void) {
+int gprs_power_off(void) {
 
 	return OK;
 }
 
-gprs_state gprs_wake_up(void) {
+int gprs_wake_up(void) {
 
-	xSemaphoreTake(gprs_module.lock,portMAX_DELAY);
+	
 	return OK;
 }
 
-gprs_state gprs_sleep(void) {
-	xSemaphoreGive(gprs_module.lock);
+int gprs_sleep(void) {
 	return OK;
 }
 
@@ -1432,7 +1449,7 @@ int GPRS_Create_TCP_Link(int center) {
 	int _repeats = 0;
 
 	if (gprsConfigSuccess == FALSE) {
-		GSM_Open();
+		gprs_power_on();
 
 		while (GSM_AT_CloseFeedback() != 0) {
 			if (_repeats > 0)
@@ -1521,7 +1538,7 @@ int GPRS_Close_TCP_Link() {
 
 void GPRS_Close_GSM() {
 	gprsConfigSuccess = FALSE;
-	GSM_Close(1);
+	gprs_power_off();
 	System_Delayms(1000);  //关机延时1s
 }
 
@@ -1634,3 +1651,133 @@ int Hydrology_ProcessGPRSReceieve() {
 	return 0;
 }
 
+static int  GSM_AT_CloseFeedback()
+{  //这条指令会收到:
+  //ATE0 
+  //OK
+    int _retNum;
+    int _repeats=0;
+    char _recv[30]="ATE0";  
+CloseFeedback:  
+    //UART0_Send(_recv,4,1); lmj20170814
+    UART0_Send(_recv,4,1);//lmj0814不用UART0发送里面的补充回车换行，直接将回车换行放在指令字符串当中
+//    System_Delayms(50);
+    if(UART0_RecvLineWait(_recv,30,&_retNum)==-1)
+    {  
+        ++s_TimeOut; 
+        return -1; 
+    } 
+      //收到ERROR ,
+    if(Utility_Strncmp(_recv,"ERROR",5)==0)
+    {
+        if(_repeats>2)
+        {
+        	Console_WriteStringln("Close feedback failed");
+            return -2;
+        }
+        //++SIM_ErrorNum;
+        ++ _repeats;
+        goto CloseFeedback;
+    } 
+    //如果是ATE0,则再获得一个OK,就可以返回了
+    if(Utility_Strncmp(_recv,"ATE0",4)==0)
+    {
+        if(UART0_RecvLineWait(_recv,30,&_retNum)==-1)
+        { ++s_TimeOut; return -1; }
+        if(Utility_Strncmp(_recv,"OK",2)==0)
+        {
+        	TraceMsg("Close feedback success", 1);
+            return 0;  
+        }
+    //++SIM_ErrorNum;
+        return -2;
+    }
+    //如果是OK,说明已经关闭
+    if(Utility_Strncmp(_recv,"OK",2)==0)
+        return 0;
+    GSM_DealData(_recv,_retNum);
+    //++SIM_BadNum;
+    return -2;
+}
+
+static int GSM_AT_OffCall()
+{
+    GSM_DealAllData();
+    int _retNum;
+    char _ath[]="ATH";
+    char _recv[50];
+    //该指令如果挂断了电话,那么就没有返回,无电话状态时,返回OK
+    //OK  
+    UART0_Send(_ath,3,1);
+    if(UART0_RecvLineWait(_recv,50,&_retNum)==-1)
+        return 0;
+    if(Utility_Strncmp(_recv,"OK",2)==0)
+        return -3; 
+    else
+    {
+        GSM_DealData(_recv,_retNum); 
+        return 0;
+    }
+} 
+
+// 专门用来清空缓冲区;
+// 对每行数据调用SIM_Deal
+static int GSM_DealAllData()
+{
+    int _retNum; 
+    char _recv[UART0_MAXBUFFLEN];
+    while(UART0_RecvLineTry(_recv,UART0_MAXBUFFLEN,&_retNum)==0)
+    {
+        if(GSM_DealData(_recv,_retNum)==2)
+        {
+            return 2;
+        }
+    }
+    return 0;
+}
+
+static int GSM_DealData(char *_recv, int _dataLen)
+{   
+  //
+  //  主动型数据
+  //
+    if(Utility_Strncmp(_recv,"RING",4)==0)
+    {//电话  
+        ++s_RING;
+        TraceMsg(" RING !",1);
+        //Console_WriteStringln("SIM_Deal:RING !");
+        GSM_AT_OffCall();
+        return 2;
+    }
+    if(Utility_Strncmp(_recv,"+CMTI: ",7)==0)
+    {  
+        Led1_WARN(); 
+        TraceMsg("Got A Msg !",1);
+        ++s_MsgNum;//存放 
+        if(_recv[13]=='\0')//recvLine函数将末尾处理为'\0'
+            s_MsgArray[s_RecvIdx]=(_recv[12]-'0');
+        else
+            s_MsgArray[s_RecvIdx]=(_recv[12]-'0')*10 + _recv[13]-'0'; 
+        
+        if(s_RecvIdx<ARRAY_MAX-1) 
+            ++s_RecvIdx;//增加索引,ArrayIdx指向的是第一个无效位
+        else
+            s_RecvIdx=0;
+        //++Deal_Msg;
+        return 2;
+     }
+     if(Utility_Strncmp(_recv,"+CMGS: ",7)==0)
+     { 
+         return 1; 
+     }
+     //
+     //  响应型数据
+     //
+     //按最可能收到 以及 处理优先级的 顺序排列 
+     if(Utility_Strncmp(_recv,"OK",2)==0)
+     { 
+         return 0;
+     }
+    //其他的都不管了.
+     return -1;
+}

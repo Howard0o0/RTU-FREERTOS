@@ -4321,6 +4321,9 @@
                 <name>$PROJ_DIR$\Apps\include\BLE_Task.h</name>
             </file>
             <file>
+                <name>$PROJ_DIR$\Apps\include\communication_opr.h</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\Apps\include\gprs.h</name>
             </file>
             <file>
@@ -4335,6 +4338,9 @@
         </group>
         <file>
             <name>$PROJ_DIR$\Apps\BLE_Task.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Apps\communication_opr.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\Apps\gprs.c</name>
@@ -4709,18 +4715,6 @@
             <name>$PROJ_DIR$\Oldproject\flow.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\Oldproject\GSM.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\Oldproject\GSM.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\Oldproject\GTM900C.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\Oldproject\GTM900C.h</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\Oldproject\hydrologycommand.c</name>
         </file>
         <file>
@@ -4879,6 +4873,9 @@
     </file>
     <file>
         <name>$PROJ_DIR$\main.c</name>
+    </file>
+    <file>
+        <name>$PROJ_DIR$\module_config.h</name>
     </file>
     <file>
         <name>$PROJ_DIR$\ParTest.c</name>

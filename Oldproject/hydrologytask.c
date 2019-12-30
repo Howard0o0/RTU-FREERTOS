@@ -1,5 +1,4 @@
 #include "hydrologytask.h"
-#include "GSM.h"
 #include "Sampler.h"
 #include "adc.h"
 #include "common.h"
@@ -18,7 +17,6 @@
 //#include "hydrology.h"
 //#include "hydrologmakebody.h"
 #include "FreeRTOS.h"
-#include "GTM900C.h"
 #include "hydrologycommand.h"
 #include "message.h"
 #include "string.h"
