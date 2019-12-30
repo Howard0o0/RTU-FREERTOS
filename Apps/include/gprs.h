@@ -1,3 +1,5 @@
+
+
 #ifndef __GPRS_H
 #define __GPRS_H
 
@@ -19,7 +21,7 @@ enum AtCmdType
     OFF_CALL
 };
 
-enum RETURN_VALUE
+typedef enum RETURN_VALUE
 {
     OK_MESSAGE_RECV,
     NO_MESSAGE_RECV_ERROR,
@@ -72,7 +74,7 @@ enum RETURN_VALUE
     GPRS_DATA_RECV,
     OK,
     ERR
-};
+}gprs_state;
 
 typedef enum tagTelecomOperater
 {
@@ -82,8 +84,50 @@ typedef enum tagTelecomOperater
     CHINA_TELECOM
 }Operater;
 
-int gprs_power_on();   
-int gprs_power_off();
+/*
+ * GPRS_Send -> GPRS_Close_TCP_Link
+*/
+
+/*
+ * return : OK  ERR
+ */
+gprs_state gprs_power_on(void);  
+
+gprs_state gprs_power_off(void);
+
+gprs_state gprs_sleep(void);
+
+gprs_state gprs_wake_up(void);
+
+int GPRS_Send(char* pSend, int sendDataLen, int isLastPacket, int center);
+
+char* GPRS_Receive();
+
+int gprs_module_driver_install(void);
+
+void JudgeServerDataArrived(void);
+
+int Hydrology_ProcessGPRSReceieve();
+
+/* 以下接口都是服务于上面的接口的，上层应用应该调用上面的接口 */
+void GPRS_PrepareForSend();
+
+int GPRS_AT_OFF_CALL();
+
+int GRPS_AT_Receive();
+
+int GPRS_QueryRemainData();
+
+int GPRS_Create_TCP_Link(int center);
+
+int GPRS_Close_TCP_Link();
+
+void GPRS_Close_GSM();
+
+
+extern char* _ReceiveData;
+extern int _ReceiveDataLen;
+extern int gprsConfigSuccess;
 
 
 #endif

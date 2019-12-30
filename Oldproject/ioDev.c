@@ -17,7 +17,7 @@ int RegisterIODev(pBLE_Dev ptIODev)
 void ShowIODevs(void)
 {
 	pBLE_Dev ptTmp = g_ptIODevHead;
-	printf("IODevs : %s\n", ptTmp->name);
+	printf("communication dev : %s\n", ptTmp->name);
 }
 
 pBLE_Dev getIODev(void)
