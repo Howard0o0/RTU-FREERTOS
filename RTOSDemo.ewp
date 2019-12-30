@@ -4629,6 +4629,9 @@
                 <name>$PROJ_DIR$\Apps\include\BLE_Task.h</name>
             </file>
             <file>
+                <name>$PROJ_DIR$\Apps\include\gprs.h</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\Apps\include\Hydrolody_Task.h</name>
             </file>
             <file>
@@ -4640,6 +4643,9 @@
         </group>
         <file>
             <name>$PROJ_DIR$\Apps\BLE_Task.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Apps\gprs.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\Apps\Hydrolody_Task.c</name>

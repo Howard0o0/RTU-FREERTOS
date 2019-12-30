@@ -1,0 +1,28 @@
+at+cpin?  //查询SIM卡
+
+at+cops?  //查询SIM卡供应商（也即是接入点，有cmnet，mobile，联通，电信等）
+AT+CREG  //网络注册信息
+
+at+cgdcont=1,"ip","cmnet"
+at+cgdcont=1,"ip","CHINA  MOBILE"
+CHINA  MOBILE
+OK
+
+at%etcpip
+OK
+
+at%etcpip?
+%ETCPIP:1,"10.65.165.83",,"211.137.160.5","211.136.17.107"
+OK
+
+AT%IPOPEN="TCP","101.201.238.190",8888 
+AT%IPOPEN="TCP","39.108.190.66",3399
+
+CONNECT
+
+at%iomode=0,1,1,//ascii mode 推荐使用这种方法
+AT%IOMODE=1,1,0  //hex mode
+
+AT%IPSEND="ABC" //发送的信息ABC
+%IPSEND:1,15 
+OK
