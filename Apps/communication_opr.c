@@ -4,12 +4,12 @@
 #include "module_config.h"
 #include <string.h>
 
-static communication_dev_t *g_communication_handler = NULL;
+static communication_module_t *g_communication_handler = NULL;
 
 static int init_communication_dev_lock(void);
 static int select_communication_dev_and_install_driver(void);
 
-int register_communication_dev_t(communication_dev_t* comm_dev) {
+int register_communication_module(communication_module_t* comm_dev) {
 	if (comm_dev == NULL) {
 		return ERROR;
 	}
@@ -18,8 +18,8 @@ int register_communication_dev_t(communication_dev_t* comm_dev) {
 	return OK;
 }
 
-void show_communication_dev(void) {
-	communication_dev_t *comm_dev = g_communication_handler;
+void show_current_communication_dev(void) {
+	communication_module_t *comm_dev = g_communication_handler;
 	if (comm_dev) {
 		printf("communication dev : %s\n", comm_dev->name);
 	}
@@ -28,11 +28,11 @@ void show_communication_dev(void) {
 	}
 }
 
-communication_dev_t* get_communication_dev(void) {
+communication_module_t* get_communication_dev(void) {
 	return g_communication_handler;
 }
 
-int register_communication_module(void) {
+int install_communication_module_driver(void) {
 
 	if (select_communication_dev_and_install_driver() != OK){
 		return ERROR;
@@ -70,7 +70,7 @@ static int init_communication_dev_lock(void) {
 	if (g_communication_handler->lock == NULL) {
 		debug_printf("insufficient heap memory available,communication's lock init failed! "
 			     "\r\n");
-		return -ERROR;
+		return ERROR;
 	}
 
 	return OK;

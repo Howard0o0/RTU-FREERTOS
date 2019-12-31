@@ -62,7 +62,6 @@ int Console_WriteHexCharln(char * _str,int len)
     Console_WriteBytesln(dst,len*2);
 
     myvPortFree(dst);
-    dst = NULL; //ly 避免野指针  ++++
     
     return 0;
 }

@@ -15,6 +15,7 @@
 #include "hydrologytask.h"
 #include "memoryleakcheck.h"
 #include "rom.h"
+#include "communication_opr.h"
 
 //#define DEBUG
 //#include "ldebug.h"
@@ -191,10 +192,11 @@ int Hydrology_SendData(char* data, int len) {
 		isUARTConfig = 0;
 		return 0;
 	}
+	communication_module_t* comm_dev = get_communication_dev();
 
 	if (!IsDebug) {
 		if (!IsQuery) {
-			while (GPRS_Send(data, len, 0, HYDROLOGY_CENTER1_IP) == FALSE) {
+			while (comm_dev->send_msg(data, len, 0, HYDROLOGY_CENTER1_IP) == FALSE) {
 				//       if(GPRS_Close_TCP_Link() != 0)
 				//            GPRS_Close_GSM();
 				if (_repeats >= 0) {
@@ -202,15 +204,11 @@ int Hydrology_SendData(char* data, int len) {
 				}
 				++_repeats;
 			}
-			if (GPRS_Close_TCP_Link() != 0)
-				GPRS_Close_GSM();
 			IsQuery = 0;
 		}
 
 		_repeats = 0;
-		while (GPRS_Send(data, len, 0, HYDROLOGY_BACKUP1_IP) == FALSE) {
-			if (GPRS_Close_TCP_Link() != 0)
-				GPRS_Close_GSM();
+		while (comm_dev->send_msg(data, len, 0, HYDROLOGY_BACKUP1_IP) == FALSE) {
 			if (_repeats > 0) {
 				break;
 			}
@@ -1480,7 +1478,6 @@ void hydrologyExitSend() {
 	//     }
 	//   }
 	myvPortFree(uppbody);
-	uppbody = NULL;  //+++
 }
 
 int hydrologyProcessSend(char* src, char funcode) {
@@ -1676,7 +1673,6 @@ void hydrologyExitReceieve() {
 
 	hydrologyDownBody* downpbody = ( hydrologyDownBody* )(g_HydrologyMsg.downbody);
 	myvPortFree(downpbody);
-	downpbody = NULL;  //+++
 }
 
 int hydrologyProcessReceieve(char* input, int inputlen) {

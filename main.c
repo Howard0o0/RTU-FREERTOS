@@ -49,9 +49,10 @@
 #include "BLE_Task.h"
 #include "Hydrolody_Task.h"
 #include "RTC_Task.h"
+#include "communication_opr.h"
 #include "gprs.h"
 #include "memoryleakcheck.h"
-#include "communication_opr.h"
+
 
 int IsDebug = 0;
 // extern SemaphoreHandle_t xSemaphore_BLE;
@@ -60,6 +61,10 @@ int IsDebug = 0;
  * Every init coperation here.
  */
 static void prvSetupHardware(void);
+
+static void install_io_devs_driver(void);
+
+static void bios_check(void);
 
 static void       task_print_1(void* pvParameters);
 static void       task_print_2(void* pvParameters);
@@ -72,20 +77,12 @@ void main(void) {
 	interrupts. */
 	prvSetupHardware();
 
-	register_communication_module();
-	lock_communication_dev();
-	communication_dev_t* comm_dev = get_communication_dev();
-	if(comm_dev->power_on() != OK){
-		printf("gprs boot err \r\n");
-	}
-	else{
-		printf("gprs boot ok \r\n");
-	}
-	unlock_communication_dev();
+	install_io_devs_driver();
 
+	bios_check();
 
-	while (1)
-		;
+	// while (1)
+	// 	;
 
 	/* end of gprs test */
 
@@ -138,7 +135,8 @@ void main(void) {
 
 /*-----------------------------------------------------------*/
 
-void vApplicationTickHook(void) {}
+void vApplicationTickHook(void) {
+}
 /*-----------------------------------------------------------*/
 
 static void prvSetupHardware(void) {
@@ -327,149 +325,19 @@ void Restart_Init() {
 	return;
 }
 
-int Restart_GSMInit() {
-	GSM_Open();
-	if (GSM_CheckOK() < 0) {
-		System_Delayms(1000);
-		GSM_Open();
-		if (GSM_CheckOK() < 0) {
-			System_Delayms(1000);
-			GSM_Open();
-			if (GSM_CheckOK() < 0) {  //�޷������ͷ�����.
-				GSM_Close(1);
-				return -1;
-			}
-		}
-	}
-
-	char _phone[ 12 ];
-	char _data[ 30 ];  // 30�㹻��
-
-	_data[ 0 ] = '$';
-	if (Store_ReadDeviceNO(&_data[ 1 ]) < 0) {
-		_data[ 1 ]  = '0';
-		_data[ 2 ]  = '0';
-		_data[ 3 ]  = '0';
-		_data[ 4 ]  = '0';
-		_data[ 5 ]  = '0';
-		_data[ 6 ]  = '0';
-		_data[ 7 ]  = '0';
-		_data[ 8 ]  = '0';
-		_data[ 9 ]  = '0';
-		_data[ 10 ] = '0';
-		_data[ 11 ] = '0';
-	}
-
-	Utility_Strncpy(&_data[ 12 ], "<restart#", 9);
-	if (Store_GSM_ReadCenterPhone(5, _phone) == 0) {
-		if (_phone[ 0 ] != '0' && _phone[ 1 ] != '0' && _phone[ 2 ] != '0') {
-			GSM_SendMsgTxt(_phone, _data, 21);
-		}
-	}
-	GSM_Process(1, 0);     // GSM ������
-	GSM_Close(0);	  //�ر� GSM
-	System_Delayms(2000);  //����ػ�����쿪������ʧ��.
-	return 0;
+static void install_io_devs_driver(void) {
+	install_communication_module_driver();
+	get_communication_dev()->power_on();
 }
 
-int Restart_DTUInit() {
-	char _data[ UART3_MAXBUFFLEN ];
-	int  _dataLen = 0;
-	int  _repeats = 0;
-	int  _out     = 0;
-	//
-	//��������һ��DTU�ȴ��������õĹ���.
-	//
-	if (trace_open == 0) {
-		//���û�򿪵��ԵĻ�,������Ҫ����򿪵�
-		// Console_Open();
-	}
-	UART3_ClearBuffer();
-	// Console_WriteStringln("ACK");
-
-	if (UART3_RecvLineLongWait(_data, UART3_MAXBUFFLEN, &_dataLen) == 0) {
-		//����ȵ���������, �ͽ�������״̬.�ȴ�15����
-		// Console_WriteStringln("waiting for 15 seconds .");
-		if (Main_ProcCommand(_data, _dataLen, NULL) == 3) {  //������һ��SYN,�ͽ�������״̬
-			while (1) {
-				_repeats = 0;
-				while (UART3_RecvLineLongWait(_data, UART3_MAXBUFFLEN, &_dataLen)
-				       < 0) {
-					++_repeats;
-					if (_repeats > 4) {
-						_out = 1;
-						break;
-					}
-				}
-				if (_out != 0)
-					break;
-				if (Main_ProcCommand(_data, _dataLen, NULL) == 2) {  //��ʾ�˳�����״̬
-					break;
-				}
-			}
-		}
-	}
-	//�����ڵ���״̬��ʱ��Ҫ�رյ�
-	if (trace_open == 0) {  //��������ǹرյ�,���ڵ���Ҫ�ر�
-				// Console_Close();
-	}
-
-	return 0;
-}
-
-int WorkMode_Init(char* ptype) {
-	char _curType, _selType;
-	int  _ret;
-
-#if 0
-    //��ȡѡ����״̬    DTU/GSM   232 
-    P3DIR &= ~BIT3;   //P33Ϊ����
-    P3DIR &= ~BIT2;   //P32Ϊ����
-    if(P3IN & BIT2)
-    {//P32Ϊ��
-        _selType='D';
-    }
-    else
-    {
-        _selType='G';
-    }
-#endif
-	_selType = 'S';  // GPRSģʽ GTM900
-	switch (_selType) {
-	case 'G':
-		g_main_type = MAIN_TYPE_GSM;
-		TraceMsg("Device is GSM Mode !", 1);
-		break;
-	case 'D':
-		g_main_type = MAIN_TYPE_DTU;
-		TraceMsg("Device is DTU Mode !", 1);
-		break;
-
-	case 'S':
-		g_main_type = MAIN_TYPE_GTM900;
-		TraceMsg("Device is GPRS Mode !", 1);
-		break;
-
-	default:
-		//�����������.������
-
-		TraceMsg("Bad Mode !", 1);
-		System_Reset();
-		break;
-	}
-
-	//�жϵ�ǰ����״̬,   DTU/GSM
-	if (Store_ReadSystemType(&_curType) < 0) {  //����޷�����
-						    //�����ģʽ,�Ͳ��ж��Ƿ� ����������.
-		_ret = 0;
+static void bios_check(void) {
+	communication_module_t* comm_module = get_communication_dev();
+	if (comm_module->check_if_module_is_normal() == OK) {
+		printf("[OK] %s module\r\n", comm_module->name);
 	}
 	else {
-		_ret = _selType != _curType ? 1 : 0;
+		printf("[ERROR] %s module not respond\r\n", comm_module->name);
 	}
-
-	*ptype = _selType;
-
-	return _ret;
 }
 
 void Main_Init() {  //ʱ��ʹ��8M

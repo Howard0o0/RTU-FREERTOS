@@ -8,7 +8,6 @@
 #include "hydrologytask.h"
 #include "rtc.h"
 
-extern SemaphoreHandle_t GPRS_Lock;
 
 
 void rtc_update(void* pvParameters) {
@@ -21,9 +20,7 @@ void rtc_update(void* pvParameters) {
 		TimerB_Clear();
 		WatchDog_Clear();
 
-                xSemaphoreTake(GPRS_Lock,portMAX_DELAY);
 		Hydrology_TimeCheck();
-                xSemaphoreGive(GPRS_Lock);
 
 		RTC_ReadTimeBytes5(g_rtc_nowTime);
 		RTC_ReadTimeBytes6(rtc_nowTime);

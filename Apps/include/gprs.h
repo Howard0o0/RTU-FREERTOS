@@ -3,6 +3,8 @@
 #ifndef __GPRS_H
 #define __GPRS_H
 
+#include "communication_opr.h"
+
 enum AtCmdType
 {
     SET_APN,
@@ -107,6 +109,8 @@ int gprs_module_driver_install(void);
 void JudgeServerDataArrived(void);
 
 int Hydrology_ProcessGPRSReceieve();
+
+time_t GSM_AT_QueryTime(void);
 
 /* 以下接口都是服务于上面的接口的，上层应用应该调用上面的接口 */
 void GPRS_PrepareForSend();

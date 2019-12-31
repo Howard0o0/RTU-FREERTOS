@@ -4,38 +4,38 @@
 #include "common.h"
 #include "main.h"
 #include "math.h"
+#include "memoryleakcheck.h"
 #include "msp430common.h"
 #include "packet.h"
 #include "rtc.h"
 #include "stdint.h"
 #include "store.h"
 #include <stdio.h>
-#include "memoryleakcheck.h"
-
 
 //#include "convertsampledata.h"
 //#include "hydrology.h"
 //#include "hydrologmakebody.h"
 #include "FreeRTOS.h"
+#include "communication_opr.h"
+#include "gprs.h"
 #include "hydrologycommand.h"
 #include "message.h"
+#include "semphr.h"
 #include "string.h"
 #include "task.h"
-#include "semphr.h"
 #include "timer.h"
 #include "uart1.h"
 #include "uart3.h"
 #include "uart_config.h"
 
-extern int		UserElementCount;
-extern int		RS485RegisterCount;
-extern int		IsDebug;
-extern int		DataPacketLen;
-extern hydrologyElement inputPara[ MAX_ELEMENT ];
-extern hydrologyElement outputPara[ MAX_ELEMENT ];
-uint16_t		time_10min = 0, time_5min = 0, time_1min = 1, time_1s = 0;
+extern int		 UserElementCount;
+extern int		 RS485RegisterCount;
+extern int		 IsDebug;
+extern int		 DataPacketLen;
+extern hydrologyElement  inputPara[ MAX_ELEMENT ];
+extern hydrologyElement  outputPara[ MAX_ELEMENT ];
+uint16_t		 time_10min = 0, time_5min = 0, time_1min = 1, time_1s = 0;
 extern SemaphoreHandle_t GPRS_Lock;
-
 
 void HydrologyTimeBase() {
 	time_1min++;
@@ -124,7 +124,7 @@ void HydrologyDataPacketInit() {
 	packet_len += HYDROLOGY_DATA_TIME_LEN;
 	while (Element_table[ i ].ID != 0) {
 		mypvPortMallocElement(Element_table[ i ].ID, Element_table[ i ].D,
-				    Element_table[ i ].d, &inputPara[ i ]);
+				      Element_table[ i ].d, &inputPara[ i ]);
 		packet_len += inputPara[ i ].num;
 		i++;
 	}
@@ -133,18 +133,26 @@ void HydrologyDataPacketInit() {
 				 HYDROLOGY_DATA_PACKET_LEN_LEN);
 
 	/*初始化的时候更新下时间*/
-	char newtime[ 6 ] = { 0 };
-	GSM_Open();
-	GSM_AT_QueryTime(&newtime[ 0 ], &newtime[ 1 ], &newtime[ 2 ], &newtime[ 3 ], &newtime[ 4 ],
-			 &newtime[ 5 ]);
+	lock_communication_dev();
+	communication_module_t* comm_dev = get_communication_dev();
+
+	time_t time_from_gprs_module = comm_dev->get_real_time();
+	unlock_communication_dev();
 	System_Delayms(50);
-	TraceHexMsg(newtime, 6);
-	_RTC_SetTime(newtime[ 5 ], newtime[ 4 ], newtime[ 3 ], newtime[ 2 ], newtime[ 1 ], 1,
-		     newtime[ 0 ], 0);
+	if (time_from_gprs_module.year == 0) {
+		printf("update rtc through gprs module failed \r\n");
+		return;
+	}
+	printf("update rtc time, %d/%d/%d %d:%d:%d \r\n", time_from_gprs_module.year,
+	       time_from_gprs_module.month, time_from_gprs_module.date, time_from_gprs_module.hour,
+	       time_from_gprs_module.min, time_from_gprs_module.sec);
+	_RTC_SetTime(( char )time_from_gprs_module.sec, ( char )time_from_gprs_module.min,
+		     ( char )time_from_gprs_module.hour, ( char )time_from_gprs_module.date,
+		     ( char )time_from_gprs_module.month, 1, ( char )time_from_gprs_module.year, 0);
 }
 
 extern SemaphoreHandle_t sample_switch_save;
-int HydrologySample(char* _saveTime) {
+int			 HydrologySample(char* _saveTime) {
 
 	int	  i     = 0;
 	int	  adc_i = 0, isr_i = 0;
@@ -168,8 +176,9 @@ int HydrologySample(char* _saveTime) {
 
 	int tmp = sampletime[ 4 ] % (interval / 60);
 	if (tmp != 0) {
-                printf("Not Sample Time! now time is: %d/%d/%d  %d:%d:%d \r\n", sampletime[ 0 ],
-		       sampletime[ 1 ], sampletime[ 2 ], sampletime[ 3 ], sampletime[ 4 ], sampletime[ 5 ]);
+		printf("Not Sample Time! now time is: %d/%d/%d  %d:%d:%d \r\n", sampletime[ 0 ],
+		       sampletime[ 1 ], sampletime[ 2 ], sampletime[ 3 ], sampletime[ 4 ],
+		       sampletime[ 5 ]);
 		return -1;
 	}
 
@@ -246,7 +255,7 @@ int HydrologySample(char* _saveTime) {
 	UART1_Open(UART1_BT_TYPE);
 	TraceMsg("Sample Done!  ", 0);
 
-        xSemaphoreGive(sample_switch_save);
+	xSemaphoreGive(sample_switch_save);
 	return 0;
 }
 
@@ -285,8 +294,8 @@ int HydrologySaveData(char* _saveTime, char funcode)  // char *_saveTime
 	// int tmp = storetime[ 4 ] % (storeinterval);
 	// if (tmp != 0) {
 	// 	printf("Not Save Time! now time is: %d/%d/%d  %d:%d:%d \r\n", storetime[ 0 ],
-	// 	       storetime[ 1 ], storetime[ 2 ], storetime[ 3 ], storetime[ 4 ], storetime[ 5 ]);
-	// 	return -1;
+	// 	       storetime[ 1 ], storetime[ 2 ], storetime[ 3 ], storetime[ 4 ], storetime[ 5
+	// ]); 	return -1;
 	// }
 
 	TraceMsg("Start Store:   ", 0);
@@ -295,9 +304,10 @@ int HydrologySaveData(char* _saveTime, char funcode)  // char *_saveTime
 			switch (Element_table[ i ].type) {
 			case ANALOG: {
 				Hydrology_ReadAnalog(&floatvalue, acount++);
-				mypvPortMallocElement(Element_table[ i ].ID, Element_table[ i ].D,
-						    Element_table[ i ].d,
-						    &inputPara[ i ]);  //???id ??num??????value????
+				mypvPortMallocElement(
+					Element_table[ i ].ID, Element_table[ i ].D,
+					Element_table[ i ].d,
+					&inputPara[ i ]);  //???id ??num??????value????
 				converToHexElement(( double )floatvalue, Element_table[ i ].D,
 						   Element_table[ i ].d, inputPara[ i ].value);
 				break;
@@ -305,7 +315,7 @@ int HydrologySaveData(char* _saveTime, char funcode)  // char *_saveTime
 			case PULSE: {
 				Hydrology_ReadPulse(&intvalue1, pocunt++);
 				mypvPortMallocElement(Element_table[ i ].ID, Element_table[ i ].D,
-						    Element_table[ i ].d, &inputPara[ i ]);
+						      Element_table[ i ].d, &inputPara[ i ]);
 				converToHexElement(( double )intvalue1, Element_table[ i ].D,
 						   Element_table[ i ].d, inputPara[ i ].value);
 				break;
@@ -313,7 +323,7 @@ int HydrologySaveData(char* _saveTime, char funcode)  // char *_saveTime
 			case SWITCH: {
 				Hydrology_ReadSwitch(&intvalue2);
 				mypvPortMallocElement(Element_table[ i ].ID, Element_table[ i ].D,
-						    Element_table[ i ].d, &inputPara[ i ]);
+						      Element_table[ i ].d, &inputPara[ i ]);
 				converToHexElement(( double )intvalue2, Element_table[ i ].D,
 						   Element_table[ i ].d, inputPara[ i ].value);
 				break;
@@ -322,13 +332,16 @@ int HydrologySaveData(char* _saveTime, char funcode)  // char *_saveTime
 				inputPara[ i ].guide[ 0 ] = Element_table[ i ].ID;
 				inputPara[ i ].guide[ 1 ] = Element_table[ i ].ID;
 
-				if(Debug)
-		    			TraceMsg("hydrologytask.c  HydrologySaveData malloc ", 1);
-				// inputPara[ i ].value      = ( char* )mypvPortMalloc(SinglePacketSize);
-				// if (NULL != inputPara[ i ].value) {
-					inputPara[ i ].num = SinglePacketSize;
-				// 	Console_WriteStringln("hydrologytask.c HydrologySaveData Malloc Failed");
-				// 	// Hydrology_ReadRom(RomElementBeginAddr,inputPara[i].value,SinglePacketSendCount++);
+				if (Debug)
+					TraceMsg("hydrologytask.c  HydrologySaveData malloc ", 1);
+				// inputPara[ i ].value      = ( char*
+				// )mypvPortMalloc(SinglePacketSize); if (NULL != inputPara[ i
+				// ].value) {
+				inputPara[ i ].num = SinglePacketSize;
+				// 	Console_WriteStringln("hydrologytask.c HydrologySaveData
+				// Malloc Failed");
+				// 	//
+				// Hydrology_ReadRom(RomElementBeginAddr,inputPara[i].value,SinglePacketSendCount++);
 				// }
 				break;
 			}
@@ -368,7 +381,6 @@ int HydrologySaveData(char* _saveTime, char funcode)  // char *_saveTime
 		// 	myvPortFree(inputPara[ i ].value);
 		// 	inputPara[ i ].value = NULL;
 		// }
-                
 	}
 	++_effect_count;  //????????1
 	Hydrology_SetDataPacketCount(_effect_count);
@@ -457,10 +469,9 @@ int HydrologyInstantWaterLevel(char* _saveTime)  //??��??????��????��
 		{
 			sendlen = _ret;
 
-                        xSemaphoreTake(GPRS_Lock,portMAX_DELAY);
+			lock_communication_dev();
 			hydrologyProcessSend(_send, TimerReport);
-                        xSemaphoreGive(GPRS_Lock);
-
+			unlock_communication_dev();
 
 			Store_MarkDataItemSended(_startIdx);  //??????????????
 			--_effect_count;
@@ -488,23 +499,15 @@ int HydrologyInstantWaterLevel(char* _saveTime)  //??��??????��????��
 	// hydrologyProcessSend(TimerReport);
 
 	if (!IsDebug) {
+		lock_communication_dev();
 		System_Delayms(5000);
-                xSemaphoreTake(GPRS_Lock,portMAX_DELAY);
 		JudgeServerDataArrived();
 		Hydrology_ProcessGPRSReceieve();
-                xSemaphoreGive(GPRS_Lock);
-                xSemaphoreTake(GPRS_Lock,portMAX_DELAY);
 		JudgeServerDataArrived();
 		Hydrology_ProcessGPRSReceieve();
-                xSemaphoreGive(GPRS_Lock);
-		xSemaphoreTake(GPRS_Lock,portMAX_DELAY);
-                JudgeServerDataArrived();
+		JudgeServerDataArrived();
 		Hydrology_ProcessGPRSReceieve();
-                xSemaphoreGive(GPRS_Lock);
-                xSemaphoreTake(GPRS_Lock,portMAX_DELAY);
-		if (GPRS_Close_TCP_Link() != 0)
-			GPRS_Close_GSM();
-                xSemaphoreGive(GPRS_Lock);
+		unlock_communication_dev();
 	}
 
 	time_10min = 0;
@@ -549,13 +552,25 @@ int Hydrology_TimeCheck() {
 		TraceMsg("Device time is bad !", 1);
 		TraceMsg("Waiting for config !", 1);
 		char newtime[ 6 ] = { 0 };
-		GSM_Open();
-		GSM_AT_QueryTime(&newtime[ 0 ], &newtime[ 1 ], &newtime[ 2 ], &newtime[ 3 ],
-				 &newtime[ 4 ], &newtime[ 5 ]);
+
+		lock_communication_dev();
+		communication_module_t* comm_dev = get_communication_dev();
+
+		time_t time_from_gprs_module = comm_dev->get_real_time();
+		unlock_communication_dev();
+		if (time_from_gprs_module.year == 0) {
+			return -1;
+		}
+		printf("update rtc time, %d/%d/%d %d:%d:%d \r\n", time_from_gprs_module.year,
+		       time_from_gprs_module.month, time_from_gprs_module.date,
+		       time_from_gprs_module.hour, time_from_gprs_module.min,
+		       time_from_gprs_module.sec);
+		_RTC_SetTime(( char )time_from_gprs_module.sec, ( char )time_from_gprs_module.min,
+			     ( char )time_from_gprs_module.hour, ( char )time_from_gprs_module.date,
+			     ( char )time_from_gprs_module.month, 1,
+			     ( char )time_from_gprs_module.year, 0);
+
 		System_Delayms(50);
-		TraceHexMsg(newtime, 6);
-		_RTC_SetTime(newtime[ 5 ], newtime[ 4 ], newtime[ 3 ], newtime[ 2 ], newtime[ 1 ],
-			     1, newtime[ 0 ], 0);  //????????????????RTC???
 	}
 	if (RTC_IsBadTime(g_rtc_nowTime, 1) < 0) {  //????????????????,?????????????
 		TraceMsg("Still bad time!", 1);
@@ -590,8 +605,7 @@ int HydrologyTask() {
 	HydrologySaveData(rtc_nowTime, TimerReport);
 	HydrologyInstantWaterLevel(rtc_nowTime);
 
-
-	return 0; 
+	return 0;
 }
 
 void task_hydrology_run(void* pvParameters) {

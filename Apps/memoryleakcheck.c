@@ -157,7 +157,12 @@ void *dbg_malloc(size_t elem_size, char *filename, size_t line)
 */
 void dbg_free(void *ptr)
 {
-        vPortFree(ptr);
-        // 从链表中删除节点
-        mem_node_remove(ptr);
+	if (ptr != NULL)
+	{
+		// 从链表中删除节点
+		mem_node_remove(ptr);
+        	vPortFree(ptr);
+		ptr = NULL;
+	}
+	
 }

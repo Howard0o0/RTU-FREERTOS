@@ -3,15 +3,16 @@
 #include "common.h"
 #include "communication_opr.h"
 #include "hydrologycommand.h"
+#include "memoryleakcheck.h"
 #include "message.h"
 #include "msp430common.h"
 #include "msp430f5438a.h"
+#include "portmacro.h"
 #include "rtc.h"
 #include "store.h"
 #include "uart0.h"
 #include <stdbool.h>
 #include <string.h>
-#include "portmacro.h"
 
 static int   check_gprs_module_is_normal();
 static void  uart0_init();
@@ -21,55 +22,57 @@ static void  pull_up_pin_igt();
 static void  send_at_cmd(char* at_cmd);
 static char* rcv_at_response();
 static int   check_gprs_module_is_normal();
-static int GSM_DealData(char *_recv, int _dataLen);
-static int  GSM_AT_CloseFeedback();
-static int GSM_AT_OffCall();
-static int GSM_DealAllData();
+static int   GSM_DealData(char* recv_, int _dataLen);
+static int   GSM_AT_CloseFeedback();
+static int   GSM_AT_OffCall();
+static int   GSM_DealAllData();
 
 #define BUF_LEN 50
-#define ARRAY_MAX 15 
+#define ARRAY_MAX 15
 
 char  centerIP[ 16 ];   // = "125.220.159.168";
 char  centerPort[ 7 ];  // = "6666";
-char* psrc    = NULL;
-int   dataLen = 0;
+char* psrc	    = NULL;
+int   dataLen	 = 0;
 char* _ReceiveData    = NULL;
 int   _ReceiveDataLen = 0;
 
- int g_work_mode;
- int main_time_error;
-extern int s_alert_flag[8];
+int	g_work_mode;
+int	main_time_error;
+extern int s_alert_flag[ 8 ];
 
-//  调试统计计数  
-int  s_TimeOut=0;
-int  s_RING=0;
-int  s_OOPS=0;
-int  s_MsgFail=0;
-int  s_MsgOK=0;
-int  s_MsgDel=0;
+//  调试统计计数
+int s_TimeOut = 0;
+int s_RING    = 0;
+int s_OOPS    = 0;
+int s_MsgFail = 0;
+int s_MsgOK   = 0;
+int s_MsgDel  = 0;
 
-int  s_RecvIdx=0;    //注意是指向最后索引的下一个
-int  s_ProcIdx=0;    //注意是指向最后处理的下一个. 
-int  s_MsgNum=0;     //收到短信的总数 
-int  s_MsgArray[ARRAY_MAX];
+int s_RecvIdx = 0;  //注意是指向最后索引的下一个
+int s_ProcIdx = 0;  //注意是指向最后处理的下一个.
+int s_MsgNum  = 0;  //收到短信的总数
+int s_MsgArray[ ARRAY_MAX ];
 
 //函数间交互的变量
-int  s_MsgLeft=0;
-char s_NetState='0';
+int  s_MsgLeft  = 0;
+char s_NetState = '0';
 
-communication_dev_t gprs_module = {
-	.name      = "gprs",
-	.power_on  = gprs_power_on,
-	.power_off = gprs_power_off,
-	.sleep     = gprs_sleep,
-	.wake_up   = gprs_wake_up,
-	.send_msg  = GPRS_Send,
-	.rcv_msg   = GPRS_Receive,
+communication_module_t gprs_module = {
+	.name	  = "gprs",
+	.power_on      = gprs_power_on,
+	.power_off     = gprs_power_off,
+	.sleep	 = gprs_sleep,
+	.wake_up       = gprs_wake_up,
+	.send_msg      = GPRS_Send,
+	.rcv_msg       = GPRS_Receive,
+	.get_real_time = GSM_AT_QueryTime,
+	.check_if_module_is_normal = check_gprs_module_is_normal,
 };
 
 int gprs_module_driver_install(void) {
 
-	return register_communication_dev_t(&gprs_module);
+	return register_communication_module(&gprs_module);
 }
 
 /*
@@ -95,7 +98,6 @@ int gprs_power_off(void) {
 
 int gprs_wake_up(void) {
 
-	
 	return OK;
 }
 
@@ -129,6 +131,93 @@ static void pull_up_pin_igt() {
 
 static void send_at_cmd(char* at_cmd) {
 	UART0_Send(at_cmd, strlen(at_cmd), 1);
+}
+
+/*
+ *@ author : howard
+ *@ 如果获取时间失败，则time_t.year置0
+ */
+time_t GSM_AT_QueryTime(void) {
+	int	  rcvFlag = 0;
+	int	  _repeat = 0;
+	int	  _retNum;
+	char	 _sendAT[ 30 ] = "AT+CCLK?";
+	char*	pcAtResp      = NULL;
+	char*	pcSeperate    = "/";
+	static char* pcRcvAtBuff   = NULL;  //定义静态局部变量，分配在全局数据区
+
+	time_t get_time_from_gprs_module;
+	get_time_from_gprs_module.year = 0;
+
+	pcRcvAtBuff = ( char* )mypvPortMalloc(200 * sizeof(char));
+	if (pcRcvAtBuff == NULL) {
+		printf("pcRcvAtBuff malloc failed! \r\n");
+		return get_time_from_gprs_module;
+	}
+
+	UART0_Send(_sendAT, 8, 1);
+
+	while (_repeat < 10) {
+		if ((UART0_RecvLineTry(pcRcvAtBuff, 200, &_retNum) == 0)
+		    && ((pcAtResp = strstr(pcRcvAtBuff, pcSeperate)) != NULL))  //有数据
+		{
+			rcvFlag = 1;
+			break;
+		}
+		_repeat++;
+		System_Delayms(50);
+	}
+
+	/* got AT response contained time */
+	if (rcvFlag == 1) {
+		//        printf("%s \r\n ",pcRcvAtBuff);
+		//        printf("%s \r\n ",pcAtResp);
+		pcAtResp -= 2;
+
+		int  offset = 0;
+		char year1, year2, month1, month2, date1, date2, hour1, hour2, min1, min2, sec1,
+			sec2;
+		year1 = *(pcAtResp + offset);
+		offset++;
+		year2 = *(pcAtResp + offset);
+		offset++;
+		offset++;
+		month1 = *(pcAtResp + offset);
+		offset++;
+		month2 = *(pcAtResp + offset);
+		offset++;
+		offset++;
+		date1 = *(pcAtResp + offset);
+		offset++;
+		date2 = *(pcAtResp + offset);
+		offset++;
+		offset++;
+		hour1 = *(pcAtResp + offset);
+		offset++;
+		hour2 = *(pcAtResp + offset);
+		offset++;
+		offset++;
+		min1 = *(pcAtResp + offset);
+		offset++;
+		min2 = *(pcAtResp + offset);
+		offset++;
+		offset++;
+		sec1 = *(pcAtResp + offset);
+		offset++;
+		sec2 = *(pcAtResp + offset);
+
+		/* char *year,char *month,char *date,char *hour,char *min,char *second */
+		get_time_from_gprs_module.year  = (year1 - 48) * 10 + (year2 - 48);
+		get_time_from_gprs_module.month = (month1 - 48) * 10 + (month2 - 48);
+		get_time_from_gprs_module.date  = (date1 - 48) * 10 + (date2 - 48);
+		get_time_from_gprs_module.hour  = ((hour1 - 48) * 10 + (hour2 - 48));
+		get_time_from_gprs_module.min   = (min1 - 48) * 10 + (min2 - 48);
+		get_time_from_gprs_module.sec   = (sec1 - 48) * 10 + (sec2 - 48);
+	}
+
+	myvPortFree(pcRcvAtBuff);
+
+	return get_time_from_gprs_module;
 }
 
 static char* rcv_at_response() {
@@ -323,30 +412,30 @@ void GPRS_Print_Error(int errorCode) {
 	}
 }
 
-int GPRS_AT_SetAPN_Response(char* _recv) {
+int GPRS_AT_SetAPN_Response(char* recv_) {
 	return TRUE;
 }
 
-int GPRS_AT_ActiveGPRSNet_Response(char* _recv) {
+int GPRS_AT_ActiveGPRSNet_Response(char* recv_) {
 	return TRUE;
 }
 
-int GPRS_AT_CheckSimStat_Response(char* _recv, int* _retErrorCode) {
+int GPRS_AT_CheckSimStat_Response(char* recv_, int* _retErrorCode) {
 	int retValue = TRUE;
-	if (Utility_Strncmp(_recv, "%TSIM", 5) == 0) {
-		if (_recv[ 6 ] == '0') {
+	if (Utility_Strncmp(recv_, "%TSIM", 5) == 0) {
+		if (recv_[ 6 ] == '0') {
 			retValue = FALSE;
 		}
 	}
-	else if (Utility_Strncmp(_recv, "ERROR", 5) == 0)  // ERROR: 14  冒号和14中间有空格
+	else if (Utility_Strncmp(recv_, "ERROR", 5) == 0)  // ERROR: 14  冒号和14中间有空格
 	{
 		char bufErrorTmp[ 3 ] = {
 			0
 		};  //调用atoi函数，需要有字符串结束符，2位错误码，1位结束符
 
-		bufErrorTmp[ 0 ] = _recv[ 7 ];
-		if (_recv[ 8 ] != 0) {
-			bufErrorTmp[ 1 ] = _recv[ 8 ];
+		bufErrorTmp[ 0 ] = recv_[ 7 ];
+		if (recv_[ 8 ] != 0) {
+			bufErrorTmp[ 1 ] = recv_[ 8 ];
 		}
 		*_retErrorCode = atoi(bufErrorTmp);
 		GPRS_Print_Error(*_retErrorCode);
@@ -357,21 +446,21 @@ int GPRS_AT_CheckSimStat_Response(char* _recv, int* _retErrorCode) {
 
 Operater TelecomOperater;
 
-int GPRS_AT_QueryOperater_Response(char* _recv, int* _retErrorCode) {
+int GPRS_AT_QueryOperater_Response(char* recv_, int* _retErrorCode) {
 	int retValue = TRUE;
-	if (Utility_Strncmp(_recv, "+COPS: 0,0,\"CHINA  MOBILE\"", 26) == 0) {
+	if (Utility_Strncmp(recv_, "+COPS: 0,0,\"CHINA  MOBILE\"", 26) == 0) {
 		TelecomOperater = CHINA_MOBILE;
 		retValue	= TRUE;
 	}
-	else if (Utility_Strncmp(_recv, "ERROR", 5) == 0)  // ERROR: 14  冒号和14中间有空格
+	else if (Utility_Strncmp(recv_, "ERROR", 5) == 0)  // ERROR: 14  冒号和14中间有空格
 	{
 		char bufErrorTmp[ 3 ] = {
 			0
 		};  //调用atoi函数，需要有字符串结束符，2位错误码，1位结束符
 
-		bufErrorTmp[ 0 ] = _recv[ 7 ];
-		if (_recv[ 8 ] != 0) {
-			bufErrorTmp[ 1 ] = _recv[ 8 ];
+		bufErrorTmp[ 0 ] = recv_[ 7 ];
+		if (recv_[ 8 ] != 0) {
+			bufErrorTmp[ 1 ] = recv_[ 8 ];
 		}
 		*_retErrorCode = atoi(bufErrorTmp);
 		GPRS_Print_Error(*_retErrorCode);
@@ -380,22 +469,22 @@ int GPRS_AT_QueryOperater_Response(char* _recv, int* _retErrorCode) {
 	return retValue;
 }
 
-int GPRS_AT_QueryIP_Response(char* _recv, int* _retErrorCode) {
+int GPRS_AT_QueryIP_Response(char* recv_, int* _retErrorCode) {
 	int retValue = TRUE;
-	if (Utility_Strncmp(_recv, "%ETCPIP:", 8) == 0) {
-		if (_recv[ 8 ] == 0) {
+	if (Utility_Strncmp(recv_, "%ETCPIP:", 8) == 0) {
+		if (recv_[ 8 ] == 0) {
 			retValue = FALSE;
 		}
 	}
-	else if (Utility_Strncmp(_recv, "ERROR", 5) == 0)  // ERROR: 14  冒号和14中间有空格
+	else if (Utility_Strncmp(recv_, "ERROR", 5) == 0)  // ERROR: 14  冒号和14中间有空格
 	{
 		char bufErrorTmp[ 3 ] = {
 			0
 		};  //调用atoi函数，需要有字符串结束符，2位错误码，1位结束符
 
-		bufErrorTmp[ 0 ] = _recv[ 7 ];
-		if (_recv[ 8 ] != 0) {
-			bufErrorTmp[ 1 ] = _recv[ 8 ];
+		bufErrorTmp[ 0 ] = recv_[ 7 ];
+		if (recv_[ 8 ] != 0) {
+			bufErrorTmp[ 1 ] = recv_[ 8 ];
 		}
 		*_retErrorCode = atoi(bufErrorTmp);
 		GPRS_Print_Error(*_retErrorCode);
@@ -405,26 +494,26 @@ int GPRS_AT_QueryIP_Response(char* _recv, int* _retErrorCode) {
 }
 
 //打开链接和其它命令响应有一定不一致，因为只返回一个connect或者error
-int GPRS_AT_OpenTCPLink_Response(char* _recv) {
+int GPRS_AT_OpenTCPLink_Response(char* recv_) {
 	return TRUE;
 }
 
-int GPRS_AT_QueryTCPLink_Response(char* _recv, int* _retErrorCode) {
+int GPRS_AT_QueryTCPLink_Response(char* recv_, int* _retErrorCode) {
 	int retValue = TRUE;
-	if (Utility_Strncmp(_recv, "%IPOPEN:", 8) == 0) {
-		if (_recv[ 8 ] == 0) {
+	if (Utility_Strncmp(recv_, "%IPOPEN:", 8) == 0) {
+		if (recv_[ 8 ] == 0) {
 			retValue = FALSE;
 		}
 	}
-	else if (Utility_Strncmp(_recv, "ERROR", 5) == 0)  // ERROR: 14  冒号和14中间有空格
+	else if (Utility_Strncmp(recv_, "ERROR", 5) == 0)  // ERROR: 14  冒号和14中间有空格
 	{
 		char bufErrorTmp[ 3 ] = {
 			0
 		};  //调用atoi函数，需要有字符串结束符，2位错误码，1位结束符
 
-		bufErrorTmp[ 0 ] = _recv[ 7 ];
-		if (_recv[ 8 ] != 0) {
-			bufErrorTmp[ 1 ] = _recv[ 8 ];
+		bufErrorTmp[ 0 ] = recv_[ 7 ];
+		if (recv_[ 8 ] != 0) {
+			bufErrorTmp[ 1 ] = recv_[ 8 ];
 		}
 		*_retErrorCode = atoi(bufErrorTmp);
 		GPRS_Print_Error(*_retErrorCode);
@@ -434,23 +523,23 @@ int GPRS_AT_QueryTCPLink_Response(char* _recv, int* _retErrorCode) {
 }
 
 //这里没考虑出错，后面要处理
-int GPRS_AT_CloseTCPLink_Response(char* _recv, int* _retErrorCode) {
+int GPRS_AT_CloseTCPLink_Response(char* recv_, int* _retErrorCode) {
 	int retValue = FALSE;
 	// IPCLOSE如果有IP链接，会先返回%IPCLOSE,然后再返回OK,如果没有链接，只会返回一个命令响应成功
 	// OK
-	if ((Utility_Strncmp(_recv, "%IPCLOSE", 8) == 0)
-	    || (Utility_Strncmp(_recv, "OK", 2) == 0)) {
+	if ((Utility_Strncmp(recv_, "%IPCLOSE", 8) == 0)
+	    || (Utility_Strncmp(recv_, "OK", 2) == 0)) {
 		retValue = TRUE;
 	}
-	else if (Utility_Strncmp(_recv, "ERROR", 5) == 0)  // ERROR: 14  冒号和14中间有空格
+	else if (Utility_Strncmp(recv_, "ERROR", 5) == 0)  // ERROR: 14  冒号和14中间有空格
 	{
 		char bufErrorTmp[ 3 ] = {
 			0
 		};  //调用atoi函数，需要有字符串结束符，2位错误码，1位结束符
 
-		bufErrorTmp[ 0 ] = _recv[ 7 ];
-		if (_recv[ 8 ] != 0) {
-			bufErrorTmp[ 1 ] = _recv[ 8 ];
+		bufErrorTmp[ 0 ] = recv_[ 7 ];
+		if (recv_[ 8 ] != 0) {
+			bufErrorTmp[ 1 ] = recv_[ 8 ];
 		}
 		*_retErrorCode = atoi(bufErrorTmp);
 		GPRS_Print_Error(*_retErrorCode);
@@ -460,23 +549,23 @@ int GPRS_AT_CloseTCPLink_Response(char* _recv, int* _retErrorCode) {
 }
 
 //这里没考虑出错，后面要处理
-int GPRS_AT_QuitGPRSNet_Response(char* _recv, int* _retErrorCode) {
+int GPRS_AT_QuitGPRSNet_Response(char* recv_, int* _retErrorCode) {
 	int retValue = FALSE;
 	// IPCLOSE如果有IP链接，会先返回%IPCLOSE,然后再返回OK,如果没有链接，只会返回一个命令响应成功
 	// OK
-	if ((Utility_Strncmp(_recv, "%IPCLOSE", 8) == 0)
-	    || (Utility_Strncmp(_recv, "OK", 2) == 0)) {
+	if ((Utility_Strncmp(recv_, "%IPCLOSE", 8) == 0)
+	    || (Utility_Strncmp(recv_, "OK", 2) == 0)) {
 		retValue = TRUE;
 	}
-	else if (Utility_Strncmp(_recv, "ERROR", 5) == 0)  // ERROR: 14  冒号和14中间有空格
+	else if (Utility_Strncmp(recv_, "ERROR", 5) == 0)  // ERROR: 14  冒号和14中间有空格
 	{
 		char bufErrorTmp[ 3 ] = {
 			0
 		};  //调用atoi函数，需要有字符串结束符，2位错误码，1位结束符
 
-		bufErrorTmp[ 0 ] = _recv[ 7 ];
-		if (_recv[ 8 ] != 0) {
-			bufErrorTmp[ 1 ] = _recv[ 8 ];
+		bufErrorTmp[ 0 ] = recv_[ 7 ];
+		if (recv_[ 8 ] != 0) {
+			bufErrorTmp[ 1 ] = recv_[ 8 ];
 		}
 		*_retErrorCode = atoi(bufErrorTmp);
 		GPRS_Print_Error(*_retErrorCode);
@@ -486,36 +575,36 @@ int GPRS_AT_QuitGPRSNet_Response(char* _recv, int* _retErrorCode) {
 }
 
 //使用ASCii码还是Hex码发送消息，0,1,1---ASCii， 1,1,0---Hex
-int GPRS_AT_SetIOMode_Response(char* _recv) {
+int GPRS_AT_SetIOMode_Response(char* recv_) {
 	int retValue = TRUE;
 	// SetIOMode如果有IP链接，会先返回OK,没有IP，就会返回 EXT: I
-	if (Utility_Strncmp(_recv, "EXT:", 4) == 0) {
+	if (Utility_Strncmp(recv_, "EXT:", 4) == 0) {
 		retValue = FALSE;
 	}
 	return retValue;
 }
 
 int _GTM900SendBufLeft = 16;
-int GRPS_AT_Send_Response(char* _recv, int* _retErrorCode) {
+int GRPS_AT_Send_Response(char* recv_, int* _retErrorCode) {
 	int retValue = FALSE;
-	if (Utility_Strncmp(_recv, "%IPSEND:", 8) == 0) {
+	if (Utility_Strncmp(recv_, "%IPSEND:", 8) == 0) {
 		char bufLeftTmp[ 3 ] = { 0 };  //调用atoi函数，需要有字符串结束符
-		bufLeftTmp[ 0 ]      = _recv[ 8 ];
-		if (_recv[ 9 ] != 0) {
-			bufLeftTmp[ 1 ] = _recv[ 9 ];
+		bufLeftTmp[ 0 ]      = recv_[ 8 ];
+		if (recv_[ 9 ] != 0) {
+			bufLeftTmp[ 1 ] = recv_[ 9 ];
 		}
 		_GTM900SendBufLeft = atoi(bufLeftTmp);
 		retValue	   = TRUE;
 	}
-	else if (Utility_Strncmp(_recv, "ERROR", 5) == 0)  // ERROR: 14  冒号和14中间有空格
+	else if (Utility_Strncmp(recv_, "ERROR", 5) == 0)  // ERROR: 14  冒号和14中间有空格
 	{
 		char bufErrorTmp[ 3 ] = {
 			0
 		};  //调用atoi函数，需要有字符串结束符，2位错误码，1位结束符
 
-		bufErrorTmp[ 0 ] = _recv[ 7 ];
-		if (_recv[ 8 ] != 0) {
-			bufErrorTmp[ 1 ] = _recv[ 8 ];
+		bufErrorTmp[ 0 ] = recv_[ 7 ];
+		if (recv_[ 8 ] != 0) {
+			bufErrorTmp[ 1 ] = recv_[ 8 ];
 		}
 		*_retErrorCode = atoi(bufErrorTmp);
 		GPRS_Print_Error(*_retErrorCode);
@@ -526,21 +615,21 @@ int GRPS_AT_Send_Response(char* _recv, int* _retErrorCode) {
 }
 
 int RemainingData = 0;
-int GPRS_AT_QueryRemainData_Response(char* _recv, int* _retErrorCode) {
+int GPRS_AT_QueryRemainData_Response(char* recv_, int* _retErrorCode) {
 	int retValue = TRUE;
 
-	if (Utility_Strncmp(_recv, "%IPDQ:", 6) == 0) {
-		RemainingData = atoi(&_recv[ 7 ]);
+	if (Utility_Strncmp(recv_, "%IPDQ:", 6) == 0) {
+		RemainingData = atoi(&recv_[ 7 ]);
 	}
-	else if (Utility_Strncmp(_recv, "ERROR", 5) == 0)  // ERROR: 14  冒号和14中间有空格
+	else if (Utility_Strncmp(recv_, "ERROR", 5) == 0)  // ERROR: 14  冒号和14中间有空格
 	{
 		char bufErrorTmp[ 3 ] = {
 			0
 		};  //调用atoi函数，需要有字符串结束符，2位错误码，1位结束符
 
-		bufErrorTmp[ 0 ] = _recv[ 7 ];
-		if (_recv[ 8 ] != 0) {
-			bufErrorTmp[ 1 ] = _recv[ 8 ];
+		bufErrorTmp[ 0 ] = recv_[ 7 ];
+		if (recv_[ 8 ] != 0) {
+			bufErrorTmp[ 1 ] = recv_[ 8 ];
 		}
 		*_retErrorCode = atoi(bufErrorTmp);
 		GPRS_Print_Error(*_retErrorCode);
@@ -549,26 +638,26 @@ int GPRS_AT_QueryRemainData_Response(char* _recv, int* _retErrorCode) {
 	return retValue;
 }
 
-int GRPS_AT_Receive_Response(char* _recv, int* _retErrorCode) {
+int GRPS_AT_Receive_Response(char* recv_, int* _retErrorCode) {
 	int   retValue     = FALSE;
 	char* pdata	= NULL;
-	char* psrc	 = _recv + 10;
+	char* psrc	 = recv_ + 10;
 	int   _datalensize = 0;
 
-	if (Utility_Strncmp(_recv, "%IPDR:", 6) == 0) {
+	if (Utility_Strncmp(recv_, "%IPDR:", 6) == 0) {
 		while ((*psrc) != ',') {
 			_datalensize++;
 			psrc++;
 		}
-		psrc  = _recv + 10;
-		pdata = ( char* )malloc(_datalensize);
-		Utility_Strncpy(pdata, _recv + 10, _datalensize);
+		psrc  = recv_ + 10;
+		pdata = ( char* )mypvPortMalloc(_datalensize);
+		Utility_Strncpy(pdata, recv_ + 10, _datalensize);
 		_ReceiveDataLen = Utility_atoi(pdata, _datalensize);
-		free(pdata);
+		myvPortFree(pdata);
 		pdata	= NULL;  //
-		_ReceiveData = ( char* )malloc(_ReceiveDataLen * 2);
+		_ReceiveData = ( char* )mypvPortMalloc(_ReceiveDataLen * 2);
 		if (_ReceiveData == NULL) {
-			Console_WriteStringln("Malloc in GRPS_AT_Receive_Response failed");
+			Console_WriteStringln("mypvPortMalloc in GRPS_AT_Receive_Response failed");
 			return MSG_SEND_FAILED;
 		}
 
@@ -576,19 +665,19 @@ int GRPS_AT_Receive_Response(char* _recv, int* _retErrorCode) {
 			psrc++;
 		}
 		Utility_Strncpy(_ReceiveData, psrc + 1, _ReceiveDataLen * 2);
-		free(_ReceiveData);  //+++
+		myvPortFree(_ReceiveData);  //+++
 		_ReceiveData = NULL;
 		retValue     = TRUE;
 	}
-	else if (Utility_Strncmp(_recv, "ERROR", 5) == 0)  // ERROR: 14  冒号和14中间有空格
+	else if (Utility_Strncmp(recv_, "ERROR", 5) == 0)  // ERROR: 14  冒号和14中间有空格
 	{
 		char bufErrorTmp[ 3 ] = {
 			0
 		};  //调用atoi函数，需要有字符串结束符，2位错误码，1位结束符
 
-		bufErrorTmp[ 0 ] = _recv[ 7 ];
-		if (_recv[ 8 ] != 0) {
-			bufErrorTmp[ 1 ] = _recv[ 8 ];
+		bufErrorTmp[ 0 ] = recv_[ 7 ];
+		if (recv_[ 8 ] != 0) {
+			bufErrorTmp[ 1 ] = recv_[ 8 ];
 		}
 		*_retErrorCode = atoi(bufErrorTmp);
 		GPRS_Print_Error(*_retErrorCode);
@@ -598,14 +687,14 @@ int GRPS_AT_Receive_Response(char* _recv, int* _retErrorCode) {
 	return retValue;
 }
 
-int GPRS_AT_OFF_CALL_Response(char* _recv) {
+int GPRS_AT_OFF_CALL_Response(char* recv_) {
 	return TRUE;
 }
 
-int GPRS_SubProc_AT_ResponseOne(char* _recv, int* _retMsgNum, int cmdType, int* _retErrorCode) {
+int GPRS_SubProc_AT_ResponseOne(char* recv_, int* _retMsgNum, int cmdType, int* _retErrorCode) {
 	int retValue = FALSE;
 
-	if (Utility_Strncmp(_recv, "RING", 4) == 0)  //如果是电话来了，直接挂掉，重新等待接受。
+	if (Utility_Strncmp(recv_, "RING", 4) == 0)  //如果是电话来了，直接挂掉，重新等待接受。
 	{
 		GPRS_AT_OFF_CALL();
 		retValue = FALSE;  //出现电话
@@ -614,63 +703,63 @@ int GPRS_SubProc_AT_ResponseOne(char* _recv, int* _retMsgNum, int cmdType, int* 
 
 	switch (cmdType) {
 	case SET_APN: {
-		retValue = GPRS_AT_SetAPN_Response(_recv);
+		retValue = GPRS_AT_SetAPN_Response(recv_);
 		break;
 	}
 	case ACTIVE_GPRS: {
-		retValue = GPRS_AT_ActiveGPRSNet_Response(_recv);
+		retValue = GPRS_AT_ActiveGPRSNet_Response(recv_);
 		break;
 	}
 	case CHECK_SIM_STATUS: {
-		retValue = GPRS_AT_CheckSimStat_Response(_recv, _retErrorCode);
+		retValue = GPRS_AT_CheckSimStat_Response(recv_, _retErrorCode);
 		break;
 	}
 	case QUERY_OPERATER: {
-		retValue = GPRS_AT_QueryOperater_Response(_recv, _retErrorCode);
+		retValue = GPRS_AT_QueryOperater_Response(recv_, _retErrorCode);
 		break;
 	}
 	case QUERY_IP: {
 		retValue = GPRS_AT_QueryIP_Response(
-			_recv,
+			recv_,
 			_retErrorCode);  //如果第一步的"%ETCPIP:0"标识值为0，直接返回，后面不用进行了
 		break;
 	}
 	case OPEN_TCP_LINK: {
-		retValue = GPRS_AT_OpenTCPLink_Response(_recv);
+		retValue = GPRS_AT_OpenTCPLink_Response(recv_);
 		break;
 	}
 	case QUERY_TCP_LINK: {
 		retValue = GPRS_AT_QueryTCPLink_Response(
-			_recv,
+			recv_,
 			_retErrorCode);  //如果第一步的"%ETCPIP:0"标识值为0，直接返回，后面不用进行了
 		break;
 	}
 	case CLOSE_TCP_LINK: {
-		retValue = GPRS_AT_CloseTCPLink_Response(_recv, _retErrorCode);
+		retValue = GPRS_AT_CloseTCPLink_Response(recv_, _retErrorCode);
 		break;
 	}
 	case QUIT_GPRS_NET: {
-		retValue = GPRS_AT_QuitGPRSNet_Response(_recv, _retErrorCode);
+		retValue = GPRS_AT_QuitGPRSNet_Response(recv_, _retErrorCode);
 		break;
 	}
 	case SETIO_MODE: {
-		retValue = GPRS_AT_SetIOMode_Response(_recv);
+		retValue = GPRS_AT_SetIOMode_Response(recv_);
 		break;
 	}
 	case SEND_DATA: {
-		retValue = GRPS_AT_Send_Response(_recv, _retErrorCode);
+		retValue = GRPS_AT_Send_Response(recv_, _retErrorCode);
 		break;
 	}
 	case QUERY_REMAIN_DATA: {
-		retValue = GPRS_AT_QueryRemainData_Response(_recv, _retErrorCode);
+		retValue = GPRS_AT_QueryRemainData_Response(recv_, _retErrorCode);
 		break;
 	}
 	case RECEIVE_DATA: {
-		retValue = GRPS_AT_Receive_Response(_recv, _retErrorCode);
+		retValue = GRPS_AT_Receive_Response(recv_, _retErrorCode);
 		break;
 	}
 	case OFF_CALL: {
-		retValue = GPRS_AT_OFF_CALL_Response(_recv);
+		retValue = GPRS_AT_OFF_CALL_Response(recv_);
 		break;
 	}
 	default: {
@@ -682,23 +771,23 @@ int GPRS_SubProc_AT_ResponseOne(char* _recv, int* _retMsgNum, int cmdType, int* 
 }
 
 //只要不是ERROR或者OK,其它响应执行完了，还要继续处理。这里有问题，明天继续处理!!!!!!!!!!! 17-08-21
-int GPRS_SubProc_AT_ResponseTwo(char* _recv, int* _retErrorCode) {
+int GPRS_SubProc_AT_ResponseTwo(char* recv_, int* _retErrorCode) {
 	int retValue = FALSE;
-	if (Utility_Strncmp(_recv, "OK", 2) == 0) {
+	if (Utility_Strncmp(recv_, "OK", 2) == 0) {
 		retValue = TRUE;
 	}
-	else if (Utility_Strncmp(_recv, "CONNECT", 7) == 0) {
+	else if (Utility_Strncmp(recv_, "CONNECT", 7) == 0) {
 		retValue = TRUE;
 	}
-	else if (Utility_Strncmp(_recv, "ERROR", 5) == 0)  // ERROR: 14  冒号和14中间有空格
+	else if (Utility_Strncmp(recv_, "ERROR", 5) == 0)  // ERROR: 14  冒号和14中间有空格
 	{
 		char bufErrorTmp[ 3 ] = {
 			0
 		};  //调用atoi函数，需要有字符串结束符，2位错误码，1位结束符
 
-		bufErrorTmp[ 0 ] = _recv[ 7 ];
-		if (_recv[ 8 ] != 0) {
-			bufErrorTmp[ 1 ] = _recv[ 8 ];
+		bufErrorTmp[ 0 ] = recv_[ 7 ];
+		if (recv_[ 8 ] != 0) {
+			bufErrorTmp[ 1 ] = recv_[ 8 ];
 		}
 		*_retErrorCode = atoi(bufErrorTmp);
 		GPRS_Print_Error(*_retErrorCode);
@@ -710,7 +799,7 @@ int GPRS_SubProc_AT_ResponseTwo(char* _recv, int* _retErrorCode) {
 	return retValue;
 }
 
-int GPRS_Proc_AT_Response(char* _recv, int* _retMsgNum, int cmdType, int* errorCode) {
+int GPRS_Proc_AT_Response(char* recv_, int* _retMsgNum, int cmdType, int* errorCode) {
 	int _recvTryTimes1 = 0;
 	int _retValue      = FALSE;
 	int _okFlag;  //设定用来判断需不需要收2行响应
@@ -780,7 +869,7 @@ int GPRS_Proc_AT_Response(char* _recv, int* _retMsgNum, int cmdType, int* errorC
 	}
 
 	while (_recvTryTimes1 < 100) {
-		if (UART0_RecvLineTry(_recv, UART0_MAXBUFFLEN, _retMsgNum) == -1) {
+		if (UART0_RecvLineTry(recv_, UART0_MAXBUFFLEN, _retMsgNum) == -1) {
 			_recvTryTimes1 += 1;
 			if (cmdType == ACTIVE_GPRS)
 				System_Delayms(
@@ -797,7 +886,7 @@ int GPRS_Proc_AT_Response(char* _recv, int* _retMsgNum, int cmdType, int* errorC
 			    == FALSE)  //如果返回的第一行不是OK,则需要处理第一行；否则直接处理第二行
 			{
 				int respRet;
-				respRet = GPRS_SubProc_AT_ResponseOne(_recv, _retMsgNum, cmdType,
+				respRet = GPRS_SubProc_AT_ResponseOne(recv_, _retMsgNum, cmdType,
 								      errorCode);
 				if (respRet
 				    == TRUE)  //如果第一步处理有返回结果，就继续处理，不正确也会继续收到一个OK,只要第一步不出现错误标志，收到消息就往下一步走，由下一步处理
@@ -811,7 +900,7 @@ int GPRS_Proc_AT_Response(char* _recv, int* _retMsgNum, int cmdType, int* errorC
 				}
 			}
 			else {
-				_retValue = GPRS_SubProc_AT_ResponseTwo(_recv, errorCode);
+				_retValue = GPRS_SubProc_AT_ResponseTwo(recv_, errorCode);
 				if (_retValue == TRUE) {
 					break;
 				}
@@ -836,7 +925,7 @@ int GPRS_AT_SetAPN() {
 	int  _cmdLen     = 0;
 	int  _retValue   = FALSE;
 	char _send[ 30 ] = "at+cgdcont=1,\"ip\",\"";
-	char _recv[ 30 ] = { 0 };
+	char recv_[ 30 ] = { 0 };
 
 	_cmdLen += 19;
 
@@ -855,7 +944,7 @@ int GPRS_AT_SetAPN() {
 	//注意，需要先关闭回显，以免造成麻烦
 	GPRS_PrepareForSend();
 	GPRS_WriteBytes(_send, _cmdLen);
-	_retValue = GPRS_Proc_AT_Response(_recv, &_retMsgNum, SET_APN, &errorCode);
+	_retValue = GPRS_Proc_AT_Response(recv_, &_retMsgNum, SET_APN, &errorCode);
 
 	if (_retValue == TRUE) {
 		TraceMsg("Set APN Success", 1);
@@ -874,7 +963,7 @@ int GPRS_AT_ActiveGPRSNet() {
 	int  _cmdLen     = 0;
 	int  _retValue   = 0;
 	char _send[ 10 ] = "at%etcpip";
-	char _recv[ 30 ] = { 0 };
+	char recv_[ 30 ] = { 0 };
 	_cmdLen += 9;
 
 	//该AT指令会返回:
@@ -882,7 +971,7 @@ int GPRS_AT_ActiveGPRSNet() {
 	//注意，需要先关闭回显，以免造成麻烦
 	GPRS_PrepareForSend();
 	GPRS_WriteBytes(_send, _cmdLen);
-	_retValue = GPRS_Proc_AT_Response(_recv, &_retMsgNum, ACTIVE_GPRS, &errorCode);
+	_retValue = GPRS_Proc_AT_Response(recv_, &_retMsgNum, ACTIVE_GPRS, &errorCode);
 
 	if (_retValue == TRUE) {
 		TraceMsg("Active GPRS success", 1);
@@ -901,7 +990,7 @@ int GPRS_AT_CheckSimStat() {
 	int  _cmdLen     = 0;
 	int  _retValue   = 0;
 	char _send[ 10 ] = "AT%TSIM";
-	char _recv[ 30 ] = { 0 };
+	char recv_[ 30 ] = { 0 };
 	_cmdLen += 7;
 
 	//该AT指令会返回:
@@ -909,7 +998,7 @@ int GPRS_AT_CheckSimStat() {
 	//注意，需要先关闭回显，以免造成麻烦
 	GPRS_PrepareForSend();
 	GPRS_WriteBytes(_send, _cmdLen);
-	_retValue = GPRS_Proc_AT_Response(_recv, &_retMsgNum, CHECK_SIM_STATUS, errorCode);
+	_retValue = GPRS_Proc_AT_Response(recv_, &_retMsgNum, CHECK_SIM_STATUS, errorCode);
 
 	if (_retValue == TRUE) {
 		TraceMsg("CheckSimStat Success", 1);
@@ -928,7 +1017,7 @@ int GPRS_AT_QueryOperater() {
 	int  _cmdLen      = 0;
 	int  _retValue    = 0;
 	char _send[ 8 ]   = "AT+COPS?";
-	char _recv[ 100 ] = { 0 };
+	char recv_[ 100 ] = { 0 };
 	_cmdLen += 8;
 
 	//该AT指令会返回:
@@ -936,7 +1025,7 @@ int GPRS_AT_QueryOperater() {
 	//注意，需要先关闭回显，以免造成麻烦
 	GPRS_PrepareForSend();
 	GPRS_WriteBytes(_send, _cmdLen);
-	_retValue = GPRS_Proc_AT_Response(_recv, &_retMsgNum, QUERY_OPERATER, &errorCode);
+	_retValue = GPRS_Proc_AT_Response(recv_, &_retMsgNum, QUERY_OPERATER, &errorCode);
 
 	if (_retValue == TRUE) {
 		if (TelecomOperater == CHINA_MOBILE) {
@@ -957,7 +1046,7 @@ int GPRS_AT_QueryIP() {
 	int  _cmdLen      = 0;
 	int  _retValue    = 0;
 	char _send[ 10 ]  = "at%etcpip?";
-	char _recv[ 100 ] = { 0 };
+	char recv_[ 100 ] = { 0 };
 	_cmdLen += 10;
 
 	//该AT指令会返回:
@@ -965,7 +1054,7 @@ int GPRS_AT_QueryIP() {
 	//注意，需要先关闭回显，以免造成麻烦
 	GPRS_PrepareForSend();
 	GPRS_WriteBytes(_send, _cmdLen);
-	_retValue = GPRS_Proc_AT_Response(_recv, &_retMsgNum, QUERY_IP, &errorCode);
+	_retValue = GPRS_Proc_AT_Response(recv_, &_retMsgNum, QUERY_IP, &errorCode);
 	// 查询指令会先返回一行%ETCPIP:1,"10.101.53.141",,"114.114.114.114","211.138.156.146",
 	//注意，只返回本地IP还不行，还要有网关和DNS，否则后面打开连链接会出问题
 	// 再返回一行 OK
@@ -1015,7 +1104,7 @@ int GPRS_AT_OpenTCPLink(int center) {
 	int  _retValue     = 0;
 	int  IPStrLen      = 0;
 	int  PortStrLen    = 0;
-	char _recv[ 30 ]   = { 0 };
+	char recv_[ 30 ]   = { 0 };
 	char centerip[ 6 ] = { 0, 0, 0, 0, 0, 0 };
 	int  ip[ 4 ]       = { 0, 0, 0, 0 };
 	char iplen[ 4 ]    = { 0, 0, 0, 0 };
@@ -1149,7 +1238,7 @@ int GPRS_AT_OpenTCPLink(int center) {
 
 	GPRS_PrepareForSend();
 	GPRS_WriteBytes(_send, _cmdLen);
-	_retValue = GPRS_Proc_AT_Response(_recv, &_retMsgNum, OPEN_TCP_LINK, &errorCode);
+	_retValue = GPRS_Proc_AT_Response(recv_, &_retMsgNum, OPEN_TCP_LINK, &errorCode);
 	//开启成功会返回"CONNECT"
 
 	if (_retValue == TRUE) {
@@ -1171,7 +1260,7 @@ int GPRS_AT_QueryTCPLink(int* errorCode) {
 	int  _cmdLen      = 0;
 	int  _retValue    = 0;
 	char _send[ 10 ]  = "AT%IPOPEN?";
-	char _recv[ 100 ] = { 0 };
+	char recv_[ 100 ] = { 0 };
 	_cmdLen += 10;
 
 	//该AT指令会返回:
@@ -1179,7 +1268,7 @@ int GPRS_AT_QueryTCPLink(int* errorCode) {
 	//注意，需要先关闭回显，以免造成麻烦
 	GPRS_PrepareForSend();
 	GPRS_WriteBytes(_send, _cmdLen);
-	_retValue = GPRS_Proc_AT_Response(_recv, &_retMsgNum, QUERY_TCP_LINK, errorCode);
+	_retValue = GPRS_Proc_AT_Response(recv_, &_retMsgNum, QUERY_TCP_LINK, errorCode);
 	// 查询指令会先返回一行%ETCPIP:1,"10.101.53.141",,"114.114.114.114","211.138.156.146",
 	//注意，只返回本地IP还不行，还要有网关和DNS，否则后面打开连链接会出问题
 	// 再返回一行 OK
@@ -1200,7 +1289,7 @@ int GPRS_AT_CloseTCPLink(int* errorCode) {
 	int  _retMsgNum  = 0;  //
 	int  _cmdLen     = 0;
 	int  _retValue   = 0;
-	char _recv[ 30 ] = { 0 };
+	char recv_[ 30 ] = { 0 };
 
 	char _send[ 50 ] = " AT%IPCLOSE=1";
 	_cmdLen += 12;
@@ -1211,7 +1300,7 @@ int GPRS_AT_CloseTCPLink(int* errorCode) {
 	//注意，需要先关闭回显，以免造成麻烦
 	GPRS_PrepareForSend();
 	GPRS_WriteBytes(_send, _cmdLen);
-	_retValue = GPRS_Proc_AT_Response(_recv, &_retMsgNum, CLOSE_TCP_LINK, errorCode);
+	_retValue = GPRS_Proc_AT_Response(recv_, &_retMsgNum, CLOSE_TCP_LINK, errorCode);
 
 	if (_retValue == FALSE) {
 		Console_WriteStringln("Close TCP link failed-1286");
@@ -1227,7 +1316,7 @@ int GPRS_AT_QuitGPRSNet(int* errorCode) {
 	int  _retMsgNum  = 0;  //
 	int  _cmdLen     = 0;
 	int  _retValue   = 0;
-	char _recv[ 30 ] = { 0 };
+	char recv_[ 30 ] = { 0 };
 	char _send[ 50 ] = "AT%IPCLOSE=5";
 	_cmdLen += 12;
 
@@ -1237,7 +1326,7 @@ int GPRS_AT_QuitGPRSNet(int* errorCode) {
 	//注意，需要先关闭回显，以免造成麻烦
 	GPRS_PrepareForSend();
 	GPRS_WriteBytes(_send, _cmdLen);
-	_retValue = GPRS_Proc_AT_Response(_recv, &_retMsgNum, QUIT_GPRS_NET, errorCode);
+	_retValue = GPRS_Proc_AT_Response(recv_, &_retMsgNum, QUIT_GPRS_NET, errorCode);
 	//开启成功会返回"CONNECT"
 
 	if (_retValue == TRUE) {
@@ -1260,7 +1349,7 @@ int GPRS_AT_SetIOMode() {
 	int  _cmdLen     = 0;
 	int  _retValue   = 0;
 	char _send[ 20 ] = "at%iomode=1,1,0";
-	char _recv[ 30 ] = { 0 };
+	char recv_[ 30 ] = { 0 };
 	_cmdLen += 15;
 
 	//该AT指令会返回:
@@ -1268,7 +1357,7 @@ int GPRS_AT_SetIOMode() {
 	//注意，需要先关闭回显，以免造成麻烦
 	GPRS_PrepareForSend();
 	GPRS_WriteBytes(_send, _cmdLen);
-	_retValue = GPRS_Proc_AT_Response(_recv, &_retMsgNum, SETIO_MODE, &errorCode);
+	_retValue = GPRS_Proc_AT_Response(recv_, &_retMsgNum, SETIO_MODE, &errorCode);
 
 	if (_retValue == TRUE) {
 		TraceMsg("Set IO Mode Success", 1);
@@ -1294,11 +1383,11 @@ int GRPS_AT_Send() {
 	int  _retMsgNum  = 0;  //
 	int  _cmdLen     = 0;
 	int  _retValue   = 0;
-	char _recv[ 30 ] = { 0 };
+	char recv_[ 30 ] = { 0 };
 
-	char* _send = ( char* )malloc(dataLen + 12);
+	char* _send = ( char* )mypvPortMalloc(dataLen + 12);
 	if (_send == NULL) {
-		Console_WriteStringln("Malloc in GPRS_AT_Send failed");
+		Console_WriteStringln("mypvPortMalloc in GPRS_AT_Send failed");
 		return MSG_SEND_FAILED;
 	}
 	Utility_Strncpy(_send, "AT%IPSEND=\"", 11);
@@ -1315,10 +1404,10 @@ int GRPS_AT_Send() {
 	//注意，需要先关闭回显，以免造成后续数据接收干扰
 	GPRS_PrepareForSend();
 	GPRS_WriteBytes(_send, _cmdLen);
-	_retValue = GPRS_Proc_AT_Response(_recv, &_retMsgNum, SEND_DATA, &errorCode);
+	_retValue = GPRS_Proc_AT_Response(recv_, &_retMsgNum, SEND_DATA, &errorCode);
 	// 发送指令会先返回一行 %IPSEND:1,15
 	// 再返回一行 OK
-	free(_send);
+	myvPortFree(_send);
 	_send = NULL;
 
 	if (_retValue == TRUE) {
@@ -1338,7 +1427,7 @@ int GRPS_AT_QueryRemainData() {
 	int  _cmdLen      = 0;
 	int  _retValue    = 0;
 	char _send[ 8 ]   = "AT%IPDQ";
-	char _recv[ 200 ] = { 0 };
+	char recv_[ 200 ] = { 0 };
 
 	_cmdLen += 7;
 	//该AT指令会返回:
@@ -1346,7 +1435,7 @@ int GRPS_AT_QueryRemainData() {
 	//注意，需要先关闭回显，以免造成后续数据接收干扰
 	GPRS_PrepareForSend();
 	GPRS_WriteBytes(_send, _cmdLen);
-	_retValue = GPRS_Proc_AT_Response(_recv, &_retMsgNum, QUERY_REMAIN_DATA, &errorCode);
+	_retValue = GPRS_Proc_AT_Response(recv_, &_retMsgNum, QUERY_REMAIN_DATA, &errorCode);
 	// 发送指令会先返回一行 %IPDQ:
 	// 再返回一行 OK
 
@@ -1366,7 +1455,7 @@ int GRPS_AT_Receive() {
 	int  _cmdLen      = 0;
 	int  _retValue    = 0;
 	char _send[ 8 ]   = "AT%IPDR";
-	char _recv[ 200 ] = { 0 };
+	char recv_[ 200 ] = { 0 };
 
 	_cmdLen += 7;
 	//该AT指令会返回:
@@ -1374,7 +1463,7 @@ int GRPS_AT_Receive() {
 	//注意，需要先关闭回显，以免造成后续数据接收干扰
 	GPRS_PrepareForSend();
 	GPRS_WriteBytes(_send, _cmdLen);
-	_retValue = GPRS_Proc_AT_Response(_recv, &_retMsgNum, RECEIVE_DATA, &errorCode);
+	_retValue = GPRS_Proc_AT_Response(recv_, &_retMsgNum, RECEIVE_DATA, &errorCode);
 	// 发送指令会先返回一行 %IPDR:1,1,87,"7E7E"
 	// 再返回一行 OK
 
@@ -1390,17 +1479,17 @@ int GRPS_AT_Receive() {
 }
 
 int GPRS_OFF_CALL() {
-	int  _retNum;
-	char _ath[] = "ATH";
-	char _recv[ 50 ];
+	int  retNum_;
+	char ath_[] = "ATH";
+	char recv_[ 50 ];
 	//该指令如果挂断了电话,返回OK,无电话状态时,也返回OK,OK只表示模块收到了指令
 	// OK
-	UART0_Send(_ath, 3, 1);  //两个ring之间时间差大于ring和OK出现时间差，因此，OK肯定会先出来?
-				 // if(UART0_RecvLineWait(_recv,50,&_retNum)==-1)
-	if (UART0_RecvLineWait(_recv, 50, &_retNum) == -1) {
+	UART0_Send(ath_, 3, 1);  //两个ring之间时间差大于ring和OK出现时间差，因此，OK肯定会先出来?
+				 // if(UART0_RecvLineWait(recv_,50,&retNum_)==-1)
+	if (UART0_RecvLineWait(recv_, 50, &retNum_) == -1) {
 		return 0;
 	}
-	if (Utility_Strncmp(_recv, "OK", 2) == 0) {
+	if (Utility_Strncmp(recv_, "OK", 2) == 0) {
 		return -3;
 	}
 	else {
@@ -1409,16 +1498,16 @@ int GPRS_OFF_CALL() {
 }
 
 int GPRS_AT_OFF_CALL() {
-	int  _retNum = 0;
-	char _ath[]  = "ATH";
-	char _recv[ 50 ];
+	int  retNum_ = 0;
+	char ath_[]  = "ATH";
+	char recv_[ 50 ];
 	//该指令如果挂断了电话,返回OK,无电话状态时,也返回OK,OK只表示模块收到了指令
 	// OK
-	UART0_Send(_ath, 3, 1);  //两个ring之间时间差大于ring和OK出现时间差，因此，OK肯定会先出来?
-	if (UART0_RecvLineWait(_recv, 50, &_retNum) == -1) {
+	UART0_Send(ath_, 3, 1);  //两个ring之间时间差大于ring和OK出现时间差，因此，OK肯定会先出来?
+	if (UART0_RecvLineWait(recv_, 50, &retNum_) == -1) {
 		return 0;
 	}
-	if (Utility_Strncmp(_recv, "OK", 2) == 0) {
+	if (Utility_Strncmp(recv_, "OK", 2) == 0) {
 		return -3;
 	}
 	else {
@@ -1446,66 +1535,66 @@ void GPRS_PrepareForSend() {
 }
 
 int GPRS_Create_TCP_Link(int center) {
-	int _repeats = 0;
+	int repeats_ = 0;
 
 	if (gprsConfigSuccess == FALSE) {
 		gprs_power_on();
 
 		while (GSM_AT_CloseFeedback() != 0) {
-			if (_repeats > 0)
+			if (repeats_ > 0)
 				return -1;
-			++_repeats;
+			++repeats_;
 		}
-		_repeats = 0;
+		repeats_ = 0;
 
 		while (GPRS_AT_CheckSimStat() != GPRS_CHECKSIM_SUCCESS) {
-			if (_repeats > 0)
+			if (repeats_ > 0)
 				return -1;
-			++_repeats;
+			++repeats_;
 		}
-		_repeats = 0;
+		repeats_ = 0;
 
 		while (GPRS_AT_QueryOperater() != QUERY_OPERATER_SUCCESS) {
-			if (_repeats > 0)
+			if (repeats_ > 0)
 				return -1;
-			++_repeats;
+			++repeats_;
 		}
-		_repeats = 0;
+		repeats_ = 0;
 
 		while (GPRS_AT_SetAPN() != SET_APN_SUCCESS) {
-			if (_repeats > 0)
+			if (repeats_ > 0)
 				return -1;
-			++_repeats;
+			++repeats_;
 		}
-		_repeats = 0;
+		repeats_ = 0;
 
 		while (GPRS_AT_ActiveGPRSNet() != ACTIVE_GPRS_SUCCESS) {
-			if (_repeats > 0)
+			if (repeats_ > 0)
 				return -1;
-			++_repeats;
+			++repeats_;
 		}
-		_repeats = 0;
+		repeats_ = 0;
 
 		while (GPRS_AT_QueryIP() != QUERY_IP_SUCCESS) {
-			if (_repeats > 0)
+			if (repeats_ > 0)
 				return -1;
-			++_repeats;
+			++repeats_;
 		}
-		_repeats = 0;
+		repeats_ = 0;
 
 		while (GPRS_AT_OpenTCPLink(center) != TCP_CONNECT_SUCCESS) {
-			if (_repeats > 0)
+			if (repeats_ > 0)
 				return -1;
-			++_repeats;
+			++repeats_;
 		}
-		_repeats = 0;
+		repeats_ = 0;
 
 		while (GPRS_AT_SetIOMode() != SET_IOMODE_SUCCESS) {
-			if (_repeats > 0)
+			if (repeats_ > 0)
 				return -1;
-			++_repeats;
+			++repeats_;
 		}
-		_repeats = 0;
+		repeats_ = 0;
 
 		gprsConfigSuccess = TRUE;
 	}
@@ -1514,24 +1603,24 @@ int GPRS_Create_TCP_Link(int center) {
 }
 
 int GPRS_Close_TCP_Link() {
-	int _repeats = 0;
+	int repeats_ = 0;
 	int _retErrorCode;
 
 	gprsConfigSuccess = FALSE;
 
 	while (GPRS_AT_CloseTCPLink(&_retErrorCode) != TCP_Link_CLOSE_SUCCESS) {
-		if (_repeats > 0)
+		if (repeats_ > 0)
 			return -1;
-		++_repeats;
+		++repeats_;
 	}
-	_repeats = 0;
+	repeats_ = 0;
 
 	while (GPRS_AT_QuitGPRSNet(&_retErrorCode) != GPRS_NET_QUIT_SUCCESS) {
-		if (_repeats > 0)
+		if (repeats_ > 0)
 			return -1;
-		++_repeats;
+		++repeats_;
 	}
-	_repeats = 0;
+	repeats_ = 0;
 
 	return 0;
 }
@@ -1555,10 +1644,10 @@ int GPRS_Send(char* pSend, int sendDataLen, int isLastPacket, int center) {
 			"Error, Packet exceed 1024, Please Decrease Sending Packet Size!");
 	}
 
-	psrc = ( char* )malloc(sendDataLen * 2
-			       + 1);  //+1是因为转换函数hex_2_ascii最后有个\0,否则最后会出越界错误
+	psrc = ( char* )mypvPortMalloc(
+		sendDataLen * 2 + 1);  //+1是因为转换函数hex_2_ascii最后有个\0,否则最后会出越界错误
 	if (psrc == NULL) {
-		Console_WriteStringln("Malloc in GPRS_Send Failed");
+		Console_WriteStringln("mypvPortMalloc in GPRS_Send Failed");
 		return FALSE;
 	}
 	hex_2_ascii(pSend, psrc, sendDataLen);
@@ -1566,7 +1655,7 @@ int GPRS_Send(char* pSend, int sendDataLen, int isLastPacket, int center) {
 
 	_retvalue = GRPS_AT_Send();
 
-	free(psrc);
+	myvPortFree(psrc);
 	psrc = NULL;
 	GPRS_Close_TCP_Link();
 
@@ -1588,25 +1677,23 @@ int GPRS_QueryRemainData() {
 	return -1;
 }
 
+char  hexdata[ 100 ];
 char* GPRS_Receive() {
-	char* hexdata;
 
+	memset(hexdata, 0, 100);
 	if (GRPS_AT_Receive() == MSG_RECEIVE_SUCCESS) {
-		hexdata = ( char* )malloc(_ReceiveDataLen);
 		ConvertAscIItoHex(_ReceiveData, hexdata, _ReceiveDataLen * 2);
-		free(_ReceiveData);
+		myvPortFree(_ReceiveData);
 		_ReceiveData = NULL;
 	}
 	else if (GRPS_AT_Receive() == MSG_RECEIVE_SUCCESS) {
-		hexdata = ( char* )malloc(_ReceiveDataLen);
 		ConvertAscIItoHex(_ReceiveData, hexdata, _ReceiveDataLen * 2);
-		free(_ReceiveData);
+		myvPortFree(_ReceiveData);
 		_ReceiveData = NULL;
 	}
 	else if (GRPS_AT_Receive() == MSG_RECEIVE_SUCCESS) {
-		hexdata = ( char* )malloc(_ReceiveDataLen);
 		ConvertAscIItoHex(_ReceiveData, hexdata, _ReceiveDataLen * 2);
-		free(_ReceiveData);
+		myvPortFree(_ReceiveData);
 		_ReceiveData = NULL;
 	}
 
@@ -1631,153 +1718,142 @@ void JudgeServerDataArrived(void) {
 }
 
 int Hydrology_ProcessGPRSReceieve() {
-	char* dowmhydrologydata = NULL;
+	char*		     dowmhydrologydata = NULL;
+	communication_module_t* comm_dev	  = get_communication_dev();
 
 	if (GPRSDataArrived != TRUE)
 		return -1;
 	//   GPRS_QueryRemainData();
 	unprocessedGPRSdata = 1;
 	while (unprocessedGPRSdata--) {
-		dowmhydrologydata = GPRS_Receive();
+		dowmhydrologydata = comm_dev->rcv_msg();
 		TraceHexMsg(dowmhydrologydata, _ReceiveDataLen);
 		if (hydrologyProcessReceieve(dowmhydrologydata, _ReceiveDataLen) != 0)
 			continue;
 		HydrologyRecord(ERC17);
 	}
 	if (dowmhydrologydata != NULL)
-		free(dowmhydrologydata);
+		myvPortFree(dowmhydrologydata);
 
 	GPRSDataArrived = FALSE;
 	return 0;
 }
 
-static int  GSM_AT_CloseFeedback()
-{  //这条指令会收到:
-  //ATE0 
-  //OK
-    int _retNum;
-    int _repeats=0;
-    char _recv[30]="ATE0";  
-CloseFeedback:  
-    //UART0_Send(_recv,4,1); lmj20170814
-    UART0_Send(_recv,4,1);//lmj0814不用UART0发送里面的补充回车换行，直接将回车换行放在指令字符串当中
-//    System_Delayms(50);
-    if(UART0_RecvLineWait(_recv,30,&_retNum)==-1)
-    {  
-        ++s_TimeOut; 
-        return -1; 
-    } 
-      //收到ERROR ,
-    if(Utility_Strncmp(_recv,"ERROR",5)==0)
-    {
-        if(_repeats>2)
-        {
-        	Console_WriteStringln("Close feedback failed");
-            return -2;
-        }
-        //++SIM_ErrorNum;
-        ++ _repeats;
-        goto CloseFeedback;
-    } 
-    //如果是ATE0,则再获得一个OK,就可以返回了
-    if(Utility_Strncmp(_recv,"ATE0",4)==0)
-    {
-        if(UART0_RecvLineWait(_recv,30,&_retNum)==-1)
-        { ++s_TimeOut; return -1; }
-        if(Utility_Strncmp(_recv,"OK",2)==0)
-        {
-        	TraceMsg("Close feedback success", 1);
-            return 0;  
-        }
-    //++SIM_ErrorNum;
-        return -2;
-    }
-    //如果是OK,说明已经关闭
-    if(Utility_Strncmp(_recv,"OK",2)==0)
-        return 0;
-    GSM_DealData(_recv,_retNum);
-    //++SIM_BadNum;
-    return -2;
+//这条指令会收到:
+// ATE0
+// OK
+static int GSM_AT_CloseFeedback() {
+	int  retNum_;
+	int  repeats_    = 0;
+	char recv_[ 30 ] = "ATE0";
+CloseFeedback:
+	// UART0_Send(recv_,4,1); lmj20170814
+	UART0_Send(recv_, 4,
+		   1);  // lmj0814不用UART0发送里面的补充回车换行，直接将回车换行放在指令字符串当中
+	//    System_Delayms(50);
+	if (UART0_RecvLineWait(recv_, 30, &retNum_) == -1) {
+		++s_TimeOut;
+		return -1;
+	}
+	//收到ERROR ,
+	if (Utility_Strncmp(recv_, "ERROR", 5) == 0) {
+		if (repeats_ > 2) {
+			Console_WriteStringln("Close feedback failed");
+			return -2;
+		}
+		//++SIM_ErrorNum;
+		++repeats_;
+		goto CloseFeedback;
+	}
+	//如果是ATE0,则再获得一个OK,就可以返回了
+	if (Utility_Strncmp(recv_, "ATE0", 4) == 0) {
+		if (UART0_RecvLineWait(recv_, 30, &retNum_) == -1) {
+			++s_TimeOut;
+			return -1;
+		}
+		if (Utility_Strncmp(recv_, "OK", 2) == 0) {
+			TraceMsg("Close feedback success", 1);
+			return 0;
+		}
+		//++SIM_ErrorNum;
+		return -2;
+	}
+	//如果是OK,说明已经关闭
+	if (Utility_Strncmp(recv_, "OK", 2) == 0)
+		return 0;
+	GSM_DealData(recv_, retNum_);
+	//++SIM_BadNum;
+	return -2;
 }
 
-static int GSM_AT_OffCall()
-{
-    GSM_DealAllData();
-    int _retNum;
-    char _ath[]="ATH";
-    char _recv[50];
-    //该指令如果挂断了电话,那么就没有返回,无电话状态时,返回OK
-    //OK  
-    UART0_Send(_ath,3,1);
-    if(UART0_RecvLineWait(_recv,50,&_retNum)==-1)
-        return 0;
-    if(Utility_Strncmp(_recv,"OK",2)==0)
-        return -3; 
-    else
-    {
-        GSM_DealData(_recv,_retNum); 
-        return 0;
-    }
-} 
+static int GSM_AT_OffCall() {
+	GSM_DealAllData();
+	int  retNum_;
+	char ath_[] = "ATH";
+	char recv_[ 50 ];
+	//该指令如果挂断了电话,那么就没有返回,无电话状态时,返回OK
+	// OK
+	UART0_Send(ath_, 3, 1);
+	if (UART0_RecvLineWait(recv_, 50, &retNum_) == -1)
+		return 0;
+	if (Utility_Strncmp(recv_, "OK", 2) == 0)
+		return -3;
+	else {
+		GSM_DealData(recv_, retNum_);
+		return 0;
+	}
+}
 
 // 专门用来清空缓冲区;
 // 对每行数据调用SIM_Deal
-static int GSM_DealAllData()
-{
-    int _retNum; 
-    char _recv[UART0_MAXBUFFLEN];
-    while(UART0_RecvLineTry(_recv,UART0_MAXBUFFLEN,&_retNum)==0)
-    {
-        if(GSM_DealData(_recv,_retNum)==2)
-        {
-            return 2;
-        }
-    }
-    return 0;
+static int GSM_DealAllData() {
+	int  retNum_;
+	char recv_[ UART0_MAXBUFFLEN ];
+	while (UART0_RecvLineTry(recv_, UART0_MAXBUFFLEN, &retNum_) == 0) {
+		if (GSM_DealData(recv_, retNum_) == 2) {
+			return 2;
+		}
+	}
+	return 0;
 }
 
-static int GSM_DealData(char *_recv, int _dataLen)
-{   
-  //
-  //  主动型数据
-  //
-    if(Utility_Strncmp(_recv,"RING",4)==0)
-    {//电话  
-        ++s_RING;
-        TraceMsg(" RING !",1);
-        //Console_WriteStringln("SIM_Deal:RING !");
-        GSM_AT_OffCall();
-        return 2;
-    }
-    if(Utility_Strncmp(_recv,"+CMTI: ",7)==0)
-    {  
-        Led1_WARN(); 
-        TraceMsg("Got A Msg !",1);
-        ++s_MsgNum;//存放 
-        if(_recv[13]=='\0')//recvLine函数将末尾处理为'\0'
-            s_MsgArray[s_RecvIdx]=(_recv[12]-'0');
-        else
-            s_MsgArray[s_RecvIdx]=(_recv[12]-'0')*10 + _recv[13]-'0'; 
-        
-        if(s_RecvIdx<ARRAY_MAX-1) 
-            ++s_RecvIdx;//增加索引,ArrayIdx指向的是第一个无效位
-        else
-            s_RecvIdx=0;
-        //++Deal_Msg;
-        return 2;
-     }
-     if(Utility_Strncmp(_recv,"+CMGS: ",7)==0)
-     { 
-         return 1; 
-     }
-     //
-     //  响应型数据
-     //
-     //按最可能收到 以及 处理优先级的 顺序排列 
-     if(Utility_Strncmp(_recv,"OK",2)==0)
-     { 
-         return 0;
-     }
-    //其他的都不管了.
-     return -1;
+static int GSM_DealData(char* recv_, int _dataLen) {
+	//
+	//  主动型数据
+	//
+	if (Utility_Strncmp(recv_, "RING", 4) == 0) {  //电话
+		++s_RING;
+		TraceMsg(" RING !", 1);
+		// Console_WriteStringln("SIM_Deal:RING !");
+		GSM_AT_OffCall();
+		return 2;
+	}
+	if (Utility_Strncmp(recv_, "+CMTI: ", 7) == 0) {
+		Led1_WARN();
+		TraceMsg("Got A Msg !", 1);
+		++s_MsgNum;		  //存放
+		if (recv_[ 13 ] == '\0')  // recvLine函数将末尾处理为'\0'
+			s_MsgArray[ s_RecvIdx ] = (recv_[ 12 ] - '0');
+		else
+			s_MsgArray[ s_RecvIdx ] = (recv_[ 12 ] - '0') * 10 + recv_[ 13 ] - '0';
+
+		if (s_RecvIdx < ARRAY_MAX - 1)
+			++s_RecvIdx;  //增加索引,ArrayIdx指向的是第一个无效位
+		else
+			s_RecvIdx = 0;
+		//++Deal_Msg;
+		return 2;
+	}
+	if (Utility_Strncmp(recv_, "+CMGS: ", 7) == 0) {
+		return 1;
+	}
+	//
+	//  响应型数据
+	//
+	//按最可能收到 以及 处理优先级的 顺序排列
+	if (Utility_Strncmp(recv_, "OK", 2) == 0) {
+		return 0;
+	}
+	//其他的都不管了.
+	return -1;
 }
