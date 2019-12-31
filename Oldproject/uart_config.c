@@ -6,6 +6,7 @@
 #include "uart3.h"
 #include "string.h"
 #include "ioDev.h"
+#include "blueTooth.h"
 #include "message.h"
 
 char isUARTConfig = 0;
@@ -39,7 +40,7 @@ void Hydrology_InitWaitConfig()
   int count = 0;
   pBLE_Dev  ptDevBle =  getIODev();
   // if(ptDevBle->isCanUse() && (ptDevBle->open() == 0))
-  if(ptDevBle->isspp())
+  if( BLE_isexist() && ptDevBle->isspp() )
   {
       
       char acBleRcvBuf[200] = {0};

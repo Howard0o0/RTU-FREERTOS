@@ -22,6 +22,7 @@
 
 int BLEINIT=0;
 int sppflag=0;
+int isbtexist=0;
 
 void BLE_buffer_Clear() //清除BUFF
 {
@@ -44,21 +45,22 @@ void SPPRX(char * result,int len) //透传模式下RTU发送信息给蓝牙模�
 void SPPTX(char * result,int * len) //透传模式下RTU接收蓝牙模块信息
 {
   int time=0;
-  printf("30s\r\n");
 
+  printf("10s\r\n");
   while(UART1_RecvLineWait(result,100,len)<0)
   {
-      if(time>30)//30s time:100
-        return;
+      if(time>33)//30s time:100
+      {
+            printf("BLERX:\r\n");    
+            return;
+      }
       time++;
   }
-  
+
   printf("BLERX:");
   for(int i=0;i<*len;i++)
     printf("%c",result[i]);
-  printf("\r\n");
-      
-      
+  printf("\r\n");    
 }
 
 
@@ -88,7 +90,7 @@ void BLE_RecAt(char *result,int *num)   //RTU接收蓝牙模块的消息
   {
     if(BLE_RecvLineTry ( result,100,num ) == 0) // rcv AT response
     {
-      if(strstr(result,"RR")!=0 && strstr(result,"CO")!=0)
+      if(strstr(result,"RR")!=0 && strstr(result,"CO") != NULL)
         BLE_RecvLineTry(result,100,num);
       break;
     }
@@ -107,7 +109,7 @@ BLERet BLE_ATE()        //使蓝牙模块返回消息不回显发送的指令
   // printf("AT SEND: %s \r\n",cmd);
   BLE_RecAt(result,&num);
   // printf("REC:%s\r\n",result);
-  if(strstr(result,"K") !=0)
+  if(strstr(result,"K") !=NULL)
   {
     return BLE_SUCCESS;
   }
@@ -118,7 +120,6 @@ BLERet BLE_ATE()        //使蓝牙模块返回消息不回显发送的指令
 
 BLERet ATTEST()  // 测试蓝牙模块
 {
-      
   // char cmd[] = {0x41 ,0x54  };
   char cmd[] = "AT";
   char result[100] =" ";    
@@ -131,7 +132,7 @@ BLERet ATTEST()  // 测试蓝牙模块
       // printf("AT SEND: %s \r\n",cmd);//
       BLE_RecAt(result,&num);
       // printf("REC:%s\r\n",result); //
-      if(strstr(result,"K") != 0)
+      if(strstr(result,"K") != NULL)
       {
         // printf("ATTEST OK!\r\n");//
         return BLE_SUCCESS;
@@ -144,7 +145,6 @@ BLERet ATTEST()  // 测试蓝牙模块
 
 BLERet BLE_SetName ( void )//    AT+BLENAME : RTU 设置蓝牙名称RTU
 {
-
   // char cmd[]={0x41,0x54,0x2B,0x42,0x4C,0x45,0x41,0x44,0x56,0x44,0x41,0x54,0x41,0x3D,0x22,0x30,0x32,0x30,0x31,0x30,0x36,0x30,0x34,0x30,0x39,0x35,0x32,0x35,0x34,0x35,0x35,0x30,0x33,0x30,0x33,0x30,0x32,0x41,0x30,0x22};
   char cmd[]="AT+BLEADVDATA=\"0201060409525455030302A0\"";
   int num;
@@ -154,7 +154,7 @@ BLERet BLE_SetName ( void )//    AT+BLENAME : RTU 设置蓝牙名称RTU
   // printf("AT SEND: %s \r\n",cmd);
   BLE_RecAt(result,&num);
   // printf("REC:%s\r\n",result);
-  if(strstr(result,"K") != 0)
+  if(strstr(result,"K") != NULL)
   {
     return BLE_SUCCESS;
   }
@@ -173,10 +173,10 @@ BLERet BLE_SERVER()  // //AT+BLEINIT=2  使蓝牙模块为服务端
           
   char result[100]=" ";
   BLE_SendAtCmd(cmd,sizeof(cmd)-1);
-  // printf("AT SEND: %s \r\n",cmd);
+//   printf("AT SEND: %s \r\n",cmd);
   BLE_RecAt(result,&num);  
   // printf("REC:%s\r\n",result);
-  if(strstr(result,"K") != 0)
+  if(strstr(result,"K") != NULL)
   {
     return BLE_SUCCESS;
   }
@@ -193,20 +193,15 @@ BLERet BLE_GATTSSRVCRE()// AT+BLEGATTSSRVCRE 初始化蓝牙模块GATTS服务
   int num;
   char result[100]=" ";
 
-  // BLE_SendAtCmd(cmd,sizeof(cmd)-1);
-  BLE_buffer_Clear();
-  char end[]={0x0D,0x0A};
-  UART1_Send("AT",2,0);     //��һ��OK�ղ���
-  UART1_Send(end,sizeof(end),0);
-  System_Delayms ( 100 );
-  UART1_Send(cmd,sizeof(cmd)-1,0);     
+        char end[]={0x0D,0x0A};
+  UART1_Send(cmd,sizeof(cmd)-1,0);      //只能输出一次
   UART1_Send(end,sizeof(end),0);
 
-  // printf("AT SEND: %s \r\n",cmd);
+//   printf("AT SEND: %s \r\n",cmd);
   BLE_RecAt(result,&num);
-  // printf("REC:%s\r\n",result);
+//   printf("REC:%s\r\n",result);
 
-  if(strstr(result,"K") != 0)
+  if(strstr(result,"K") != NULL)
   {
     return BLE_SUCCESS;
   }
@@ -226,7 +221,7 @@ BLERet BLE_GATTSSRVSTART() //AT+BLEGATTSSRVSTART 开启蓝牙模块GATTS服务
   // printf("AT SEND: %s \r\n",cmd);
   BLE_RecAt(result,&num);
   // printf("REC:%s\r\n",result);
-  if(strstr(result,"K") != 0)
+  if(strstr(result,"K") != NULL)
   {
     return BLE_SUCCESS;
   }
@@ -246,7 +241,7 @@ BLERet BLE_ADVSTART()  //AT+BLEADVSTART 蓝牙模块广播
   // printf("AT SEND: %s \r\n",cmd);
   BLE_RecAt(result,&num);
   // printf("REC:%s\r\n",result);
-  if(strstr(result,"K") != 0)
+  if(strstr(result,"K") != NULL)
   {
     return BLE_SUCCESS;
   }
@@ -266,7 +261,7 @@ BLERet BLE_BLESPPCFG()//AT+BLESPPCFG=1,1,7,1,5  设置蓝牙模块透传参数
   // printf("AT SEND: %s \r\n",cmd);
   BLE_RecAt(result,&num);
   // printf("REC:%s\r\n",result);
-  if(strstr(result,"K") != 0)
+  if(strstr(result,"K") != NULL)
   {
     return BLE_SUCCESS;
   }
@@ -286,33 +281,22 @@ BLERet BLE_BLESP()//AT+BLESPP  开启透传
 
 	// BLE_SendAtCmd(cmd,sizeof(cmd)-1);
   BLE_buffer_Clear();
-  char end[]={0x0D,0x0A};
+//   char end[]={0x0D,0x0A};
 
-  // UART1_Send("AT",2,0);     
-  // UART1_Send(end,sizeof(end),0);
-  // System_Delayms ( 100 );
-  UART1_Send(cmd,sizeof(cmd)-1,0);     
-  UART1_Send(end,sizeof(end),0);
-  // printf("AT SEND: %s \r\n",cmd);
-	// BLE_RecAt(result,&num);
-  // printf("REC:%s\r\n",result);
+BLE_SendAtCmd(cmd,sizeof(cmd)-1);
+//   UART1_Send(cmd,sizeof(cmd)-1,0);     
+//   UART1_Send(end,sizeof(end),0);
 
-  // if(strstr(result,"K") != 0)
-  // {
-  //   return BLE_SUCCESS;
-  // }
-  // else
-  // {
+ 
     System_Delayms ( 100 );
     BLE_SendAtCmd(" ",1);
     BLE_RecAt(result,&num);
     // printf("result:%s\r\n",result);
-    if(strstr(result,"RR") != 0)
+
+    if(strstr(result,"RR") != NULL)
       return BLE_ERROR;
     else 
       return BLE_SUCCESS;
-  // }
-
 }
 
 BLERet BLE_BLESPP() //开启透传模式5次
@@ -344,7 +328,7 @@ BLERet BLE_BLESPPEND()//+++ 退出透传
     char result[100]=" ";
 
     System_Delayms(1000);   
-    UART1_Send(cmd,sizeof(cmd)-1,0);
+    UART1_Send(cmd,sizeof(cmd)-1,0);    //+++ 不加回车换行
     BLE_RecAt(result,&num);
     // printf("REC:%s\r\n",result);
     System_Delayms(1000);
@@ -443,7 +427,7 @@ BLERet BLE_CONNECT()    //查询蓝牙是否连接
   // printf("AT SEND: %s \r\n",cmd);
   BLE_RecAt(result,&num);
   // printf("REC:%s\r\n",result);
-  if(strstr(result,"N:0") != 0)
+  if(strstr(result,"N:0") != NULL)
   {
     System_Delayms ( 500 );
     return BLE_SUCCESS;
@@ -463,7 +447,7 @@ BLERet BLE_ADVSTOP()    //关闭广播
   // printf("AT SEND: %s \r\n",cmd);
   BLE_RecAt(result,&num);
   // printf("REC:%s\r\n",result);
-  if(strstr(result,"K") != 0)
+  if(strstr(result,"K") != NULL)
   {
     return BLE_SUCCESS;
   }
@@ -485,7 +469,7 @@ BLERet BLE_RST()    //蓝牙模块重启
   // printf("AT SEND: %s \r\n",cmd);
   BLE_RecAt(result,&num);
   // printf("REC:%s\r\n",result);
-  if(strstr(result,"ea") != 0)
+  if(strstr(result,"ea") != NULL)
   {
     return BLE_SUCCESS;
   }
@@ -505,7 +489,7 @@ BLERet BLE_SLEEP()      //蓝牙模块进入休眠
   // printf("AT SEND: %s \r\n",cmd);
   BLE_RecAt(result,&num);
   // printf("REC:%s\r\n",result);
-  if(strstr(result,"K") != 0)
+  if(strstr(result,"K") != NULL)
   {
   }
   else
@@ -518,7 +502,7 @@ BLERet BLE_SLEEP()      //蓝牙模块进入休眠
   // printf("AT SEND: %s \r\n",cmd2);
   BLE_RecAt(result,&num);
   // printf("REC:%s\r\n",result);
-  if(strstr(result,"OK") != 0)
+  if(strstr(result,"OK") != NULL)
   {
     return BLE_SUCCESS;
   }
@@ -550,15 +534,18 @@ int BLE_RecvLineTry ( char* _dest,const int _max, int* _pNum )
 
 int BLE_MAIN()  // if 0 connectd , -1 not connected
 {
-        if(BLE_INIT()!=BLE_SUCCESS)
-          return -1;
+        if(BLE_INIT()!=BLE_SUCCESS){
+                isbtexist=0;
+                return -1;  
+        }
+        isbtexist=1;
         printf( "BLE Init success!\r\n\r\n" );
         
         
         int time=0;
         while(BLE_Open() != BLE_SUCCESS)
         {
-          printf( "open ble failed ,reset system\r\n" );
+          printf( "open ble failed\r\n" );
           time++;
           System_Delayms ( 100 );
           if(time>5)
@@ -614,13 +601,13 @@ int BLE_MAIN()  // if 0 connectd , -1 not connected
         //   while(1)
         //   {
         //     BLE_RecAt(result,&num);
-        //     if(flag1==0 && strstr(result,"6") != 0 && strstr(result,"ITE") != 0)
+        //     if(flag1==0 && strstr(result,"6") != 0 && strstr(result,"ITE") != NULL)
         //     {
         //       printf("success6  ...\r\n");
         //       flag1=1;
         //       break;
         //     }
-        //     else if(flag2==0 && strstr(result,"7") != 0 && strstr(result,"ITE") != 0)
+        //     else if(flag2==0 && strstr(result,"7") != 0 && strstr(result,"ITE") != NULL)
         //     {
         //       printf("success7  ...\r\n");
         //       flag2=1;
@@ -662,7 +649,10 @@ int BLE_MAIN()  // if 0 connectd , -1 not connected
 	//System_Reset();
 }
 
-
+int BLE_isexist()
+{
+        return isbtexist;
+}
 
 
 /*

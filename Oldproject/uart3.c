@@ -16,6 +16,7 @@
 #include "led.h"
 #include "stdio.h"
 #include "ioDev.h"
+#include "blueTooth.h"
 /************A1********/
 #define TXD3 BIT4
 #define RXD3 BIT5
@@ -223,17 +224,20 @@ int  UART3_Send(char * _data ,int _len, int _CR)
     }
 
     /*******BLE*********/
-    pBLE_Dev  ptDevBle =  getIODev();
-    if( s_uart1_type == UART1_BT_TYPE ){
-        if( ptDevBle->isspp() ){
-            ptDevBle->read(_data,_len);
-            if(_CR)//补发一个换行
-            {
-                System_Delayms(1000);    
-                ptDevBle->read("\r\n",2);
-            }
-        }
+    if(BLE_isexist()){
+        pBLE_Dev  ptDevBle =  getIODev();
+        if( s_uart1_type == UART1_BT_TYPE ){
+                if( ptDevBle->isspp() ){
+                ptDevBle->read(_data,_len);
+                if(_CR)//补发一个换行
+                {
+                        System_Delayms(1000);    
+                        ptDevBle->read("\r\n",2);
+                }
+                }
+        }     
     }
+    
     /*******BLE*********/
     return 0;
 }
