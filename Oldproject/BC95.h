@@ -70,7 +70,7 @@ void BC95_AtTest(void);
 char *makeUDPBody(char *socket,char *ipAddr,char *port,char *len,char *data);  
 											// invalid when loaded with 电信卡
 
-void BC95_Communication_test();
+void BC95_Unit_test();
 
 
 

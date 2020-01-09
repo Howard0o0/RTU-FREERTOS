@@ -1281,7 +1281,7 @@ void BC95_AnalysisRecvSocketData(char *revc_data, int revc_data_len, char *down_
 	*down_Stream_data_len = down_Stream_data_ascii_len / 2;
 }
 
-void BC95_Communication_test()
+void BC95_Unit_test()
 {
 	int len = 0;
 	char msgLen = 0xA;
@@ -1291,19 +1291,24 @@ void BC95_Communication_test()
 	strcat(msgIdAndData, msgData);
 	char recv_data[BC95_SOCKET_DATA_LEN] = {0};
 
+	BC95_Open();
+
 	while (1)
 	{
+		if(BC95_ConfigProcess() != BC95StateOK){
+			printf("bc95 config error \r\n");
+		}
 		BC95_SendSocketData(msgIdAndData, Utility_Strlen(msgIdAndData));
 
 		Console_WriteStringln("BC95 send data:");
 
 		Console_WriteStringln(msgIdAndData);
 
-		BC95_RecvSocketData(recv_data, &len);
+		// BC95_RecvSocketData(recv_data, &len);
 
-		Console_WriteStringln("BC95 recv  down data:");
+		// Console_WriteStringln("BC95 recv  down data:");
 
-		Console_WriteStringln(recv_data);
+		// Console_WriteStringln(recv_data);
 
 		System_Delayms(5000);
 	}

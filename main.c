@@ -81,11 +81,6 @@ void main(void) {
 
 	bios_check();
 
-	// while (1)
-	// 	;
-
-	/* end of gprs test */
-
 	/**********TEST************/
 	// vSemaphoreCreateBinary(lock);
 	// xTaskCreate(task_print_1, "TEST1", configMINIMAL_STACK_SIZE * 2, NULL, tskIDLE_PRIORITY +
@@ -140,7 +135,7 @@ void vApplicationTickHook(void) {
 /*-----------------------------------------------------------*/
 
 static void prvSetupHardware(void) {
-	halBoardInit();
+	// halBoardInit();
 
 	BleDriverInstall();
 	UART1_Open(1);
