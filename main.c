@@ -77,14 +77,15 @@ void main(void) {
 	interrupts. */
 	prvSetupHardware();
 
-	install_io_devs_driver();
+	BC95_Unit_test();
+	
 
-	bios_check();
+	// install_io_devs_driver();
+
+	// bios_check();
 
 	/**********TEST************/
 	// vSemaphoreCreateBinary(lock);
-	// xTaskCreate(task_print_1, "TEST1", configMINIMAL_STACK_SIZE * 2, NULL, tskIDLE_PRIORITY +
-	// 	1, 	    NULL);
 	// xTaskCreate(task_print_2, "TEST2", configMINIMAL_STACK_SIZE * 2, NULL, tskIDLE_PRIORITY +
 	// 	1, 	    NULL);
 	// xTaskCreate(task_print_3, "TEST3", configMINIMAL_STACK_SIZE * 2, NULL, tskIDLE_PRIORITY +
@@ -135,8 +136,6 @@ void vApplicationTickHook(void) {
 /*-----------------------------------------------------------*/
 
 static void prvSetupHardware(void) {
-	// halBoardInit();
-
 	BleDriverInstall();
 	UART1_Open(1);
 

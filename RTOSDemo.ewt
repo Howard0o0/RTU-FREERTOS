@@ -4324,9 +4324,6 @@
                 <name>$PROJ_DIR$\Apps\include\communication_opr.h</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\Apps\include\gprs.h</name>
-            </file>
-            <file>
                 <name>$PROJ_DIR$\Apps\include\Hydrolody_Task.h</name>
             </file>
             <file>
@@ -4341,9 +4338,6 @@
         </file>
         <file>
             <name>$PROJ_DIR$\Apps\communication_opr.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\Apps\gprs.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\Apps\Hydrolody_Task.c</name>
@@ -4630,6 +4624,12 @@
     </group>
     <group>
         <name>Drivers</name>
+        <file>
+            <name>$PROJ_DIR$\Drivers\gprs.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Drivers\gprs.h</name>
+        </file>
     </group>
     <group>
         <name>F5XX_6XX_Core_Lib</name>

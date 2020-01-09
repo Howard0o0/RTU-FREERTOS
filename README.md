@@ -62,3 +62,6 @@ FreeRTOS源代码
 
 ## 拔掉调试器后配置报文被reset
 拔掉调试器后需要重新4条报文
+
+## pvPortMalloc/vPortFree 等FREERTOR提供的API只能在任务体里使用
+推荐使用带内存泄漏检测的malloc与free
