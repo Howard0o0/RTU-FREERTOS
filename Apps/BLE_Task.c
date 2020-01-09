@@ -28,35 +28,64 @@ void BLE_RE(void* pvParameters)
 
         // printf("BLE HWM:%d\r\n",uxTaskGetStackHighWaterMark(NULL)); 
         
-        if(BLE_isexist()){
-               if ( s_uart1_type==UART1_BT_TYPE ){
-                // printf("1\r\n");
-                        if ( ptDevBle->isinit() ){
-                                // printf("2 \r\n");
-                                if ( ptDevBle->isspp() == 0 ){
-                                        // printf("3 \r\n");
-                                        if( !ptDevBle->isConnect() ){
-                                                // printf("4 \r\n");
-                                                ptDevBle->adv();
-                                        }else{
-                                                // printf("5 \r\n");
-                                                if( ptDevBle->open() ){
-                                                ptDevBle->init();
-                                                }
-                                        }
-                                }else{
-                                vTaskDelay(10000 / portTICK_PERIOD_MS);
-                                ptDevBle->close();
-                                }
-                                
+        if(BLE_isexist() && (s_uart1_type == UART1_BT_TYPE)){
+                if(ptDevBle->isinit() == 0){
+                        ptDevBle->init();
+                        vTaskDelay(100 / portTICK_PERIOD_MS);
+                        continue;
+                }
+
+                if(ptDevBle->isspp() != 0){
+                        vTaskDelay(10000 / portTICK_PERIOD_MS);
+                        ptDevBle->close();
+                        vTaskDelay(100 / portTICK_PERIOD_MS);
+                        continue;
+                }
+
+                if(ptDevBle->isConnect() != 0){
+                        if(ptDevBle->open()){
+                            ptDevBle->init();    
                         }
-                        else 
-                        {
-                                // printf("6 \r\n");
-                                ptDevBle->init();
-                        }
-                } 
+                        vTaskDelay(100 / portTICK_PERIOD_MS);
+                        continue;
+                }
+
+                ptDevBle->adv();
+
         }
+
+
+
+        // if(BLE_isexist()){
+        //        if ( s_uart1_type==UART1_BT_TYPE ){
+        //         // printf("1\r\n");
+        //                 if ( ptDevBle->isinit() ){
+        //                         // printf("2 \r\n");
+        //                         if ( ptDevBle->isspp() == 0 ){
+        //                                 // printf("3 \r\n");
+        //                                 if( !ptDevBle->isConnect() ){
+        //                                         // printf("4 \r\n");
+        //                                         ptDevBle->adv();
+        //                                 }else{
+        //                                         // printf("5 \r\n");
+        //                                         if( ptDevBle->open() ){
+        //                                         ptDevBle->init();
+        //                                         }
+        //                                 }
+        //                         }else{
+        //                         vTaskDelay(10000 / portTICK_PERIOD_MS);
+        //                         ptDevBle->close();
+        //                         }
+                                
+        //                 }
+        //                 else 
+        //                 {
+        //                         // printf("6 \r\n");
+        //                         ptDevBle->init();
+        //                 }
+        //         } 
+        // }
+        
         vTaskDelay(100 / portTICK_PERIOD_MS);
 
     }

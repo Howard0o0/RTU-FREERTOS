@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <settings>
     <DebugChecksum>
-        <Checksum>3888291011</Checksum>
+        <Checksum>866819546</Checksum>
     </DebugChecksum>
     <DisAssemblyWindow>
         <NumStates>_ 1</NumStates>
@@ -159,7 +159,8 @@
         <LogFile>_ ""</LogFile>
     </TermIOLog>
     <Aliases>
-        <Count>0</Count>
-        <SuppressDialog>0</SuppressDialog>
+        <A0>_ "C:\Users\waz\Desktop\RTU-FREERTOS-develope\RTU-FREERTOS-develope\Driverlib\wdt_a.c" "C:\Users\waz\Desktop\freertos_rtu\RTU-FREERTOS\Driverlib\wdt_a.c"</A0>
+        <Count>1</Count>
+        <SuppressDialog>1</SuppressDialog>
     </Aliases>
 </settings>

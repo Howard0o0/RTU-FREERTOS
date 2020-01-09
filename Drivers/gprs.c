@@ -80,7 +80,7 @@ int gprs_module_driver_install(void) {
  */
 int gprs_power_on(void) {
 
-	debug_printf("gprs is trying to power on , need to wait 42s ...");
+	debug_printf("gprs is trying to power on , need to wait 42s ...\r\n");
 
 	uart0_init();
 

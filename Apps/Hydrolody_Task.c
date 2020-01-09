@@ -62,7 +62,7 @@ void hydrology_report(void* pvParameters) {
 
                 printf("\r\nReport end,freeheap:%d\r\n",xPortGetFreeHeapSize());
 
-                // show_block();
+                show_block();
 		
 		if (debug)
 			vTaskDelay(1000 / portTICK_PERIOD_MS);

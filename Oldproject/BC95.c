@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include "uart0.h"
 #include "FreeRTOS.h"
+#include "memoryleakcheck.h"
 
 //相关AT指令
 
@@ -973,6 +974,7 @@ BC95State BC95_ConnectToIotCloud(char *serverIp, char *serverPort)
 	if(Debug)
 		TraceMsg("BC95.c  BC95_ConnectToIotCloud malloc ", 1);
 	char *head_ip_comma_port_end = (char *)mypvPortMalloc(40);
+        memset(head_ip_comma_port_end,0,40);
 	if(head_ip_comma_port_end == NULL){
 		TraceMsg("BC95.c  BC95_ConnectToIotCloud malloc failed!", 1);
 	}
@@ -1291,6 +1293,9 @@ void BC95_Communication_test()
 	strcat(msgIdAndData, msgData);
 	char recv_data[BC95_SOCKET_DATA_LEN] = {0};
 
+        BC95_Open();
+        BC95_ConfigProcess();
+
 	while (1)
 	{
 		BC95_SendSocketData(msgIdAndData, Utility_Strlen(msgIdAndData));
@@ -1364,3 +1369,114 @@ void BC95_Test(void)
 
 
 
+
+communication_module_t bc95_module = {
+	.name	  = "bc95",
+	.power_on      = bc95_open,
+	.power_off     = bc95_close,
+	.sleep	 = bc95_sleep,
+	.wake_up       = bc95_wake_up,
+	.send_msg      = bc95_send,
+	.rcv_msg       = bc95_receive,
+	.get_real_time = bc95_AT_gettime,
+	.check_if_module_is_normal = check_bc95_module_is_normal,
+};
+
+static int bc95_open()
+{
+        if(BC95_Open() != 0){
+                Console_WriteStringln("BC95 Open failed!");
+                return ERROR;
+        }
+
+        return check_bc95_module_is_normal();
+}
+
+static int bc95_close()
+{
+        BC95_Close();
+        return OK;
+}
+
+static int bc95_sleep()
+{
+        return OK;
+}
+
+static int bc95_wake_up()
+{
+        return OK;
+}
+
+
+static int bc95_send(char* pSend, int sendDataLen, int isLastPacket, int center)
+{
+        while(BC95_ConfigProcess() != BC95StateOK);
+
+        while(BC95_query_cdp_server_setting() != BC95StateOK){
+                BC95_ConnectToIotCloud("221.229.214.202", "5683");
+        }
+
+        BC95_SendDataToCloud(pSend,sendDataLen,1);
+}
+
+static char* bc95_receive()
+{
+        char * recv_data = NULL;
+        int recv_data_len = 0;
+        BC95_RecvDataFromCloud(recv_data, &recv_data_len);
+        return recv_data;
+}
+
+static time_t bc95_AT_gettime()
+{
+        time_t bc95_time;
+        bc95_time.year = 0;
+        BC95_QueryTime(&bc95_time.year, &bc95_time.month, &bc95_time.date, &bc95_time.hour,
+                        &bc95_time.min, &bc95_time.sec);
+        return bc95_time;
+}
+
+static int check_bc95_module_is_normal()
+{
+        char* at_rsp;
+
+	send_at_cmd("AT+CGMI=?");
+	at_rsp = BC95_Receive();
+
+	if (strstr(at_rsp, "OK") != NULL) {
+		return OK;
+	}
+	else {
+		return ERROR;
+	}
+}
+
+BC95State BC95_query_cdp_server_setting(void)
+{
+	int _repeat = 0;
+	int _dataLen = 0;
+	char _data[UART1_MAXBUFFLEN] = {0};
+
+	// head_ip_comma_port_end = " AT+NCDP="49.4.85.232","5683" "
+	char *at_cmd = "AT+NCDP?";
+
+
+	BC95_Send(at_cmd);
+	Console_WriteStringln(at_cmd);
+
+	while (_repeat < BC95_REPEAT_TIMES)
+	{
+		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //������
+		{
+			Console_WriteStringln(_data);
+			if(strstr(_data,"OK")){
+			  	return BC95StateOK;
+			}
+		}
+		_repeat++;
+		System_Delayms(500);
+	}
+	
+	return -1;
+}

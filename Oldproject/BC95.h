@@ -9,8 +9,15 @@
  * 					4.
 */
 
+#ifndef _BC95_
+#define _BC95_
+
+#include "communication_opr.h"
+
 #define BC95_SOCKET_DATA_LEN 500
 #define BC95_SOCKET_UP_DATA_LENGTH_LINK 4   //这是BC95上传变长数据时需要在数据前面指定上传的数据长度
+
+
 
 typedef enum tagBC95State
 {
@@ -45,6 +52,7 @@ int BC95_QueryTime(char *year,char *month,char *date,char *hour,char *min,char *
 
 
 /*  underlying function */
+BC95State BC95_CGMI();
 BC95State BC95_SendSocketData(char *send_data, int send_data_len);
 void BC95_RecvSocketData(char *recv_data, int *recv_data_len);
 int BC95_Char_to_Hex(char chr);
@@ -71,15 +79,23 @@ char *makeUDPBody(char *socket,char *ipAddr,char *port,char *len,char *data);
 											// invalid when loaded with 电信卡
 
 void BC95_Communication_test();
+BC95State BC95_query_cdp_server_setting(void);
+
+// BC95State BC95_CheckNCDP();
+
+int bc95_module_driver_install(void);
+static int bc95_open();
+static int bc95_close();
+static int bc95_sleep();
+static int bc95_wake_up();
+static int bc95_send(char* pSend, int sendDataLen, int isLastPacket, int center);
+static char* bc95_receive();
+static time_t bc95_AT_gettime();
+static int check_bc95_module_is_normal();
 
 
 
 
-
-
-
-
-
-
+#endif
 
 

@@ -76,10 +76,13 @@ void main(void) {
 	includes configuring the joystick input select button to generate
 	interrupts. */
 	prvSetupHardware();
+        
 
-	install_io_devs_driver();
+	// install_io_devs_driver();
 
-	bios_check();
+	// bios_check();
+
+        BC95_Communication_test();
 
 	// while (1)
 	// 	;

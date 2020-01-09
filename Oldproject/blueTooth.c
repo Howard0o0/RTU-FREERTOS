@@ -47,7 +47,7 @@ void SPPTX(char * result,int * len) //透传模式下RTU接收蓝牙模块信息
   int time=0;
 
   printf("10s\r\n");
-  while(UART1_RecvLineWait(result,100,len)<0)
+  while(UART1_RecvLineWait(result,512,len)<0)
   {
       if(time>33)//30s time:100
       {
@@ -59,7 +59,7 @@ void SPPTX(char * result,int * len) //透传模式下RTU接收蓝牙模块信息
 
   printf("BLERX:");
   for(int i=0;i<*len;i++)
-    printf("%c",result[i]);
+    printf("%02x",result[i]);
   printf("\r\n");    
 }
 
