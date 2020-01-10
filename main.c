@@ -66,57 +66,18 @@ static void install_io_devs_driver(void);
 
 static void bios_check(void);
 
+void app_main(void* pvParameters);
+
 static void       task_print_1(void* pvParameters);
 static void       task_print_2(void* pvParameters);
 static void       task_print_3(void* pvParameters);
 SemaphoreHandle_t lock;
 
 void main(void) {
-	/* Configure the peripherals used by this demo application.  This
-	includes configuring the joystick input select button to generate
-	interrupts. */
-	prvSetupHardware();
-
-	BC95_Unit_test();
 	
 
-	// install_io_devs_driver();
-
-	// bios_check();
-
-	/**********TEST************/
-	// vSemaphoreCreateBinary(lock);
-	// xTaskCreate(task_print_2, "TEST2", configMINIMAL_STACK_SIZE * 2, NULL, tskIDLE_PRIORITY +
-	// 	1, 	    NULL);
-	// xTaskCreate(task_print_3, "TEST3", configMINIMAL_STACK_SIZE * 2, NULL, tskIDLE_PRIORITY +
-	// 	1, 	    NULL);
-
-	// while(1)
-	// {
-	//         char *p;
-	//         p=(char *)mypvPortMalloc(sizeof(char)*10);
-	//         p=(char *)mypvPortMalloc(sizeof(char)*10);
-	//         p=(char *)mypvPortMalloc(sizeof(char)*30);
-	//         myvPortFree(p);
-	//         show_block();
-	// }
-
-	/**********TEST************/
-
-	/*****BLE*************/
-
-	// pBLE_Dev  ptDevBle =  getIODev();
-	// ptDevBle->init();
-	// xTaskCreate(BLE_RE, "BLE", configMINIMAL_STACK_SIZE * 3, NULL, tskIDLE_PRIORITY + 1,
-	// NULL); xSemaphoreGive(xSemaphore_BLE);
-
-	/*****BLE*************/
-
-	hydrology_run();
-
-	// hydrology_init();
-	// xTaskCreate(task_hydrology_run, "task_hydrology_run", configMINIMAL_STACK_SIZE * 25,
-	// NULL, 	    configMAX_PRIORITIES - 2, NULL);
+	xTaskCreate(app_main, "app_main", configMINIMAL_STACK_SIZE * 4, NULL,
+		    tskIDLE_PRIORITY + 2, NULL);//550 333//660 433//440 266
 
 	vTaskStartScheduler();
 
@@ -128,8 +89,23 @@ void main(void) {
 	while (1)
 		;
 }
-
 /*-----------------------------------------------------------*/
+
+
+void app_main(void* pvParameters){
+	prvSetupHardware();
+
+	install_io_devs_driver();
+	bios_check();
+
+	hydrology_init();
+	create_hydrology_tasks();
+	
+	
+	vTaskDelete(NULL);
+}
+/*-----------------------------------------------------------*/
+
 
 void vApplicationTickHook(void) {
 }

@@ -90,7 +90,7 @@ void hydrology_init() {
 
 }
 
-void hydrology_run() {
+void create_hydrology_tasks() {
 	hydrology_init();
 	xTaskCreate(rtc_update, "RTC update", configMINIMAL_STACK_SIZE * 4, NULL,
 		    tskIDLE_PRIORITY + 2, NULL);//550 333//660 433//440 266
