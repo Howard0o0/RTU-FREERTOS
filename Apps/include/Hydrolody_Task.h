@@ -8,6 +8,6 @@ void hydrology_sample(void* pvParameters);
 void hydrology_save(void* pvParameters);
 void hydrology_report(void* pvParameters);
 void hydrology_init();
-void hydrology_run();
+void create_hydrology_tasks();
 
 #endif

@@ -63,7 +63,5 @@ FreeRTOS源代码
 ## 拔掉调试器后配置报文被reset
 拔掉调试器后需要重新4条报文
 
-## 堆栈空间不足
-Error[e16]: Segment DATA16_I (size: 0x8074 align: 0x1) is too long for segment definition
-freeRTOSconfig.h中的configTOTAL_HEAP_SIZE调小
-
+## pvPortMalloc/vPortFree 等FREERTOR提供的API只能在任务体里使用
+推荐使用带内存泄漏检测的malloc与free

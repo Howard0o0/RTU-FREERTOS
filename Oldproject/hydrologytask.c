@@ -135,7 +135,6 @@ void HydrologyDataPacketInit() {
 	/*初始化的时候更新下时间*/
 	lock_communication_dev();
 	communication_module_t* comm_dev = get_communication_dev();
-
 	time_t time_from_gprs_module = comm_dev->get_real_time();
 	unlock_communication_dev();
 	System_Delayms(50);
