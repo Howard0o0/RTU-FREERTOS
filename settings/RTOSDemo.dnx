@@ -125,7 +125,8 @@
     </DataSample>
     <Breakpoints>
         <Bp0>_ "STD_CODE" "{$PROJ_DIR$\Oldproject\message.c}.690.3" 0 0 0 0 "" 0 ""</Bp0>
-        <Count>1</Count>
+        <Bp1>_ "STD_CODE" "{$PROJ_DIR$\Apps\gprs.c}.1637.2" 1 0 0 0 "" 0 ""</Bp1>
+        <Count>2</Count>
     </Breakpoints>
     <FET>
         <Clock_mode>14</Clock_mode>

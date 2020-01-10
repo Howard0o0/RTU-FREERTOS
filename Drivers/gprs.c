@@ -1538,7 +1538,7 @@ int GPRS_Create_TCP_Link(int center) {
 	int repeats_ = 0;
 
 	if (gprsConfigSuccess == FALSE) {
-		gprs_power_on();
+		// gprs_power_on();
 
 		while (GSM_AT_CloseFeedback() != 0) {
 			if (repeats_ > 0)

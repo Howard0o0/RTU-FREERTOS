@@ -78,37 +78,13 @@ void main(void) {
 	prvSetupHardware();
         
 
-	// install_io_devs_driver();
+	install_io_devs_driver();
 
-	// bios_check();
+	bios_check();
 
-        BC95_Communication_test();
+        // BC95_Unit_test();
 
-	// while (1)
-	// 	;
 
-	/* end of gprs test */
-
-	/**********TEST************/
-	// vSemaphoreCreateBinary(lock);
-	// xTaskCreate(task_print_1, "TEST1", configMINIMAL_STACK_SIZE * 2, NULL, tskIDLE_PRIORITY +
-	// 	1, 	    NULL);
-	// xTaskCreate(task_print_2, "TEST2", configMINIMAL_STACK_SIZE * 2, NULL, tskIDLE_PRIORITY +
-	// 	1, 	    NULL);
-	// xTaskCreate(task_print_3, "TEST3", configMINIMAL_STACK_SIZE * 2, NULL, tskIDLE_PRIORITY +
-	// 	1, 	    NULL);
-
-	// while(1)
-	// {
-	//         char *p;
-	//         p=(char *)mypvPortMalloc(sizeof(char)*10);
-	//         p=(char *)mypvPortMalloc(sizeof(char)*10);
-	//         p=(char *)mypvPortMalloc(sizeof(char)*30);
-	//         myvPortFree(p);
-	//         show_block();
-	// }
-
-	/**********TEST************/
 
 	/*****BLE*************/
 

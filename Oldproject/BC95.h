@@ -78,8 +78,9 @@ void BC95_AtTest(void);
 char *makeUDPBody(char *socket,char *ipAddr,char *port,char *len,char *data);  
 											// invalid when loaded with 电信卡
 
-void BC95_Communication_test();
+
 BC95State BC95_query_cdp_server_setting(void);
+void BC95_Unit_test();
 
 // BC95State BC95_CheckNCDP();
 
@@ -92,8 +93,8 @@ static int bc95_send(char* pSend, int sendDataLen, int isLastPacket, int center)
 static char* bc95_receive();
 static time_t bc95_AT_gettime();
 static int check_bc95_module_is_normal();
-
-
+int bc95_module_driver_install();
+void bc95_getipandipport(int center); 
 
 
 #endif

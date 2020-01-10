@@ -60,6 +60,8 @@ void unlock_communication_dev(void);
 communication_module_t* get_communication_dev(void);
 
 void show_current_communication_dev(void);
+
+void communication_module_unit_test(void);
 /*==================================================================*/
 
 

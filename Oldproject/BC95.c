@@ -11,7 +11,7 @@
 #include "uart0.h"
 #include "FreeRTOS.h"
 #include "memoryleakcheck.h"
-
+#include "hydrologycommand.h"
 //相关AT指令
 
 #define AT_BC95_NCONFIG "AT+NCONFIG?"
@@ -38,6 +38,9 @@ int g_autoconfigState = 0; //扰码功能
 int g_scrambState = 0;	 ////自动模式
 int g_cfunstate = 0;	   //全功能模式
 char g_BC95RcvBuf[400];
+
+static char  BC95_centerIP[ 16 ];   
+static char  BC95_centerPort[ 7 ];
 
 int BC95_Char_to_Hex(char chr)
 {
@@ -941,11 +944,11 @@ BC95State BC95_ConfigProcess() //如果查询失败，需要处理
 	// 	return state;
 	// }
 
-	//设置设备对接的IoT平台(华为云)的IP地址和端口号
+	//设置设备对接的IoT平台的IP地址和端口号
 	retrytimes = 0;
 	while (retrytimes < BC95_REPEAT_TIMES)
 	{
-		state = BC95_ConnectToIotCloud("49.4.85.232", "5683");
+		state = BC95_ConnectToIotCloud("221.229.214.202", "5683");
 		if (state == BC95StateOK)
 		{
 			break;
@@ -971,13 +974,15 @@ BC95State BC95_ConnectToIotCloud(char *serverIp, char *serverPort)
 	char *comma = ",";
 	int _dataLen = 0;
 	char _data[UART1_MAXBUFFLEN] = {0};
-	if(Debug)
-		TraceMsg("BC95.c  BC95_ConnectToIotCloud malloc ", 1);
-	char *head_ip_comma_port_end = (char *)mypvPortMalloc(40);
+	// if(Debug)
+	// 	TraceMsg("BC95.c  BC95_ConnectToIotCloud malloc ", 1);
+	// char *head_ip_comma_port_end = (char *)mypvPortMalloc(40);
+        // memset(head_ip_comma_port_end,0,40);
+        char head_ip_comma_port_end[40];
         memset(head_ip_comma_port_end,0,40);
-	if(head_ip_comma_port_end == NULL){
-		TraceMsg("BC95.c  BC95_ConnectToIotCloud malloc failed!", 1);
-	}
+	// if(head_ip_comma_port_end == NULL){
+	// 	TraceMsg("BC95.c  BC95_ConnectToIotCloud malloc failed!", 1);
+	// }
 
 	strcat(head_ip_comma_port_end, at_head);
 	strcat(head_ip_comma_port_end, serverIp);
@@ -995,13 +1000,13 @@ BC95State BC95_ConnectToIotCloud(char *serverIp, char *serverPort)
 
 			if (strstr(_data, "OK"))
 			{
-				printf("BC95 Connect to HUAWEI Cloud Success \r\n");
+				printf("BC95 Connect to Cloud Success \r\n");
 				return BC95StateOK;
 			}
 
 			if (strstr(_data, "+CGATT:0"))
 			{
-				printf("BC95 Connect to HUAWEI Cloud fail !! \r\n");
+				printf("BC95 Connect to Cloud fail !! \r\n");
 				return BC95ErrorNCDP;
 			}
 		}
@@ -1009,8 +1014,8 @@ BC95State BC95_ConnectToIotCloud(char *serverIp, char *serverPort)
 		System_Delayms(1000);
 	}
 
-        myvPortFree(head_ip_comma_port_end);
-        head_ip_comma_port_end = NULL; //++++
+        // myvPortFree(head_ip_comma_port_end);
+        // head_ip_comma_port_end = NULL; //++++
 
 	return BC95ErrorNCDP;
 }
@@ -1283,7 +1288,7 @@ void BC95_AnalysisRecvSocketData(char *revc_data, int revc_data_len, char *down_
 	*down_Stream_data_len = down_Stream_data_ascii_len / 2;
 }
 
-void BC95_Communication_test()
+void BC95_Unit_test()
 {
 	int len = 0;
 	char msgLen = 0xA;
@@ -1293,22 +1298,30 @@ void BC95_Communication_test()
 	strcat(msgIdAndData, msgData);
 	char recv_data[BC95_SOCKET_DATA_LEN] = {0};
 
-        BC95_Open();
-        BC95_ConfigProcess();
+	BC95_Open();
+        // BC95_query_cdp_server_setting();
+        // BC95_ConfigProcess();
+        // while(1){
+        //         BC95_ConnectToIotCloud("221.229.214.202", "5683");
+        //         BC95_query_cdp_server_setting();
+        // }
 
 	while (1)
 	{
+		if(BC95_ConfigProcess() != BC95StateOK){
+			printf("bc95 config error \r\n");
+		}
 		BC95_SendSocketData(msgIdAndData, Utility_Strlen(msgIdAndData));
 
 		Console_WriteStringln("BC95 send data:");
 
 		Console_WriteStringln(msgIdAndData);
 
-		BC95_RecvSocketData(recv_data, &len);
+		// BC95_RecvSocketData(recv_data, &len);
 
-		Console_WriteStringln("BC95 recv  down data:");
+		// Console_WriteStringln("BC95 recv  down data:");
 
-		Console_WriteStringln(recv_data);
+		// Console_WriteStringln(recv_data);
 
 		System_Delayms(5000);
 	}
@@ -1367,7 +1380,115 @@ void BC95_Test(void)
 	
 }
 
+void bc95_getipandipport(int center) 
+{
+	char centerip[ 6 ] = { 0, 0, 0, 0, 0, 0 };
+	int  ip[ 4 ]       = { 0, 0, 0, 0 };
+	char iplen[ 4 ]    = { 0, 0, 0, 0 };
+	char i, j;
+	char centerport[ 3 ] = { 0, 0, 0 };
+	char centerportlen   = 0;
 
+	char ipvalue[ 10 ];
+
+	memset(ipvalue, 0, sizeof(ipvalue));
+	Hydrology_ReadStoreInfo(center, ipvalue, HYDROLOGY_CENTER_IP_LEN);
+	memcpy(centerip, &ipvalue[ 1 ], 6);
+	memcpy(centerport, &ipvalue[ 7 ], 3);
+
+	//    Store_ReadHydrologyServerIP(centerip,center);
+	centerip[ 0 ] = _BCDtoDEC(centerip[ 0 ]);
+	centerip[ 1 ] = _BCDtoDEC(centerip[ 1 ]);
+	centerip[ 2 ] = _BCDtoDEC(centerip[ 2 ]);
+	centerip[ 3 ] = _BCDtoDEC(centerip[ 3 ]);
+	centerip[ 4 ] = _BCDtoDEC(centerip[ 4 ]);
+	centerip[ 5 ] = _BCDtoDEC(centerip[ 5 ]);
+
+	ip[ 0 ] = centerip[ 0 ] * 10 + centerip[ 1 ] / 10;
+	ip[ 1 ] = (centerip[ 1 ] % 10) * 100 + centerip[ 2 ];
+	ip[ 2 ] = centerip[ 3 ] * 10 + centerip[ 4 ] / 10;
+	ip[ 3 ] = (centerip[ 4 ] % 10) * 100 + centerip[ 5 ];
+
+	judgeintlen(ip, iplen, 4);
+
+	for (i = 0, j = 0; i < 4; i++) {
+		if (iplen[ i ] == 3) {
+			BC95_centerIP[ j ]     = ip[ i ] / 100 + '0';
+			BC95_centerIP[ j + 1 ] = ((ip[ i ] / 10) % 10) + '0';
+			BC95_centerIP[ j + 2 ] = ip[ i ] % 10 + '0';
+			BC95_centerIP[ j + 3 ] = '.';
+			j += 4;
+		}
+		else if (iplen[ i ] == 2) {
+			BC95_centerIP[ j ]     = ip[ i ] / 10 + '0';
+			BC95_centerIP[ j + 1 ] = ip[ i ] % 10 + '0';
+			BC95_centerIP[ j + 2 ] = '.';
+			j += 3;
+		}
+		else {
+			BC95_centerIP[ j ]     = ip[ i ] + '0';
+			BC95_centerIP[ j + 1 ] = '.';
+			j += 2;
+		}
+	}
+	BC95_centerIP[ j - 1 ] = '\0';
+	TraceMsg(BC95_centerIP, 1);
+
+	centerport[ 0 ] = _BCDtoDEC(centerport[ 0 ]);
+	centerport[ 1 ] = _BCDtoDEC(centerport[ 1 ]);
+	centerport[ 2 ] = _BCDtoDEC(centerport[ 2 ]);
+
+	centerportlen = judgeportlen(centerport);
+
+	switch (centerportlen) {
+	case 6: {
+		BC95_centerPort[ 0 ] = centerport[ 0 ] / 10 + '0';
+		BC95_centerPort[ 1 ] = centerport[ 0 ] % 10 + '0';
+		BC95_centerPort[ 2 ] = centerport[ 1 ] / 10 + '0';
+		BC95_centerPort[ 3 ] = centerport[ 1 ] % 10 + '0';
+		BC95_centerPort[ 4 ] = centerport[ 2 ] / 10 + '0';
+		BC95_centerPort[ 5 ] = centerport[ 2 ] % 10 + '0';
+		BC95_centerPort[ 6 ] = '\0';
+		break;
+	}
+	case 5: {
+		BC95_centerPort[ 0 ] = centerport[ 0 ] % 10 + '0';
+		BC95_centerPort[ 1 ] = centerport[ 1 ] / 10 + '0';
+		BC95_centerPort[ 2 ] = centerport[ 1 ] % 10 + '0';
+		BC95_centerPort[ 3 ] = centerport[ 2 ] / 10 + '0';
+		BC95_centerPort[ 4 ] = centerport[ 2 ] % 10 + '0';
+		BC95_centerPort[ 5 ] = '\0';
+		break;
+	}
+	case 4: {
+		BC95_centerPort[ 0 ] = centerport[ 1 ] / 10 + '0';
+		BC95_centerPort[ 1 ] = centerport[ 1 ] % 10 + '0';
+		BC95_centerPort[ 2 ] = centerport[ 2 ] / 10 + '0';
+		BC95_centerPort[ 3 ] = centerport[ 2 ] % 10 + '0';
+		BC95_centerPort[ 4 ] = '\0';
+		break;
+	}
+	case 3: {
+		BC95_centerPort[ 0 ] = centerport[ 1 ] % 10 + '0';
+		BC95_centerPort[ 1 ] = centerport[ 2 ] / 10 + '0';
+		BC95_centerPort[ 2 ] = centerport[ 2 ] % 10 + '0';
+		BC95_centerPort[ 3 ] = '\0';
+		break;
+	}
+	case 2: {
+		BC95_centerPort[ 0 ] = centerport[ 2 ] / 10 + '0';
+		BC95_centerPort[ 1 ] = centerport[ 2 ] % 10 + '0';
+		BC95_centerPort[ 2 ] = '\0';
+		break;
+	}
+	case 1: {
+		BC95_centerPort[ 0 ] = centerport[ 2 ] % 10 + '0';
+		BC95_centerPort[ 1 ] = '\0';
+		break;
+	}
+	}
+	TraceMsg(BC95_centerPort, 1);
+}
 
 
 communication_module_t bc95_module = {
@@ -1411,13 +1532,23 @@ static int bc95_wake_up()
 
 static int bc95_send(char* pSend, int sendDataLen, int isLastPacket, int center)
 {
-        while(BC95_ConfigProcess() != BC95StateOK);
+
+        bc95_getipandipport(center);
+
+        if(BC95_ConfigProcess() != BC95StateOK){
+                return ERROR;
+        }
 
         while(BC95_query_cdp_server_setting() != BC95StateOK){
                 BC95_ConnectToIotCloud("221.229.214.202", "5683");
         }
 
-        BC95_SendDataToCloud(pSend,sendDataLen,1);
+        if(BC95_SendDataToCloud(pSend,sendDataLen,1) == BC95StateOK){
+                return OK;     
+        }else{
+                return ERROR;
+        }
+        
 }
 
 static char* bc95_receive()
@@ -1441,7 +1572,7 @@ static int check_bc95_module_is_normal()
 {
         char* at_rsp;
 
-	send_at_cmd("AT+CGMI=?");
+	BC95_Send("AT+CGMI=?");
 	at_rsp = BC95_Receive();
 
 	if (strstr(at_rsp, "OK") != NULL) {
@@ -1470,7 +1601,7 @@ BC95State BC95_query_cdp_server_setting(void)
 		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //������
 		{
 			Console_WriteStringln(_data);
-			if(strstr(_data,"OK")){
+			if(strstr(_data,"221.229.214.202")){
 			  	return BC95StateOK;
 			}
 		}
@@ -1479,4 +1610,9 @@ BC95State BC95_query_cdp_server_setting(void)
 	}
 	
 	return -1;
+}
+
+int bc95_module_driver_install()
+{
+        return register_communication_module(&bc95_module);
 }
