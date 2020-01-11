@@ -2,3 +2,4 @@ Debug_Large_Data_Model/
 
 settings/RTOSDemo.wsdt
 RTOSDemo.dep
+settings/RTOSDemo.Debug_Large_Data_Model.driver.xcl

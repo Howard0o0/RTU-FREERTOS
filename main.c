@@ -109,7 +109,7 @@ void vApplicationTickHook(void) {
 /*-----------------------------------------------------------*/
 
 static void prvSetupHardware(void) {
-	// halBoardInit();
+	halBoardInit();
 
 	BleDriverInstall();
 	UART1_Open(1);
