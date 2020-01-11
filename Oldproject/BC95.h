@@ -91,7 +91,7 @@ static int bc95_sleep();
 static int bc95_wake_up();
 static int bc95_send(char* pSend, int sendDataLen, int isLastPacket, int center);
 static char* bc95_receive();
-static time_t bc95_AT_gettime();
+static rtc_time_t bc95_AT_gettime();
 static int check_bc95_module_is_normal();
 int bc95_module_driver_install();
 void bc95_getipandipport(int center); 

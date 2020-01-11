@@ -27,6 +27,7 @@
 #include "uart1.h"
 #include "uart3.h"
 #include "uart_config.h"
+#include <stdbool.h>
 
 extern int		 UserElementCount;
 extern int		 RS485RegisterCount;
@@ -134,20 +135,20 @@ void HydrologyDataPacketInit() {
 
 	/*初始化的时候更新下时间*/
 	lock_communication_dev();
-	communication_module_t* comm_dev = get_communication_dev();
-	time_t time_from_gprs_module = comm_dev->get_real_time();
+	communication_module_t* comm_dev	      = get_communication_dev();
+	rtc_time_t			rtc_time = comm_dev->get_real_time();
 	unlock_communication_dev();
 	System_Delayms(50);
-	if (time_from_gprs_module.year == 0) {
+	if (rtc_time.year == 0) {
 		printf("update rtc through gprs module failed \r\n");
 		return;
 	}
-	printf("update rtc time, %d/%d/%d %d:%d:%d \r\n", time_from_gprs_module.year,
-	       time_from_gprs_module.month, time_from_gprs_module.date, time_from_gprs_module.hour,
-	       time_from_gprs_module.min, time_from_gprs_module.sec);
-	_RTC_SetTime(( char )time_from_gprs_module.sec, ( char )time_from_gprs_module.min,
-		     ( char )time_from_gprs_module.hour, ( char )time_from_gprs_module.date,
-		     ( char )time_from_gprs_module.month, 1, ( char )time_from_gprs_module.year, 0);
+	printf("update rtc time, %d/%d/%d %d:%d:%d \r\n", rtc_time.year,
+	       rtc_time.month, rtc_time.date, rtc_time.hour,
+	       rtc_time.min, rtc_time.sec);
+	_RTC_SetTime(( char )rtc_time.sec, ( char )rtc_time.min,
+		     ( char )rtc_time.hour, ( char )rtc_time.date,
+		     ( char )rtc_time.month, 1, ( char )rtc_time.year, 0);
 }
 
 extern SemaphoreHandle_t sample_switch_save;
@@ -532,6 +533,53 @@ int HydrologyVoltage() {
 	return 0;
 }
 
+static bool check_if_rtc_time_format_correct(void) {
+	
+	for (int i = 0; i < 11; ++i) {
+		RTC_ReadTimeBytes5(g_rtc_nowTime);
+		if (RTC_IsBadTime(g_rtc_nowTime, 1) == 0) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+static void try_to_correct_rtc_time_via_network(void) {
+
+	lock_communication_dev();
+	communication_module_t* comm_dev = get_communication_dev();
+	rtc_time_t rtc_time = comm_dev->get_real_time();
+	unlock_communication_dev();
+
+	if (rtc_time.year == 0) {
+		return ;
+	}
+	printf("sync rtc time via network success : %d/%d/%d %d:%d:%d \r\n", rtc_time.year,
+	       rtc_time.month, rtc_time.date, rtc_time.hour,
+	       rtc_time.min, rtc_time.sec);
+	_RTC_SetTime(( char )rtc_time.sec, ( char )rtc_time.min,
+		     ( char )rtc_time.hour, ( char )rtc_time.date,
+		     ( char )rtc_time.month, 1, ( char )rtc_time.year, 0);
+
+	vTaskDelay(50 / portTICK_RATE_MS);
+}
+
+void check_rtc_time(void) {
+	
+	if (check_if_rtc_time_format_correct() == true) {
+		return;
+	}
+
+	err_printf("rtc time format error, trying to correct rtc via network ... \r\n");
+	try_to_correct_rtc_time_via_network();
+
+	if (check_if_rtc_time_format_correct() == false) {
+		err_printf("correct rtc failed, rebooting ... \r\n ");
+		System_Reset();
+	}
+}
+
 /*?????��???????????????????????????????*/
 int Hydrology_TimeCheck() {
 	RTC_ReadTimeBytes5(g_rtc_nowTime);  //??rtc???????g_rtc_nowtime
@@ -555,19 +603,19 @@ int Hydrology_TimeCheck() {
 		lock_communication_dev();
 		communication_module_t* comm_dev = get_communication_dev();
 
-		time_t time_from_gprs_module = comm_dev->get_real_time();
+		rtc_time_t rtc_time = comm_dev->get_real_time();
 		unlock_communication_dev();
-		if (time_from_gprs_module.year == 0) {
+		if (rtc_time.year == 0) {
 			return -1;
 		}
-		printf("update rtc time, %d/%d/%d %d:%d:%d \r\n", time_from_gprs_module.year,
-		       time_from_gprs_module.month, time_from_gprs_module.date,
-		       time_from_gprs_module.hour, time_from_gprs_module.min,
-		       time_from_gprs_module.sec);
-		_RTC_SetTime(( char )time_from_gprs_module.sec, ( char )time_from_gprs_module.min,
-			     ( char )time_from_gprs_module.hour, ( char )time_from_gprs_module.date,
-			     ( char )time_from_gprs_module.month, 1,
-			     ( char )time_from_gprs_module.year, 0);
+		printf("update rtc time, %d/%d/%d %d:%d:%d \r\n", rtc_time.year,
+		       rtc_time.month, rtc_time.date,
+		       rtc_time.hour, rtc_time.min,
+		       rtc_time.sec);
+		_RTC_SetTime(( char )rtc_time.sec, ( char )rtc_time.min,
+			     ( char )rtc_time.hour, ( char )rtc_time.date,
+			     ( char )rtc_time.month, 1,
+			     ( char )rtc_time.year, 0);
 
 		System_Delayms(50);
 	}

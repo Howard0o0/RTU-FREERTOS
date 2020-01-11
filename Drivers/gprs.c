@@ -1,5 +1,6 @@
 #include "gprs.h"
 #include "Console.h"
+#include "FreeRTOS.h"
 #include "common.h"
 #include "communication_opr.h"
 #include "hydrologycommand.h"
@@ -10,9 +11,11 @@
 #include "portmacro.h"
 #include "rtc.h"
 #include "store.h"
+#include "task.h"
 #include "uart0.h"
 #include <stdbool.h>
 #include <string.h>
+
 
 static int   check_gprs_module_is_normal();
 static void  uart0_init();
@@ -59,14 +62,14 @@ int  s_MsgLeft  = 0;
 char s_NetState = '0';
 
 communication_module_t gprs_module = {
-	.name	  = "gprs",
-	.power_on      = gprs_power_on,
-	.power_off     = gprs_power_off,
-	.sleep	 = gprs_sleep,
-	.wake_up       = gprs_wake_up,
-	.send_msg      = GPRS_Send,
-	.rcv_msg       = GPRS_Receive,
-	.get_real_time = GSM_AT_QueryTime,
+	.name			   = "gprs",
+	.power_on		   = gprs_power_on,
+	.power_off		   = gprs_power_off,
+	.sleep			   = gprs_sleep,
+	.wake_up		   = gprs_wake_up,
+	.send_msg		   = GPRS_Send,
+	.rcv_msg		   = GPRS_Receive,
+	.get_real_time		   = GSM_AT_QueryTime,
 	.check_if_module_is_normal = check_gprs_module_is_normal,
 };
 
@@ -80,13 +83,13 @@ int gprs_module_driver_install(void) {
  */
 int gprs_power_on(void) {
 
-	debug_printf("gprs is trying to power on , need to wait 42s ...\r\n");
-
 	uart0_init();
 
+	taskENTER_CRITICAL();
 	pull_up_pin_batt();
 	pull_down_pin_igt();
 	pull_up_pin_igt();
+	taskEXIT_CRITICAL();
 
 	return check_gprs_module_is_normal();
 }
@@ -117,6 +120,7 @@ static void pull_up_pin_batt() {
 }
 
 static void pull_down_pin_igt() {
+	P3DIR |= BIT0;
 	P3OUT |= BIT0;
 	System_Delayms(10);
 	P3OUT &= ~BIT0;
@@ -137,7 +141,7 @@ static void send_at_cmd(char* at_cmd) {
  *@ author : howard
  *@ 如果获取时间失败，则time_t.year置0
  */
-time_t GSM_AT_QueryTime(void) {
+rtc_time_t GSM_AT_QueryTime(void) {
 	int	  rcvFlag = 0;
 	int	  _repeat = 0;
 	int	  _retNum;
@@ -146,7 +150,7 @@ time_t GSM_AT_QueryTime(void) {
 	char*	pcSeperate    = "/";
 	static char* pcRcvAtBuff   = NULL;  //定义静态局部变量，分配在全局数据区
 
-	time_t get_time_from_gprs_module;
+	rtc_time_t get_time_from_gprs_module;
 	get_time_from_gprs_module.year = 0;
 
 	pcRcvAtBuff = ( char* )mypvPortMalloc(200 * sizeof(char));
@@ -1719,7 +1723,7 @@ void JudgeServerDataArrived(void) {
 }
 
 int Hydrology_ProcessGPRSReceieve() {
-	char*		     dowmhydrologydata = NULL;
+	char*			dowmhydrologydata = NULL;
 	communication_module_t* comm_dev	  = get_communication_dev();
 
 	if (GPRSDataArrived != TRUE)

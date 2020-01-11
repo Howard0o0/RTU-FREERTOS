@@ -4866,6 +4866,12 @@
         </file>
     </group>
     <file>
+        <name>$PROJ_DIR$\boot.c</name>
+    </file>
+    <file>
+        <name>$PROJ_DIR$\boot.h</name>
+    </file>
+    <file>
         <name>$PROJ_DIR$\lnk430F5438A_mod.xcl</name>
     </file>
     <file>

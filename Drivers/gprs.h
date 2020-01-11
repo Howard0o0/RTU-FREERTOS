@@ -110,7 +110,7 @@ void JudgeServerDataArrived(void);
 
 int Hydrology_ProcessGPRSReceieve();
 
-time_t GSM_AT_QueryTime(void);
+rtc_time_t GSM_AT_QueryTime(void);
 
 /* 以下接口都是服务于上面的接口的，上层应用应该调用上面的接口 */
 void GPRS_PrepareForSend();

@@ -3,7 +3,8 @@
 # git注意事项
 需要忽略的目录:Debug_Large_Data_Model/ ， 如果不忽略，git的时候会产生冲突，并且冲突无法解决
 
-
+# 代码维护注意事项
+1. 使用printf/err_printf/debug_printf时，请在末尾加两个换行(\n\n)，以方便查看串口打印消息
 
 
 

@@ -1,32 +1,3 @@
-//////////////////////////////////////////////////////
-//     �ļ���: rtc.c
-//   �ļ��汾: 1.0.0
-//   ����ʱ��: 09�� 11��30��
-//   ��������:
-//       ����: ����
-//       ��ע: ��
-//
-//////////////////////////////////////////////////////
-
-/*
- * author:  �����
- * time:    2019-08-28
- * changes:
- *          int  RTC_Open();
-	    char _RTC_Read_OneByte(char regAddr);
-	    void _RTC_Write_OneByte(char regAddr,char data);
-	    void _RTC_DisableWrite();
-	    void _RTC_EnableWrite();
-	    void _RTC_Go();
-	    int  _RTC_Check();
-	    void _RTC_WriteRAM(unsigned char index,const char data);
-	    char _RTC_ReadRAM(unsigned char index);
- * abandon:
-	    void _RTC_DisableWrite();
-	    void _RTC_EnableWrite();
-	    void _RTC_EnableCharge();
-	    void _RTC_DisableCharge();
- */
 
 #include "rtc.h"
 #include "Sampler.h"
@@ -37,44 +8,41 @@
 #include "msp430common.h"
 #include "rom.h"
 
-//�߼�����
-
 extern char g_pulse1_range[ 3 ];
 extern char g_pulse2_range[ 3 ];
 extern char g_pulse3_range[ 3 ];
 extern char g_pulse4_range[ 3 ];
 
-//ȫ�ֱ���  ������ʱ��
+//全局变量  开机的时间
 char g_rtc_nowTime[ 5 ] = { 0, 0, 0, 0, 0 };
-char rtc_nowTime[ 6 ] = { 0, 0, 0, 0, 0 , 0 };
+char rtc_nowTime[ 6 ]   = { 0, 0, 0, 0, 0, 0 };
 
-//  �ؼ����ݵı������.�ڴ�һ��,RTCһ��
-//  �ڴ��ʼ��ֵȫΪһ����Ȼ�����ֵ.
-//  1.д����ʱ,�����ڴ��RTC
-//  2.������ʱ,���ڴ� X,  ��RTCֵ Y
-//    ��X,Y����ȷ, X!=Y,����XΪ׼,���޸�Y.
-//    ��X,Y�Դ���,��������ΪĬ��ֵ
-//    ��XΪ����ֵ.Y��ȷ.����YΪ׼,���޸�X.
-//  3.RTC��ʼ����ʱ��,����XY��ϵ ����XY.
-//
+//  关键数据的保存策略.内存一份,RTC一份
+//  内存初始化值全为一个显然错误的值.
+//  1.写数据时,更新内存和RTC
+//  2.读数据时,读内存 X,  读RTC值 Y
+//    若X,Y皆正确, X!=Y,则以X为准,并修改Y.
+//    若X,Y皆错误,报错或设为默认值
+//    若X为错误值.Y正确.则以Y为准,并修改X.
+//  3.RTC初始化的时候,根据XY关系 更正XY.
 
 char s_RTC_lastTime[ 5 ]   = { 0x00, 0x00, 0x00, 0x00, 0x00 };
-char s_RTC_CheckTime[ 5 ]  = { 0x00, 0x00, 0x00, 0x00, 0x00 };  //��ʼ��Ϊ����ֵ
-char s_RTC_SaveTime[ 5 ]   = { 0x00, 0x00, 0x00, 0x00, 0x00 };  //��ʼ��Ϊ����ֵ
-char s_RTC_ReportTime[ 5 ] = { 0x00, 0x00, 0x00, 0x00, 0x00 };  //��ʼ��Ϊ����ֵ
-char s_RTC_StartIdx	= 240;  //��ʼ��Ϊ����ֵ  ��ΧΪ1~200
-char s_RTC_EndIdx	  = 240;  //��ʼ��Ϊ����ֵ    ��ΧΪ1~200
+char s_RTC_CheckTime[ 5 ]  = { 0x00, 0x00, 0x00, 0x00, 0x00 };  //初始化为错误值
+char s_RTC_SaveTime[ 5 ]   = { 0x00, 0x00, 0x00, 0x00, 0x00 };  //初始化为错误值
+char s_RTC_ReportTime[ 5 ] = { 0x00, 0x00, 0x00, 0x00, 0x00 };  //初始化为错误值
+char s_RTC_StartIdx	= 240;  //初始化为错误值  范围为1~200
+char s_RTC_EndIdx	  = 240;  //初始化为错误值    范围为1~200
 
-//���������豸����(��Ӧ ��������豸 �����ֵ)
+//储存脉冲设备度数(对应 脉冲计数设备 上面的值)
 char s_RTC_PulseBytes[ 4 ][ 3 ] = {
 	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
-};  //��һ�ֽ�ΪFF����Ϊ�Ǵ���
-//��Ϊ����������ô��, �������֧��7��'9'�Ķ���
+};  //第一字节为FF被认为是错误
+//因为不可能有那么大, 程序最高支持7个'9'的度数
 
+///
+//  RTC_RetrieveIndex   :    0表示未发送   1表示已发送
 //
-//  RTC_RetrieveIndex   :    0��ʾδ����   1��ʾ�ѷ���
-//
-//   ����         ��һ�����               �ڶ������                ���������      ���������
+//   索引         第一种情况               第二种情况                第三种情况      第四种情况
 //    1              0                         1                          0               1
 //    2              0                         1                          0               1
 //    3              0                         1                          0               1
@@ -85,31 +53,30 @@ char s_RTC_PulseBytes[ 4 ][ 3 ] = {
 //   MAX-1           0                         1                          0               1
 //   MAX             0                         1                          0               1
 //
-//  �������Ϳյ��ж�,���� 1�Ƚ� _startIdx �� _endIdx , 2
-//  ���ʱ�ж�_startIdxΪ�ѷ��ͻ���δ����
+//  对于满和空的判断,我们 1比较 _startIdx 和 _endIdx , 2 相等时判断_startIdx为已发送还是未发送
 //
 
 //
-//   RTC���������жϷ����б�����, ���Ҫ���� �жϹر� ���б���
+//   RTC函数会在中断服务中被调用, 因此要进行 中断关闭 进行保护
 //
 
 //
-//   �ú������ܺܺ�Ӧ�Է���������������δ���͵�����. �����õ�ʵ��.
+//   该函数不能很好应对发送数据中隐藏着未发送的数据. 待更好的实现.
 //
 
 int RTC_ReadStartIdx(char* dest) {
 	DownInt();
-	if (s_RTC_StartIdx <= DATA_MAX_IDX && s_RTC_StartIdx >= DATA_MIN_IDX) {  //�ڴ�ֵ��ȷ
+	if (s_RTC_StartIdx <= DATA_MAX_IDX && s_RTC_StartIdx >= DATA_MIN_IDX) {  //内存值正确
 		*dest = s_RTC_StartIdx;
-		//д��RTC,��֤RTC���ֵ����ȷ
+		//写入RTC,保证RTC里的值的正确
 		_RTC_WriteRAM(STARTIDX_ADDR, s_RTC_StartIdx);
 		UpInt();
 		return 0;
 	}
-	else {  //�ڴ�ֵ����
+	else {  //内存值错误
 		*dest = _RTC_ReadRAM(STARTIDX_ADDR);
-		if ((*dest) <= DATA_MAX_IDX && (*dest) >= DATA_MIN_IDX) {  // RTCֵ������ȷ
-			s_RTC_StartIdx = (*dest);			   //�����ڴ�ֵ
+		if ((*dest) <= DATA_MAX_IDX && (*dest) >= DATA_MIN_IDX) {  // RTC值可能正确
+			s_RTC_StartIdx = (*dest);			   //更新内存值
 			UpInt();
 			return 0;
 		}
@@ -122,12 +89,13 @@ int RTC_ReadStartIdx(char* dest) {
 
 int RTC_SetStartIdx(char src) {
 	DownInt();
-	s_RTC_StartIdx = src;		    //�����ڴ�
-	_RTC_WriteRAM(STARTIDX_ADDR, src);  //����RTC
+	s_RTC_StartIdx = src;	//更新内存
+	_RTC_WriteRAM(STARTIDX_ADDR, src);  //更新RTC
 	UpInt();
 	return 0;
 }
 
+///////////////
 int RTC_ReadEndIdx(char* dest) {
 	DownInt();
 	if (s_RTC_EndIdx <= DATA_MAX_IDX && s_RTC_EndIdx >= DATA_MIN_IDX) {  //�ڴ�ֵ��ȷ
@@ -842,37 +810,6 @@ int RTC_SetTimeBytes5(const char* src) {
 	return ret;
 }
 void RTC_ReadTimeBytes6(char* dest) {
-#if 0
-
-    char year;
-    char day;
-    char month;
-    char date;
-    char hour;
-    char minute;
-    char second;
-    char control;
-    DownInt();
-    _RTC_ReadTime(&second,&minute,&hour,&date,&month,&day,&year,&control); 
-    UpInt();
-    dest[0]=year/10+'0';
-    dest[1]=year%10+'0';
-
-    dest[2]=month/10+'0';
-    dest[3]=month%10+'0';
-
-    dest[4]=date/10+'0';
-    dest[5]=date%10+'0';
-
-    dest[6]=hour/10+'0';
-    dest[7]=hour%10+'0';
-
-    dest[8]=minute/10+'0';
-    dest[9]=minute%10+'0'; 
-
-    dest[10]=second/10+'0';
-    dest[11]=second%10+'0';
-#else
 	char control;
 	char day;
 	DownInt();
@@ -881,7 +818,6 @@ void RTC_ReadTimeBytes6(char* dest) {
 		      &(dest[ 0 ]), &control);
 
 	UpInt();
-#endif
 }
 int RTC_SetTimeBytes6(const char* src) {
 	DownInt();
@@ -889,6 +825,7 @@ int RTC_SetTimeBytes6(const char* src) {
 	UpInt();
 	return ret;
 }
+
 
 //��������õ�ʱ�䣺�롢�֡�ʱ���ա��¡����ڡ��ꡢ������
 int _RTC_SetTime(const char second, const char minute, const char hour, const char date,
@@ -1472,4 +1409,14 @@ u8 IIC_Read_Byte(unsigned char ack) {
 	else
 		IIC_Ack();  //����ACK
 	return receive;
+}
+
+
+int check_if_rtc_normal(void) {
+	if (_RTC_Check() == 0) {
+		return TRUE;
+	}
+	else {
+		return FALSE;
+	}
 }

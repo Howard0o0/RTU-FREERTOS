@@ -1,12 +1,3 @@
-//////////////////////////////////////////////////////
-//     �ļ���: rtc.h
-//   �ļ��汾: 1.0.0
-//   ����ʱ��: 09��11��30��
-//   ��������:  
-//       ����: ����
-//       ��ע: ��
-//
-//////////////////////////////////////////////////////
 
 #ifndef __RTC_h
 #define __RTC_h
@@ -16,7 +7,7 @@
  
 #define RTC_RST   BIT4   //P44
  
-//   RAM ����ȫ
+//   RAM 不安全
 //   0  1  2  3  4  CheckTime
 //   5  6  7  8  9  SaveTime
 //  10 11 12 13 14  ReportTime
@@ -26,7 +17,7 @@
 //    20 21 22      PULSE2_BYTES
 //    23 24 25      PULSE3_BYTES
 //    26 27 28      PULSE4_BYTES
-//    
+//   
 
 #define CHECKTIME_ADDR 0
 #define SAVETIME_ADDR 5
@@ -61,50 +52,50 @@ extern char s_RTC_SaveTime[5];
 extern char s_RTC_ReportTime[5];
 extern char s_RTC_StartIdx;
 extern char s_RTC_EndIdx;
-//���ݱ�ǩ
+//数据标签
 int RTC_RetrieveIndex();
 int RTC_ReadStartIdx(char * _dest); 
 int RTC_SetStartIdx(const char _src);
 int RTC_ReadEndIdx(char * _dest);
 int RTC_SetEndIdx(const char _src);
 
-//���ʱ��
+//检查时间
 int RTC_ReadCheckTimeBytes(unsigned char index, char *dest);
 int RTC_ReadCheckTimeStr5_A(char * _dest); 
 int RTC_SetCheckTimeBytes(unsigned char index, const char * _src);
-//����ʱ��
+//保存时间
 int RTC_ReadSaveTimeBytes(unsigned char index, char *dest);
 int RTC_ReadSaveTimeStr5_A(char * _dest); 
 int RTC_SetSaveTimeBytes(unsigned char index, const char * _src);
-//����ʱ��
+//报告时间
 int RTC_ReadReportTimeBytes(unsigned char index, char *dest);
 int RTC_ReadReportTimeStr5_A(char * _dest); 
 int RTC_SetReportTimeBytes(unsigned char index, const char * _src); 
 
-//����1
+//脉冲1
 int RTC_ReadPulseBytes(int _index, char * _dest);
 int RTC_SetPulseBytes(int _index, char * _src);
 int RTC_IncPulseBytes(int _index);
 
 int RTC_RetrievePulseBytes();
 //
-//  �߼�����
+//  高级函数
 // 
 ////////////////////////////////////
-//    ����: �ж�ʱ���Ƿ��Ѿ�����
-//    ����: char *   ��ʽΪ������ʱ�ֵ�char[5]����
-//  ����ֵ: 1 :  Ϊ��ȥʱ��
-//          0 :  Ϊ����ʱ��
-//         -1 :  Ϊδ��ʱ��  
-//    ��ע: >>  ��ȷ����   
+//    功能: 判断时间是否已经到达
+//    参数: char *   格式为年月日时分的char[5]缓存
+//  返回值: 1 :  为过去时间
+//          0 :  为现在时间
+//         -1 :  为未来时间  
+//    附注: >>  精确到分   
 ////////////////////////////////////
 int  RTC_IsPassed(char * time);
 int  RTC_IsBadTime(char * time, int RTCTime);
 ////////////////////////////////////
-//    ����: ������ǰʱ�䴮
-//    ����: char * д�뻺��
-//  ����ֵ: ��
-//    ��ע: >>   д���ʽ0903062300
+//    功能: 读出当前时间串
+//    参数: char * 写入缓存
+//  返回值: 无
+//    附注: >>   写入格式0903062300
 ////////////////////////////////////
 void RTC_ReadTimeStr5_A(char * dest);
 void RTC_ReadTimeStr5_B(char * dest);
@@ -119,190 +110,64 @@ void RTC_SetTimeStr6_B(const char *src);
  void RTC_SetTimeStr6_C(const char *src);
 
 ////////////////////////////////////
-//    ����: ������ǰʱ��ֵ
-//    ����: char * д�뻺��,char[5]
-//  ����ֵ: ��
-//    ��ע: >> ����д��������ʱ�ֵ���ֵ
-//          >>��:[0]=9 [1]=3 [2]=6 [3]=23 [4]=0
+//    功能: 读出当前时间值
+//    参数: char * 写入缓存,char[5]
+//  返回值: 无
+//    附注: >> 依次写入年月日时分的数值
+//          >>如:[0]=9 [1]=3 [2]=6 [3]=23 [4]=0
 ////////////////////////////////////
 void RTC_ReadTimeBytes5(char *dest); 
 void RTC_ReadTimeBytes6(char *dest);  
 
 ////////////////////////////////////
-//    ����: ���õ�ǰʱ��
-//    ����: char * ʱ����ֵ����
-//  ����ֵ: 0 : �ɹ�
-//         -1 : ��������
-//    ��ע: >> ���ζ�ȡ������ʱ�ֵ���ֵ
-//          >>��:[0]=9 [1]=3 [2]=6 [3]=23 [4]=0
-//          >> ����δʵ�� !!!
+//    功能: 设置当前时间
+//    参数: char * 时间数值缓存
+//  返回值: 0 : 成功
+//         -1 : 参数错误
+//    附注: >> 依次读取年月日时分的数值
+//          >>如:[0]=9 [1]=3 [2]=6 [3]=23 [4]=0
+//          >> 代码未实现 !!!
 ////////////////////////////////////
 int RTC_SetTimeBytes5(const char *dest);
 int RTC_SetTimeBytes6(const char *dest);
-////////////////////////////////////
-//    ����: ����Сʱ
-//    ����: char  Сʱ��ֵ
-//  ����ֵ: ��
-//    ��ע: >>
-////////////////////////////////////
-//void _RTC_SetHour(const unsigned  char hour);
+
+
+int check_if_rtc_normal(void);
+
 
 ////////////////////////////////////
-//    ����: ���÷���
-//    ����: char  ������ֵ
-//  ����ֵ: ��
-//    ��ע: >>
-////////////////////////////////////
-//void _RTC_SetMinute(const unsigned  char minute);
-
-////////////////////////////////////
-//    ����: ��������
-//    ����: char  ������ֵ
-//  ����ֵ: ��
-//    ��ע: >>
-////////////////////////////////////
-//void _RTC_SetSecond(const unsigned  char second);
-
-////////////////////////////////////
-//    ����: ��������
-//    ����: char  ������ֵ
-//  ����ֵ: ��
-//    ��ע: >>
-////////////////////////////////////
-//void _RTC_SetDay(const unsigned char Day);
-
-////////////////////////////////////
-//    ����: ��������
-//    ����: char  ������ֵ
-//  ����ֵ: ��
-//    ��ע: >>
-////////////////////////////////////
-//void _RTC_SetDate(const  unsigned char Date);
-
-////////////////////////////////////
-//    ����: �����·�
-//    ����: char  �·���ֵ
-//  ����ֵ: ��
-//    ��ע: >>
-////////////////////////////////////
-//void _RTC_SetMonth(const unsigned  char month);
-
-////////////////////////////////////
-//    ����: �������
-//    ����: char  �����ֵ
-//  ����ֵ: ��
-//    ��ע: >>
-////////////////////////////////////
-//void _RTC_SetYear(const unsigned  char year);
-
-////////////////////////////////////
-//    ����: һ��������ʱ��
-//    ����: char ���εĸ���ʱ��Ĵ�����ֵ
-//  ����ֵ: 0 : �ɹ�
-//         -1 : ��������
-//    ��ע: >>
+//    功能: 一次性设置时间
+//    参数: char 依次的各个时间寄存器的值
+//  返回值: 0 : 成功
+//         -1 : 参数错误
+//    附注: >>
 ////////////////////////////////////
 int _RTC_SetTime(const char second,const char minute,
                  const char hour,const char date,const char month,
                  const char day,const char year,const char control);
 
-////////////////////////////////////
-//    ����: һ��������ʱ��
-//    ����: char* ���ΰ�������ʱ��Ĵ���ֵ������
-//  ����ֵ: 0 : �ɹ�
-//         -1 : ��������
-//    ��ע: >>
-////////////////////////////////////
-//int _RTC_SetRTCTimeBytes(const char * src);
 
 ////////////////////////////////////
-//    ����: ��ȡСʱ
-//    ����: ��
-//  ����ֵ: Сʱֵ
-//    ��ע: >>
-////////////////////////////////////
-//char _RTC_ReadHour();
-
-////////////////////////////////////
-//    ����: ��ȡ����
-//    ����: ��
-//  ����ֵ: ����ֵ
-//    ��ע: >>
-////////////////////////////////////
-//char _RTC_ReadMinute();
-
-////////////////////////////////////
-//    ����: ��ȡ����
-//    ����: ��
-//  ����ֵ: ����ֵ
-//    ��ע: >>
+//    功能: 读取秒钟
+//    参数: 无
+//  返回值: 秒钟值
+//    附注: >>
 ////////////////////////////////////
  char _RTC_ReadSecond();
 
-////////////////////////////////////
-//    ����: ��ȡ����
-//    ����: ��
-//  ����ֵ: ����ֵ
-//    ��ע: >>
-////////////////////////////////////
-//char _RTC_ReadDay();
 
-////////////////////////////////////
-//    ����: ��ȡ����
-//    ����: ��
-//  ����ֵ: ����ֵ
-//    ��ע: >>
-////////////////////////////////////
-//char _RTC_ReadDate();
-
-
-////////////////////////////////////
-//    ����: ��ȡ�·�
-//    ����: ��
-//  ����ֵ: �·�ֵ
-//    ��ע: >>
-////////////////////////////////////
-//char _RTC_ReadMonth();
-
-////////////////////////////////////
-//    ����: ��ȡ���
-//    ����: ��
-//  ����ֵ: ���ֵ
-//    ��ע: >>
-////////////////////////////////////
-//char _RTC_ReadYear();
-
-////////////////////////////////////
-//    ����: һ���Զ�ȡʱ��
-//    ����: ����ʢװ�����Ĵ���ֵ�Ļ���
-//  ����ֵ: ��
-//    ��ע: >>
-////////////////////////////////////
 void _RTC_ReadTime(char *second,char *minute,
                  char *hour,char *date,char *month,
                  char *day, char *year,char *control);
 
-////////////////////////////////////
-//    ����: һ���Զ�ȡʱ��
-//    ����: ����ʢװ�����Ĵ���ֵ�����黺��
-//  ����ֵ: ��
-//    ��ע: >>
-////////////////////////////////////
-//void  _RTC_ReadRTCTimeBytes(char * dest);
-
-
-/*
- *  
- */
-void _RTC_Init(void);
 
 ////////////////////////////////////
-//    ����: ����RTC�ĵײ㺯��Ⱥ
-//    ����: *****
-//  ����ֵ: *****
-//    ��ע: >> �����DS1302оƬ�ֲ�
+//    功能: 操作RTC的底层函数群
+//    参数: *****
+//  返回值: *****
+//    附注: >> 具体见DS1302芯片手册
 ////////////////////////////////////
-//�м�����
+//中级函数
 int  _RTC_SendByte(char data);
 char _RTC_RecvByte(void);
 char _RTC_Read_OneByte(char regAddr);
@@ -314,8 +179,7 @@ void _RTC_EnableWrite();
 void _RTC_Go();
 void _RTC_Pause();
 int  _RTC_Check();
-// void _RTC_EnableCharge();
-// void _RTC_DisableCharge(); 
+
 //RAM
 void _RTC_WriteRAM(unsigned char index,const char data);
 char _RTC_ReadRAM(unsigned char index); 
@@ -326,9 +190,9 @@ char _RTC_ReadRAM(unsigned char index);
 #define Delay_us(us)    __delay_cycles(CPU_CLOCK/1000000*(us))
 #define u8 unsigned char
 
-//IO��������
-#define SDA_IN()  {P9DIR &= ~(1<<1);}	//P9.1����ģʽ
-#define SDA_OUT() {P9DIR |= (1<<1);} //P9.1���ģʽ
+//IO方向设置
+#define SDA_IN()  {P9DIR &= ~(1<<1);}	//P9.1输入模式
+#define SDA_OUT() {P9DIR |= (1<<1);} //P9.1输出模式
 
 #define RTC_SCLK  BIT2  // p9.2
 #define RTC_IO    BIT1  // p9.1
@@ -344,18 +208,18 @@ char _RTC_ReadRAM(unsigned char index);
 typedef enum{
   RegAddr_Sec,    // Seconds              00-59
   RegAddr_Min,    // Minutes              00-59
-  RegAddr_Hour,   // Hours                1�C12 + AM/PM 00�C23
+  RegAddr_Hour,   // Hours                1–12 + AM/PM 00–23
   RegAddr_Day,    // Day                  1 - 7
   RegAddr_Date,   // Data                 01-31
-  RegAddr_CMon,   // Century and month    Century + 01�C12
+  RegAddr_CMon,   // Century and month    Century + 01–12
   RegAddr_Year,   // Year                 00 - 99
   RegAddr_Sec_A1, // Alarm 1 Seconds      00-59
   RegAddr_Min_A1, // Alarm 1 Minutes      00-59
-  RegAddr_Hour_A1,// Alarm 1 Hours        1�C12 + AM/PM 00�C23
-  RegAddr_Da_A1,  // Alarm 1 Day/Date     1 - 7 / 1 �C 31
+  RegAddr_Hour_A1,// Alarm 1 Hours        1–12 + AM/PM 00–23
+  RegAddr_Da_A1,  // Alarm 1 Day/Date     1 - 7 / 1 – 31
   RegAddr_Min_A2, // Alarm 2 Minutes      00-59
-  RegAddr_Hour_A2,// Alarm 2 Hours        1�C12 + AM/PM 00�C23
-  RegAddr_Da_A2,  // Alarm 2 Day/Date     1 - 7 / 1 �C 31
+  RegAddr_Hour_A2,// Alarm 2 Hours        1–12 + AM/PM 00–23
+  RegAddr_Da_A2,  // Alarm 2 Day/Date     1 - 7 / 1 – 31
   RegAddr_Control,// Control
   RegAddr_CtlStat,// Control/Status
   RegAddr_AgOfset,// Aging offset
@@ -364,10 +228,10 @@ typedef enum{
 }DS3231REG_ADDR;
 
  
-//��������
+//辅助函数
 char _BCDtoDEC(char bcd);
 char _DECtoBCD(char dec); 
-//�ͼ�����
+//低级函数
 int  RTC_Open(); 
 int  RTC_Close();
 void _RTC_Set_RST_low();
@@ -380,20 +244,20 @@ void _RTC_Set_IO_OUT();
 void _RTC_Set_IO_IN(); 
 void _RTC_delay();
 
-//IIC���в�������
+//IIC所有操作函数
 void IIC_SCL_HIGH(void);
 void IIC_SCL_LOW(void);
 void IIC_SDA_HIGH(void);
 void IIC_SDA_LOW(void);
 int READ_SDA(void);
-void IIC_Init(void);                //��ʼ��IIC��IO��				 
-void IIC_Start(void);				//����IIC��ʼ�ź�
-void IIC_Stop(void);	  			//����IICֹͣ�ź�
-void IIC_Send_Byte(u8 txd);			//IIC����һ���ֽ�
-u8 IIC_Read_Byte(unsigned char ack);//IIC��ȡһ���ֽ�
-u8 IIC_Wait_Ack(void); 				//IIC�ȴ�ACK�ź�
-void IIC_Ack(void);					//IIC����ACK�ź�
-void IIC_NAck(void);				//IIC������ACK�ź� 
+void IIC_Init(void);                //初始化IIC的IO口				 
+void IIC_Start(void);				//发送IIC开始信号
+void IIC_Stop(void);	  			//发送IIC停止信号
+void IIC_Send_Byte(u8 txd);			//IIC发送一个字节
+u8 IIC_Read_Byte(unsigned char ack);//IIC读取一个字节
+u8 IIC_Wait_Ack(void); 				//IIC等待ACK信号
+void IIC_Ack(void);					//IIC发送ACK信号
+void IIC_NAck(void);				//IIC不发送ACK信号 
 
   
 #endif

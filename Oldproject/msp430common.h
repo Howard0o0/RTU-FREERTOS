@@ -7,9 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
-
 #define TRUE                               0
-#define FALSE                              1
+#define FALSE                              -1
 //#include <msp430x24x.h>
 #endif

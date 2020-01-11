@@ -1320,9 +1320,9 @@ static char* bc95_receive()
         return recv_data;
 }
 
-static time_t bc95_AT_gettime()
+static rtc_time_t bc95_AT_gettime()
 {
-        time_t bc95_time;
+        rtc_time_t bc95_time;
         bc95_time.year = 0;
         BC95_QueryTime(&bc95_time.year, &bc95_time.month, &bc95_time.date, &bc95_time.hour,
                         &bc95_time.min, &bc95_time.sec);

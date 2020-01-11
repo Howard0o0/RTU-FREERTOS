@@ -52,28 +52,39 @@
 #include "communication_opr.h"
 #include "gprs.h"
 #include "memoryleakcheck.h"
-
+#include "boot.h"
 
 int IsDebug = 0;
 // extern SemaphoreHandle_t xSemaphore_BLE;
 
 /*
- * Every init coperation here.
+ * halboard necessary init coperation here.
  */
-static void prvSetupHardware(void);
-
-static void install_io_devs_driver(void);
-
-static void bios_check(void);
-
-void app_main(void* pvParameters);
+static void setup_board_hardware(void);
 
 
+/*
+ * !!!   应用程序的入口在这里    !!!!!
+ */
+void app_main(void* pvParameters) {
+
+	install_io_devs_driver();
+
+	bios_check();
+
+	hydrology_init();
+
+	create_hydrology_tasks();
+
+	vTaskDelete(NULL);
+}
+/*-----------------------------------------------------------*/
 
 void main(void) {
+	setup_board_hardware();
 
-	xTaskCreate(app_main, "app_main", configMINIMAL_STACK_SIZE * 4, NULL,
-		    tskIDLE_PRIORITY + 2, NULL);
+	xTaskCreate(app_main, "app_main", configMINIMAL_STACK_SIZE * 4, NULL, tskIDLE_PRIORITY + 2,
+		    NULL);
 
 	vTaskStartScheduler();
 
@@ -87,34 +98,11 @@ void main(void) {
 }
 /*-----------------------------------------------------------*/
 
-
-void app_main(void* pvParameters){
-	prvSetupHardware();
-
-	install_io_devs_driver();
-	bios_check();
-
-	hydrology_init();
-
-	create_hydrology_tasks();
-	
-	
-	vTaskDelete(NULL);
-}
-/*-----------------------------------------------------------*/
-
-
 void vApplicationTickHook(void) {
 }
 /*-----------------------------------------------------------*/
 
-static void prvSetupHardware(void) {
-	// halBoardInit();
-
-	BleDriverInstall();
-	UART1_Open(1);
-
-	WDT_A_hold(WDT_A_BASE);
+static void setup_board_hardware(void) {
 
 	Restart_Init();
 
@@ -122,14 +110,15 @@ static void prvSetupHardware(void) {
 
 	TraceOpen();
 
-	TraceMsg("Device Open !", 1);
-
 	Main_Init();
+
+	WDT_A_hold(WDT_A_BASE);
+
+	printf("device boot on ! \r\n");
 
 	Sampler_Open();
 }
 /*-----------------------------------------------------------*/
-
 
 /*-----------------------------------------------------------*/
 
@@ -235,34 +224,13 @@ void Restart_Init() {
 
 	Console_Open();
 
-	/*wyq  ����485ȥ�������Ĳ���*/
-	//     P3DIR &= ~BIT2;
-	//    if(P3IN & BIT2)
-	//    {
-	//        IsDebug = 1;
-	//    }
-	//    else
-	//    {
-	//        IsDebug = 0;
-	//    }
 
 	return;
 }
 
-static void install_io_devs_driver(void) {
-	install_communication_module_driver();
-	get_communication_dev()->power_on();
-}
 
-static void bios_check(void) {
-	communication_module_t* comm_module = get_communication_dev();
-	if (comm_module->check_if_module_is_normal() == OK) {
-		printf("[OK] %s module\r\n", comm_module->name);
-	}
-	else {
-		printf("[ERROR] %s module not respond\r\n", comm_module->name);
-	}
-}
+
+
 
 void Main_Init() {  //ʱ��ʹ��8M
 	//���ж�,�Է�֮ǰ�����д������жϱ��ر�

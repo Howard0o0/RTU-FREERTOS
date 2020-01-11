@@ -24,7 +24,7 @@ typedef struct time_struct {
 	uint8_t hour;
 	uint8_t min;
 	uint8_t sec;
-} time_t;
+} rtc_time_t;
 
 enum return_code { ERROR = -1, OK = 0 };
 
@@ -40,7 +40,7 @@ typedef struct communication_module_t {
 	int (*check_if_module_is_normal)(void);	//0成功 其他失败
 	int (*send_msg)(char* pSend, int sendDataLen, int isLastPacket, int center);	//0成功 其他失败
 	char* (*rcv_msg)(void);	//非NULL成功 NULL失败
-	time_t (*get_real_time)(void); //若获取时间失败，则将time_t.year置零
+	rtc_time_t (*get_real_time)(void); //若获取时间失败，则将time_t.year置零
 
 } communication_module_t;
 

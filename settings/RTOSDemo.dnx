@@ -120,6 +120,9 @@
         <GraphEnabled>0</GraphEnabled>
         <ShowTimeLog>1</ShowTimeLog>
     </DataSample>
+    <Disassembly>
+        <MixedMode>1</MixedMode>
+    </Disassembly>
     <Breakpoints>
         <Count>0</Count>
     </Breakpoints>
@@ -158,7 +161,4 @@
         <Count>0</Count>
         <SuppressDialog>0</SuppressDialog>
     </Aliases>
-    <Disassembly>
-        <MixedMode>1</MixedMode>
-    </Disassembly>
 </settings>
