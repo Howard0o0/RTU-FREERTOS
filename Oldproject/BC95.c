@@ -36,13 +36,14 @@
 #define BC95_REPEAT_TIMES 10
 #define BC95_RETRY_TIMES 3
 
+#define Cloud_IP "221.229.214.202"
+#define Cloud_IP_Port "5683"
+
 int  g_autoconfigState = 0;  //扰码功能
 int  g_scrambState     = 0;  ////自动模式
 int  g_cfunstate       = 0;  //全功能模式
 char g_BC95RcvBuf[ 400 ];
 
-static char  BC95_centerIP[ 16 ];   
-static char  BC95_centerPort[ 7 ];
 
 int BC95_Char_to_Hex(char chr)
 {
@@ -867,7 +868,7 @@ BC95State BC95_ConfigProcess()  //如果查询失败，需要处理
 	retrytimes = 0;
 	while (retrytimes < BC95_REPEAT_TIMES)
 	{
-		state = BC95_ConnectToIotCloud("221.229.214.202", "5683");
+		state = BC95_ConnectToIotCloud(Cloud_IP, Cloud_IP_Port);
 		if (state == BC95StateOK)
 		{
 			break;
@@ -933,12 +934,13 @@ BC95State BC95_ConnectToIotCloud(char* serverIp, char* serverPort) {
  *BC95模块先把数据上传到云平台（可能是华为云或者电信云等），再由云平台转到我们自己的服务器上
  *这里是上传可变长度的数据，因此需要根据云平台的编解码插件来增加一些头，这里在发送的数据中需要加一个4个字节的16位无符号整型作为上传数据包长度
  */
-char up_data_len_str[ BC95_SOCKET_UP_DATA_LENGTH_LINK ] = { 0 };
-//上传数据的关联长度,由于4个16位无符号整型转化位字符串是4个字符，是2个字节
 
-char _data[ UART1_MAXBUFFLEN ]			  = { 0 };
-char send_data_ascii_mode[ BC95_SOCKET_DATA_LEN ] = { 0 };
-char socket_data[ BC95_SOCKET_DATA_LEN ]	  = { 0 };
+// char up_data_len_str[ BC95_SOCKET_UP_DATA_LENGTH_LINK ] = { 0 };
+// //上传数据的关联长度,由于4个16位无符号整型转化位字符串是4个字符，是2个字节
+
+// char _data[ UART1_MAXBUFFLEN ]			  = { 0 };
+// char send_data_ascii_mode[ BC95_SOCKET_DATA_LEN ] = { 0 };
+// char socket_data[ BC95_SOCKET_DATA_LEN ]	  = { 0 };
 
 BC95State BC95_SendSocketData(char* send_data, int send_data_len) {
 	int i	  = 0;
@@ -946,6 +948,17 @@ BC95State BC95_SendSocketData(char* send_data, int send_data_len) {
 	int data_len   = 0;
 	int retrytimes = 0;
 	int _dataLen   = 0;
+
+        char * up_data_len_str = (char *)mypvPortMalloc(BC95_SOCKET_UP_DATA_LENGTH_LINK * sizeof(char));
+        char * _data = (char *)mypvPortMalloc(UART1_MAXBUFFLEN * sizeof(char));
+        char * send_data_ascii_mode = (char *)mypvPortMalloc(BC95_SOCKET_DATA_LEN * sizeof(char));
+        char * socket_data = (char *)mypvPortMalloc(BC95_SOCKET_DATA_LEN * sizeof(char));
+        memset(up_data_len_str,0,BC95_SOCKET_UP_DATA_LENGTH_LINK);
+        memset(_data,0,UART1_MAXBUFFLEN);
+        memset(send_data_ascii_mode,0,BC95_SOCKET_DATA_LEN);
+        memset(socket_data,0,BC95_SOCKET_DATA_LEN);
+
+
 
 	//将上传数据的长度转化为字符串形式
 	BC95_UintToStr4(send_data_len, up_data_len_str);
@@ -990,6 +1003,15 @@ BC95State BC95_SendSocketData(char* send_data, int send_data_len) {
 
 			if (strstr(_data, "OK"))  //发送数据成功
 			{
+                                myvPortFree(up_data_len_str);
+                                up_data_len_str = NULL;
+                                myvPortFree(_data);
+                                _data = NULL;
+                                myvPortFree(send_data_ascii_mode);
+                                send_data_ascii_mode = NULL;
+                                myvPortFree(socket_data);
+                                socket_data = NULL;
+
 				return BC95StateOK;
 			}
 		}
@@ -999,6 +1021,15 @@ BC95State BC95_SendSocketData(char* send_data, int send_data_len) {
 	if (retrytimes == BC95_REPEAT_TIMES) {
 		Console_WriteStringln("BC95 send data falied!");
 	}
+
+        myvPortFree(up_data_len_str);
+        up_data_len_str = NULL;
+        myvPortFree(_data);
+        _data = NULL;
+        myvPortFree(send_data_ascii_mode);
+        send_data_ascii_mode = NULL;
+        myvPortFree(socket_data);
+        socket_data = NULL;
 
 	return BC95ErrorSEND;
 }
@@ -1070,79 +1101,79 @@ void BC95_RecvDataFromCloud(char* recv_data, int* recv_data_len) {
  *BC95模块先把数据上传到云平台（可能是华为云或者电信云等），再由云平台转到我们自己的服务器上
  *这里是上传可变长度的数据，因此需要根据云平台的编解码插件来增加一些头，这里在发送的数据中需要加一个4个字节的16位无符号整型作为上传数据包长度
  */
-BC95State BC95_SendAndRecvData(char* send_data, int send_data_len, char* recv_data,
-			       int* recv_data_len) {
-	int i	  = 0;
-	int j	  = 0;
-	int data_len   = 0;
-	int retrytimes = 0;
-	int _dataLen   = 0;
+// BC95State BC95_SendAndRecvData(char* send_data, int send_data_len, char* recv_data,
+// 			       int* recv_data_len) {
+// 	int i	  = 0;
+// 	int j	  = 0;
+// 	int data_len   = 0;
+// 	int retrytimes = 0;
+// 	int _dataLen   = 0;
 
-	char up_data_len_str[ BC95_SOCKET_UP_DATA_LENGTH_LINK ] = { 0 };
-	//上传数据的关联长度,由于4个16位无符号整型转化位字符串是4个字符，是2个字节
-	char _data[ UART1_MAXBUFFLEN ]			  = { 0 };
-	char send_data_ascii_mode[ BC95_SOCKET_DATA_LEN ] = { 0 };
-	char socket_data[ BC95_SOCKET_DATA_LEN ]	  = { 0 };
+// 	char up_data_len_str[ BC95_SOCKET_UP_DATA_LENGTH_LINK ] = { 0 };
+// 	//上传数据的关联长度,由于4个16位无符号整型转化位字符串是4个字符，是2个字节
+// 	char _data[ UART1_MAXBUFFLEN ]			  = { 0 };
+// 	char send_data_ascii_mode[ BC95_SOCKET_DATA_LEN ] = { 0 };
+// 	char socket_data[ BC95_SOCKET_DATA_LEN ]	  = { 0 };
 
-	//将上传数据的长度转化为字符串形式
-	BC95_UintToStr4(send_data_len, up_data_len_str);
+// 	//将上传数据的长度转化为字符串形式
+// 	BC95_UintToStr4(send_data_len, up_data_len_str);
 
-	//将上传数据转化为ASCII字符串形式
-	Console_WriteStringln(send_data);
-	ASCII_to_AsciiStr(send_data, send_data_len, send_data_ascii_mode);  //转成ASCII字符串
+// 	//将上传数据转化为ASCII字符串形式
+// 	Console_WriteStringln(send_data);
+// 	ASCII_to_AsciiStr(send_data, send_data_len, send_data_ascii_mode);  //转成ASCII字符串
 
-	//组包
-	data_len = send_data_len + BC95_SOCKET_UP_DATA_LENGTH_LINK / 2;
-	sprintf(socket_data, "AT+NMGS=%d,", data_len);  //加入逗号之前的数据，包括逗号
+// 	//组包
+// 	data_len = send_data_len + BC95_SOCKET_UP_DATA_LENGTH_LINK / 2;
+// 	sprintf(socket_data, "AT+NMGS=%d,", data_len);  //加入逗号之前的数据，包括逗号
 
-	//加入数据关联长度的字符串
-	// data_len = send_data_len + BC95_SOCKET_UP_DATA_LENGTH_LINK+1;//加1跳过逗号
-	for (i = Utility_Strlen(socket_data), j = 0; j < BC95_SOCKET_UP_DATA_LENGTH_LINK; j++) {
-		socket_data[ i ] = up_data_len_str[ j ];
-		i++;
-	}
+// 	//加入数据关联长度的字符串
+// 	// data_len = send_data_len + BC95_SOCKET_UP_DATA_LENGTH_LINK+1;//加1跳过逗号
+// 	for (i = Utility_Strlen(socket_data), j = 0; j < BC95_SOCKET_UP_DATA_LENGTH_LINK; j++) {
+// 		socket_data[ i ] = up_data_len_str[ j ];
+// 		i++;
+// 	}
 
-	// i = Utility_Strlen(socket_data);//加入第二个逗号
-	// socket_data[i] = ',';
+// 	// i = Utility_Strlen(socket_data);//加入第二个逗号
+// 	// socket_data[i] = ',';
 
-	data_len = Utility_Strlen(socket_data) + Utility_Strlen(send_data_ascii_mode);
-	//加入上行数据ASCII字符串
-	for (i = Utility_Strlen(socket_data), j = 0; i < data_len; i++) {
-		socket_data[ i ] = send_data_ascii_mode[ j ];
-		j++;
-	}
+// 	data_len = Utility_Strlen(socket_data) + Utility_Strlen(send_data_ascii_mode);
+// 	//加入上行数据ASCII字符串
+// 	for (i = Utility_Strlen(socket_data), j = 0; i < data_len; i++) {
+// 		socket_data[ i ] = send_data_ascii_mode[ j ];
+// 		j++;
+// 	}
 
-	//发送
-	BC95_Send(socket_data);
+// 	//发送
+// 	BC95_Send(socket_data);
 
-	Console_WriteStringln("BC95 send data:");
+// 	Console_WriteStringln("BC95 send data:");
 
-	Console_WriteStringln(socket_data);
+// 	Console_WriteStringln(socket_data);
 
-	//接收数据
-	retrytimes = 0;
+// 	//接收数据
+// 	retrytimes = 0;
 
-	while (retrytimes < BC95_REPEAT_TIMES) {
-		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0)  //有数据
-		{
-			Console_WriteStringln(_data);
+// 	while (retrytimes < BC95_REPEAT_TIMES) {
+// 		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0)  //有数据
+// 		{
+// 			Console_WriteStringln(_data);
 
-			if (strstr(_data, "+NNMI:"))  //判断是否为接收到的数据
-			{
+// 			if (strstr(_data, "+NNMI:"))  //判断是否为接收到的数据
+// 			{
 
-				*recv_data_len = BC95_Extract_DownData(_data, _dataLen, recv_data);
-				return BC95StateOK;
-			}
-		}
-		retrytimes++;
-		System_Delayms(1000);
-	}
-	if (retrytimes == BC95_REPEAT_TIMES) {
-		Console_WriteStringln("BC95 send data falied!");
-	}
+// 				*recv_data_len = BC95_Extract_DownData(_data, _dataLen, recv_data);
+// 				return BC95StateOK;
+// 			}
+// 		}
+// 		retrytimes++;
+// 		System_Delayms(1000);
+// 	}
+// 	if (retrytimes == BC95_REPEAT_TIMES) {
+// 		Console_WriteStringln("BC95 send data falied!");
+// 	}
 
-	return BC95ErrorSEND;
-}
+// 	return BC95ErrorSEND;
+// }
 
 //解析接收的数据
 void BC95_AnalysisRecvSocketData(char* revc_data, int revc_data_len, char* down_Stream_data,
@@ -1175,39 +1206,7 @@ void BC95_AnalysisRecvSocketData(char* revc_data, int revc_data_len, char* down_
 	*down_Stream_data_len = down_Stream_data_ascii_len / 2;
 }
 
-void BC95_Unit_test() {
-	int   len				= 0;
-	char  msgLen				= 0xA;
-	char* msgData				= "hahamama12";
-	char  recv_data[ BC95_SOCKET_DATA_LEN ] = { 0 };
 
-	BC95_Open();
-        // BC95_query_cdp_server_setting();
-        // BC95_ConfigProcess();
-        // while(1){
-        //         BC95_ConnectToIotCloud("221.229.214.202", "5683");
-        //         BC95_query_cdp_server_setting();
-        // }
-
-	while (1) {
-		if (BC95_ConfigProcess() != BC95StateOK) {
-			printf("bc95 config error \r\n");
-		}
-		BC95_SendSocketData(msgData, Utility_Strlen(msgData));
-
-		Console_WriteStringln("BC95 send data:");
-
-		Console_WriteStringln(msgData);
-
-		// BC95_RecvSocketData(recv_data, &len);
-
-		// Console_WriteStringln("BC95 recv  down data:");
-
-		// Console_WriteStringln(recv_data);
-
-		System_Delayms(5000);
-	}
-}
 
 /* ret: NULL(fail)  otherwise(success) */
 char* BC95_Receive(void) {
@@ -1254,116 +1253,6 @@ void BC95_Test(void) {
 	}
 }
 
-void bc95_getipandipport(int center) 
-{
-	char centerip[ 6 ] = { 0, 0, 0, 0, 0, 0 };
-	int  ip[ 4 ]       = { 0, 0, 0, 0 };
-	char iplen[ 4 ]    = { 0, 0, 0, 0 };
-	char i, j;
-	char centerport[ 3 ] = { 0, 0, 0 };
-	char centerportlen   = 0;
-
-	char ipvalue[ 10 ];
-
-	memset(ipvalue, 0, sizeof(ipvalue));
-	Hydrology_ReadStoreInfo(center, ipvalue, HYDROLOGY_CENTER_IP_LEN);
-	memcpy(centerip, &ipvalue[ 1 ], 6);
-	memcpy(centerport, &ipvalue[ 7 ], 3);
-
-	//    Store_ReadHydrologyServerIP(centerip,center);
-	centerip[ 0 ] = _BCDtoDEC(centerip[ 0 ]);
-	centerip[ 1 ] = _BCDtoDEC(centerip[ 1 ]);
-	centerip[ 2 ] = _BCDtoDEC(centerip[ 2 ]);
-	centerip[ 3 ] = _BCDtoDEC(centerip[ 3 ]);
-	centerip[ 4 ] = _BCDtoDEC(centerip[ 4 ]);
-	centerip[ 5 ] = _BCDtoDEC(centerip[ 5 ]);
-
-	ip[ 0 ] = centerip[ 0 ] * 10 + centerip[ 1 ] / 10;
-	ip[ 1 ] = (centerip[ 1 ] % 10) * 100 + centerip[ 2 ];
-	ip[ 2 ] = centerip[ 3 ] * 10 + centerip[ 4 ] / 10;
-	ip[ 3 ] = (centerip[ 4 ] % 10) * 100 + centerip[ 5 ];
-
-	judgeintlen(ip, iplen, 4);
-
-	for (i = 0, j = 0; i < 4; i++) {
-		if (iplen[ i ] == 3) {
-			BC95_centerIP[ j ]     = ip[ i ] / 100 + '0';
-			BC95_centerIP[ j + 1 ] = ((ip[ i ] / 10) % 10) + '0';
-			BC95_centerIP[ j + 2 ] = ip[ i ] % 10 + '0';
-			BC95_centerIP[ j + 3 ] = '.';
-			j += 4;
-		}
-		else if (iplen[ i ] == 2) {
-			BC95_centerIP[ j ]     = ip[ i ] / 10 + '0';
-			BC95_centerIP[ j + 1 ] = ip[ i ] % 10 + '0';
-			BC95_centerIP[ j + 2 ] = '.';
-			j += 3;
-		}
-		else {
-			BC95_centerIP[ j ]     = ip[ i ] + '0';
-			BC95_centerIP[ j + 1 ] = '.';
-			j += 2;
-		}
-	}
-	BC95_centerIP[ j - 1 ] = '\0';
-	TraceMsg(BC95_centerIP, 1);
-
-	centerport[ 0 ] = _BCDtoDEC(centerport[ 0 ]);
-	centerport[ 1 ] = _BCDtoDEC(centerport[ 1 ]);
-	centerport[ 2 ] = _BCDtoDEC(centerport[ 2 ]);
-
-	centerportlen = judgeportlen(centerport);
-
-	switch (centerportlen) {
-	case 6: {
-		BC95_centerPort[ 0 ] = centerport[ 0 ] / 10 + '0';
-		BC95_centerPort[ 1 ] = centerport[ 0 ] % 10 + '0';
-		BC95_centerPort[ 2 ] = centerport[ 1 ] / 10 + '0';
-		BC95_centerPort[ 3 ] = centerport[ 1 ] % 10 + '0';
-		BC95_centerPort[ 4 ] = centerport[ 2 ] / 10 + '0';
-		BC95_centerPort[ 5 ] = centerport[ 2 ] % 10 + '0';
-		BC95_centerPort[ 6 ] = '\0';
-		break;
-	}
-	case 5: {
-		BC95_centerPort[ 0 ] = centerport[ 0 ] % 10 + '0';
-		BC95_centerPort[ 1 ] = centerport[ 1 ] / 10 + '0';
-		BC95_centerPort[ 2 ] = centerport[ 1 ] % 10 + '0';
-		BC95_centerPort[ 3 ] = centerport[ 2 ] / 10 + '0';
-		BC95_centerPort[ 4 ] = centerport[ 2 ] % 10 + '0';
-		BC95_centerPort[ 5 ] = '\0';
-		break;
-	}
-	case 4: {
-		BC95_centerPort[ 0 ] = centerport[ 1 ] / 10 + '0';
-		BC95_centerPort[ 1 ] = centerport[ 1 ] % 10 + '0';
-		BC95_centerPort[ 2 ] = centerport[ 2 ] / 10 + '0';
-		BC95_centerPort[ 3 ] = centerport[ 2 ] % 10 + '0';
-		BC95_centerPort[ 4 ] = '\0';
-		break;
-	}
-	case 3: {
-		BC95_centerPort[ 0 ] = centerport[ 1 ] % 10 + '0';
-		BC95_centerPort[ 1 ] = centerport[ 2 ] / 10 + '0';
-		BC95_centerPort[ 2 ] = centerport[ 2 ] % 10 + '0';
-		BC95_centerPort[ 3 ] = '\0';
-		break;
-	}
-	case 2: {
-		BC95_centerPort[ 0 ] = centerport[ 2 ] / 10 + '0';
-		BC95_centerPort[ 1 ] = centerport[ 2 ] % 10 + '0';
-		BC95_centerPort[ 2 ] = '\0';
-		break;
-	}
-	case 1: {
-		BC95_centerPort[ 0 ] = centerport[ 2 ] % 10 + '0';
-		BC95_centerPort[ 1 ] = '\0';
-		break;
-	}
-	}
-	TraceMsg(BC95_centerPort, 1);
-}
-
 
 communication_module_t bc95_module = {
 	.name	  = "bc95",
@@ -1407,14 +1296,12 @@ static int bc95_wake_up()
 static int bc95_send(char* pSend, int sendDataLen, int isLastPacket, int center)
 {
 
-        bc95_getipandipport(center);
-
         if(BC95_ConfigProcess() != BC95StateOK){
                 return ERROR;
         }
 
         while(BC95_query_cdp_server_setting() != BC95StateOK){
-                BC95_ConnectToIotCloud("221.229.214.202", "5683");
+                BC95_ConnectToIotCloud(Cloud_IP, Cloud_IP_Port);
         }
 
         if(BC95_SendDataToCloud(pSend,sendDataLen,1) == BC95StateOK){
@@ -1475,7 +1362,7 @@ BC95State BC95_query_cdp_server_setting(void)
 		while (UART0_RecvLineTry(_data, UART1_MAXBUFFLEN, &_dataLen) == 0) //������
 		{
 			Console_WriteStringln(_data);
-			if(strstr(_data,"221.229.214.202")){
+			if(strstr(_data,Cloud_IP)){
 			  	return BC95StateOK;
 			}
 		}
@@ -1489,4 +1376,32 @@ BC95State BC95_query_cdp_server_setting(void)
 int bc95_module_driver_install()
 {
         return register_communication_module(&bc95_module);
+}
+
+
+void BC95_Unit_test() {
+	int   len				= 0;
+	char  msgLen				= 0xA;
+	char* msgData				= "hahamama12";
+	char  recv_data[ BC95_SOCKET_DATA_LEN ] = { 0 };
+
+	bc95_open();
+
+	while (1) {
+
+
+                bc95_send(msgData,Utility_Strlen(msgData),0,0);
+
+		Console_WriteStringln("BC95 send data:");
+
+		Console_WriteStringln(msgData);
+
+		// BC95_RecvSocketData(recv_data, &len);
+
+		// Console_WriteStringln("BC95 recv  down data:");
+
+		// Console_WriteStringln(recv_data);
+
+		System_Delayms(5000);
+	}
 }

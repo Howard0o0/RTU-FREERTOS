@@ -101,8 +101,10 @@ static int init_communication_dev_lock(void) {
 
 static int select_communication_dev_and_install_driver(void) {
 #ifdef GPRS
+        printf("GPRS module\r\n");
 	return gprs_module_driver_install();
 #elif defined BC95
+        printf("BC95 module\r\n");
         return bc95_module_driver_install();
 #else
 	debug_printf("要在module_config.h文件里选择通信模块的类型 ！ \r\n");

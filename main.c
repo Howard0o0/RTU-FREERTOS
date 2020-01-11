@@ -69,8 +69,8 @@ static void bios_check(void);
 void app_main(void* pvParameters);
 
 
+
 void main(void) {
-	
 
 	xTaskCreate(app_main, "app_main", configMINIMAL_STACK_SIZE * 4, NULL,
 		    tskIDLE_PRIORITY + 2, NULL);
@@ -95,6 +95,7 @@ void app_main(void* pvParameters){
 	bios_check();
 
 	hydrology_init();
+
 	create_hydrology_tasks();
 	
 	
@@ -108,7 +109,7 @@ void vApplicationTickHook(void) {
 /*-----------------------------------------------------------*/
 
 static void prvSetupHardware(void) {
-	halBoardInit();
+	// halBoardInit();
 
 	BleDriverInstall();
 	UART1_Open(1);
@@ -129,52 +130,7 @@ static void prvSetupHardware(void) {
 }
 /*-----------------------------------------------------------*/
 
-static void task_print_1(void* pvParameters) {
-	static int cnt    = 0;
-	char*      buffer = NULL;
 
-	while (1) {
-		xSemaphoreTake(lock, portMAX_DELAY);
-		printf("P1 START\r\n");
-		// buffer = ( char* )pvPortMalloc(100);
-		// for(int i=0;i<10;i++)
-		//         printf("haha p1: %d \r\n", cnt++);
-		// vPortFree(buffer);
-		// buffer = NULL;
-		// printf("P1 HWM left:%d\r\n", uxTaskGetStackHighWaterMark(NULL));
-		printf("P1 END\r\n");
-		vTaskDelay(1000 / portTICK_PERIOD_MS);
-	}
-}
-
-static void task_print_2(void* pvParameters) {
-	static int cnt    = 0;
-	char*      buffer = NULL;
-	while (1) {
-		// printf("P2 START\r\n");
-		// buffer = ( char* )pvPortMalloc(100);
-		// for(int i=0;i<10;i++)
-		//         printf("haha p2: %d \r\n", cnt++);
-		// vPortFree(buffer);
-		// buffer = NULL;
-		// // printf("P2 HWM left:%d\r\n", uxTaskGetStackHighWaterMark(NULL));
-		// printf("P2 END\r\n");
-		printf("%ds\r\n", cnt++);
-		vTaskDelay(1000 / portTICK_PERIOD_MS);
-	}
-}
-
-static void task_print_3(void* pvParameters) {
-	static int cnt    = 0;
-	char*      buffer = NULL;
-	while (1) {
-		buffer = ( char* )mypvPortMalloc(sizeof(char) * 10);
-		myvPortFree(buffer);
-		buffer = ( char* )mypvPortMalloc(sizeof(char) * 20);
-		show_block();
-		vTaskDelay(1000 / portTICK_PERIOD_MS);
-	}
-}
 /*-----------------------------------------------------------*/
 
 /* The MSP430X port uses this callback function to configure its tick interrupt.

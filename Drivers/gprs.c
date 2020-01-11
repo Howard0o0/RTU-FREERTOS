@@ -1119,6 +1119,7 @@ int GPRS_AT_OpenTCPLink(int center) {
 
 	memset(ipvalue, 0, sizeof(ipvalue));
 	Hydrology_ReadStoreInfo(center, ipvalue, HYDROLOGY_CENTER_IP_LEN);
+
 	memcpy(centerip, &ipvalue[ 1 ], 6);
 	memcpy(centerport, &ipvalue[ 7 ], 3);
 
