@@ -19,11 +19,9 @@ void hydrology_sample_and_store(void* pvParameters) {
 		// debug_printf("\r\nSample start,freeheap:%d\r\n", xPortGetFreeHeapSize());
 		// debug_printf("Sample HWM :%d\r\n", uxTaskGetStackHighWaterMark(NULL));
 
-		if( HydrologySample(rtc_nowTime) != TRUE){
-			continue;
+		if( HydrologySample(rtc_nowTime) == TRUE){
+			HydrologySaveData(TimerReport);
 		}
-		
-		HydrologySaveData(TimerReport);
 
 		// debug_printf("\r\nSample end,freeheap:%d\r\n", xPortGetFreeHeapSize());
 
