@@ -11,20 +11,21 @@
 #include "common.h"
 
 //extern const hydrologyElementInfo Element_table[UserElementCount+1]; 
-extern  hydrologyElementInfo Element_table[MAX_ELEMENT+1]; //ÒªËØ±í
-extern int UserElementCount; //ÓÃ»§ÒªËØÊıÁ¿
-int RS485RegisterCount = 0; //485ÒªËØÊıÁ¿
+extern  hydrologyElementInfo Element_table[MAX_ELEMENT+1]; //Òªï¿½Ø±ï¿½
+extern int UserElementCount; //ï¿½Ã»ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+int RS485RegisterCount = 0; //485Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  extern char s_isr_count_flag;
 
 /* USER CODE END Includes */
 
-/*ÒÔÏÂº¯ÊıÎªÍâ²¿½Ó¿Úº¯Êı£¬ĞèÓÉÓÃ»§¸ù¾İÓ²¼şÉè±¸ÊµÏÖ£¬·ñÔòË®ÎÄĞ­ÒéÎŞ·¨ÔËĞĞ*/
+/*ï¿½ï¿½ï¿½Âºï¿½ï¿½ï¿½Îªï¿½â²¿ï¿½Ó¿Úºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ó²ï¿½ï¿½ï¿½è±¸Êµï¿½Ö£ï¿½ï¿½ï¿½ï¿½ï¿½Ë®ï¿½ï¿½Ğ­ï¿½ï¿½ï¿½Ş·ï¿½ï¿½ï¿½ï¿½ï¿½*/
 void RS485_Dir(char inout)
 {
   if(inout)
   {
 //    P3DIR |= BIT0+BIT1;
 //    P3OUT |= BIT0+BIT1;
-//¸´ÓÃ½Å ¶ÔP100ÒªÑ¡µÍ
+//ï¿½ï¿½ï¿½Ã½ï¿½ ï¿½ï¿½P100ÒªÑ¡ï¿½ï¿½
      P10DIR |= BIT4;
      P10OUT |= BIT4;
   }
@@ -98,7 +99,7 @@ void RS485_ValueDefine(char *buffer,char *value,int index,int times)
     }
   }
 }
-/*ÒÔÉÏº¯ÊıÎªÍâ²¿½Ó¿Úº¯Êı£¬ĞèÓÉÓÃ»§¸ù¾İÓ²¼şÉè±¸ÊµÏÖ£¬·ñÔòË®ÎÄĞ­ÒéÎŞ·¨ÔËĞĞ*/
+/*ï¿½ï¿½ï¿½Ïºï¿½ï¿½ï¿½Îªï¿½â²¿ï¿½Ó¿Úºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ó²ï¿½ï¿½ï¿½è±¸Êµï¿½Ö£ï¿½ï¿½ï¿½ï¿½ï¿½Ë®ï¿½ï¿½Ğ­ï¿½ï¿½ï¿½Ş·ï¿½ï¿½ï¿½ï¿½ï¿½*/
 
 void RS485_Send(char device,char function,char reg_addrH,char reg_addrL,char timeout)
 {
@@ -139,7 +140,7 @@ int RS485_Read(char *buffer)
   crc1 = hydrologyCRC16(temp_buffer,7);
   crc2 = temp_buffer[8]<<8 | temp_buffer[7];
 //  crc2 = hydrologyCRC16(temp_buffer,7);
-//  crc1 = temp_buffer[8]<<8 | temp_buffer[7];  //µÍÎ»ÔÚÇ°£¬¸ßÎ»ÔÚºó
+//  crc1 = temp_buffer[8]<<8 | temp_buffer[7];  //ï¿½ï¿½Î»ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½Î»ï¿½Úºï¿½
  
   if(crc1 == crc2)
   {
@@ -193,77 +194,75 @@ void Hydrology_ReadRS485(char *value,int index)
   else
     rs485_count += single_count2;
 }
-/*¶ÁÈ¡¿ª¹ØÁ¿×´Ì¬Öµ£¬Ò»¸ö×Ö½Ú±íÊ¾8¸öio¿Ú*/
-void Hydrology_ReadIO_STATUS(char *value,int flag)  //1ÊÇ¶ÔP2¿ª¹ØÊäÈë£¬2ÊÇio9-16£¬3ÊÇio17-24£¬¶ÔP8¿ª¹ØÊäÈë£¨·ÖÊ±¸´ÓÃ£©++++++++++++++++++++++++++++++++++
-{
-   //¿ª¹ØÁ¿ 
-   char _tempChar1=BIT0;
-   char *temp = value;
 
-   if(1 == flag)
-   {    
-          
-      for(int i=0;i<8;++i)
-      {
-            if(P2IN & _tempChar1)
+void Hydrology_ReadIO_STATUS(char *value,int flag)  //1æ˜¯å¯¹P2å¼€å…³è¾“å…¥ï¼Œ2æ˜¯io9-16ï¼Œ3æ˜¯io17-24ï¼Œå¯¹P8å¼€å…³è¾“å…¥ï¼ˆåˆ†æ—¶å¤ç”¨ï¼‰++++++++++++++++++++++++++++++++++
+{
+   //å¼€å…³é‡ 
+   char _tempChar0=BIT0;
+   char _tempChar1=BIT0;
+   char _tempChar2=BIT0;
+   char _tempChar3=BIT0;
+   char *temp = value;
+ 
+      *(&temp[0]) = 0;
+      
+     for(int i=0;i<8;i++)
+        {
+        if(P2IN & _tempChar1)
             {
-                *temp |=1<<i;
+                *(&temp[1]) |=1<<i;
             }
             else
             {
-                *temp &=~(1<<i);
+               *(&temp[1]) &=~(1<<i);
             }
-         
-         //ÅĞ¶ÏÏÂÒ»¸ö
-        _tempChar1= _tempChar1 << 1;
-         
-    }
-   }
-   if(2 == flag)
-   {
+         _tempChar1= _tempChar1 << 1;
+        }
+    
       P11DIR |= BIT0+BIT1+BIT2;             
       P11OUT &=~(BIT0+BIT1+BIT2);
       
     for(int i=0;i<8;i++)
     {
-        if(P8IN & _tempChar1)
+        if(P8IN & _tempChar2)
             {
-                *temp |=1<<i;
+                *(&temp[2]) |=1<<i;
             }
             else
             {
-               *temp &=~(1<<i);
+               *(&temp[2]) &=~(1<<i);
             }
-         _tempChar1= _tempChar1 << 1;
+         _tempChar2= _tempChar2 << 1;
     }
    
-   }
    
-   if(3 == flag)
-   {
+   
+
      P11DIR |= BIT0+BIT1+BIT2;
      P11OUT |=BIT0;
      P11OUT &=~(BIT1+BIT2);
      
     for(int i=0;i<8;i++)
     {
-        if(P8IN & _tempChar1)
+        if(P8IN & _tempChar3)
             {
-                *temp |=1<<i;
+                *(&temp[3]) |=1<<i;
             }
             else
             {
-                *temp &=~(1<<i);
+                *(&temp[3]) &=~(1<<i);
             }
-         _tempChar1= _tempChar1 << 1;
+         _tempChar3= _tempChar3 << 1;
     }
    
-   }
+    *(&temp[1]) = ~(*(&temp[1]));
+     *(&temp[2]) = ~(*(&temp[2]));
+      *(&temp[3]) = ~(*(&temp[3]));
    return ;
 
 
 }
-/*ÉèÖÃ¿ª¹ØÁ¿,¿ª¹ØÁ¿Êä³ö*/
+/*ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 void Hydrology_SetIO_STATUS(char *value)          //+++++++++++++++++++++++++++++++++++++++
 {
     char _temp = 0xff;
@@ -272,8 +271,8 @@ void Hydrology_SetIO_STATUS(char *value)          //++++++++++++++++++++++++++++
     P4DIR |= _temp;   // temp2
     P4OUT |= _temp2;
 
-    //Çı¶¯IO¿Ú
-    //¶Ô¸ÃÎ»½øĞĞÉèÖÃ
+    //ï¿½ï¿½ï¿½ï¿½IOï¿½ï¿½
+    //ï¿½Ô¸ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
     return ;
 
@@ -824,7 +823,7 @@ int hydrologySetParaSelect(char* guide,char* value)
     }
     case 0xFF:
     {
-      //ret = Hydrology_WriteElementTable();  //Óöµ½0xff£¬¾ÍÊÇÒ»¸öelement tableÀïµÄÔªËØ  
+      //ret = Hydrology_WriteElementTable();  //ï¿½ï¿½ï¿½ï¿½0xffï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½element tableï¿½ï¿½ï¿½Ôªï¿½ï¿½  
       break;
     }
     default:
@@ -1171,7 +1170,7 @@ int hydrologyReadParaSelect(char* guide,char* value)
   return ret;
 }
 
-void getElementDd(char ID,char *D,char *d)         //++++++++++++++++±àÂëÒªËØÅäÖÃ±í+++++++++++++++++++++++
+void getElementDd(char ID,char *D,char *d)         //++++++++++++++++ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Ã±ï¿½+++++++++++++++++++++++
 {       
   char x = ID ;
   char *y = D ;
@@ -1253,6 +1252,7 @@ int hydrologySetPara(void)
   char temp[8] = {0,0,0,0,0,0,0,0};
   char end = 0;
 
+
   hydrologyDownBody* pbody = (hydrologyDownBody*)(g_HydrologyMsg.downbody);
   
   if(Extend_Flag == 1)                                                            //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1269,18 +1269,30 @@ int hydrologySetPara(void)
      Hydrology_WriteStoreInfo(HYDROLOGY_ELEMENT1_TYPE+i*HYDROLOGY_ELEMENT_TYPE_LEN,&(pbody->element)[i].value[0],HYDROLOGY_ELEMENT_TYPE_LEN);
      Hydrology_WriteStoreInfo(HYDROLOGY_ELEMENT1_MODE+i*HYDROLOGY_ELEMENT_MODE_LEN,&(pbody->element)[i].value[1],HYDROLOGY_ELEMENT_MODE_LEN);
      Hydrology_WriteStoreInfo(HYDROLOGY_ELEMENT1_CHANNEL+i*HYDROLOGY_ELEMENT_CHANNEL_LEN,&(pbody->element)[i].value[2],HYDROLOGY_ELEMENT_CHANNEL_LEN);
-      /*¸ù¾İID»ñÈ¡D,d*/     
+      /*ï¿½ï¿½ï¿½ï¿½IDï¿½ï¿½È¡D,d*/     
      getElementDd(Element_table[i].ID,&Element_table[i].D,&Element_table[i].d);
       if((pbody->element)[i].value[1] == RS485)
       {  
          
-         temp[0] =  (pbody->element)[i].value[3];     //¼Ä´æÆ÷¸öÊı
+         temp[0] =  (pbody->element)[i].value[3];     //ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          Hydrology_WriteStoreInfo(HYDROLOGY_RS485_COUNT1 +j*HYDROLOGY_RS485_COUNT_LEN,temp,HYDROLOGY_RS485_COUNT_LEN);        
-         memcpy(temp,&(pbody->element)[i].value[5],(pbody->element)[i].value[4]);            //(pbody->element)[i].value[4] =HYDROLOGY_RS485_LEN   485ÃüÁî
+         memcpy(temp,&(pbody->element)[i].value[5],(pbody->element)[i].value[4]);            //(pbody->element)[i].value[4] =HYDROLOGY_RS485_LEN   485ï¿½ï¿½ï¿½ï¿½
          Hydrology_WriteStoreInfo(HYDROLOGY_RS4851+j*HYDROLOGY_RS485_LEN,temp,HYDROLOGY_RS485_LEN);   
          
-         j++; //485ÒªËØµÄÊıÁ¿
-      }        
+         j++; //485Òªï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½
+      } 
+            if((pbody->element)[i].value[1] == ISR_COUNT)//è„‰å†²é‡ï¼Œåˆ¤æ–­æ˜¯å•è·¯è®¡æ•°çš„è¿˜æ˜¯è”åˆè®¡æ•°çš„ï¼Œé›¨é‡æ˜¯è”åˆè®¡æ•°çš„flag=1
+        {
+            if((pbody->element)[i].guide[0]==0x20||(pbody->element)[i].guide[0]==0x26)
+            {
+                s_isr_count_flag = 1;
+               Hydrology_WriteStoreInfo(HYDROLOGY_ISR_COUNT_FLAG,&s_isr_count_flag,HYDROLOGY_ISR_COUNT_FLAG_LEN);  //åˆå§‹åŒ–è¿™å—å†…å­˜æ˜¯0
+            }
+            else
+            {
+               Hydrology_WriteStoreInfo(HYDROLOGY_ISR_COUNT_FLAG,&s_isr_count_flag,HYDROLOGY_ISR_COUNT_FLAG_LEN);
+            }
+        }       
     }   
       RS485RegisterCount = j;
       rs485 = (char)RS485RegisterCount;

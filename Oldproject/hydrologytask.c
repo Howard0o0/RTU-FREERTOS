@@ -117,7 +117,7 @@ void HydrologyUpdateElementTable() {
 	Element_table[ i ].Mode    = NULL;
 	Element_table[ i ].Channel = NULL;
 }
-
+char s_isr_count_flag = 0;
 void HydrologyDataPacketInit() {
 	char packet_len = 0;
 	int  i		= 0;
@@ -132,29 +132,27 @@ void HydrologyDataPacketInit() {
 	DataPacketLen = packet_len;
 	Hydrology_WriteStoreInfo(HYDROLOGY_DATA_PACKET_LEN, &packet_len,
 				 HYDROLOGY_DATA_PACKET_LEN_LEN);
-
+	Hydrology_ReadStoreInfo(HYDROLOGY_ISR_COUNT_FLAG,&s_isr_count_flag,HYDROLOGY_ISR_COUNT_FLAG_LEN);  
 	/*初始化的时候更新下时间*/
 	lock_communication_dev();
-	communication_module_t* comm_dev	      = get_communication_dev();
-	rtc_time_t			rtc_time = comm_dev->get_real_time();
+	communication_module_t* comm_dev = get_communication_dev();
+	rtc_time_t		rtc_time = comm_dev->get_real_time();
 	unlock_communication_dev();
 	System_Delayms(50);
 	if (rtc_time.year == 0) {
 		printf("update rtc through gprs module failed \r\n");
 		return;
 	}
-	printf("update rtc time, %d/%d/%d %d:%d:%d \r\n", rtc_time.year,
-	       rtc_time.month, rtc_time.date, rtc_time.hour,
-	       rtc_time.min, rtc_time.sec);
-	_RTC_SetTime(( char )rtc_time.sec, ( char )rtc_time.min,
-		     ( char )rtc_time.hour, ( char )rtc_time.date,
-		     ( char )rtc_time.month, 1, ( char )rtc_time.year, 0);
+	printf("update rtc time, %d/%d/%d %d:%d:%d \r\n", rtc_time.year, rtc_time.month,
+	       rtc_time.date, rtc_time.hour, rtc_time.min, rtc_time.sec);
+	_RTC_SetTime(( char )rtc_time.sec, ( char )rtc_time.min, ( char )rtc_time.hour,
+		     ( char )rtc_time.date, ( char )rtc_time.month, 1, ( char )rtc_time.year, 0);
 }
 
 extern SemaphoreHandle_t sample_switch_save;
 int			 HydrologySample(char* _saveTime) {
 
-	int	  i     = 0;
+	int	  i     = 0,j=0;
 	int	  adc_i = 0, isr_i = 0;
 	int	  interval = 0;
 	int	  a = 0, b = 0, c = 0;
@@ -184,12 +182,22 @@ int			 HydrologySample(char* _saveTime) {
 
 	TraceMsg(" Start Sample:   ", 0);
 	UART1_Open_9600(UART1_U485_TYPE);
-
+	while(Element_table[ j ].ID != 0)
+{
+if(Element_table[ j ].Mode == ADC)
+{
+ADC_Sample();
+break;
+}
+j++;
+	
+}
+	
 	while (Element_table[ i ].ID != 0) {
 		memset(value, 0, sizeof(value));
 		switch (Element_table[ i ].Mode) {
 		case ADC: {
-			ADC_Sample();
+			
 			adc_i = ( int )Element_table[ i ].Channel;
 			ADC_Element(value, adc_i);
 			// adc_i++;
@@ -276,13 +284,14 @@ int HydrologyOffline() {
 int HydrologySaveData(char* _saveTime, char funcode)  // char *_saveTime
 {
 	int   i = 0, acount = 0, pocunt = 0;
-	float floatvalue    = 0;
-	long  intvalue1     = 0;
-	int   intvalue2     = 0;
-	int   type	  = 0;
-	int   cnt	   = 0;
-	int   _effect_count = 0;
-	Hydrology_ReadDataPacketCount(&_effect_count);  //????????????��?????????????
+	float floatvalue	= 0;
+	long  intvalue1		= 0;
+	int   intvalue2		= 0;
+	int   type		= 0;
+	int   cnt		= 0;
+	int   _effect_count     = 0;
+	char  switch_value[ 4 ] = { 0 };
+	Hydrology_ReadDataPacketCount(&_effect_count);  //初始读取内存剩余未发送数据包数量
 
 	type = hydrologyJudgeType(funcode);
 	char	storeinterval;
@@ -290,13 +299,13 @@ int HydrologySaveData(char* _saveTime, char funcode)  // char *_saveTime
 	Hydrology_ReadStoreInfo(HYDROLOGY_WATERLEVEL_STORE_INTERVAL, &storeinterval,
 				HYDROLOGY_WATERLEVEL_STORE_INTERVAL_LEN);  // ly
 	storeinterval = _BCDtoDEC(storeinterval);
-	// Utility_Strncpy(storetime, _saveTime, 6);
-	// int tmp = storetime[ 4 ] % (storeinterval);
-	// if (tmp != 0) {
-	// 	printf("Not Save Time! now time is: %d/%d/%d  %d:%d:%d \r\n", storetime[ 0 ],
-	// 	       storetime[ 1 ], storetime[ 2 ], storetime[ 3 ], storetime[ 4 ], storetime[ 5
-	// ]); 	return -1;
-	// }
+	Utility_Strncpy(storetime, _saveTime, 6);
+	int tmp = storetime[ 4 ] % (storeinterval);
+	// if(tmp!= 0)
+	if (tmp != 0 && IsDebug == 0) {
+		TraceMsg("Not Save Time!", 1);
+		return -1;
+	}
 
 	TraceMsg("Start Store:   ", 0);
 	if (type == 1) {
@@ -304,10 +313,9 @@ int HydrologySaveData(char* _saveTime, char funcode)  // char *_saveTime
 			switch (Element_table[ i ].type) {
 			case ANALOG: {
 				Hydrology_ReadAnalog(&floatvalue, acount++);
-				mypvPortMallocElement(
-					Element_table[ i ].ID, Element_table[ i ].D,
-					Element_table[ i ].d,
-					&inputPara[ i ]);  //???id ??num??????value????
+				mypvPortMallocElement(Element_table[ i ].ID, Element_table[ i ].D,
+					      Element_table[ i ].d,
+					      &inputPara[ i ]);  //获得id ，num，开辟value的空间
 				converToHexElement(( double )floatvalue, Element_table[ i ].D,
 						   Element_table[ i ].d, inputPara[ i ].value);
 				break;
@@ -315,34 +323,29 @@ int HydrologySaveData(char* _saveTime, char funcode)  // char *_saveTime
 			case PULSE: {
 				Hydrology_ReadPulse(&intvalue1, pocunt++);
 				mypvPortMallocElement(Element_table[ i ].ID, Element_table[ i ].D,
-						      Element_table[ i ].d, &inputPara[ i ]);
+					      Element_table[ i ].d, &inputPara[ i ]);
 				converToHexElement(( double )intvalue1, Element_table[ i ].D,
 						   Element_table[ i ].d, inputPara[ i ].value);
 				break;
 			}
 			case SWITCH: {
-				Hydrology_ReadSwitch(&intvalue2);
+				// Hydrology_ReadSwitch(&intvalue2);
+				Hydrology_ReadSwitch(switch_value);
 				mypvPortMallocElement(Element_table[ i ].ID, Element_table[ i ].D,
-						      Element_table[ i ].d, &inputPara[ i ]);
-				converToHexElement(( double )intvalue2, Element_table[ i ].D,
-						   Element_table[ i ].d, inputPara[ i ].value);
+					      Element_table[ i ].d, &inputPara[ i ]);
+				// converToHexElement((double)intvalue2,Element_table[i].D,Element_table[i].d,inputPara[i].value);
+				// memcpy(inputPara[i].value,switch_value,4);
+				inputPara[ i ].value[ 0 ] = switch_value[ 3 ];
+				inputPara[ i ].value[ 1 ] = switch_value[ 2 ];
+				inputPara[ i ].value[ 2 ] = switch_value[ 1 ];
+				inputPara[ i ].value[ 3 ] = switch_value[ 0 ];
+
 				break;
 			}
 			case STORE: {
 				inputPara[ i ].guide[ 0 ] = Element_table[ i ].ID;
 				inputPara[ i ].guide[ 1 ] = Element_table[ i ].ID;
-
-				if (Debug)
-					TraceMsg("hydrologytask.c  HydrologySaveData malloc ", 1);
-				// inputPara[ i ].value      = ( char*
-				// )mypvPortMalloc(SinglePacketSize); if (NULL != inputPara[ i
-				// ].value) {
 				inputPara[ i ].num = SinglePacketSize;
-				// 	Console_WriteStringln("hydrologytask.c HydrologySaveData
-				// Malloc Failed");
-				// 	//
-				// Hydrology_ReadRom(RomElementBeginAddr,inputPara[i].value,SinglePacketSendCount++);
-				// }
 				break;
 			}
 			default:
@@ -352,39 +355,20 @@ int HydrologySaveData(char* _saveTime, char funcode)  // char *_saveTime
 			cnt++;
 		}
 	}
-
-#if 0
-	 g_HydrologyDataPacket.send_flag = 0x00;
-	 Hydrology_ReadObservationTime(Element_table[0].ID,g_HydrologyDataPacket.observationtime,0);
-	for(i = 0;i < cnt;i++)
-	{
-		memcpy((g_HydrologyDataPacket.element)[i].guide, inputPara[i].guide,2);
-		(g_HydrologyDataPacket.element)[i].value = (char*) mypvPortMalloc(inputPara[i].num);
-		if(NULL == (g_HydrologyDataPacket.element)[i].value)
-			 return -1;
-		memcpy((g_HydrologyDataPacket.element)[i].value,inputPara[i].value, inputPara[i].num);
-		(g_HydrologyDataPacket.element)[i].num = inputPara[i].num; 
-	}
-#else
-	char _data[ 40 ] = { 0 };  //???????40?????
+	char _data[ HYDROLOGY_DATA_ITEM_LEN ] = { 0 };  //数据条为130个字节
 	char observationtime[ 5 ];
 	int  len   = 0;
-	_data[ 0 ] = 0x00;  // ��?????? ???0x00
-	Hydrology_ReadObservationTime(Element_table[ 0 ].ID, observationtime,
-				      0);  // or save_time
+	_data[ 0 ] = 0x00;  // 未发送标记 记为0x00
+	Hydrology_ReadObservationTime(Element_table[ 0 ].ID, observationtime, 0);  // or save_time
 	memcpy(&_data[ 1 ], observationtime, HYDROLOGY_OBSERVATION_TIME_LEN);
 	len += 6;
 	for (i = 0; i < cnt; i++) {
 		memcpy(&_data[ len ], inputPara[ i ].value, inputPara[ i ].num);
 		len += inputPara[ i ].num;
-		// if (inputPara[ i ].value != NULL) {
-		// 	myvPortFree(inputPara[ i ].value);
-		// 	inputPara[ i ].value = NULL;
-		// }
 	}
-	++_effect_count;  //????????1
+	++_effect_count;  //存一条就加1
 	Hydrology_SetDataPacketCount(_effect_count);
-#endif
+
 	if (Store_WriteDataItemAuto(_data) < 0) {
 		return -1;
 	}
@@ -421,7 +405,7 @@ int HydrologyInstantWaterLevel(char* _saveTime)  //??��??????��????��
 	int _startIdx = 0;
 	int _endIdx   = 0;
 
-	char _send[ 40 ] = { 0 };
+	char _send[ 200 ] = { 0 };
 	int  _ret	= 0;
 	int  _seek_num   = 0;  //????????
 	int  sendlen     = 0;
@@ -534,7 +518,7 @@ int HydrologyVoltage() {
 }
 
 static bool check_if_rtc_time_format_correct(void) {
-	
+
 	for (int i = 0; i < 11; ++i) {
 		RTC_ReadTimeBytes5(g_rtc_nowTime);
 		if (RTC_IsBadTime(g_rtc_nowTime, 1) == 0) {
@@ -549,24 +533,22 @@ static void try_to_correct_rtc_time_via_network(void) {
 
 	lock_communication_dev();
 	communication_module_t* comm_dev = get_communication_dev();
-	rtc_time_t rtc_time = comm_dev->get_real_time();
+	rtc_time_t		rtc_time = comm_dev->get_real_time();
 	unlock_communication_dev();
 
 	if (rtc_time.year == 0) {
-		return ;
+		return;
 	}
 	printf("sync rtc time via network success : %d/%d/%d %d:%d:%d \r\n", rtc_time.year,
-	       rtc_time.month, rtc_time.date, rtc_time.hour,
-	       rtc_time.min, rtc_time.sec);
-	_RTC_SetTime(( char )rtc_time.sec, ( char )rtc_time.min,
-		     ( char )rtc_time.hour, ( char )rtc_time.date,
-		     ( char )rtc_time.month, 1, ( char )rtc_time.year, 0);
+	       rtc_time.month, rtc_time.date, rtc_time.hour, rtc_time.min, rtc_time.sec);
+	_RTC_SetTime(( char )rtc_time.sec, ( char )rtc_time.min, ( char )rtc_time.hour,
+		     ( char )rtc_time.date, ( char )rtc_time.month, 1, ( char )rtc_time.year, 0);
 
 	vTaskDelay(50 / portTICK_RATE_MS);
 }
 
 void check_rtc_time(void) {
-	
+
 	if (check_if_rtc_time_format_correct() == true) {
 		return;
 	}
@@ -608,13 +590,10 @@ int Hydrology_TimeCheck() {
 		if (rtc_time.year == 0) {
 			return -1;
 		}
-		printf("update rtc time, %d/%d/%d %d:%d:%d \r\n", rtc_time.year,
-		       rtc_time.month, rtc_time.date,
-		       rtc_time.hour, rtc_time.min,
-		       rtc_time.sec);
-		_RTC_SetTime(( char )rtc_time.sec, ( char )rtc_time.min,
-			     ( char )rtc_time.hour, ( char )rtc_time.date,
-			     ( char )rtc_time.month, 1,
+		printf("update rtc time, %d/%d/%d %d:%d:%d \r\n", rtc_time.year, rtc_time.month,
+		       rtc_time.date, rtc_time.hour, rtc_time.min, rtc_time.sec);
+		_RTC_SetTime(( char )rtc_time.sec, ( char )rtc_time.min, ( char )rtc_time.hour,
+			     ( char )rtc_time.date, ( char )rtc_time.month, 1,
 			     ( char )rtc_time.year, 0);
 
 		System_Delayms(50);

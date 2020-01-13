@@ -11,6 +11,8 @@
 	"task.h": "c",
 	"string.h": "c",
 	"communication_opr.h": "c",
-	"common.h": "c"
+	"common.h": "c",
+	"msp430common.h": "c",
+	"uart3.h": "c"
 }
 }

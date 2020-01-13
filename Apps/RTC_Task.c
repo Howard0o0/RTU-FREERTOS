@@ -1,5 +1,5 @@
-#include "RTC_Task.h"
-#include "Hydrolody_Task.h"
+#include "rtc_task.h"
+#include "hydrology_task.h"
 
 #include "FreeRTOS.h"
 #include "ParTest.h"
@@ -12,11 +12,8 @@
 void rtc_update(void* pvParameters) {
 
 	while (1) {
-		debug_printf("\r\nRTC start,freeheap:%d\r\n", xPortGetFreeHeapSize());
-		debug_printf("RTC HWM:%d\r\n", uxTaskGetStackHighWaterMark(NULL));
-
 		// TimerB_Clear();
-		// WatchDog_Clear();
+		WatchDog_Clear();
 
 		check_rtc_time();
 
@@ -27,7 +24,6 @@ void rtc_update(void* pvParameters) {
 		       rtc_nowTime[ 1 ], rtc_nowTime[ 2 ], rtc_nowTime[ 3 ], rtc_nowTime[ 4 ],
 		       rtc_nowTime[ 5 ]);
 
-		debug_printf("\r\nRTC end,freeheap:%d\r\n", xPortGetFreeHeapSize());
 
 		vTaskDelay(5000 / portTICK_PERIOD_MS);
 	}

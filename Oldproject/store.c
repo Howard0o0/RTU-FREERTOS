@@ -1,24 +1,24 @@
 //////////////////////////////////////////////////////
-//     ÎÄ¼þÃû: store.c
-//   ÎÄ¼þ°æ±¾: 1.0.0
-//   ´´½¨Ê±¼ä: 09Äê11ÔÂ30ÈÕ
-//   ¸üÐÂÄÚÈÝ:  
-//       ×÷Õß: ÁÖÖÇ
-//       ¸½×¢: 
+//     ï¿½Ä¼ï¿½ï¿½ï¿½: store.c
+//   ï¿½Ä¼ï¿½ï¿½æ±¾: 1.0.0
+//   ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½: 09ï¿½ï¿½11ï¿½ï¿½30ï¿½ï¿½
+//   ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:  
+//       ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½
+//       ï¿½ï¿½×¢: 
 //
-//       1. Êý¾Ý×éÖ¯¸ñÊ½.
-//       Êý¾ÝÌõ:
-//           Ð£Ñé×Ö½Ú(1) + Ê±¼ä´®(10) + Ä£ÄâÖµÌõ(8*2) + Âö³åÖµÌõ(4*3) + ¿ª¹ØÁ¿(1) 
-//           ±£´æÊý¾Ý²»ÐèÒªÀàÐÍÂë
-//           Âö³åÖµ  ÎÒÃÇ ±£´æ 3×Ö½Ú.
-//       Ê±¼ä´®:
-//           ÄêÄêÔÂÔÂÈÕÈÕÊ±Ê±·Ö·Ö
-//       Ä£ÄâÖµÌõ: (ÀàÐÍÂë A ~ H)
-//           ÀàÐÍÂë(1) + ÊýÖµ(2×Ö½ÚintÀàÐÍ)
-//       Âö³åÖµÌõ: (ÀàÐÍÂë I ~ L)
-//           ÀàÐÍÂë(1) + ÊýÖµ(2×Ö½ÚintÀàÐÍ)
+//       1. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¯ï¿½ï¿½Ê½.
+//       ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:
+//           Ð£ï¿½ï¿½ï¿½Ö½ï¿½(1) + Ê±ï¿½ä´®(10) + Ä£ï¿½ï¿½Öµï¿½ï¿½(8*2) + ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½(4*3) + ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(1) 
+//           ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý²ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//           ï¿½ï¿½ï¿½ï¿½Öµ  ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 3ï¿½Ö½ï¿½.
+//       Ê±ï¿½ä´®:
+//           ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±Ê±ï¿½Ö·ï¿½
+//       Ä£ï¿½ï¿½Öµï¿½ï¿½: (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ A ~ H)
+//           ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(1) + ï¿½ï¿½Öµ(2ï¿½Ö½ï¿½intï¿½ï¿½ï¿½ï¿½)
+//       ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½: (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ I ~ L)
+//           ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(1) + ï¿½ï¿½Öµ(2ï¿½Ö½ï¿½intï¿½ï¿½ï¿½ï¿½)
 //        
-//       2. ÉÏ±¨¸ñÊ½
+//       2. ï¿½Ï±ï¿½ï¿½ï¿½Ê½
 //       $00000000000>0909091230*A1234B1234C1234D1234E1234F1234G1234H1234I000000J000000K000000L000000
 //       M1N1O1P1Q1R1S1T1#
 //////////////////////////////////////////////////////
@@ -39,15 +39,15 @@
 extern int DataPacketLen;
 extern char switcher,anahigh,analow,pulsehigh,pulsemedium,pulselow,vthigh,vtlow;
 int contextlen=0;
-int s_StartIdx=2001;//³õÊ¼»¯Îª´íÎóÖµ  ·¶Î§Îª1~2000    //++++
-int s_EndIdx=2001;//³õÊ¼»¯Îª´íÎóÖµ    ·¶Î§Îª1~2000  
-//int s_DPCount=0; // //»¹Î´·¢ËÍµÄ´æÓÚflashµÄÊý¾Ý°üÊýÁ¿
-//³õÊ¼»¯
+int s_StartIdx=2001;//ï¿½ï¿½Ê¼ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½Öµ  ï¿½ï¿½Î§Îª1~2000    //++++
+int s_EndIdx=2001;//ï¿½ï¿½Ê¼ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½Öµ    ï¿½ï¿½Î§Îª1~2000  
+//int s_DPCount=0; // //ï¿½ï¿½Î´ï¿½ï¿½ï¿½ÍµÄ´ï¿½ï¿½ï¿½flashï¿½ï¿½ï¿½ï¿½ï¿½Ý°ï¿½ï¿½ï¿½ï¿½ï¿½
+//ï¿½ï¿½Ê¼ï¿½ï¿½
 void Store_Init()
 {
     ROM_Init();
 } 
-//  ¶Á³ö 4096ÕâÑùµÄ×Ö´®
+//  ï¿½ï¿½ï¿½ï¿½ 4096ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½
 int Store_ReadDataMaxStr(int _index ,char * _dest)
 {
     if( _index < 1 || _index >8)
@@ -80,8 +80,8 @@ int Store_ReadDataMaxInt(int _index, int * _pDestInt)
             return -1;
         }
         ++ _repeats;
-    }//×ª»¯Îªint
-    (*_pDestInt)= (((unsigned int)_temp[0])<<8 ) ;(*_pDestInt)+=_temp[1];//¸ßµÍÎ»×Ö½Ú 
+    }//×ªï¿½ï¿½Îªint
+    (*_pDestInt)= (((unsigned int)_temp[0])<<8 ) ;(*_pDestInt)+=_temp[1];//ï¿½ßµï¿½Î»ï¿½Ö½ï¿½ 
     return 0;
 }
 
@@ -106,7 +106,7 @@ int Store_SetDataMaxInt(int _index, const int _max)
     return 0;
 }
 
-//4×Ö½Ú×Ö·ûÊý×Ö
+//4ï¿½Ö½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½
 int Store_ReadDataMinStr(int _index, char * _dest)
 {
     if( _index < 1  || _index > 8 )
@@ -140,19 +140,19 @@ int Store_ReadDataMinInt(int _index, int * _pDestInt)
             return -1;
         }
         ++ _repeats;
-    }//×ª»¯ÎªInt
-    (*_pDestInt)=((unsigned int)_temp[0])<<8;  (*_pDestInt) += _temp[1];//¸ßµÍÎ»×Ö½Ú 
+    }//×ªï¿½ï¿½ÎªInt
+    (*_pDestInt)=((unsigned int)_temp[0])<<8;  (*_pDestInt) += _temp[1];//ï¿½ßµï¿½Î»ï¿½Ö½ï¿½ 
     return 0;
 }
 
-//ÉèÖÃ¸ñÊ½Îª4068
+//ï¿½ï¿½ï¿½Ã¸ï¿½Ê½Îª4068
 int Store_SetDataMinInt(int _index, const int _min)
 {
     if( _index < 1  || _index > 8 )
         return -2;
     long _addr = DATA_MIN_BASE_ADDR + ( _index - 1 ) * DATA_LIMIT_LEN * 2;
     int _repeats=0;char _temp[2];
-    _temp[0]=(_min>>8); _temp[1]=_min & 0x00FF ; //µÍÎ»×Ö½Ú  
+    _temp[0]=(_min>>8); _temp[1]=_min & 0x00FF ; //ï¿½ï¿½Î»ï¿½Ö½ï¿½  
     while(ROM_WriteBytes(_addr,_temp, DATA_LIMIT_LEN )!=0)
     {
         if(_repeats>2)
@@ -165,7 +165,7 @@ int Store_SetDataMinInt(int _index, const int _min)
 }
 
 
-int Store_ReadConfig(char * _dest)//  1¸ö×Ö½Ú
+int Store_ReadConfig(char * _dest)//  1ï¿½ï¿½ï¿½Ö½ï¿½
 { 
     int _repeats=0;
     while(ROM_ReadByte(CONFIG_ADDR,_dest)!=0)
@@ -193,7 +193,7 @@ int Store_SetConfig(char _config)
      } 
      return 0;
 } 
-// 11¸ö×Ö·ûÐÍ×Ö½Ú
+// 11ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½Ö½ï¿½
 int Store_ReadDeviceNO(char *_dest)
 {
   int _repeats=0;
@@ -207,7 +207,7 @@ int Store_ReadDeviceNO(char *_dest)
   }
   return 0;
 }
-// 3¸ö×Ö·ûÐÍ×Ö½Ú
+// 3ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½Ö½ï¿½
 int Store_SetDeviceNO(const char * _src)
 {
   int _repeats=0;
@@ -221,7 +221,7 @@ int Store_SetDeviceNO(const char * _src)
   }  
   return 0;  
 }
-// 4¸ö×Ö·ûÐÍ×Ö½Ú
+// 4ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½Ö½ï¿½
 int Store_ReadPassword(char *_dest)
 { 
   int _repeats=0;
@@ -237,7 +237,7 @@ int Store_ReadPassword(char *_dest)
 } 
 
 
-// 4¸ö×Ö·ûÐÍ×Ö½Ú
+// 4ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½Ö½ï¿½
 int Store_SetPassword(const char * _src)
 {
     int _repeats=0;
@@ -266,7 +266,7 @@ int Store_SetWIFIConfigFlag(char * _src){
    return 0;
 }
 
-//¶ÁWIFIÅäÖÃ±êÊ¶  by ÁõÃÎ¾ý 2017-7-16
+//ï¿½ï¿½WIFIï¿½ï¿½ï¿½Ã±ï¿½Ê¶  by ï¿½ï¿½ï¿½Î¾ï¿½ 2017-7-16
 int Store_ReadWIFIConfigFlag(char * _dest){
     int _repeats=0;
    while(ROM_ReadBytes(WIFI_CONFIG_FLAG_ADDR, _dest,WIFI_CONFIG_FLAG_LEN)!=0)
@@ -284,7 +284,7 @@ int Store_ReadWIFIConfigFlag(char * _dest){
 
 
 ///////////
-//1¸ö×Ö·ûÐÍ×Ö½Ú
+//1ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½Ö½ï¿½
 int  Store_ReadWorkMode(char * _dest)
 {
     int _repeats=0;
@@ -349,15 +349,15 @@ int  Store_ReadAnalogSelect(char * _dest)
 int  Store_SetAnalogSelectStr(const char * _src)
 {
     char _temp=0x00;
-    //ÓÉ_srcÐÎ³ÉÒ»¸öcharÐ´Èë
+    //ï¿½ï¿½_srcï¿½Î³ï¿½Ò»ï¿½ï¿½charÐ´ï¿½ï¿½
     for(int i=7;i>=0;--i)
     {
-        //ÏÂÒ»Î»;
+        //ï¿½ï¿½Ò»Î»;
         _temp<<=1;
         if(_src[i]=='0')
-            _temp &= 0xFE;//½«×îºóÒ»Î»Çå0;
+            _temp &= 0xFE;//ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Î»ï¿½ï¿½0;
         else
-            _temp |= 0x01;//½«×îºóÒ»Î»ÖÃ1;
+            _temp |= 0x01;//ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Î»ï¿½ï¿½1;
         
     } 
     if(Store_SetAnalogSelect(_temp)<0)
@@ -392,20 +392,20 @@ int  Store_ReadPulseSelect(char * _dest)
 int  Store_SetPulseSelectStr(const char * _src)
 {
     char _temp=0x00;
-    //ÓÉ_srcÐÎ³ÉÒ»¸öcharÐ´Èë
+    //ï¿½ï¿½_srcï¿½Î³ï¿½Ò»ï¿½ï¿½charÐ´ï¿½ï¿½
     for(int i=0;i<4;++i)
     {
         
         
         if(_src[i]=='0')
-            _temp &= 0xF7;//½«µ¹ÊýµÚ4Î»Çå0;
+            _temp &= 0xF7;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½4Î»ï¿½ï¿½0;
         else
-            _temp |= 0x08;//½«µ¹ÊýµÚ4Î»ÖÃ1;
+            _temp |= 0x08;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½4Î»ï¿½ï¿½1;
         
-        //ÏÂÒ»Î»;
+        //ï¿½ï¿½Ò»Î»;
         _temp<<=1;
     }
-    //Ç°4Î»¶ÔÓ¦µÄÎªÑ¡Ôñ
+    //Ç°4Î»ï¿½ï¿½Ó¦ï¿½ï¿½ÎªÑ¡ï¿½ï¿½
     if(Store_SetPulseSelect(_temp)<0)
         return -1;
     return 0;
@@ -448,16 +448,16 @@ int  Store_SetIoSelect(char _src)
 int  Store_SetIoSelectStr(const char * _src)
 {
     char _temp=0x00;
-    //ÓÉ_srcÐÎ³ÉÒ»¸öcharÐ´Èë
+    //ï¿½ï¿½_srcï¿½Î³ï¿½Ò»ï¿½ï¿½charÐ´ï¿½ï¿½
     for(int i=7;i>=0;--i)
     {
-        //ÏÂÒ»Î»;
+        //ï¿½ï¿½Ò»Î»;
         _temp<<=1;
         
         if(_src[i]=='0')
-            _temp &= 0xFE;//½«×îºóÒ»Î»Çå0;
+            _temp &= 0xFE;//ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Î»ï¿½ï¿½0;
         else
-            _temp |= 0x01;//½«×îºóÒ»Î»ÖÃ1;
+            _temp |= 0x01;//ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Î»ï¿½ï¿½1;
         
     } 
     if(Store_SetIoSelect(_temp)<0)
@@ -499,7 +499,7 @@ int  Store_SetPulseRate(int _index, char _src)
 
 
 int  Store_ReadPulseRange(int _index, char *_dest)
-{//¶Á³ö9µÄ¸öÊý  2½øÖÆ
+{//ï¿½ï¿½ï¿½ï¿½9ï¿½Ä¸ï¿½ï¿½ï¿½  2ï¿½ï¿½ï¿½ï¿½
     if( _index < 1 || _index>4)
         return -2;
     long _addr = PULSE_RANGE_BASE_ADDR + (_index-1);
@@ -513,7 +513,7 @@ int  Store_ReadPulseRange(int _index, char *_dest)
     return 0;
 }
 int  Store_SetPulseRange(int _index, char  _src)
-{//Ð´Èë 9µÄ¸öÊý 2½øÖÆ
+{//Ð´ï¿½ï¿½ 9ï¿½Ä¸ï¿½ï¿½ï¿½ 2ï¿½ï¿½ï¿½ï¿½
     if( _index < 1 || _index>4)
         return -2;
     long _addr = PULSE_RANGE_BASE_ADDR + (_index-1); 
@@ -527,7 +527,7 @@ int  Store_SetPulseRange(int _index, char  _src)
     return 0;
 }
 int  Store_ReadPulseRangeBytes(int _index, char *_dest)
-{//¶Á³ö ¶ÔÓ¦µÄ 3¸ö×Ö½Ú
+{//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ó¦ï¿½ï¿½ 3ï¿½ï¿½ï¿½Ö½ï¿½
    Console_Open();
     if( _index < 1|| _index>4)
         return -2;
@@ -546,7 +546,7 @@ int  Store_ReadPulseRangeBytes(int _index, char *_dest)
     
     switch(_temp)
     {
-      case 0x00://0¸ö9,ÓÃÓÚ´íÎó»òÕßÎ´ÉèÖÃµÄÊ±ºò.
+      case 0x00://0ï¿½ï¿½9,ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½Ãµï¿½Ê±ï¿½ï¿½.
         _dest[0]=0x00;_dest[1]=0x00;_dest[2]=0x00;
         break;
       case 0x01:
@@ -571,7 +571,7 @@ int  Store_ReadPulseRangeBytes(int _index, char *_dest)
         _dest[0]=0x98;_dest[1]=0x96;_dest[2]=0x7F;
         break;
       default:
-        //´íÎóµÄ9µÄ¸öÊý,ÎÒÃÇÖØÖÃÎª0
+        //ï¿½ï¿½ï¿½ï¿½ï¿½9ï¿½Ä¸ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª0
         Store_SetPulseRange(_index,0);
         _dest[0]=0x00;_dest[1]=0x00;_dest[2]=0x00;
         break;
@@ -579,7 +579,7 @@ int  Store_ReadPulseRangeBytes(int _index, char *_dest)
     return 0;
 }
 
-//8¸ö×Ö·ûÊý¾Ý
+//8ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½
 int Store_ReadIoDirConfigStr(char * _dest)
 {
     char _temp;
@@ -624,9 +624,9 @@ int  Store_SetIoDirConfigStr(char * _src)
     {
         _temp <<=1;
         if(_src[i]=='0')
-            _temp &= 0xFE;//Çå×îºóÒ»Î»Îª0
+            _temp &= 0xFE;//ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Î»Îª0
         else
-            _temp |= 0x01;//ÖÃ×îºóÒ»Î»Îª1
+            _temp |= 0x01;//ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Î»Îª1
         
         
     }
@@ -635,7 +635,7 @@ int  Store_SetIoDirConfigStr(char * _src)
     return 0;
 } 
 
-//8¸ö×Ö·ûÊý¾Ý
+//8ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½
 int  Store_ReadIoLevelConfigStr(char * _dest)
 {
     char _temp;
@@ -681,9 +681,9 @@ int  Store_SetIoLevelConfigStr(char * _src)
     { 
         _temp <<=1;
         if(_src[i]=='0')
-            _temp &= 0xFE;//Çå×îºóÒ»Î»Îª0
+            _temp &= 0xFE;//ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Î»Îª0
         else
-            _temp |= 0x01;//ÖÃ×îºóÒ»Î»Îª1
+            _temp |= 0x01;//ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Î»Îª1
         
     }
     if(Store_SetIoLevelConfig(_temp)<0)
@@ -691,7 +691,7 @@ int  Store_SetIoLevelConfigStr(char * _src)
     return 0;
 }
 
-//2¸ö×Ö·ûÐÍ×Ö½Ú
+//2ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½Ö½ï¿½
 int Store_ReadReportTimeMode(char * _dest)
 {
   int _repeats=0;
@@ -708,7 +708,7 @@ int Store_ReadReportTimeMode(char * _dest)
 
 
 
-//2¸ö×Ö·ûÐÍ×Ö½Ú
+//2ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½Ö½ï¿½
 int Store_SetReportTimeMode(const char * _src)
 {
   int _repeats=0;
@@ -723,7 +723,7 @@ int Store_SetReportTimeMode(const char * _src)
   return 0;
 }
 
-//2¸ö×Ö·ûÐÍ×Ö½Ú
+//2ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½Ö½ï¿½
 int Store_ReadSaveTimeMode(char *_dest)
 {
   int _repeats=0;
@@ -738,7 +738,7 @@ int Store_ReadSaveTimeMode(char *_dest)
   return 0;
 }
 
-//2¸ö×Ö·ûÐÍ×Ö½Ú
+//2ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½Ö½ï¿½
 int Store_SetSaveTimeMode(const char * _src)
 {
     int _repeats=0;
@@ -752,7 +752,7 @@ int Store_SetSaveTimeMode(const char * _src)
     } 
     return 0;
 }
-//Ë®ÎÄÒ£²âÕ¾»ù±¾ÅäÖÃ
+//Ë®ï¿½ï¿½Ò£ï¿½ï¿½Õ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //int Store_SetHydrologyCenterAddr(char* _src)
 //{
 //    int _repeats=0;
@@ -1579,7 +1579,7 @@ int Store_SetSaveTimeMode(const char * _src)
 //    
 //    return ret;
 //}
-////ÉèÖÃhydrology run parameter
+////ï¿½ï¿½ï¿½ï¿½hydrology run parameter
 //int Store_SetHydrologyTimerInterval(char* _src)
 //{
 //    int _repeats=0;
@@ -3607,7 +3607,7 @@ int Store_SetSaveTimeMode(const char * _src)
 //    } 
 //    return 0;
 //}
-//ÉèÖÃhydrology config data
+//ï¿½ï¿½ï¿½ï¿½hydrology config data
 int Store_SetHydrologyConfigData(char* _src)
 {
     int _repeats=0;
@@ -3642,7 +3642,7 @@ int Store_SetHydrologyConfigData(char* _src)
             
     return 0;
 }
-//¶ÁÈ¡hydrology config data
+//ï¿½ï¿½È¡hydrology config data
 int Store_ReadHydrologyConfigData(char* _dest)
 {
     int _repeats=0;
@@ -3681,7 +3681,7 @@ int Store_ReadHydrologyConfigData(char* _dest)
 
 
 //////////////////////////////////////////////////////////////
-//     GSM º¯Êý
+//     GSM ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////
 int  Store_GSM_ReadCenterPhone(int _index, char *_dest)
 {
@@ -3720,11 +3720,11 @@ int  Store_GSM_SetCenterPhone(int _index, char *_src)
 
 //
 //
-//  Êý¾Ý±£´æÇø ²Ù×÷º¯Êý
+//  ï¿½ï¿½ï¿½Ý±ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //
 //
 //
-int  Store_CheckDataItemSended(int _index) //¼ì²é·¢ËÍ´æ´¢±ê¼Ç  
+int  Store_CheckDataItemSended(int _index) //ï¿½ï¿½é·¢ï¿½Í´æ´¢ï¿½ï¿½ï¿½  
 {
     if( _index < HYDROLOGY_DATA_MIN_IDX || _index > HYDROLOGY_DATA_MAX_IDX)
         return -2;
@@ -3747,7 +3747,7 @@ int  Store_CheckDataItemSended(int _index) //¼ì²é·¢ËÍ´æ´¢±ê¼Ç
 
 int  Store_ClearWork()         //+++++++
 {
-    //Êý¾ÝÉÏÏÂÏÞÈ«²¿ÉèÎªÄ¬ÈÏ
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½ï¿½ï¿½ÎªÄ¬ï¿½ï¿½
     for(int i=1;i<=8;++i)
     {
         if(Store_SetDataMaxInt(i,4096)<0)
@@ -3755,7 +3755,7 @@ int  Store_ClearWork()         //+++++++
         if(Store_SetDataMinInt(i,0)<0)
             return -1;
     }
-    //Êý¾ÝÇøÈ«²¿ÈÏÎªÒÑ¾­·¢ËÍ
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½ï¿½ï¿½Îªï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½
     for(int i=HYDROLOGY_DATA_MIN_IDX;i<=HYDROLOGY_DATA_MAX_IDX;++i)
     {
         if(Store_MarkDataItemSended(i)<0)
@@ -3764,7 +3764,7 @@ int  Store_ClearWork()         //+++++++
     return 0;
 }
 
-int  Store_MarkDataItemSended(int _index)   //ÉèÖÃ·¢ËÍ±ê¼Ç
+int  Store_MarkDataItemSended(int _index)   //ï¿½ï¿½ï¿½Ã·ï¿½ï¿½Í±ï¿½ï¿½
 {
     if( _index < HYDROLOGY_DATA_MIN_IDX || _index > HYDROLOGY_DATA_MAX_IDX)
         return -2;
@@ -3776,12 +3776,12 @@ int  Store_MarkDataItemSended(int _index)   //ÉèÖÃ·¢ËÍ±ê¼Ç
     }
     return 0;
 }
-//  Ð´Êý¾Ýº¯Êý Ö±½ÓÐ´
+//  Ð´ï¿½ï¿½ï¿½Ýºï¿½ï¿½ï¿½ Ö±ï¿½ï¿½Ð´
 int  Store_WriteDataItem(int _index,  char * _src)
 {
     if( _index < HYDROLOGY_DATA_MIN_IDX || _index > HYDROLOGY_DATA_MAX_IDX)
         return -2;
-    //µÚÒ»¸öÎ´¶Á±ê¼Ç(»òÐ£Ñé×Ö½Ú)ÓÉ_srcÌá¹©
+    //ï¿½ï¿½Ò»ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½Ð£ï¿½ï¿½ï¿½Ö½ï¿½)ï¿½ï¿½_srcï¿½á¹©
    // int _addr = DATA_START_ADDR + ( _index -1 ) * DATA_ITEM_LEN; 
     //char _tmp;                                                                  //+++++   
     //Hydrology_ReadStoreInfo(HYDROLOGY_DATA_PACKET_LEN,&_tmp,HYDROLOGY_DATA_PACKET_LEN_LEN); 
@@ -3796,11 +3796,11 @@ int  Store_WriteDataItemAuto(char * _src)
 {
     int _endIdx=0;
     if(Hydrology_ReadEndIdx(&_endIdx)<0)//
-    {//¶ÁÈ¡ÌîÐ´±ê¼Ç´íÎó
+    {//ï¿½ï¿½È¡ï¿½ï¿½Ð´ï¿½ï¿½Ç´ï¿½ï¿½ï¿½
         if(Hydrology_RetrieveIndex()<0)
-            return -1;//³¢ÊÔÉú³É±ê¼ÇÊ§°Ü
+            return -1;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É±ï¿½ï¿½Ê§ï¿½ï¿½
         if(Hydrology_ReadEndIdx(&_endIdx)<0)
-            return -1;//ÈÔ¾É´íÎó
+            return -1;//ï¿½Ô¾É´ï¿½ï¿½ï¿½
     }
     if(Store_WriteDataItem(_endIdx,_src)<0)
         return -1;
@@ -3810,27 +3810,27 @@ int  Store_WriteDataItemAuto(char * _src)
     else
     {
         ++_endIdx;
-    //RTC_SetEndIdx(_endIdx);//¸üÐÂ_endIdx
+    //RTC_SetEndIdx(_endIdx);//ï¿½ï¿½ï¿½ï¿½_endIdx
        
     }
      Hydrology_SetEndIdx(_endIdx);
     return 0;
 } 
 
-// ¸ù¾Ýµ±Ç°ÅäÖÃ¶Á³öÊý¾Ý´®
-// ÐèÒª95×Ö½ÚµÄbuffer
-//  ·µ»ØÖµÎªÊµ¼ÊÌîÐ´µÄ¸öÊý(¼´¿ÉÐ´µÄÏÂÒ»¸öÏÂ±ê)
-//  _destÌîÐ´Îª Ê±¼ä´®*A0000B0000
+// ï¿½ï¿½ï¿½Ýµï¿½Ç°ï¿½ï¿½ï¿½Ã¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý´ï¿½
+// ï¿½ï¿½Òª95ï¿½Ö½Úµï¿½buffer
+//  ï¿½ï¿½ï¿½ï¿½ÖµÎªÊµï¿½ï¿½ï¿½ï¿½Ð´ï¿½Ä¸ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Â±ï¿½)
+//  _destï¿½ï¿½Ð´Îª Ê±ï¿½ä´®*A0000B0000
 //  
-//  ¹©·¢ËÍÁ÷³ÌÖ±½ÓÊ¹ÓÃ
-//  ±£´æÄÚÈÝÎª
-//  Ð£Ñé×Ö½Ú 0909011230×Ö½ÚA1×Ö½ÚA2×Ö½ÚB1×Ö½ÚB2×Ö½Ú..×Ö½ÚI1×Ö½ÚI2...¿ª¹Ø×Ö½Ú
-//  ÈçÏÂ:
+//  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ï¿½Ê¹ï¿½ï¿½
+//  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª
+//  Ð£ï¿½ï¿½ï¿½Ö½ï¿½ 0909011230ï¿½Ö½ï¿½A1ï¿½Ö½ï¿½A2ï¿½Ö½ï¿½B1ï¿½Ö½ï¿½B2ï¿½Ö½ï¿½..ï¿½Ö½ï¿½I1ï¿½Ö½ï¿½I2...ï¿½ï¿½ï¿½ï¿½ï¿½Ö½ï¿½
+//  ï¿½ï¿½ï¿½ï¿½:
 //  0           1          2          3     
 //  0  1234567890 1234567890123456 789012345678  9
-//  Ð£ 0909011230 AABBCCDDEEFFGGHH IIIJJJKKKLLL ¿ª¹Ø
+//  Ð£ 0909011230 AABBCCDDEEFFGGHH IIIJJJKKKLLL ï¿½ï¿½ï¿½ï¿½
 // 
-//  _buffer(ÑùÀý)
+//  _buffer(ï¿½ï¿½ï¿½ï¿½)
 //  0         1         2         3         4
 //  01234567890123456789012345678901234567890 
 //  0909011230*A4096B4096I0000F0J000000M1N0R1 
@@ -3839,7 +3839,7 @@ int  Store_ReadDataItem(int _index , char * _dest, int _flag)
     if( _index < HYDROLOGY_DATA_MIN_IDX || _index > HYDROLOGY_DATA_MAX_IDX)
         return -2;
     long _addr=HYDROLOGY_DATAMIN_ADDR + (_index -1)*DataPacketLen; //
-    char _buffer[40];
+    char _buffer[HYDROLOGY_DATA_ITEM_LEN];
     //int  _repeats=0;
     int  _read_flag=0;
    // int i = 0;
@@ -3856,14 +3856,14 @@ int  Store_ReadDataItem(int _index , char * _dest, int _flag)
         {
             _read_flag =1;
         }
-        //ÌîÐ´Ê±¼ä´®
+        //ï¿½ï¿½Ð´Ê±ï¿½ä´®
         Utility_Strncpy(_dest, &(_buffer[1]),5);
-        //ÌîÐ´Êý¾Ý
+        //ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½
         Utility_Strncpy(&(_dest[5]), &(_buffer[6]),DataPacketLen-6);
         
            
     
-    //¸ù¾Ý ÒÑ·¢ËÍ±ê¼Ç½øÐÐ·µ»Ø
+    //ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ·ï¿½ï¿½Í±ï¿½Ç½ï¿½ï¿½Ð·ï¿½ï¿½ï¿½
     if(_read_flag && !_flag)
         return 1;
     else

@@ -46,9 +46,9 @@
 #include <string.h>
 
 /* APP */
-#include "BLE_Task.h"
-#include "Hydrolody_Task.h"
-#include "RTC_Task.h"
+#include "ble_task.h"
+#include "hydrology_task.h"
+#include "rtc_task.h"
 #include "boot.h"
 #include "communication_opr.h"
 #include "gprs.h"
@@ -72,8 +72,6 @@ void app_main(void* pvParameters) {
 
 	bios_check();
 
-	hydrology_init();
-
 	create_hydrology_tasks();
 
 	vTaskDelete(NULL);
@@ -83,7 +81,7 @@ void app_main(void* pvParameters) {
 void main(void) {
 	setup_board_hardware();
 
-	xTaskCreate(app_main, "app_main", configMINIMAL_STACK_SIZE * 4, NULL, tskIDLE_PRIORITY + 2,
+	xTaskCreate(app_main, "app_main", configMINIMAL_STACK_SIZE * 6, NULL, tskIDLE_PRIORITY + 2,
 		    NULL);
 
 	vTaskStartScheduler();
@@ -114,7 +112,7 @@ static void setup_board_hardware(void) {
 
 	WDT_A_hold(WDT_A_BASE);
 
-	printf("device boot on ! \r\n");
+	printf("device power on ! \r\n");
 
 	Sampler_Open();
 }

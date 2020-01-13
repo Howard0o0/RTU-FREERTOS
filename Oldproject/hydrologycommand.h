@@ -2,7 +2,7 @@
 #ifndef  _HYDROLOGYCOMMAND_H_
 #define  _HYDROLOGYCOMMAND_H_
 
-/*¿¼ÂÇ¶¯Ì¬´æ´¢     »ù±¾ÅäÖÃÒ»¿é   ¶¯Ì¬´æÊý¾ÝµÄÇøÓòÒ»¿é
+/*ï¿½ï¿½ï¿½Ç¶ï¿½Ì¬ï¿½æ´¢     ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½   ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½Ýµï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
 
 */
 
@@ -65,6 +65,8 @@
 
 #define       HYDROLOGY_ISR_COUNT_LEN         		5
 
+#define       HYDROLOGY_ISR_COUNT_FLAG_LEN              1
+
 #define       HYDROLOGY_ANALOG_LEN         		4
 
 #define       HYDROLOGY_PULSE_LEN         		4
@@ -111,92 +113,92 @@
 #define       HYDROLOGY_PARAWATERLEVEL_BASEVALUE_LEN             4
 #define       HYDROLOGY_PARAWATERLEVEL_CORRECTVALUE_LEN          3
 #define       HYDROLOGY_PARAWATERLEVEL_ADDVALUE_LEN              2
-#define       HYDROLOGY_PARAWATERLEVEL_EXCEEDADD_THRESHOLDVALUE_LEN      2                //¼Ó±¨Ë®Î»ÒÔÉÏ¼Ó±¨ãÐÖµ
+#define       HYDROLOGY_PARAWATERLEVEL_EXCEEDADD_THRESHOLDVALUE_LEN      2                //ï¿½Ó±ï¿½Ë®Î»ï¿½ï¿½ï¿½Ï¼Ó±ï¿½ï¿½ï¿½Öµ
  
-#define       HYDROLOGY_PARAWATERLEVEL_BELOWADD_THRESHOLDVALUE_LEN       2                //¼Ó±¨Ë®Î»ÒÔÏÂ¼Ó±¨ãÐÖµ 
-#define       HYDROLOGY_PARAFLOW_ADD_THRESHOLDVALUE_LEN                  3                //Á÷Á¿¼Ó±¨ãÐÖµ
-#define       HYDROLOGY_PARAVELOCITY_ADD_THRESHOLDVALUE_LEN              3                //Á÷ËÙ¼Ó±¨ãÐÖµ
-#define       HYDROLOGY_PARAGATEPOSITION_ADD_THRESHOLDVALUE_LEN          2                //Õ¢Î»¼Ó±¨ãÐÖµ 
-#define       HYDROLOGY_PARAPOWER_ADD_THRESHOLDVALUE_LEN                 3                //¹¦ÂÊ¼Ó±¨ãÐÖµ
-#define       HYDROLOGY_PARAPRESSURE_ADD_THRESHOLDVALUE_LEN              2                //ÆøÑ¹¼Ó±¨ãÐÖµ
-#define       HYDROLOGY_PARAWINDSPEED_ADD_THRESHOLDVALUE_LEN             2                //·çËÙ¼Ó±¨ãÐÖµ
+#define       HYDROLOGY_PARAWATERLEVEL_BELOWADD_THRESHOLDVALUE_LEN       2                //ï¿½Ó±ï¿½Ë®Î»ï¿½ï¿½ï¿½Â¼Ó±ï¿½ï¿½ï¿½Öµ 
+#define       HYDROLOGY_PARAFLOW_ADD_THRESHOLDVALUE_LEN                  3                //ï¿½ï¿½ï¿½ï¿½ï¿½Ó±ï¿½ï¿½ï¿½Öµ
+#define       HYDROLOGY_PARAVELOCITY_ADD_THRESHOLDVALUE_LEN              3                //ï¿½ï¿½ï¿½Ù¼Ó±ï¿½ï¿½ï¿½Öµ
+#define       HYDROLOGY_PARAGATEPOSITION_ADD_THRESHOLDVALUE_LEN          2                //Õ¢Î»ï¿½Ó±ï¿½ï¿½ï¿½Öµ 
+#define       HYDROLOGY_PARAPOWER_ADD_THRESHOLDVALUE_LEN                 3                //ï¿½ï¿½ï¿½Ê¼Ó±ï¿½ï¿½ï¿½Öµ
+#define       HYDROLOGY_PARAPRESSURE_ADD_THRESHOLDVALUE_LEN              2                //ï¿½ï¿½Ñ¹ï¿½Ó±ï¿½ï¿½ï¿½Öµ
+#define       HYDROLOGY_PARAWINDSPEED_ADD_THRESHOLDVALUE_LEN             2                //ï¿½ï¿½ï¿½Ù¼Ó±ï¿½ï¿½ï¿½Öµ
 
-#define       HYDROLOGY_PARAWATERTEMPERATURE_ADD_THRESHOLDVALUE_LEN      1                     //Ë®ÎÂ¼Ó±¨ãÐÖµ     
-#define       HYDROLOGY_PARAWATERINTAKING_UPLEVEL_LEN                    2                     //È¡£¨ÅÅ£©Ë®¿Ú1ÉÏÏÞË®Î»
-#define       HYDROLOGY_PARAWATERINTAKING_LOWLEVEL_LEN                   2                     //È¡£¨ÅÅ£©Ë®¿Ú1ÏÂÏÞË®Î»
-
-
-#define       HYDROLOGY_PARAWATERINTAKING_UPPRESSURE_LEN                 4                     //È¡£¨ÅÅ£©Ë®¿Ú1ÉÏÏÞË®Ñ¹                       
-#define       HYDROLOGY_PARAWATERINTAKING_LOWPRESSURE_LEN                4                     //È¡£¨ÅÅ£©Ë®¿Ú1ÏÂÏÞË®Ñ¹
+#define       HYDROLOGY_PARAWATERTEMPERATURE_ADD_THRESHOLDVALUE_LEN      1                     //Ë®ï¿½Â¼Ó±ï¿½ï¿½ï¿½Öµ     
+#define       HYDROLOGY_PARAWATERINTAKING_UPLEVEL_LEN                    2                     //È¡ï¿½ï¿½ï¿½Å£ï¿½Ë®ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½Ë®Î»
+#define       HYDROLOGY_PARAWATERINTAKING_LOWLEVEL_LEN                   2                     //È¡ï¿½ï¿½ï¿½Å£ï¿½Ë®ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½Ë®Î»
 
 
-#define       HYDROLOGY_PARAWATERTEMPERATURE_UPLIMIT_LEN                 2                     //Ë®ÎÂÉÏÏÞ
+#define       HYDROLOGY_PARAWATERINTAKING_UPPRESSURE_LEN                 4                     //È¡ï¿½ï¿½ï¿½Å£ï¿½Ë®ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½Ë®Ñ¹                       
+#define       HYDROLOGY_PARAWATERINTAKING_LOWPRESSURE_LEN                4                     //È¡ï¿½ï¿½ï¿½Å£ï¿½Ë®ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½Ë®Ñ¹
 
-#define       HYDROLOGY_PARAWATERTEMPERATURE_LOWLIMIT_LEN                2                    //Ë®ÎÂÏÂÏÞ
-#define       HYDROLOGY_PARAWATERPH_UPLIMIT_LEN                          1                    //PHÖµÉÏÏÞ       
 
-#define       HYDROLOGY_PARAWATERPH_LOWLIMIT_LEN                         1                          //PHÖµÏÂÏÞ
-#define       HYDROLOGY_PARAWATERDO_UPLIMIT_LEN                          2                          //ÈÜ½âÑõÉÏÏÞ
+#define       HYDROLOGY_PARAWATERTEMPERATURE_UPLIMIT_LEN                 2                     //Ë®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-#define       HYDROLOGY_PARAWATERDO_LOWLIMIT_LEN                         2                          //ÈÜ½âÑõÏÂÏÞ
-#define       HYDROLOGY_PARAWATERCODMn_UPLIMIT_LEN                       2                         //¸ßÃÌËáÑÎÉÏÏÞ  
+#define       HYDROLOGY_PARAWATERTEMPERATURE_LOWLIMIT_LEN                2                    //Ë®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATERPH_UPLIMIT_LEN                          1                    //PHÖµï¿½ï¿½ï¿½ï¿½       
 
-#define       HYDROLOGY_PARAWATERCODMn_LOWLIMIT_LEN                      2                         //¸ßÃÌËáÑÎÏÂÏÞ
-#define       HYDROLOGY_PARAWATERCONDUCTIVITY_UPLIMIT_LEN                3                         //µçµ¼ÂÊÉÏÏÞ        
+#define       HYDROLOGY_PARAWATERPH_LOWLIMIT_LEN                         1                          //PHÖµï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATERDO_UPLIMIT_LEN                          2                          //ï¿½Ü½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-#define       HYDROLOGY_PARAWATERCONDUCTIVITY_LOWLIMIT_LEN               3                        //µçµ¼ÂÊÏÂÏÞ         
-#define       HYDROLOGY_PARAWATEREh_UPLIMIT_LEN                          3                        //Ñõ»¯»¹Ô­µçÎ»ÉÏÏÞ
-#define       HYDROLOGY_PARAWATEREh_LOWLIMIT_LEN                         3                        //Ñõ»¯»¹Ô­µçÎ»ÏÂÏÞ
+#define       HYDROLOGY_PARAWATERDO_LOWLIMIT_LEN                         2                          //ï¿½Ü½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATERCODMn_UPLIMIT_LEN                       2                         //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  
 
-#define       HYDROLOGY_PARAWATERNTU_UPLIMIT_LEN                         2                           //×Ç¶ÈÉÏÏÞ
+#define       HYDROLOGY_PARAWATERCODMn_LOWLIMIT_LEN                      2                         //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATERCONDUCTIVITY_UPLIMIT_LEN                3                         //ï¿½çµ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½        
 
-#define       HYDROLOGY_PARAWATERNTU_LOWLIMIT_LEN                        2                          //×Ç¶ÈÏÂÏÞ
-#define       HYDROLOGY_PARAWATERNH_UPLIMIT_LEN                          3                           //°±µªÉÏÏÞ
+#define       HYDROLOGY_PARAWATERCONDUCTIVITY_LOWLIMIT_LEN               3                        //ï¿½çµ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½         
+#define       HYDROLOGY_PARAWATEREh_UPLIMIT_LEN                          3                        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATEREh_LOWLIMIT_LEN                         3                        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½
 
-#define       HYDROLOGY_PARAWATERNH_LOWLIMIT_LEN                         3                         //°±µªÏÂÏÞ
-#define       HYDROLOGY_PARAWATERNT_UPLIMIT_LEN                          3                            //×ÜµªÉÏÏÞ
+#define       HYDROLOGY_PARAWATERNTU_UPLIMIT_LEN                         2                           //ï¿½Ç¶ï¿½ï¿½ï¿½ï¿½ï¿½
 
-#define       HYDROLOGY_PARAWATERNT_LOWLIMIT_LEN                         3                        //×ÜµªÏÂÏÞ 
-#define       HYDROLOGY_PARAWATERCu_UPLIMIT_LEN                          4                             //Í­ÉÏÏÞ
+#define       HYDROLOGY_PARAWATERNTU_LOWLIMIT_LEN                        2                          //ï¿½Ç¶ï¿½ï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATERNH_UPLIMIT_LEN                          3                           //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-#define       HYDROLOGY_PARAWATERCu_LOWLIMIT_LEN                         4                         //Í­ÏÂÏÞ 
-#define       HYDROLOGY_PARAWATERZn_UPLIMIT_LEN                          3                            //Ð¿ÉÏÏÞ 
+#define       HYDROLOGY_PARAWATERNH_LOWLIMIT_LEN                         3                         //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATERNT_UPLIMIT_LEN                          3                            //ï¿½Üµï¿½ï¿½ï¿½ï¿½ï¿½
 
-#define       HYDROLOGY_PARAWATERZn_LOWLIMIT_LEN                         3                         //Ð¿ÏÂÏÞ
-#define       HYDROLOGY_PARAWATEROXIDE_UPLIMIT_LEN                       3                         //Ñõ»¯ÎïÉÏÏÞ   
+#define       HYDROLOGY_PARAWATERNT_LOWLIMIT_LEN                         3                        //ï¿½Üµï¿½ï¿½ï¿½ï¿½ï¿½ 
+#define       HYDROLOGY_PARAWATERCu_UPLIMIT_LEN                          4                             //Í­ï¿½ï¿½ï¿½ï¿½
 
-#define       HYDROLOGY_PARAWATEROXIDE_LOWLIMIT_LEN                      3                         //Ñõ»¯ÎïÏÂÏÞ
-#define       HYDROLOGY_PARAWATERSe_UPLIMIT_LEN                          4                        //ÎøÉÏÏÞ
+#define       HYDROLOGY_PARAWATERCu_LOWLIMIT_LEN                         4                         //Í­ï¿½ï¿½ï¿½ï¿½ 
+#define       HYDROLOGY_PARAWATERZn_UPLIMIT_LEN                          3                            //Ð¿ï¿½ï¿½ï¿½ï¿½ 
 
-#define       HYDROLOGY_PARAWATERSe_LOWLIMIT_LEN                         4                        //ÎøÏÂÏÞ
-#define       HYDROLOGY_PARAWATERAs_UPLIMIT_LEN                          4                        //ÉéÉÏÏÞ  
+#define       HYDROLOGY_PARAWATERZn_LOWLIMIT_LEN                         3                         //Ð¿ï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATEROXIDE_UPLIMIT_LEN                       3                         //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½   
 
-#define       HYDROLOGY_PARAWATERAs_LOWLIMIT_LEN                         4                         //ÉéÏÂÏÞ
-#define       HYDROLOGY_PARAWATERHg_UPLIMIT_LEN                          4                         //¹¯ÉÏÏÞ 
+#define       HYDROLOGY_PARAWATEROXIDE_LOWLIMIT_LEN                      3                         //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATERSe_UPLIMIT_LEN                          4                        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-#define       HYDROLOGY_PARAWATERHg_LOWLIMIT_LEN                         4                         //¹¯ÏÂÏÞ
-#define       HYDROLOGY_PARAWATERCd_UPLIMIT_LEN                          4                          //ïÓÉÏÏÞ
+#define       HYDROLOGY_PARAWATERSe_LOWLIMIT_LEN                         4                        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATERAs_UPLIMIT_LEN                          4                        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  
 
-#define       HYDROLOGY_PARAWATERCd_LOWLIMIT_LEN                         4                         //ïÓÏÂÏÞ  
-#define       HYDROLOGY_PARAWATERTOC_UPLIMIT_LEN                         2                            //×ÜÓÐ»úÌ¼ÉÏÏÞ  
+#define       HYDROLOGY_PARAWATERAs_LOWLIMIT_LEN                         4                         //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATERHg_UPLIMIT_LEN                          4                         //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
 
-#define       HYDROLOGY_PARAWATERTOC_LOWLIMIT_LEN                        2                         //×ÜÓÐ»úÌ¼ÏÂÏÞ
-#define       HYDROLOGY_PARAWATERCHL_UPLIMIT_LEN                         2                          //Ò¶ÂÌËØÉÏÏÞ
+#define       HYDROLOGY_PARAWATERHg_LOWLIMIT_LEN                         4                         //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATERCd_UPLIMIT_LEN                          4                          //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-#define       HYDROLOGY_PARAWATERCHL_LOWLIMIT_LEN                        2                         //Ò¶ÂÌËØÏÂÏÞ  
+#define       HYDROLOGY_PARAWATERCd_LOWLIMIT_LEN                         4                         //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  
+#define       HYDROLOGY_PARAWATERTOC_UPLIMIT_LEN                         2                            //ï¿½ï¿½ï¿½Ð»ï¿½Ì¼ï¿½ï¿½ï¿½ï¿½  
 
-#define       HYDROLOGY_PARAWATERFLOW_UPLIMIT_LEN                        6                          //Á÷Á¿ÉÏÏÞ                            
+#define       HYDROLOGY_PARAWATERTOC_LOWLIMIT_LEN                        2                         //ï¿½ï¿½ï¿½Ð»ï¿½Ì¼ï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATERCHL_UPLIMIT_LEN                         2                          //Ò¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-#define       HYDROLOGY_PARAWATERMETER_RECHARGEQTY_LEN                   6                          //Ë®±í³äÖµË®Á¿             
+#define       HYDROLOGY_PARAWATERCHL_LOWLIMIT_LEN                        2                         //Ò¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  
 
-#define       HYDROLOGY_PARAWATER_QTY_LEN                                6                          //Ë®Á¿¶¨ÖµÁ¿ 
+#define       HYDROLOGY_PARAWATERFLOW_UPLIMIT_LEN                        6                          //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½                            
 
-#define       HYDROLOGY_PARAFLASH_INIT_LEN                               1                          //¹ÌÌ¬´æ´¢Êý¾Ý³õÊ¼»¯ 
-#define       HYDROLOGY_PARA_RESET_LEN                                   1                           //Ò£²âÖÕ¶Ë²ÎÊý»Ö¸´³ö³§ÉèÖÃ
+#define       HYDROLOGY_PARAWATERMETER_RECHARGEQTY_LEN                   6                          //Ë®ï¿½ï¿½ï¿½ï¿½ÖµË®ï¿½ï¿½             
 
-#define       HYDROLOGY_PARAWATERMETER_INIT_LEN                          6                           //Ë®±íË®Á¿±íµ×£¨³õÊ¼£©Öµ  
+#define       HYDROLOGY_PARAWATER_QTY_LEN                                6                          //Ë®ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ 
 
-#define       HYDROLOGY_PARAWATERMETER_SURPLUS_ALARM_LEN                 6                           //Ë®±íÊ£ÓàË®Á¿±¨¾¯Öµ  
+#define       HYDROLOGY_PARAFLASH_INIT_LEN                               1                          //ï¿½ï¿½Ì¬ï¿½æ´¢ï¿½ï¿½ï¿½Ý³ï¿½Ê¼ï¿½ï¿½ 
+#define       HYDROLOGY_PARA_RESET_LEN                                   1                           //Ò£ï¿½ï¿½ï¿½Õ¶Ë²ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+
+#define       HYDROLOGY_PARAWATERMETER_INIT_LEN                          6                           //Ë®ï¿½ï¿½Ë®ï¿½ï¿½ï¿½ï¿½ï¿½×£ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½Öµ  
+
+#define       HYDROLOGY_PARAWATERMETER_SURPLUS_ALARM_LEN                 6                           //Ë®ï¿½ï¿½Ê£ï¿½ï¿½Ë®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ  
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 #define       HYDROLOGY_ELEMENT_ID_LEN                  1 
 #define       HYDROLOGY_ELEMENT_TYPE_LEN                1  
@@ -211,9 +213,9 @@
 #define       HYDROLOGY_DATA_END_INDEX_LEN              4
 #define       HYDROLOGY_SEND_FLAG_LEN                   1
 #define       HYDROLOGY_END_LEN                         1
-#define     HYDROLOGY_DATA_MAX_IDX              2000   //ÄÜ´æµÄÊý¾ÝÌõµÄ×î´ó¸öÊý
+#define     HYDROLOGY_DATA_MAX_IDX              4000   //ï¿½Ü´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 #define     HYDROLOGY_DATA_MIN_IDX              1  
-#define     HYDROLOGY_DATA_ITEM_LEN             30      //Êý¾ÝÌõµÄ×î´ó³¤¶È
+#define     HYDROLOGY_DATA_ITEM_LEN             130      //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ó³¤¶ï¿½
 
 #define     HYDROLOGY_DATA_SEND_FLAG_LEN        1
 #define     HYDROLOGY_DATA_TIME_LEN             5
@@ -221,9 +223,9 @@
 //#define     HYDROLOGY_DATA_ELEMENT_LEN_LEN      1
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-/*ÒÔÏÂºê¶¨ÒåÎªÍâ²¿´æ´¢Æ÷Ê×µØÖ·¶¨Òå£¬ÐèÓÉÓÃ»§¸ù¾ÝÓ²¼þÉè±¸ÊµÏÖ£¬·ñÔòË®ÎÄÐ­ÒéÎÞ·¨ÔËÐÐ*/
-#define       HYDROLOGY_CONFIG_ADDR                     0x0  /*2KÇøÓòÓÃÓÚ´æ´¢ÅäÖÃ²ÎÊý£¬µØÖ·¿Õ¼ä 0x0-0x007ff*/
-/*ÒÔÉÏºê¶¨ÒåÎªÍâ²¿´æ´¢Æ÷Ê×µØÖ·¶¨Òå£¬ÐèÓÉÓÃ»§¸ù¾ÝÓ²¼þÉè±¸ÊµÏÖ£¬·ñÔòË®ÎÄÐ­ÒéÎÞ·¨ÔËÐÐ*/
+/*ï¿½ï¿½ï¿½Âºê¶¨ï¿½ï¿½Îªï¿½â²¿ï¿½æ´¢ï¿½ï¿½ï¿½×µï¿½Ö·ï¿½ï¿½ï¿½å£¬ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ó²ï¿½ï¿½ï¿½è±¸Êµï¿½Ö£ï¿½ï¿½ï¿½ï¿½ï¿½Ë®ï¿½ï¿½Ð­ï¿½ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½ï¿½*/
+#define       HYDROLOGY_CONFIG_ADDR                     0x0  /*2Kï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´æ´¢ï¿½ï¿½ï¿½Ã²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½Õ¼ï¿½ 0x0-0x007ff*/
+/*ï¿½ï¿½ï¿½Ïºê¶¨ï¿½ï¿½Îªï¿½â²¿ï¿½æ´¢ï¿½ï¿½ï¿½×µï¿½Ö·ï¿½ï¿½ï¿½å£¬ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ó²ï¿½ï¿½ï¿½è±¸Êµï¿½Ö£ï¿½ï¿½ï¿½ï¿½ï¿½Ë®ï¿½ï¿½Ð­ï¿½ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½ï¿½*/
 
 #define       HYDROLOGY_RTUTYPE													HYDROLOGY_CONFIG_ADDR + 0
 
@@ -248,10 +250,10 @@
 #define       HYDROLOGY_REPEATER_STATION                HYDROLOGY_ELEMENT_SELECT + HYDROLOGY_ELEMENT_SELECT_LEN
 #define       HYDROLOGY_DEVICE_ID												HYDROLOGY_REPEATER_STATION + HYDROLOGY_REPEATER_STATION_LEN
 
-#define       HYDROLOGY_TIMER_INTERVAL                	HYDROLOGY_DEVICE_ID + HYDROLOGY_DEVICE_ID_LEN                                   //¶¨Ê±±¨Ê±¼ä¼ä¸ô
-#define       HYDROLOGY_ADD_INTERVAL                    HYDROLOGY_TIMER_INTERVAL + HYDROLOGY_TIMER_INTERVAL_LEN                         //¼Ó±¨Ê±¼ä¼ä¸ô  1-59min
-#define       HYDROLOGY_RAINFALL_BEGIN_TIME             HYDROLOGY_ADD_INTERVAL + HYDROLOGY_ADD_INTERVAL_LEN                             //²ÉÑù¼ä¸ô       0-9999s
-#define       HYDROLOGY_SAMPLE_INTERVAL                 HYDROLOGY_RAINFALL_BEGIN_TIME + HYDROLOGY_RAINFALL_BEGIN_TIME_LEN               //Ë®Î»Êý¾Ý´æ´¢¼ä¸ô 1-59min
+#define       HYDROLOGY_TIMER_INTERVAL                	HYDROLOGY_DEVICE_ID + HYDROLOGY_DEVICE_ID_LEN                                   //ï¿½ï¿½Ê±ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_ADD_INTERVAL                    HYDROLOGY_TIMER_INTERVAL + HYDROLOGY_TIMER_INTERVAL_LEN                         //ï¿½Ó±ï¿½Ê±ï¿½ï¿½ï¿½ï¿½  1-59min
+#define       HYDROLOGY_RAINFALL_BEGIN_TIME             HYDROLOGY_ADD_INTERVAL + HYDROLOGY_ADD_INTERVAL_LEN                             //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½       0-9999s
+#define       HYDROLOGY_SAMPLE_INTERVAL                 HYDROLOGY_RAINFALL_BEGIN_TIME + HYDROLOGY_RAINFALL_BEGIN_TIME_LEN               //Ë®Î»ï¿½ï¿½ï¿½Ý´æ´¢ï¿½ï¿½ï¿½ 1-59min
 #define       HYDROLOGY_WATERLEVEL_STORE_INTERVAL       HYDROLOGY_SAMPLE_INTERVAL + HYDROLOGY_SAMPLE_INTERVAL_LEN
 #define       HYDROLOGY_RAINFALL_RESOLUTION             HYDROLOGY_WATERLEVEL_STORE_INTERVAL + HYDROLOGY_WATERLEVEL_STORE_INTERVAL_LEN
 #define       HYDROLOGY_WATERLEVEL_RESOLUTION           HYDROLOGY_RAINFALL_RESOLUTION + HYDROLOGY_RAINFALL_RESOLUTION_LEN
@@ -286,7 +288,9 @@
 #define       HYDROLOGY_SOFTWARE_VERSION                HYDROLOGY_ADD_BELOW_THRESHOLD + HYDROLOGY_ADD_BELOW_THRESHOLD_LEN
 #define       HYDROLOGY_STATUS_ALARM_INFO               HYDROLOGY_SOFTWARE_VERSION + HYDROLOGY_SOFTWARE_VERSION_LEN
 
-#define       HYDROLOGY_ISR_COUNT1                      HYDROLOGY_STATUS_ALARM_INFO + HYDROLOGY_STATUS_ALARM_INFO_LEN
+#define       HYDROLOGY_ISR_COUNT_FLAG                  HYDROLOGY_STATUS_ALARM_INFO + HYDROLOGY_STATUS_ALARM_INFO_LEN
+
+#define       HYDROLOGY_ISR_COUNT1                      HYDROLOGY_ISR_COUNT_FLAG + HYDROLOGY_ISR_COUNT_FLAG_LEN
 #define       HYDROLOGY_ISR_COUNT2                      HYDROLOGY_ISR_COUNT1 + HYDROLOGY_ISR_COUNT_LEN
 #define       HYDROLOGY_ISR_COUNT3                      HYDROLOGY_ISR_COUNT2 + HYDROLOGY_ISR_COUNT_LEN
 #define       HYDROLOGY_ISR_COUNT4                      HYDROLOGY_ISR_COUNT3 + HYDROLOGY_ISR_COUNT_LEN
@@ -341,7 +345,7 @@
 
 #define       HYDROLOGY_PICTURE_SIZE                    HYDROLOGY_RECORD + HYDROLOGY_RECORD_LEN
 #define       HYDROLOGY_PICTURE                         HYDROLOGY_PICTURE_SIZE + HYDROLOGY_PICTURE_SIZE_LEN
-/*ÒÔÏÂÎªÐèÒª²É¼¯µÄelement_table*/
+/*ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Òªï¿½É¼ï¿½ï¿½ï¿½element_table*/
 
 #define       HYDROLOGY_USER_ElEMENT_COUNT                 HYDROLOGY_PICTURE + HYDROLOGY_PICTURE_LEN
 #define       HYDROLOGY_RS485_REGISTER_COUNT               HYDROLOGY_USER_ElEMENT_COUNT + HYDROLOGY_USER_ElEMENT_COUNT_LEN
@@ -457,7 +461,7 @@
 #define      HYDROLOGY_DATA_START_INDEX              HYDROLOGY_REPORTTIME_ADDR + HYDROLOGY_DATA_TIME_LEN
 
 #define      HYDROLOGY_DATA_END_INDEX                HYDROLOGY_DATA_START_INDEX + HYDROLOGY_DATA_START_INDEX_LEN
-/*Êý¾Ý»º´æÇø*/
+/*ï¿½ï¿½ï¿½Ý»ï¿½ï¿½ï¿½ï¿½ï¿½*/
 #define       HYDROLOGY_ANALOG1                     	HYDROLOGY_DATA_END_INDEX + HYDROLOGY_DATA_END_INDEX_LEN                                      //Öµ
 #define       HYDROLOGY_ANALOG2               		HYDROLOGY_ANALOG1 + HYDROLOGY_ANALOG_LEN
 #define       HYDROLOGY_ANALOG3               		HYDROLOGY_ANALOG2 + HYDROLOGY_ANALOG_LEN
@@ -552,7 +556,7 @@
 //#define       HYDROLOGY_END                             HYDROLOGY_ELEMENT16_CHANNEL + HYDROLOGY_ELEMENT_CHANNEL_LEN
 
 
-/*ÒÔÏÂºê¶¨ÒåÎªÒ£²âÕ¾ÔËÐÐ²ÎÊýÅäÖÃÇøÊ×µØÖ·¶¨Òå,±íD.4*/
+/*ï¿½ï¿½ï¿½Âºê¶¨ï¿½ï¿½ÎªÒ£ï¿½ï¿½Õ¾ï¿½ï¿½ï¿½Ð²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×µï¿½Ö·ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½D.4*/
 #define       HYDROLOGY_PARAREPORT_TIMEINTERVAL                    HYDROLOGY_END + HYDROLOGY_END_LEN  
 #define       HYDROLOGY_PARAREPORT_ADDTIME                         HYDROLOGY_PARAREPORT_TIMEINTERVAL +  HYDROLOGY_PARAREPORT_TIMEINTERVAL_LEN  
 #define       HYDROLOGY_PARARAIN_STARTTIME                         HYDROLOGY_PARAREPORT_ADDTIME + HYDROLOGY_PARAREPORT_ADDTIME_LEN  
@@ -580,7 +584,7 @@
 #define       HYDROLOGY_PARAWATERLEVEL_CORRECTVALUE7                       HYDROLOGY_PARAWATERLEVEL_CORRECTVALUE6 + HYDROLOGY_PARAWATERLEVEL_CORRECTVALUE_LEN  
 #define       HYDROLOGY_PARAWATERLEVEL_CORRECTVALUE8                       HYDROLOGY_PARAWATERLEVEL_CORRECTVALUE7 + HYDROLOGY_PARAWATERLEVEL_CORRECTVALUE_LEN  
 
-#define       HYDROLOGY_PARAWATERLEVEL_ADDVALUE1                       HYDROLOGY_PARAWATERLEVEL_CORRECTVALUE8 + HYDROLOGY_PARAWATERLEVEL_CORRECTVALUE_LEN                    //¼Ó±¨Ë®Î»
+#define       HYDROLOGY_PARAWATERLEVEL_ADDVALUE1                       HYDROLOGY_PARAWATERLEVEL_CORRECTVALUE8 + HYDROLOGY_PARAWATERLEVEL_CORRECTVALUE_LEN                    //ï¿½Ó±ï¿½Ë®Î»
 #define       HYDROLOGY_PARAWATERLEVEL_ADDVALUE2                       HYDROLOGY_PARAWATERLEVEL_ADDVALUE1 + HYDROLOGY_PARAWATERLEVEL_ADDVALUE_LEN  
 #define       HYDROLOGY_PARAWATERLEVEL_ADDVALUE3                       HYDROLOGY_PARAWATERLEVEL_ADDVALUE2 + HYDROLOGY_PARAWATERLEVEL_ADDVALUE_LEN  
 #define       HYDROLOGY_PARAWATERLEVEL_ADDVALUE4                       HYDROLOGY_PARAWATERLEVEL_ADDVALUE3 + HYDROLOGY_PARAWATERLEVEL_ADDVALUE_LEN  
@@ -589,19 +593,19 @@
 #define       HYDROLOGY_PARAWATERLEVEL_ADDVALUE7                       HYDROLOGY_PARAWATERLEVEL_ADDVALUE6 + HYDROLOGY_PARAWATERLEVEL_ADDVALUE_LEN  
 #define       HYDROLOGY_PARAWATERLEVEL_ADDVALUE8                       HYDROLOGY_PARAWATERLEVEL_ADDVALUE7 + HYDROLOGY_PARAWATERLEVEL_ADDVALUE_LEN  
 
-#define       HYDROLOGY_PARAWATERLEVEL_EXCEEDADD_THRESHOLDVALUE                       HYDROLOGY_PARAWATERLEVEL_ADDVALUE8 + HYDROLOGY_PARAWATERLEVEL_ADDVALUE_LEN                         //¼Ó±¨Ë®Î»ÒÔÉÏ¼Ó±¨ãÐÖµ
-#define       HYDROLOGY_PARAWATERLEVEL_BELOWADD_THRESHOLDVALUE                        HYDROLOGY_PARAWATERLEVEL_EXCEEDADD_THRESHOLDVALUE + HYDROLOGY_PARAWATERLEVEL_EXCEEDADD_THRESHOLDVALUE_LEN          //¼Ó±¨Ë®Î»ÒÔÏÂ¼Ó±¨ãÐÖµ
+#define       HYDROLOGY_PARAWATERLEVEL_EXCEEDADD_THRESHOLDVALUE                       HYDROLOGY_PARAWATERLEVEL_ADDVALUE8 + HYDROLOGY_PARAWATERLEVEL_ADDVALUE_LEN                         //ï¿½Ó±ï¿½Ë®Î»ï¿½ï¿½ï¿½Ï¼Ó±ï¿½ï¿½ï¿½Öµ
+#define       HYDROLOGY_PARAWATERLEVEL_BELOWADD_THRESHOLDVALUE                        HYDROLOGY_PARAWATERLEVEL_EXCEEDADD_THRESHOLDVALUE + HYDROLOGY_PARAWATERLEVEL_EXCEEDADD_THRESHOLDVALUE_LEN          //ï¿½Ó±ï¿½Ë®Î»ï¿½ï¿½ï¿½Â¼Ó±ï¿½ï¿½ï¿½Öµ
 
-#define       HYDROLOGY_PARAFLOW_ADD_THRESHOLDVALUE                            HYDROLOGY_PARAWATERLEVEL_BELOWADD_THRESHOLDVALUE + HYDROLOGY_PARAWATERLEVEL_BELOWADD_THRESHOLDVALUE_LEN          //Á÷Á¿¼Ó±¨ãÐÖµ
-#define       HYDROLOGY_PARAVELOCITY_ADD_THRESHOLDVALUE                        HYDROLOGY_PARAFLOW_ADD_THRESHOLDVALUE +  HYDROLOGY_PARAFLOW_ADD_THRESHOLDVALUE_LEN          //Á÷ËÙ¼Ó±¨ãÐÖµ
-#define       HYDROLOGY_PARAGATEPOSITION_ADD_THRESHOLDVALUE                    HYDROLOGY_PARAVELOCITY_ADD_THRESHOLDVALUE +  HYDROLOGY_PARAVELOCITY_ADD_THRESHOLDVALUE_LEN          //Õ¢Î»¼Ó±¨ãÐÖµ
-#define       HYDROLOGY_PARAPOWER_ADD_THRESHOLDVALUE                           HYDROLOGY_PARAGATEPOSITION_ADD_THRESHOLDVALUE +  HYDROLOGY_PARAGATEPOSITION_ADD_THRESHOLDVALUE_LEN          //¹¦ÂÊ¼Ó±¨ãÐÖµ
-#define       HYDROLOGY_PARAPRESSURE_ADD_THRESHOLDVALUE                        HYDROLOGY_PARAPOWER_ADD_THRESHOLDVALUE  +  HYDROLOGY_PARAPOWER_ADD_THRESHOLDVALUE_LEN          //ÆøÑ¹¼Ó±¨ãÐÖµ
-#define       HYDROLOGY_PARAWINDSPEED_ADD_THRESHOLDVALUE                       HYDROLOGY_PARAPRESSURE_ADD_THRESHOLDVALUE  +  HYDROLOGY_PARAPRESSURE_ADD_THRESHOLDVALUE_LEN          //·çËÙ¼Ó±¨ãÐÖµ
-#define       HYDROLOGY_PARAWATERTEMPERATURE_ADD_THRESHOLDVALUE                HYDROLOGY_PARAWINDSPEED_ADD_THRESHOLDVALUE  +  HYDROLOGY_PARAWINDSPEED_ADD_THRESHOLDVALUE_LEN          //Ë®ÎÂ¼Ó±¨ãÐÖµ
+#define       HYDROLOGY_PARAFLOW_ADD_THRESHOLDVALUE                            HYDROLOGY_PARAWATERLEVEL_BELOWADD_THRESHOLDVALUE + HYDROLOGY_PARAWATERLEVEL_BELOWADD_THRESHOLDVALUE_LEN          //ï¿½ï¿½ï¿½ï¿½ï¿½Ó±ï¿½ï¿½ï¿½Öµ
+#define       HYDROLOGY_PARAVELOCITY_ADD_THRESHOLDVALUE                        HYDROLOGY_PARAFLOW_ADD_THRESHOLDVALUE +  HYDROLOGY_PARAFLOW_ADD_THRESHOLDVALUE_LEN          //ï¿½ï¿½ï¿½Ù¼Ó±ï¿½ï¿½ï¿½Öµ
+#define       HYDROLOGY_PARAGATEPOSITION_ADD_THRESHOLDVALUE                    HYDROLOGY_PARAVELOCITY_ADD_THRESHOLDVALUE +  HYDROLOGY_PARAVELOCITY_ADD_THRESHOLDVALUE_LEN          //Õ¢Î»ï¿½Ó±ï¿½ï¿½ï¿½Öµ
+#define       HYDROLOGY_PARAPOWER_ADD_THRESHOLDVALUE                           HYDROLOGY_PARAGATEPOSITION_ADD_THRESHOLDVALUE +  HYDROLOGY_PARAGATEPOSITION_ADD_THRESHOLDVALUE_LEN          //ï¿½ï¿½ï¿½Ê¼Ó±ï¿½ï¿½ï¿½Öµ
+#define       HYDROLOGY_PARAPRESSURE_ADD_THRESHOLDVALUE                        HYDROLOGY_PARAPOWER_ADD_THRESHOLDVALUE  +  HYDROLOGY_PARAPOWER_ADD_THRESHOLDVALUE_LEN          //ï¿½ï¿½Ñ¹ï¿½Ó±ï¿½ï¿½ï¿½Öµ
+#define       HYDROLOGY_PARAWINDSPEED_ADD_THRESHOLDVALUE                       HYDROLOGY_PARAPRESSURE_ADD_THRESHOLDVALUE  +  HYDROLOGY_PARAPRESSURE_ADD_THRESHOLDVALUE_LEN          //ï¿½ï¿½ï¿½Ù¼Ó±ï¿½ï¿½ï¿½Öµ
+#define       HYDROLOGY_PARAWATERTEMPERATURE_ADD_THRESHOLDVALUE                HYDROLOGY_PARAWINDSPEED_ADD_THRESHOLDVALUE  +  HYDROLOGY_PARAWINDSPEED_ADD_THRESHOLDVALUE_LEN          //Ë®ï¿½Â¼Ó±ï¿½ï¿½ï¿½Öµ
 
-#define       HYDROLOGY_PARAWATERINTAKING_UPLEVEL1                         HYDROLOGY_PARAWATERTEMPERATURE_ADD_THRESHOLDVALUE  +  HYDROLOGY_PARAWATERTEMPERATURE_ADD_THRESHOLDVALUE_LEN         //È¡£¨ÅÅ£©Ë®¿Ú1ÉÏÏÞË®Î»
-#define       HYDROLOGY_PARAWATERINTAKING_LOWLEVEL1                        HYDROLOGY_PARAWATERINTAKING_UPLEVEL1  +  HYDROLOGY_PARAWATERINTAKING_UPLEVEL_LEN         //È¡£¨ÅÅ£©Ë®¿Ú1ÏÂÏÞË®Î»
+#define       HYDROLOGY_PARAWATERINTAKING_UPLEVEL1                         HYDROLOGY_PARAWATERTEMPERATURE_ADD_THRESHOLDVALUE  +  HYDROLOGY_PARAWATERTEMPERATURE_ADD_THRESHOLDVALUE_LEN         //È¡ï¿½ï¿½ï¿½Å£ï¿½Ë®ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½Ë®Î»
+#define       HYDROLOGY_PARAWATERINTAKING_LOWLEVEL1                        HYDROLOGY_PARAWATERINTAKING_UPLEVEL1  +  HYDROLOGY_PARAWATERINTAKING_UPLEVEL_LEN         //È¡ï¿½ï¿½ï¿½Å£ï¿½Ë®ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½Ë®Î»
 #define       HYDROLOGY_PARAWATERINTAKING_UPLEVEL2                         HYDROLOGY_PARAWATERINTAKING_LOWLEVEL1  +  HYDROLOGY_PARAWATERINTAKING_LOWLEVEL_LEN   
 #define       HYDROLOGY_PARAWATERINTAKING_LOWLEVEL2                        HYDROLOGY_PARAWATERINTAKING_UPLEVEL2  +  HYDROLOGY_PARAWATERINTAKING_UPLEVEL_LEN          
 #define       HYDROLOGY_PARAWATERINTAKING_UPLEVEL3                         HYDROLOGY_PARAWATERINTAKING_LOWLEVEL2  +  HYDROLOGY_PARAWATERINTAKING_LOWLEVEL_LEN  
@@ -618,8 +622,8 @@
 #define       HYDROLOGY_PARAWATERINTAKING_LOWLEVEL8                        HYDROLOGY_PARAWATERINTAKING_UPLEVEL8  +  HYDROLOGY_PARAWATERINTAKING_UPLEVEL_LEN   
 
 
-#define       HYDROLOGY_PARAWATERINTAKING_UPPRESSURE1                        HYDROLOGY_PARAWATERINTAKING_LOWLEVEL8  +  HYDROLOGY_PARAWATERINTAKING_LOWLEVEL_LEN         //È¡£¨ÅÅ£©Ë®¿Ú1ÉÏÏÞË®Ñ¹
-#define       HYDROLOGY_PARAWATERINTAKING_LOWPRESSURE1                        HYDROLOGY_PARAWATERINTAKING_UPPRESSURE1  +  HYDROLOGY_PARAWATERINTAKING_UPPRESSURE_LEN                                   //È¡£¨ÅÅ£©Ë®¿Ú1ÏÂÏÞË®Ñ¹
+#define       HYDROLOGY_PARAWATERINTAKING_UPPRESSURE1                        HYDROLOGY_PARAWATERINTAKING_LOWLEVEL8  +  HYDROLOGY_PARAWATERINTAKING_LOWLEVEL_LEN         //È¡ï¿½ï¿½ï¿½Å£ï¿½Ë®ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½Ë®Ñ¹
+#define       HYDROLOGY_PARAWATERINTAKING_LOWPRESSURE1                        HYDROLOGY_PARAWATERINTAKING_UPPRESSURE1  +  HYDROLOGY_PARAWATERINTAKING_UPPRESSURE_LEN                                   //È¡ï¿½ï¿½ï¿½Å£ï¿½Ë®ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½Ë®Ñ¹
 #define       HYDROLOGY_PARAWATERINTAKING_UPPRESSURE2                        HYDROLOGY_PARAWATERINTAKING_LOWPRESSURE1  +  HYDROLOGY_PARAWATERINTAKING_LOWPRESSURE_LEN   
 #define       HYDROLOGY_PARAWATERINTAKING_LOWPRESSURE2                        HYDROLOGY_PARAWATERINTAKING_UPPRESSURE2  +  HYDROLOGY_PARAWATERINTAKING_UPPRESSURE_LEN          
 #define       HYDROLOGY_PARAWATERINTAKING_UPPRESSURE3                        HYDROLOGY_PARAWATERINTAKING_LOWPRESSURE2  +  HYDROLOGY_PARAWATERINTAKING_LOWPRESSURE_LEN   
@@ -635,104 +639,104 @@
 #define       HYDROLOGY_PARAWATERINTAKING_UPPRESSURE8                        HYDROLOGY_PARAWATERINTAKING_LOWPRESSURE7  +  HYDROLOGY_PARAWATERINTAKING_LOWPRESSURE_LEN   
 #define       HYDROLOGY_PARAWATERINTAKING_LOWPRESSURE8                        HYDROLOGY_PARAWATERINTAKING_UPPRESSURE8  +  HYDROLOGY_PARAWATERINTAKING_UPPRESSURE_LEN  
 
-#define       HYDROLOGY_PARAWATERTEMPERATURE_UPLIMIT                        HYDROLOGY_PARAWATERINTAKING_LOWPRESSURE8  +  HYDROLOGY_PARAWATERINTAKING_LOWPRESSURE_LEN          //Ë®ÎÂÉÏÏÞ
-#define       HYDROLOGY_PARAWATERTEMPERATURE_LOWLIMIT                        HYDROLOGY_PARAWATERTEMPERATURE_UPLIMIT  +  HYDROLOGY_PARAWATERTEMPERATURE_UPLIMIT_LEN          //Ë®ÎÂÏÂÏÞ
+#define       HYDROLOGY_PARAWATERTEMPERATURE_UPLIMIT                        HYDROLOGY_PARAWATERINTAKING_LOWPRESSURE8  +  HYDROLOGY_PARAWATERINTAKING_LOWPRESSURE_LEN          //Ë®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATERTEMPERATURE_LOWLIMIT                        HYDROLOGY_PARAWATERTEMPERATURE_UPLIMIT  +  HYDROLOGY_PARAWATERTEMPERATURE_UPLIMIT_LEN          //Ë®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-#define       HYDROLOGY_PARAWATERPH_UPLIMIT                         HYDROLOGY_PARAWATERTEMPERATURE_LOWLIMIT  +  HYDROLOGY_PARAWATERTEMPERATURE_LOWLIMIT_LEN          //PHÖµÉÏÏÞ
-#define       HYDROLOGY_PARAWATERPH_LOWLIMIT                        HYDROLOGY_PARAWATERPH_UPLIMIT  +  HYDROLOGY_PARAWATERPH_UPLIMIT_LEN                             //PHÖµÏÂÏÞ
+#define       HYDROLOGY_PARAWATERPH_UPLIMIT                         HYDROLOGY_PARAWATERTEMPERATURE_LOWLIMIT  +  HYDROLOGY_PARAWATERTEMPERATURE_LOWLIMIT_LEN          //PHÖµï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATERPH_LOWLIMIT                        HYDROLOGY_PARAWATERPH_UPLIMIT  +  HYDROLOGY_PARAWATERPH_UPLIMIT_LEN                             //PHÖµï¿½ï¿½ï¿½ï¿½
 
-#define       HYDROLOGY_PARAWATERDO_UPLIMIT                         HYDROLOGY_PARAWATERPH_LOWLIMIT  +  HYDROLOGY_PARAWATERPH_LOWLIMIT_LEN                           //ÈÜ½âÑõÉÏÏÞ
-#define       HYDROLOGY_PARAWATERDO_LOWLIMIT                        HYDROLOGY_PARAWATERDO_UPLIMIT  +  HYDROLOGY_PARAWATERDO_UPLIMIT_LEN                            //ÈÜ½âÑõÏÂÏÞ
+#define       HYDROLOGY_PARAWATERDO_UPLIMIT                         HYDROLOGY_PARAWATERPH_LOWLIMIT  +  HYDROLOGY_PARAWATERPH_LOWLIMIT_LEN                           //ï¿½Ü½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATERDO_LOWLIMIT                        HYDROLOGY_PARAWATERDO_UPLIMIT  +  HYDROLOGY_PARAWATERDO_UPLIMIT_LEN                            //ï¿½Ü½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-#define       HYDROLOGY_PARAWATERCODMn_UPLIMIT                         HYDROLOGY_PARAWATERDO_LOWLIMIT  +  HYDROLOGY_PARAWATERDO_LOWLIMIT_LEN                          //¸ßÃÌËáÑÎÉÏÏÞ
-#define       HYDROLOGY_PARAWATERCODMn_LOWLIMIT                        HYDROLOGY_PARAWATERCODMn_UPLIMIT  +  HYDROLOGY_PARAWATERCODMn_UPLIMIT_LEN                            //¸ßÃÌËáÑÎÏÂÏÞ
+#define       HYDROLOGY_PARAWATERCODMn_UPLIMIT                         HYDROLOGY_PARAWATERDO_LOWLIMIT  +  HYDROLOGY_PARAWATERDO_LOWLIMIT_LEN                          //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATERCODMn_LOWLIMIT                        HYDROLOGY_PARAWATERCODMn_UPLIMIT  +  HYDROLOGY_PARAWATERCODMn_UPLIMIT_LEN                            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-#define       HYDROLOGY_PARAWATERCONDUCTIVITY_UPLIMIT                         HYDROLOGY_PARAWATERCODMn_LOWLIMIT  +  HYDROLOGY_PARAWATERCODMn_LOWLIMIT_LEN                          //µçµ¼ÂÊÉÏÏÞ
-#define       HYDROLOGY_PARAWATERCONDUCTIVITY_LOWLIMIT                        HYDROLOGY_PARAWATERCONDUCTIVITY_UPLIMIT  +  HYDROLOGY_PARAWATERCONDUCTIVITY_UPLIMIT_LEN                            //µçµ¼ÂÊÏÂÏÞ
+#define       HYDROLOGY_PARAWATERCONDUCTIVITY_UPLIMIT                         HYDROLOGY_PARAWATERCODMn_LOWLIMIT  +  HYDROLOGY_PARAWATERCODMn_LOWLIMIT_LEN                          //ï¿½çµ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATERCONDUCTIVITY_LOWLIMIT                        HYDROLOGY_PARAWATERCONDUCTIVITY_UPLIMIT  +  HYDROLOGY_PARAWATERCONDUCTIVITY_UPLIMIT_LEN                            //ï¿½çµ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-#define       HYDROLOGY_PARAWATEREh_UPLIMIT                         HYDROLOGY_PARAWATERCONDUCTIVITY_LOWLIMIT  +  HYDROLOGY_PARAWATERCONDUCTIVITY_LOWLIMIT_LEN                           //Ñõ»¯»¹Ô­µçÎ»ÉÏÏÞ
-#define       HYDROLOGY_PARAWATEREh_LOWLIMIT                        HYDROLOGY_PARAWATEREh_UPLIMIT  +  HYDROLOGY_PARAWATEREh_UPLIMIT_LEN                            //Ñõ»¯»¹Ô­µçÎ»ÏÂÏÞ
+#define       HYDROLOGY_PARAWATEREh_UPLIMIT                         HYDROLOGY_PARAWATERCONDUCTIVITY_LOWLIMIT  +  HYDROLOGY_PARAWATERCONDUCTIVITY_LOWLIMIT_LEN                           //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATEREh_LOWLIMIT                        HYDROLOGY_PARAWATEREh_UPLIMIT  +  HYDROLOGY_PARAWATEREh_UPLIMIT_LEN                            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½
 
-#define       HYDROLOGY_PARAWATERNTU_UPLIMIT                         HYDROLOGY_PARAWATEREh_LOWLIMIT  +  HYDROLOGY_PARAWATEREh_LOWLIMIT_LEN                          //×Ç¶ÈÉÏÏÞ
-#define       HYDROLOGY_PARAWATERNTU_LOWLIMIT                        HYDROLOGY_PARAWATERNTU_UPLIMIT  +  HYDROLOGY_PARAWATERNTU_UPLIMIT_LEN                            //×Ç¶ÈÏÂÏÞ
+#define       HYDROLOGY_PARAWATERNTU_UPLIMIT                         HYDROLOGY_PARAWATEREh_LOWLIMIT  +  HYDROLOGY_PARAWATEREh_LOWLIMIT_LEN                          //ï¿½Ç¶ï¿½ï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATERNTU_LOWLIMIT                        HYDROLOGY_PARAWATERNTU_UPLIMIT  +  HYDROLOGY_PARAWATERNTU_UPLIMIT_LEN                            //ï¿½Ç¶ï¿½ï¿½ï¿½ï¿½ï¿½
 
-#define       HYDROLOGY_PARAWATERNH_UPLIMIT                         HYDROLOGY_PARAWATERNTU_LOWLIMIT  +  HYDROLOGY_PARAWATERNTU_LOWLIMIT_LEN                          //°±µªÉÏÏÞ
-#define       HYDROLOGY_PARAWATERNH_LOWLIMIT                        HYDROLOGY_PARAWATERNH_UPLIMIT  +  HYDROLOGY_PARAWATERNH_UPLIMIT_LEN                             //°±µªÏÂÏÞ
+#define       HYDROLOGY_PARAWATERNH_UPLIMIT                         HYDROLOGY_PARAWATERNTU_LOWLIMIT  +  HYDROLOGY_PARAWATERNTU_LOWLIMIT_LEN                          //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATERNH_LOWLIMIT                        HYDROLOGY_PARAWATERNH_UPLIMIT  +  HYDROLOGY_PARAWATERNH_UPLIMIT_LEN                             //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-#define       HYDROLOGY_PARAWATERNT_UPLIMIT                         HYDROLOGY_PARAWATERNH_LOWLIMIT  +  HYDROLOGY_PARAWATERNH_LOWLIMIT_LEN                           //×ÜµªÉÏÏÞ
-#define       HYDROLOGY_PARAWATERNT_LOWLIMIT                        HYDROLOGY_PARAWATERNT_UPLIMIT  +  HYDROLOGY_PARAWATERNT_UPLIMIT_LEN                             //×ÜµªÏÂÏÞ  
+#define       HYDROLOGY_PARAWATERNT_UPLIMIT                         HYDROLOGY_PARAWATERNH_LOWLIMIT  +  HYDROLOGY_PARAWATERNH_LOWLIMIT_LEN                           //ï¿½Üµï¿½ï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATERNT_LOWLIMIT                        HYDROLOGY_PARAWATERNT_UPLIMIT  +  HYDROLOGY_PARAWATERNT_UPLIMIT_LEN                             //ï¿½Üµï¿½ï¿½ï¿½ï¿½ï¿½  
 
-#define       HYDROLOGY_PARAWATERCu_UPLIMIT                         HYDROLOGY_PARAWATERNT_LOWLIMIT  +  HYDROLOGY_PARAWATERNT_LOWLIMIT_LEN                           //Í­ÉÏÏÞ
-#define       HYDROLOGY_PARAWATERCu_LOWLIMIT                        HYDROLOGY_PARAWATERCu_UPLIMIT  +  HYDROLOGY_PARAWATERCu_UPLIMIT_LEN                             //Í­ÏÂÏÞ  
+#define       HYDROLOGY_PARAWATERCu_UPLIMIT                         HYDROLOGY_PARAWATERNT_LOWLIMIT  +  HYDROLOGY_PARAWATERNT_LOWLIMIT_LEN                           //Í­ï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATERCu_LOWLIMIT                        HYDROLOGY_PARAWATERCu_UPLIMIT  +  HYDROLOGY_PARAWATERCu_UPLIMIT_LEN                             //Í­ï¿½ï¿½ï¿½ï¿½  
 
-#define       HYDROLOGY_PARAWATERZn_UPLIMIT                         HYDROLOGY_PARAWATERCu_LOWLIMIT  +  HYDROLOGY_PARAWATERCu_LOWLIMIT_LEN                          //Ð¿ÉÏÏÞ
-#define       HYDROLOGY_PARAWATERZn_LOWLIMIT                        HYDROLOGY_PARAWATERZn_UPLIMIT  +  HYDROLOGY_PARAWATERZn_UPLIMIT_LEN                             //Ð¿ÏÂÏÞ  
+#define       HYDROLOGY_PARAWATERZn_UPLIMIT                         HYDROLOGY_PARAWATERCu_LOWLIMIT  +  HYDROLOGY_PARAWATERCu_LOWLIMIT_LEN                          //Ð¿ï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATERZn_LOWLIMIT                        HYDROLOGY_PARAWATERZn_UPLIMIT  +  HYDROLOGY_PARAWATERZn_UPLIMIT_LEN                             //Ð¿ï¿½ï¿½ï¿½ï¿½  
 
-#define       HYDROLOGY_PARAWATEROXIDE_UPLIMIT                         HYDROLOGY_PARAWATERZn_LOWLIMIT  +  HYDROLOGY_PARAWATERZn_LOWLIMIT_LEN                           //Ñõ»¯ÎïÉÏÏÞ
-#define       HYDROLOGY_PARAWATEROXIDE_LOWLIMIT                        HYDROLOGY_PARAWATEROXIDE_UPLIMIT  +  HYDROLOGY_PARAWATEROXIDE_UPLIMIT_LEN                             //Ñõ»¯ÎïÏÂÏÞ  
+#define       HYDROLOGY_PARAWATEROXIDE_UPLIMIT                         HYDROLOGY_PARAWATERZn_LOWLIMIT  +  HYDROLOGY_PARAWATERZn_LOWLIMIT_LEN                           //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATEROXIDE_LOWLIMIT                        HYDROLOGY_PARAWATEROXIDE_UPLIMIT  +  HYDROLOGY_PARAWATEROXIDE_UPLIMIT_LEN                             //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  
 
-#define       HYDROLOGY_PARAWATERSe_UPLIMIT                         HYDROLOGY_PARAWATEROXIDE_LOWLIMIT  +  HYDROLOGY_PARAWATEROXIDE_LOWLIMIT_LEN                           //ÎøÉÏÏÞ
-#define       HYDROLOGY_PARAWATERSe_LOWLIMIT                        HYDROLOGY_PARAWATERSe_UPLIMIT  +  HYDROLOGY_PARAWATERSe_UPLIMIT_LEN                             //ÎøÏÂÏÞ  
+#define       HYDROLOGY_PARAWATERSe_UPLIMIT                         HYDROLOGY_PARAWATEROXIDE_LOWLIMIT  +  HYDROLOGY_PARAWATEROXIDE_LOWLIMIT_LEN                           //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATERSe_LOWLIMIT                        HYDROLOGY_PARAWATERSe_UPLIMIT  +  HYDROLOGY_PARAWATERSe_UPLIMIT_LEN                             //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  
 
-#define       HYDROLOGY_PARAWATERAs_UPLIMIT                         HYDROLOGY_PARAWATERSe_LOWLIMIT  +  HYDROLOGY_PARAWATERSe_LOWLIMIT_LEN                           //ÉéÉÏÏÞ
-#define       HYDROLOGY_PARAWATERAs_LOWLIMIT                        HYDROLOGY_PARAWATERAs_UPLIMIT  +  HYDROLOGY_PARAWATERAs_UPLIMIT_LEN                             //ÉéÏÂÏÞ  
+#define       HYDROLOGY_PARAWATERAs_UPLIMIT                         HYDROLOGY_PARAWATERSe_LOWLIMIT  +  HYDROLOGY_PARAWATERSe_LOWLIMIT_LEN                           //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATERAs_LOWLIMIT                        HYDROLOGY_PARAWATERAs_UPLIMIT  +  HYDROLOGY_PARAWATERAs_UPLIMIT_LEN                             //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  
 
-#define       HYDROLOGY_PARAWATERHg_UPLIMIT                         HYDROLOGY_PARAWATERAs_LOWLIMIT  +  HYDROLOGY_PARAWATERAs_LOWLIMIT_LEN                           //¹¯ÉÏÏÞ
-#define       HYDROLOGY_PARAWATERHg_LOWLIMIT                        HYDROLOGY_PARAWATERHg_UPLIMIT  +  HYDROLOGY_PARAWATERHg_UPLIMIT_LEN                             //¹¯ÏÂÏÞ  
+#define       HYDROLOGY_PARAWATERHg_UPLIMIT                         HYDROLOGY_PARAWATERAs_LOWLIMIT  +  HYDROLOGY_PARAWATERAs_LOWLIMIT_LEN                           //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATERHg_LOWLIMIT                        HYDROLOGY_PARAWATERHg_UPLIMIT  +  HYDROLOGY_PARAWATERHg_UPLIMIT_LEN                             //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  
 
-#define       HYDROLOGY_PARAWATERCd_UPLIMIT                         HYDROLOGY_PARAWATERHg_LOWLIMIT  +  HYDROLOGY_PARAWATERHg_LOWLIMIT_LEN                           //ïÓÉÏÏÞ
-#define       HYDROLOGY_PARAWATERCd_LOWLIMIT                        HYDROLOGY_PARAWATERCd_UPLIMIT  +  HYDROLOGY_PARAWATERCd_UPLIMIT_LEN                             //ïÓÏÂÏÞ  
+#define       HYDROLOGY_PARAWATERCd_UPLIMIT                         HYDROLOGY_PARAWATERHg_LOWLIMIT  +  HYDROLOGY_PARAWATERHg_LOWLIMIT_LEN                           //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATERCd_LOWLIMIT                        HYDROLOGY_PARAWATERCd_UPLIMIT  +  HYDROLOGY_PARAWATERCd_UPLIMIT_LEN                             //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  
 
-#define       HYDROLOGY_PARAWATERTOC_UPLIMIT                         HYDROLOGY_PARAWATERCd_LOWLIMIT  +  HYDROLOGY_PARAWATERCd_LOWLIMIT_LEN                           //×ÜÓÐ»úÌ¼ÉÏÏÞ
-#define       HYDROLOGY_PARAWATERTOC_LOWLIMIT                        HYDROLOGY_PARAWATERTOC_UPLIMIT  +  HYDROLOGY_PARAWATERTOC_UPLIMIT_LEN                             //×ÜÓÐ»úÌ¼ÏÂÏÞ  
+#define       HYDROLOGY_PARAWATERTOC_UPLIMIT                         HYDROLOGY_PARAWATERCd_LOWLIMIT  +  HYDROLOGY_PARAWATERCd_LOWLIMIT_LEN                           //ï¿½ï¿½ï¿½Ð»ï¿½Ì¼ï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATERTOC_LOWLIMIT                        HYDROLOGY_PARAWATERTOC_UPLIMIT  +  HYDROLOGY_PARAWATERTOC_UPLIMIT_LEN                             //ï¿½ï¿½ï¿½Ð»ï¿½Ì¼ï¿½ï¿½ï¿½ï¿½  
 
-#define       HYDROLOGY_PARAWATERCHL_UPLIMIT                         HYDROLOGY_PARAWATERTOC_LOWLIMIT  +  HYDROLOGY_PARAWATERTOC_LOWLIMIT_LEN                           //Ò¶ÂÌËØÉÏÏÞ
-#define       HYDROLOGY_PARAWATERCHL_LOWLIMIT                        HYDROLOGY_PARAWATERCHL_UPLIMIT  +  HYDROLOGY_PARAWATERCHL_UPLIMIT_LEN                             //Ò¶ÂÌËØÏÂÏÞ  
+#define       HYDROLOGY_PARAWATERCHL_UPLIMIT                         HYDROLOGY_PARAWATERTOC_LOWLIMIT  +  HYDROLOGY_PARAWATERTOC_LOWLIMIT_LEN                           //Ò¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define       HYDROLOGY_PARAWATERCHL_LOWLIMIT                        HYDROLOGY_PARAWATERCHL_UPLIMIT  +  HYDROLOGY_PARAWATERCHL_UPLIMIT_LEN                             //Ò¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  
 
-#define       HYDROLOGY_PARAWATERFLOW_UPLIMIT                        HYDROLOGY_PARAWATERCHL_LOWLIMIT  +  HYDROLOGY_PARAWATERCHL_LOWLIMIT_LEN                          //Á÷Á¿ÉÏÏÞ
+#define       HYDROLOGY_PARAWATERFLOW_UPLIMIT                        HYDROLOGY_PARAWATERCHL_LOWLIMIT  +  HYDROLOGY_PARAWATERCHL_LOWLIMIT_LEN                          //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-#define       HYDROLOGY_PARAWATERMETER1_RECHARGEQTY                        HYDROLOGY_PARAWATERFLOW_UPLIMIT  +  HYDROLOGY_PARAWATERFLOW_UPLIMIT_LEN                             //Ë®±í1³äÖµË®Á¿  
-#define       HYDROLOGY_PARAWATERMETER2_RECHARGEQTY                        HYDROLOGY_PARAWATERMETER1_RECHARGEQTY  +  HYDROLOGY_PARAWATERMETER_RECHARGEQTY_LEN                            //Ë®±í2³äÖµË®Á¿  
-#define       HYDROLOGY_PARAWATERMETER3_RECHARGEQTY                        HYDROLOGY_PARAWATERMETER2_RECHARGEQTY  +  HYDROLOGY_PARAWATERMETER_RECHARGEQTY_LEN                             //Ë®±í3³äÖµË®Á¿  
-#define       HYDROLOGY_PARAWATERMETER4_RECHARGEQTY                        HYDROLOGY_PARAWATERMETER3_RECHARGEQTY  +  HYDROLOGY_PARAWATERMETER_RECHARGEQTY_LEN                            //Ë®±í4³äÖµË®Á¿  
-#define       HYDROLOGY_PARAWATERMETER5_RECHARGEQTY                        HYDROLOGY_PARAWATERMETER4_RECHARGEQTY  +  HYDROLOGY_PARAWATERMETER_RECHARGEQTY_LEN                             //Ë®±í5³äÖµË®Á¿  
-#define       HYDROLOGY_PARAWATERMETER6_RECHARGEQTY                        HYDROLOGY_PARAWATERMETER5_RECHARGEQTY  +  HYDROLOGY_PARAWATERMETER_RECHARGEQTY_LEN                             //Ë®±í6³äÖµË®Á¿  
-#define       HYDROLOGY_PARAWATERMETER7_RECHARGEQTY                        HYDROLOGY_PARAWATERMETER6_RECHARGEQTY  +  HYDROLOGY_PARAWATERMETER_RECHARGEQTY_LEN                             //Ë®±í7³äÖµË®Á¿  
-#define       HYDROLOGY_PARAWATERMETER8_RECHARGEQTY                        HYDROLOGY_PARAWATERMETER7_RECHARGEQTY  +  HYDROLOGY_PARAWATERMETER_RECHARGEQTY_LEN                             //Ë®±í8³äÖµË®Á¿  
+#define       HYDROLOGY_PARAWATERMETER1_RECHARGEQTY                        HYDROLOGY_PARAWATERFLOW_UPLIMIT  +  HYDROLOGY_PARAWATERFLOW_UPLIMIT_LEN                             //Ë®ï¿½ï¿½1ï¿½ï¿½ÖµË®ï¿½ï¿½  
+#define       HYDROLOGY_PARAWATERMETER2_RECHARGEQTY                        HYDROLOGY_PARAWATERMETER1_RECHARGEQTY  +  HYDROLOGY_PARAWATERMETER_RECHARGEQTY_LEN                            //Ë®ï¿½ï¿½2ï¿½ï¿½ÖµË®ï¿½ï¿½  
+#define       HYDROLOGY_PARAWATERMETER3_RECHARGEQTY                        HYDROLOGY_PARAWATERMETER2_RECHARGEQTY  +  HYDROLOGY_PARAWATERMETER_RECHARGEQTY_LEN                             //Ë®ï¿½ï¿½3ï¿½ï¿½ÖµË®ï¿½ï¿½  
+#define       HYDROLOGY_PARAWATERMETER4_RECHARGEQTY                        HYDROLOGY_PARAWATERMETER3_RECHARGEQTY  +  HYDROLOGY_PARAWATERMETER_RECHARGEQTY_LEN                            //Ë®ï¿½ï¿½4ï¿½ï¿½ÖµË®ï¿½ï¿½  
+#define       HYDROLOGY_PARAWATERMETER5_RECHARGEQTY                        HYDROLOGY_PARAWATERMETER4_RECHARGEQTY  +  HYDROLOGY_PARAWATERMETER_RECHARGEQTY_LEN                             //Ë®ï¿½ï¿½5ï¿½ï¿½ÖµË®ï¿½ï¿½  
+#define       HYDROLOGY_PARAWATERMETER6_RECHARGEQTY                        HYDROLOGY_PARAWATERMETER5_RECHARGEQTY  +  HYDROLOGY_PARAWATERMETER_RECHARGEQTY_LEN                             //Ë®ï¿½ï¿½6ï¿½ï¿½ÖµË®ï¿½ï¿½  
+#define       HYDROLOGY_PARAWATERMETER7_RECHARGEQTY                        HYDROLOGY_PARAWATERMETER6_RECHARGEQTY  +  HYDROLOGY_PARAWATERMETER_RECHARGEQTY_LEN                             //Ë®ï¿½ï¿½7ï¿½ï¿½ÖµË®ï¿½ï¿½  
+#define       HYDROLOGY_PARAWATERMETER8_RECHARGEQTY                        HYDROLOGY_PARAWATERMETER7_RECHARGEQTY  +  HYDROLOGY_PARAWATERMETER_RECHARGEQTY_LEN                             //Ë®ï¿½ï¿½8ï¿½ï¿½ÖµË®ï¿½ï¿½  
 
-#define       HYDROLOGY_PARAWATER_QTY                         HYDROLOGY_PARAWATERMETER8_RECHARGEQTY  +  HYDROLOGY_PARAWATERMETER_RECHARGEQTY_LEN                             //Ë®Á¿¶¨ÖµÁ¿ 
+#define       HYDROLOGY_PARAWATER_QTY                         HYDROLOGY_PARAWATERMETER8_RECHARGEQTY  +  HYDROLOGY_PARAWATERMETER_RECHARGEQTY_LEN                             //Ë®ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ 
 
-#define       HYDROLOGY_PARAFLASH_INIT                        HYDROLOGY_PARAWATER_QTY  +  HYDROLOGY_PARAWATER_QTY_LEN                             //¹ÌÌ¬´æ´¢Êý¾Ý³õÊ¼»¯  
+#define       HYDROLOGY_PARAFLASH_INIT                        HYDROLOGY_PARAWATER_QTY  +  HYDROLOGY_PARAWATER_QTY_LEN                             //ï¿½ï¿½Ì¬ï¿½æ´¢ï¿½ï¿½ï¿½Ý³ï¿½Ê¼ï¿½ï¿½  
 
-#define       HYDROLOGY_PARA_RESET                            HYDROLOGY_PARAFLASH_INIT  +  HYDROLOGY_PARAFLASH_INIT_LEN                            //Ò£²âÖÕ¶Ë²ÎÊý»Ö¸´³ö³§ÉèÖÃ
+#define       HYDROLOGY_PARA_RESET                            HYDROLOGY_PARAFLASH_INIT  +  HYDROLOGY_PARAFLASH_INIT_LEN                            //Ò£ï¿½ï¿½ï¿½Õ¶Ë²ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-#define       HYDROLOGY_PARAWATERMETER1_INIT                        HYDROLOGY_PARA_RESET  +  HYDROLOGY_PARA_RESET_LEN                           //Ë®±í1Ë®Á¿±íµ×£¨³õÊ¼£©Öµ
-#define       HYDROLOGY_PARAWATERMETER2_INIT                        HYDROLOGY_PARAWATERMETER1_INIT  +  HYDROLOGY_PARAWATERMETER_INIT_LEN                             //Ë®±í2Ë®Á¿±íµ×£¨³õÊ¼£©Öµ  
-#define       HYDROLOGY_PARAWATERMETER3_INIT                        HYDROLOGY_PARAWATERMETER2_INIT  +  HYDROLOGY_PARAWATERMETER_INIT_LEN                            //Ë®±í3Ë®Á¿±íµ×£¨³õÊ¼£©Öµ  
-#define       HYDROLOGY_PARAWATERMETER4_INIT                        HYDROLOGY_PARAWATERMETER3_INIT  +  HYDROLOGY_PARAWATERMETER_INIT_LEN                            //Ë®±í4Ë®Á¿±íµ×£¨³õÊ¼£©Öµ  
-#define       HYDROLOGY_PARAWATERMETER5_INIT                        HYDROLOGY_PARAWATERMETER4_INIT  +  HYDROLOGY_PARAWATERMETER_INIT_LEN                            //Ë®±í5Ë®Á¿±íµ×£¨³õÊ¼£©Öµ  
-#define       HYDROLOGY_PARAWATERMETER6_INIT                        HYDROLOGY_PARAWATERMETER5_INIT  +  HYDROLOGY_PARAWATERMETER_INIT_LEN                             //Ë®±í6Ë®Á¿±íµ×£¨³õÊ¼£©Öµ  
-#define       HYDROLOGY_PARAWATERMETER7_INIT                        HYDROLOGY_PARAWATERMETER6_INIT  +  HYDROLOGY_PARAWATERMETER_INIT_LEN                             //Ë®±í7Ë®Á¿±íµ×£¨³õÊ¼£©Öµ  
-#define       HYDROLOGY_PARAWATERMETER8_INIT                        HYDROLOGY_PARAWATERMETER7_INIT  +  HYDROLOGY_PARAWATERMETER_INIT_LEN                             //Ë®±í8Ë®Á¿±íµ×£¨³õÊ¼£©Öµ  
+#define       HYDROLOGY_PARAWATERMETER1_INIT                        HYDROLOGY_PARA_RESET  +  HYDROLOGY_PARA_RESET_LEN                           //Ë®ï¿½ï¿½1Ë®ï¿½ï¿½ï¿½ï¿½ï¿½×£ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½Öµ
+#define       HYDROLOGY_PARAWATERMETER2_INIT                        HYDROLOGY_PARAWATERMETER1_INIT  +  HYDROLOGY_PARAWATERMETER_INIT_LEN                             //Ë®ï¿½ï¿½2Ë®ï¿½ï¿½ï¿½ï¿½ï¿½×£ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½Öµ  
+#define       HYDROLOGY_PARAWATERMETER3_INIT                        HYDROLOGY_PARAWATERMETER2_INIT  +  HYDROLOGY_PARAWATERMETER_INIT_LEN                            //Ë®ï¿½ï¿½3Ë®ï¿½ï¿½ï¿½ï¿½ï¿½×£ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½Öµ  
+#define       HYDROLOGY_PARAWATERMETER4_INIT                        HYDROLOGY_PARAWATERMETER3_INIT  +  HYDROLOGY_PARAWATERMETER_INIT_LEN                            //Ë®ï¿½ï¿½4Ë®ï¿½ï¿½ï¿½ï¿½ï¿½×£ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½Öµ  
+#define       HYDROLOGY_PARAWATERMETER5_INIT                        HYDROLOGY_PARAWATERMETER4_INIT  +  HYDROLOGY_PARAWATERMETER_INIT_LEN                            //Ë®ï¿½ï¿½5Ë®ï¿½ï¿½ï¿½ï¿½ï¿½×£ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½Öµ  
+#define       HYDROLOGY_PARAWATERMETER6_INIT                        HYDROLOGY_PARAWATERMETER5_INIT  +  HYDROLOGY_PARAWATERMETER_INIT_LEN                             //Ë®ï¿½ï¿½6Ë®ï¿½ï¿½ï¿½ï¿½ï¿½×£ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½Öµ  
+#define       HYDROLOGY_PARAWATERMETER7_INIT                        HYDROLOGY_PARAWATERMETER6_INIT  +  HYDROLOGY_PARAWATERMETER_INIT_LEN                             //Ë®ï¿½ï¿½7Ë®ï¿½ï¿½ï¿½ï¿½ï¿½×£ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½Öµ  
+#define       HYDROLOGY_PARAWATERMETER8_INIT                        HYDROLOGY_PARAWATERMETER7_INIT  +  HYDROLOGY_PARAWATERMETER_INIT_LEN                             //Ë®ï¿½ï¿½8Ë®ï¿½ï¿½ï¿½ï¿½ï¿½×£ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½Öµ  
 
-#define       HYDROLOGY_PARAWATERMETER1_SURPLUS_ALARM                        HYDROLOGY_PARAWATERMETER8_INIT  +  HYDROLOGY_PARAWATERMETER_INIT_LEN                            //Ë®±í1Ê£ÓàË®Á¿±¨¾¯Öµ
-#define       HYDROLOGY_PARAWATERMETER2_SURPLUS_ALARM                        HYDROLOGY_PARAWATERMETER1_SURPLUS_ALARM  +  HYDROLOGY_PARAWATERMETER_SURPLUS_ALARM_LEN                             //Ë®±í2Ê£ÓàË®Á¿±¨¾¯Öµ  
-#define       HYDROLOGY_PARAWATERMETER3_SURPLUS_ALARM                        HYDROLOGY_PARAWATERMETER2_SURPLUS_ALARM  +  HYDROLOGY_PARAWATERMETER_SURPLUS_ALARM_LEN                             //Ë®±í3Ê£ÓàË®Á¿±¨¾¯Öµ 
-#define       HYDROLOGY_PARAWATERMETER4_SURPLUS_ALARM                        HYDROLOGY_PARAWATERMETER3_SURPLUS_ALARM  +  HYDROLOGY_PARAWATERMETER_SURPLUS_ALARM_LEN                             //Ë®±í4Ê£ÓàË®Á¿±¨¾¯Öµ  
-#define       HYDROLOGY_PARAWATERMETER5_SURPLUS_ALARM                        HYDROLOGY_PARAWATERMETER4_SURPLUS_ALARM  +  HYDROLOGY_PARAWATERMETER_SURPLUS_ALARM_LEN                             //Ë®±í5Ê£ÓàË®Á¿±¨¾¯Öµ  
-#define       HYDROLOGY_PARAWATERMETER6_SURPLUS_ALARM                        HYDROLOGY_PARAWATERMETER5_SURPLUS_ALARM  +  HYDROLOGY_PARAWATERMETER_SURPLUS_ALARM_LEN                             //Ë®±í6Ê£ÓàË®Á¿±¨¾¯Öµ 
-#define       HYDROLOGY_PARAWATERMETER7_SURPLUS_ALARM                        HYDROLOGY_PARAWATERMETER6_SURPLUS_ALARM  +  HYDROLOGY_PARAWATERMETER_SURPLUS_ALARM_LEN                             //Ë®±í7Ê£ÓàË®Á¿±¨¾¯Öµ  
-#define       HYDROLOGY_PARAWATERMETER8_SURPLUS_ALARM                        HYDROLOGY_PARAWATERMETER7_SURPLUS_ALARM  +  HYDROLOGY_PARAWATERMETER_SURPLUS_ALARM_LEN                             //Ë®±í8Ê£ÓàË®Á¿±¨¾¯Öµ  
+#define       HYDROLOGY_PARAWATERMETER1_SURPLUS_ALARM                        HYDROLOGY_PARAWATERMETER8_INIT  +  HYDROLOGY_PARAWATERMETER_INIT_LEN                            //Ë®ï¿½ï¿½1Ê£ï¿½ï¿½Ë®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
+#define       HYDROLOGY_PARAWATERMETER2_SURPLUS_ALARM                        HYDROLOGY_PARAWATERMETER1_SURPLUS_ALARM  +  HYDROLOGY_PARAWATERMETER_SURPLUS_ALARM_LEN                             //Ë®ï¿½ï¿½2Ê£ï¿½ï¿½Ë®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ  
+#define       HYDROLOGY_PARAWATERMETER3_SURPLUS_ALARM                        HYDROLOGY_PARAWATERMETER2_SURPLUS_ALARM  +  HYDROLOGY_PARAWATERMETER_SURPLUS_ALARM_LEN                             //Ë®ï¿½ï¿½3Ê£ï¿½ï¿½Ë®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ 
+#define       HYDROLOGY_PARAWATERMETER4_SURPLUS_ALARM                        HYDROLOGY_PARAWATERMETER3_SURPLUS_ALARM  +  HYDROLOGY_PARAWATERMETER_SURPLUS_ALARM_LEN                             //Ë®ï¿½ï¿½4Ê£ï¿½ï¿½Ë®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ  
+#define       HYDROLOGY_PARAWATERMETER5_SURPLUS_ALARM                        HYDROLOGY_PARAWATERMETER4_SURPLUS_ALARM  +  HYDROLOGY_PARAWATERMETER_SURPLUS_ALARM_LEN                             //Ë®ï¿½ï¿½5Ê£ï¿½ï¿½Ë®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ  
+#define       HYDROLOGY_PARAWATERMETER6_SURPLUS_ALARM                        HYDROLOGY_PARAWATERMETER5_SURPLUS_ALARM  +  HYDROLOGY_PARAWATERMETER_SURPLUS_ALARM_LEN                             //Ë®ï¿½ï¿½6Ê£ï¿½ï¿½Ë®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ 
+#define       HYDROLOGY_PARAWATERMETER7_SURPLUS_ALARM                        HYDROLOGY_PARAWATERMETER6_SURPLUS_ALARM  +  HYDROLOGY_PARAWATERMETER_SURPLUS_ALARM_LEN                             //Ë®ï¿½ï¿½7Ê£ï¿½ï¿½Ë®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ  
+#define       HYDROLOGY_PARAWATERMETER8_SURPLUS_ALARM                        HYDROLOGY_PARAWATERMETER7_SURPLUS_ALARM  +  HYDROLOGY_PARAWATERMETER_SURPLUS_ALARM_LEN                             //Ë®ï¿½ï¿½8Ê£ï¿½ï¿½Ë®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ  
 
 #define       HYDROLOGY_END                             HYDROLOGY_PARAWATERMETER8_SURPLUS_ALARM + HYDROLOGY_PARAWATERMETER_SURPLUS_ALARM_LEN
 
-/*ÒÔÏÂºê¶¨ÒåÎªÍâ²¿´æ´¢Æ÷Êý¾Ý´æ´¢ÇøÊ×µØÖ·¶¨Òå*/
-#define       HYDROLOGY_DATA_ADDR                     0x000800  /*2KÒÔºóµ½0x07ffe0µÄÇøÓò´æ´¢Êý¾Ý£¬µØÖ·¿Õ¼ä 0x000800-0x07ffe0  522208,63kBYTE*/
-/*ÒÔÉÏºê¶¨ÒåÎªÍâ²¿´æ´¢Æ÷Êý¾Ý´æ´¢ÇøÊ×µØÖ·¶¨Òå*/
+/*ï¿½ï¿½ï¿½Âºê¶¨ï¿½ï¿½Îªï¿½â²¿ï¿½æ´¢ï¿½ï¿½ï¿½ï¿½ï¿½Ý´æ´¢ï¿½ï¿½ï¿½×µï¿½Ö·ï¿½ï¿½ï¿½ï¿½*/
+#define       HYDROLOGY_DATA_ADDR                     0x000800  /*2Kï¿½Ôºï¿½0x07ffe0ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ´¢ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½Ö·ï¿½Õ¼ï¿½ 0x000800-0x07ffe0  522208,63kBYTE*/
+/*ï¿½ï¿½ï¿½Ïºê¶¨ï¿½ï¿½Îªï¿½â²¿ï¿½æ´¢ï¿½ï¿½ï¿½ï¿½ï¿½Ý´æ´¢ï¿½ï¿½ï¿½×µï¿½Ö·ï¿½ï¿½ï¿½ï¿½*/
 
-#define       HYDROLOGY_DATA_PACKET_COUNTER                     	HYDROLOGY_DATA_ADDR          //ÓÃÓÚ´æ´¢´æ´¢ÇøÖÐÎ´·¢ËÍÊý¾ÝµÄ¸öÊý£¬³¤¶È3×Ö½Ú
-#define       HYDROLOGY_DATASEND_ADDR                     	HYDROLOGY_DATA_PACKET_COUNTER + HYDROLOGY_DATA_PACKET_COUNTER_LEN    //ÓÃÓÚ´æ´¢µ±Ç°Òª·¢ËÍÊý¾ÝµÄÊ×µØÖ·£¬³¤¶È3×Ö½Ú
-#define       HYDROLOGY_DATASTORE_ADDR                     	HYDROLOGY_DATASEND_ADDR  + HYDROLOGY_DATASEND_ADDR_LEN    //ÓÃÓÚ´æ´¢ÏÂÒ»¸öÒª´æ´¢Êý¾ÝµÄÊ×µØÖ·£¬³¤¶È3×Ö½Ú
+#define       HYDROLOGY_DATA_PACKET_COUNTER                     	HYDROLOGY_DATA_ADDR          //ï¿½ï¿½ï¿½Ú´æ´¢ï¿½æ´¢ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÝµÄ¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½3ï¿½Ö½ï¿½
+#define       HYDROLOGY_DATASEND_ADDR                     	HYDROLOGY_DATA_PACKET_COUNTER + HYDROLOGY_DATA_PACKET_COUNTER_LEN    //ï¿½ï¿½ï¿½Ú´æ´¢ï¿½ï¿½Ç°Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ýµï¿½ï¿½×µï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½3ï¿½Ö½ï¿½
+#define       HYDROLOGY_DATASTORE_ADDR                     	HYDROLOGY_DATASEND_ADDR  + HYDROLOGY_DATASEND_ADDR_LEN    //ï¿½ï¿½ï¿½Ú´æ´¢ï¿½ï¿½Ò»ï¿½ï¿½Òªï¿½æ´¢ï¿½ï¿½ï¿½Ýµï¿½ï¿½×µï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½3ï¿½Ö½ï¿½
 
 /*++++++++++++++++++*/
 #define       HYDROLOGY_DATAMIN_ADDR                    HYDROLOGY_DATASTORE_ADDR + HYDROLOGY_DATASTORE_ADDR_LEN 
@@ -740,14 +744,6 @@
 
 
 #define       HYDROLOGY_DATAMAX_ADDR                   0x07FFE0
-
-
-
-
-
-
-
-
 
 
 
@@ -768,8 +764,8 @@ void Hydrology_ReadRS485(char *value,int index);
 
 int HydrologyReadSuiteElement(int type,char* guide,char* value);
 
-void getElementDd(char ID,char *D,char *d);                                           //²é±í»ñµÃ±àÂëÒªËØ±êÊ¶·û
-extern int Extend_Flag ;                                                               //À©Õ¹±êÊ¶·û±ê¼Ç£¬0±íÊ¾ÊÇÅäÖÃÔËÐÐ²ÎÊý£¬1±íÊ¾ÊÇÅäÖÃ±àÂëÒªËØ  ++++++
+void getElementDd(char ID,char *D,char *d);                                           //ï¿½ï¿½ï¿½ï¿½ï¿½Ã±ï¿½ï¿½ï¿½Òªï¿½Ø±ï¿½Ê¶ï¿½ï¿½
+extern int Extend_Flag ;                                                               //ï¿½ï¿½Õ¹ï¿½ï¿½Ê¶ï¿½ï¿½ï¿½ï¿½Ç£ï¿½0ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð²ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½Ã±ï¿½ï¿½ï¿½Òªï¿½ï¿½  ++++++
 
 
 

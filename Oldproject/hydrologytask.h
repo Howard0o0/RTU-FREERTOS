@@ -37,7 +37,7 @@ extern void hydrologyExitSend();
 extern int FlowCheckSampleData(int* pstart,int* pend);
 extern int converToHexElement(double input, int D,int d,char* out);
 //extern int mallocElement(char element,char D,char d,hydrologyElement* ele);
-extern void Hydrology_ReadSwitch(int *value);
+extern void Hydrology_ReadSwitch(char *value);
 extern void Hydrology_ReadPulse(long *value,int index);
 extern void Hydrology_ReadAnalog(float *value,int index);
 extern int hydrologyJudgeType(char funcode);

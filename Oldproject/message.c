@@ -812,11 +812,11 @@ void Hydrology_ReadPulse(long* value, int index) {
 	*value = *(( long* )temp_value);
 }
 
-void Hydrology_ReadSwitch(int* value) {
-	char temp_value[ 4 ];
+void Hydrology_ReadSwitch(char* value) {
+	// char temp_value[ 4 ];
 
-	Hydrology_ReadStoreInfo(HYDROLOGY_SWITCH1, temp_value, HYDROLOGY_SWITCH_LEN);
-	*value = *(( int* )temp_value);
+	Hydrology_ReadStoreInfo(HYDROLOGY_SWITCH1, value, HYDROLOGY_SWITCH_LEN);
+	// *value = *(( int* )temp_value);
 }
 
 void Hydrology_ReadRom(long beginaddr, char* value, int index) {
@@ -831,6 +831,7 @@ void Hydrology_CalElementInfo(int* count, char funcode) {
 	long		   intvalue1  = 0;
 	int		   intvalue2  = 0;
 	int		   type       = 0;
+		char  switch_value[ 4 ] = { 0 };
 	hydrologyDownBody* downpbody  = ( hydrologyDownBody* )(g_HydrologyMsg.downbody);
 
 	type = hydrologyJudgeType(funcode);
@@ -857,7 +858,7 @@ void Hydrology_CalElementInfo(int* count, char funcode) {
 				break;
 			}
 			case SWITCH: {
-				Hydrology_ReadSwitch(&intvalue2);
+				Hydrology_ReadSwitch(switch_value);
 				mypvPortMallocElement(Element_table[ i ].ID, Element_table[ i ].D,
 						      Element_table[ i ].d, &inputPara[ i ]);
 				converToHexElement(( double )intvalue2, Element_table[ i ].D,

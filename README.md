@@ -23,7 +23,7 @@ IAR生成的中间文件
 与RTU工程相关的文档
 
 ## Driverlib
-MSP430F5438A的官方HAL库
+MSP430F5438A的官方HAL库, 文档: http://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSP430_Driver_Library/latest/exports/driverlib/msp430_driverlib_2_91_11_01/doc/MSP430F5xx_6xx/html/index.html
 
 ## Drivers
 自己写的外设驱动
