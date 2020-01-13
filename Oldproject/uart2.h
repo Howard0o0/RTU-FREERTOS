@@ -21,7 +21,7 @@
 //缓冲区行数
 #define UART2_MAXIndex 2
 //每行长度
-#define UART2_MAXBUFFLEN 400
+#define UART2_MAXBUFFLEN 550 //摄像头返回帧最大521
 
 
 int  UART2_SendtoInt(int num);

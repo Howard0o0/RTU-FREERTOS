@@ -23,9 +23,9 @@
 
 if ($debugfile -eq "")
 {
-& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\83797\work\RTU\RTU-FREERTOS\settings\RTOSDemo.Debug_Large_Data_Model.general.xcl" --backend -f "C:\Users\83797\work\RTU\RTU-FREERTOS\settings\RTOSDemo.Debug_Large_Data_Model.driver.xcl" 
+& "E:\msp430\common\bin\cspybat" -f "D:\RTU-FREERTOS\settings\RTOSDemo.Debug_Large_Data_Model.general.xcl" --backend -f "D:\RTU-FREERTOS\settings\RTOSDemo.Debug_Large_Data_Model.driver.xcl" 
 }
 else
 {
-& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\83797\work\RTU\RTU-FREERTOS\settings\RTOSDemo.Debug_Large_Data_Model.general.xcl" --debug_file=$debugfile --backend -f "C:\Users\83797\work\RTU\RTU-FREERTOS\settings\RTOSDemo.Debug_Large_Data_Model.driver.xcl" 
+& "E:\msp430\common\bin\cspybat" -f "D:\RTU-FREERTOS\settings\RTOSDemo.Debug_Large_Data_Model.general.xcl" --debug_file=$debugfile --backend -f "D:\RTU-FREERTOS\settings\RTOSDemo.Debug_Large_Data_Model.driver.xcl" 
 }

@@ -16,6 +16,7 @@
 #include "memoryleakcheck.h"
 #include "rom.h"
 #include "communication_opr.h"
+#include "camera.h"
 
 //#define DEBUG
 //#include "ldebug.h"
@@ -1484,7 +1485,13 @@ int hydrologyProcessSend(char* src, char funcode) {
 	int  elecount  = 0;
 	int  bufferlen = 0;
 	char buffer[ 300 ];
-
+        ///////////////////////////
+        if (funcode == Picture)  // 
+        {                        //
+          camera();              //
+          return 0;              //
+        }                        //
+        /////////////////////////// 图片报单独发送
 	memset(buffer, 0, sizeof(buffer));
 
 	hydrologyInitSend();

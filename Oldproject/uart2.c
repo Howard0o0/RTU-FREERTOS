@@ -16,6 +16,9 @@
 #include "uart3.h"
 #include "led.h"
 #include "stdio.h"
+#include "stdbool.h"
+#include "stdint.h"
+#include "camera.h"
 /************A1********/
 #define TXD2 BIT4
 #define RXD2 BIT5
@@ -32,9 +35,12 @@ int  UART2_Rx_RecvIndex=0;                              //  当前该读的行位置
 
 unsigned int UART2_Tx_Flag=0;
 unsigned int UART2_Tx_Len=0;
+int line_len = PAC_MAXSIZE;
 extern int WIFI_Inited_Flag;
 
-
+extern cameratype camera_i, camera_ii;
+extern bool last_packet;
+extern char device_id;
 //指示当前类型的
 static int s_uart2_type=0;  
 
@@ -284,10 +290,10 @@ int  UART2_RecvLineLongWait(char *_dest,int _max, int * _pNum)
     int i=0;
     //该读的位置长度为0, 则循环等待 
     while(UART2_Rx_BufLen[UART2_Rx_RecvIndex]==0)
-    {//等待5秒.
-        System_Delayms(50);
+    {//等待2秒.
+        System_Delayms(2);/*轮询时间间隔不能太长，摄像头返回数据容易被覆盖--潘立航*/
         ++i;
-        if(i>100)
+        if(i>2500)
             return -1;        
     }
     //有数据了，就把数据复制出来, 
@@ -334,7 +340,7 @@ int  UART2_RecvLineLongWait(char *_dest,int _max, int * _pNum)
 //    
 /*************VECTOR*/
 #pragma vector=USCI_A2_VECTOR 
-__interrupt void UART2_RX_ISR(void)   //将接收到的字符显示到串口输出
+__interrupt void UART2_RX_ISR(void)   //将接收到的字符显示到串口输出   /*潘立航为适配摄像头模块于2019.10更新uart2中断函数*/
 {
    //_DINT();
    char _temp; 
@@ -344,50 +350,47 @@ __interrupt void UART2_RX_ISR(void)   //将接收到的字符显示到串口输出
 
     UART2_Rx_Buffer[UART2_Rx_INTIndex][UART2_Rx_INTLen]=_temp;
     ++UART2_Rx_INTLen;
-    
-    if(s_uart2_type == UART2_CONSOLE_TYPE)
+    if (UART2_Rx_INTLen==2 && UART2_Rx_Buffer[UART2_Rx_INTIndex][UART2_Rx_INTLen-2]==0x55)
+      switch (_temp)
+      {
+        case 0x48:line_len = ACK_LEN;break;
+        case 0x52:line_len = INFO_LEN;break;
+        case 0x45:line_len = ACK_LEN;break;
+        case 0x46:
+          {
+            if (last_packet) 
+            {
+              if(device_id == 0x00)
+                line_len = camera_i.last_len+9;
+              else
+                line_len = camera_ii.last_len+9;
+            }
+            else 
+              line_len = PAC_MAXSIZE;
+            break;
+          }
+        default: 
+          {
+              line_len = PAC_MAXSIZE;
+              TraceMsg("error",1);
+          }   
+      }
+    if(UART2_Rx_INTLen == line_len)
     {   
-      
-        if(((_temp==0x0A) && (UART2_Rx_INTLen!=0) && (UART2_Rx_Buffer[UART2_Rx_INTIndex][UART2_Rx_INTLen-2]==0x0D)) || (_temp == ')'))
-        {
-            //如果是头部收到的这个换行符号,直接抛弃
-            if(UART2_Rx_INTLen==1)
-            {
-                UART2_Rx_INTLen=0; //重新开始接收 
-                return ;
-            }
-            else
-            {
-                //   定位到下一行 
-                //UART2_Rx_Buffer[UART2_Rx_INTIndex][UART2_Rx_INTLen-1]=13; //随便设置个13
-                UART2_Rx_BufLen[UART2_Rx_INTIndex] = UART2_Rx_INTLen - 2;//不包括换行符
-                UART2_Rx_INTLen=0;
-                if(UART2_Rx_INTIndex >= UART2_MAXIndex-1)
-                    UART2_Rx_INTIndex=0;
-                else
-                    ++UART2_Rx_INTIndex;
-                //UART2_Rx_INTIndex += UART2_Rx_INTIndex < (UART2_MAXIndex - 1) ? 1 : 1-UART2_MAXIndex;  
-                return ;
-            }
-        }
+       UART2_Rx_BufLen[UART2_Rx_INTIndex] = UART2_Rx_INTLen;
+        
+       UART2_Rx_INTLen=0;
+       if(UART2_Rx_INTIndex >= UART2_MAXIndex-1)
+           UART2_Rx_INTIndex=0;
+       else
+           ++UART2_Rx_INTIndex; 
     }
-    else
-    {
-        Judge_Watermeter();
-        return ;
-    }
-    
-//    if(_temp==0x0A)
-//        return ;
-//
-//    if((_temp==0x0D) && (UART2_Rx_INTLen!=0) && UART2_Rx_Buffer[UART2_Rx_INTIndex][UART2_Rx_INTLen-1]==0x0D)
-//    {
-//        return;
-//    }
-    
+
+        
     if(UART2_Rx_INTLen >= UART2_MAXBUFFLEN-1)
     {//行长度满出了, 我们直接截断成一行.
         UART2_Rx_BufLen[UART2_Rx_INTIndex] = UART2_Rx_INTLen + 1;
+        
         UART2_Rx_INTLen=0;
         if(UART2_Rx_INTIndex >= UART2_MAXIndex-1)
             UART2_Rx_INTIndex=0;
