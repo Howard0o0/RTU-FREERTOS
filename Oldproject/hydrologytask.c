@@ -12,9 +12,6 @@
 #include "store.h"
 #include <stdio.h>
 
-//#include "convertsampledata.h"
-//#include "hydrology.h"
-//#include "hydrologmakebody.h"
 #include "FreeRTOS.h"
 #include "communication_opr.h"
 #include "gprs.h"
@@ -132,7 +129,8 @@ void HydrologyDataPacketInit() {
 	DataPacketLen = packet_len;
 	Hydrology_WriteStoreInfo(HYDROLOGY_DATA_PACKET_LEN, &packet_len,
 				 HYDROLOGY_DATA_PACKET_LEN_LEN);
-	Hydrology_ReadStoreInfo(HYDROLOGY_ISR_COUNT_FLAG,&s_isr_count_flag,HYDROLOGY_ISR_COUNT_FLAG_LEN);  
+	Hydrology_ReadStoreInfo(HYDROLOGY_ISR_COUNT_FLAG, &s_isr_count_flag,
+				HYDROLOGY_ISR_COUNT_FLAG_LEN);
 	/*初始化的时候更新下时间*/
 	lock_communication_dev();
 	communication_module_t* comm_dev = get_communication_dev();
@@ -149,10 +147,9 @@ void HydrologyDataPacketInit() {
 		     ( char )rtc_time.date, ( char )rtc_time.month, 1, ( char )rtc_time.year, 0);
 }
 
-extern SemaphoreHandle_t sample_switch_save;
-int			 HydrologySample(char* _saveTime) {
+int HydrologySample(char* _saveTime) {
 
-	int	  i     = 0,j=0;
+	int	  i = 0, j = 0;
 	int	  adc_i = 0, isr_i = 0;
 	int	  interval = 0;
 	int	  a = 0, b = 0, c = 0;
@@ -182,22 +179,19 @@ int			 HydrologySample(char* _saveTime) {
 
 	TraceMsg(" Start Sample:   ", 0);
 	UART1_Open_9600(UART1_U485_TYPE);
-	while(Element_table[ j ].ID != 0)
-{
-if(Element_table[ j ].Mode == ADC)
-{
-ADC_Sample();
-break;
-}
-j++;
-	
-}
-	
+	while (Element_table[ j ].ID != 0) {
+		if (Element_table[ j ].Mode == ADC) {
+			ADC_Sample();
+			break;
+		}
+		j++;
+	}
+
 	while (Element_table[ i ].ID != 0) {
 		memset(value, 0, sizeof(value));
 		switch (Element_table[ i ].Mode) {
 		case ADC: {
-			
+
 			adc_i = ( int )Element_table[ i ].Channel;
 			ADC_Element(value, adc_i);
 			// adc_i++;
@@ -263,7 +257,6 @@ j++;
 	UART1_Open(UART1_BT_TYPE);
 	TraceMsg("Sample Done!  ", 0);
 
-	xSemaphoreGive(sample_switch_save);
 	return 0;
 }
 
@@ -281,7 +274,7 @@ int HydrologyOffline() {
 	return 0;
 }
 
-int HydrologySaveData(char* _saveTime, char funcode)  // char *_saveTime
+int HydrologySaveData(char funcode)  // char *_saveTime
 {
 	int   i = 0, acount = 0, pocunt = 0;
 	float floatvalue	= 0;
@@ -294,17 +287,6 @@ int HydrologySaveData(char* _saveTime, char funcode)  // char *_saveTime
 	Hydrology_ReadDataPacketCount(&_effect_count);  //初始读取内存剩余未发送数据包数量
 
 	type = hydrologyJudgeType(funcode);
-	char	storeinterval;
-	static char storetime[ 6 ] = { 0, 0, 0, 0, 0, 0 };
-	Hydrology_ReadStoreInfo(HYDROLOGY_WATERLEVEL_STORE_INTERVAL, &storeinterval,
-				HYDROLOGY_WATERLEVEL_STORE_INTERVAL_LEN);  // ly
-	storeinterval = _BCDtoDEC(storeinterval);
-	Utility_Strncpy(storetime, _saveTime, 6);
-	int tmp = storetime[ 4 ] % (storeinterval);
-	if (tmp != 0 && IsDebug == 0) {
-		TraceMsg("Not Save Time!", 1);
-		return -1;
-	}
 
 	TraceMsg("Start Store:   ", 0);
 	if (type == 1) {
@@ -312,9 +294,10 @@ int HydrologySaveData(char* _saveTime, char funcode)  // char *_saveTime
 			switch (Element_table[ i ].type) {
 			case ANALOG: {
 				Hydrology_ReadAnalog(&floatvalue, acount++);
-				mypvPortMallocElement(Element_table[ i ].ID, Element_table[ i ].D,
-					      Element_table[ i ].d,
-					      &inputPara[ i ]);  //获得id ，num，开辟value的空间
+				mypvPortMallocElement(
+					Element_table[ i ].ID, Element_table[ i ].D,
+					Element_table[ i ].d,
+					&inputPara[ i ]);  //获得id ，num，开辟value的空间
 				converToHexElement(( double )floatvalue, Element_table[ i ].D,
 						   Element_table[ i ].d, inputPara[ i ].value);
 				break;
@@ -322,7 +305,7 @@ int HydrologySaveData(char* _saveTime, char funcode)  // char *_saveTime
 			case PULSE: {
 				Hydrology_ReadPulse(&intvalue1, pocunt++);
 				mypvPortMallocElement(Element_table[ i ].ID, Element_table[ i ].D,
-					      Element_table[ i ].d, &inputPara[ i ]);
+						      Element_table[ i ].d, &inputPara[ i ]);
 				converToHexElement(( double )intvalue1, Element_table[ i ].D,
 						   Element_table[ i ].d, inputPara[ i ].value);
 				break;
@@ -331,7 +314,7 @@ int HydrologySaveData(char* _saveTime, char funcode)  // char *_saveTime
 				// Hydrology_ReadSwitch(&intvalue2);
 				Hydrology_ReadSwitch(switch_value);
 				mypvPortMallocElement(Element_table[ i ].ID, Element_table[ i ].D,
-					      Element_table[ i ].d, &inputPara[ i ]);
+						      Element_table[ i ].d, &inputPara[ i ]);
 				// converToHexElement((double)intvalue2,Element_table[i].D,Element_table[i].d,inputPara[i].value);
 				// memcpy(inputPara[i].value,switch_value,4);
 				inputPara[ i ].value[ 0 ] = switch_value[ 3 ];
@@ -344,7 +327,7 @@ int HydrologySaveData(char* _saveTime, char funcode)  // char *_saveTime
 			case STORE: {
 				inputPara[ i ].guide[ 0 ] = Element_table[ i ].ID;
 				inputPara[ i ].guide[ 1 ] = Element_table[ i ].ID;
-				inputPara[ i ].num = SinglePacketSize;
+				inputPara[ i ].num	= SinglePacketSize;
 				break;
 			}
 			default:
@@ -405,9 +388,9 @@ int HydrologyInstantWaterLevel(char* _saveTime)  //??��??????��????��
 	int _endIdx   = 0;
 
 	char _send[ 200 ] = { 0 };
-	int  _ret	= 0;
-	int  _seek_num   = 0;  //????????
-	int  sendlen     = 0;
+	int  _ret	 = 0;
+	int  _seek_num    = 0;  //????????
+	int  sendlen      = 0;
 
 	_ret = FlowCheckSampleData(&_startIdx, &_endIdx);  //???startidx endidx
 	if (_ret != 0) {
@@ -627,7 +610,7 @@ int HydrologyTask() {
 	RTC_ReadTimeBytes6(rtc_nowTime);
 
 	HydrologySample(rtc_nowTime);
-	HydrologySaveData(rtc_nowTime, TimerReport);
+	HydrologySaveData(TimerReport);
 	HydrologyInstantWaterLevel(rtc_nowTime);
 
 	return 0;

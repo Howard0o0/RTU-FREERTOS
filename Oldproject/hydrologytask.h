@@ -30,7 +30,7 @@ extern char Picture_Flag;
 int HydrologyInstantWaterLevel(char* _saveTime);
 void HydrologyUpdateElementTable() ;
 void HydrologyDataPacketInit();
-int HydrologySaveData(char *_saveTime,char funcode);
+int HydrologySaveData(char funcode);
 extern void getElementDd(char ID,char *D,char *d); 
 //extern int BC95_QueryTime(char *year,char *month,char *date,char *hour,char *min,char *second);
 extern void hydrologyExitSend();
