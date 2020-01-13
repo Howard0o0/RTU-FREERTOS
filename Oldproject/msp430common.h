@@ -7,9 +7,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define TRUE                               0
-#define FALSE                              -1
+#define TRUE 0
+#define FALSE -1
 
-
+#define SUCCESS 0
+#define FAILED -1
 
 #endif
