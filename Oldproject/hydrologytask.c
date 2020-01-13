@@ -357,42 +357,31 @@ int HydrologySaveData(char funcode)  // char *_saveTime
 	TraceMsg("Save Data Success", 1);
 	return 0;
 }
-int HydrologyInstantWaterLevel(char* _saveTime)  //??��??????��????��??�l?????
+int HydrologyInstantWaterLevel(char* _saveTime)  //检查发送时间，判断上下标，组报文发送
 {
 
 	static char endtime[ 6 ] = { 0, 0, 0, 0, 0, 0 };
 	Utility_Strncpy(endtime, _saveTime, 6);
 	int ret = 0;
-	ret     = Utility_Is_A_ReportTime(endtime);  //?????��??????????
+	ret     = Utility_Is_A_ReportTime(endtime);  //用于判断是否到发送时间
 
 	if (!ret) {
 		printf("Not Send Time, now time is: %d/%d/%d  %d:%d:%d \r\n", endtime[ 0 ],
 		       endtime[ 1 ], endtime[ 2 ], endtime[ 3 ], endtime[ 4 ], endtime[ 5 ]);
 		return -1;
 	}
-	/*
-	 int tmp = endtime[4]%(timerinterval*5);
-	 if(tmp!= 0 && !IsDebug)
-	 {
-	//if((endtime[4]-'0')%((timerinterval-'0')*5)!= 0 )
-	 TraceMsg(" Time is:   ",0);
-	 TraceHexMsg(endtime,5);
-	     return -1;
-	 }
-    */
-	int _effect_count = 0;				//?��??flash????����??????????
-	Hydrology_ReadDataPacketCount(&_effect_count);  //???????????��?????????????
+	int _effect_count = 0;				 //存储在flash的有效未发送的数据包
+	Hydrology_ReadDataPacketCount(&_effect_count);  //读取内存里剩余未发送数据包数量
 	TraceInt4(_effect_count, 1);
-	//???????��?????��?
 	int _startIdx = 0;
 	int _endIdx   = 0;
 
 	char _send[ 200 ] = { 0 };
 	int  _ret	 = 0;
-	int  _seek_num    = 0;  //????????
+	int  _seek_num    = 0;  //防止死循环
 	int  sendlen      = 0;
 
-	_ret = FlowCheckSampleData(&_startIdx, &_endIdx);  //???startidx endidx
+	_ret = FlowCheckSampleData(&_startIdx, &_endIdx);     //获得startidx endidx
 	if (_ret != 0) {
 		return -1;
 	}
@@ -400,7 +389,7 @@ int HydrologyInstantWaterLevel(char* _saveTime)  //??��??????��????��
 		TraceMsg("read data in :", 0);
 		TraceInt4(_startIdx, 1);
 		TraceInt4(_effect_count, 1);
-		if (_seek_num > HYDROLOGY_DATA_MAX_IDX)  //??????????????????????????????????????
+		if (_seek_num > HYDROLOGY_DATA_MAX_IDX)     //寻找的数据条数已经超过最大值就退出，防止死循环
 		{
 			TraceMsg("seek num out of range", 1);
 			// hydrologHEXmyvPortFree();
@@ -409,29 +398,28 @@ int HydrologyInstantWaterLevel(char* _saveTime)  //??��??????��????��
 		}
 
 		_ret = Store_ReadDataItem(_startIdx, _send,
-					  0);  //????????ret??????????????
+					  0); //读取数据，ret为读出的数据长度
 
 		if (_ret < 0) {
 			TraceMsg("can't read data ! very bad .", 1);
-			return -1;  //??????????
-				    //?????????.
+			return -1;  //无法读取数据 就直接退了
 		}
 		else if (_ret == 1) {
 			TraceMsg("It's sended data", 1);
 			if (_startIdx
-			    >= HYDROLOGY_DATA_MAX_IDX) {  //????????startidx???????????index????????????
+			    >= HYDROLOGY_DATA_MAX_IDX) {   //如果读取的startidx超过可存的最大index，则重新置零
 				_startIdx = HYDROLOGY_DATA_MIN_IDX;
 			}
 			else {
 				++_startIdx;
-			}  //???????
+			}   //下一数据   
 			++_seek_num;
-			Hydrology_SetStartIdx(_startIdx);  //?????_startIdx.
+			Hydrology_SetStartIdx(_startIdx);   //要更新_startIdx. 
 			TraceInt4(_startIdx, 1);
 			TraceInt4(_endIdx, 1);
 			// hydrologyExitSend();
 		}
-		else  //��?????????
+		else    //未发送的数据 
 		{
 			sendlen = _ret;
 
@@ -439,23 +427,20 @@ int HydrologyInstantWaterLevel(char* _saveTime)  //??��??????��????��
 			hydrologyProcessSend(_send, TimerReport);
 			unlock_communication_dev();
 
-			Store_MarkDataItemSended(_startIdx);  //??????????????
+			Store_MarkDataItemSended(_startIdx);    //设置该数据已发送
 			--_effect_count;
-			Hydrology_SetDataPacketCount(_effect_count);  //??????????????��????cnt
+			Hydrology_SetDataPacketCount(_effect_count);    //发送完后要更新有效数据cnt
 			if (_startIdx >= HYDROLOGY_DATA_MAX_IDX) {
 				_startIdx = HYDROLOGY_DATA_MIN_IDX;
 			}
 			else {
-				++_startIdx;  //???????
+				++_startIdx;    //下一数据
 			}
 			++_seek_num;
 
 			TraceMsg(_send, 1);
-			Hydrology_SetStartIdx(_startIdx);  //????_startIdx.
+			Hydrology_SetStartIdx(_startIdx);    //更新_startIdx. 
 
-			// TraceInt4(_startIdx, 1);
-			// TraceInt4(_endIdx, 1);
-			//  hydrologyExitSend();
 		}
 	}
 
