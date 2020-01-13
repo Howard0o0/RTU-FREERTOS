@@ -301,7 +301,6 @@ int HydrologySaveData(char* _saveTime, char funcode)  // char *_saveTime
 	storeinterval = _BCDtoDEC(storeinterval);
 	Utility_Strncpy(storetime, _saveTime, 6);
 	int tmp = storetime[ 4 ] % (storeinterval);
-	// if(tmp!= 0)
 	if (tmp != 0 && IsDebug == 0) {
 		TraceMsg("Not Save Time!", 1);
 		return -1;

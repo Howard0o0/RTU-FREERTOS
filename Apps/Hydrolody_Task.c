@@ -74,6 +74,6 @@ void create_hydrology_tasks() {
 		    tskIDLE_PRIORITY + 2, NULL);  // 550 306//660 396//440 242
 	xTaskCreate(hydrology_save, "hydrology save", configMINIMAL_STACK_SIZE * 4, NULL,
 		    tskIDLE_PRIORITY + 2, NULL);  // 550 283//660 363//440 203
-	xTaskCreate(hydrology_report, "hydrology report", configMINIMAL_STACK_SIZE * 6, NULL,
+	xTaskCreate(hydrology_report, "hydrology report", configMINIMAL_STACK_SIZE * 5, NULL,
 		    tskIDLE_PRIORITY + 2, NULL);  // 550 198//660 278//440 118
 }

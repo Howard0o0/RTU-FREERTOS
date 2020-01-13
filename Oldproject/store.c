@@ -39,8 +39,8 @@
 extern int DataPacketLen;
 extern char switcher,anahigh,analow,pulsehigh,pulsemedium,pulselow,vthigh,vtlow;
 int contextlen=0;
-int s_StartIdx=2001;//��ʼ��Ϊ����ֵ  ��ΧΪ1~2000    //++++
-int s_EndIdx=2001;//��ʼ��Ϊ����ֵ    ��ΧΪ1~2000  
+int s_StartIdx=HYDROLOGY_DATA_MAX_IDX+1;//��ʼ��Ϊ����ֵ  ��ΧΪ1~2000    //++++
+int s_EndIdx=HYDROLOGY_DATA_MAX_IDX+1;//��ʼ��Ϊ����ֵ    ��ΧΪ1~2000  
 //int s_DPCount=0; // //��δ���͵Ĵ���flash�����ݰ�����
 //��ʼ��
 void Store_Init()

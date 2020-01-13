@@ -12,10 +12,10 @@
 //#include "usart.h"
 #include "FreeRTOS.h"
 #include "common.h"
+#include "communication_opr.h"
 #include "hydrologytask.h"
 #include "memoryleakcheck.h"
 #include "rom.h"
-#include "communication_opr.h"
 
 //#define DEBUG
 //#include "ldebug.h"
@@ -558,9 +558,9 @@ void getguideid(char* value, char D, char d) {
 
 int converToHexElement(double input, int D, int d, char* out) {
 	char strInterValue[ 20 ] = { 0 };  // strInterValue��ʾ����ֵ
-	char strDeciValue[ 20 ] = { 0 };   // strDeciValue��ʾС��ֵ
-	int integer = 0;		   // interger��ʾ����λ��
-	int decimer = 0;		   // decimer��ʾС��λ��
+	char strDeciValue[ 20 ]  = { 0 };  // strDeciValue��ʾС��ֵ
+	int  integer		 = 0;      // interger��ʾ����λ��
+	int  decimer		 = 0;      // decimer��ʾС��λ��
 	// int intergerValue = 0 ;			// ��ʾ����ֵ
 	// int decimerValue = 0 ; 			//��ʾС��ֵ
 	int total	= 0;  // total ��ʾinput�ܵ�λ������ȥС���㣩
@@ -827,12 +827,12 @@ void Hydrology_ReadRom(long beginaddr, char* value, int index) {
 
 void Hydrology_CalElementInfo(int* count, char funcode) {
 	int		   i = 0, acount = 0, pocunt = 0;
-	float		   floatvalue = 0;
-	long		   intvalue1  = 0;
-	int		   intvalue2  = 0;
-	int		   type       = 0;
-		char  switch_value[ 4 ] = { 0 };
-	hydrologyDownBody* downpbody  = ( hydrologyDownBody* )(g_HydrologyMsg.downbody);
+	float		   floatvalue	= 0;
+	long		   intvalue1	 = 0;
+	int		   intvalue2	 = 0;
+	int		   type		     = 0;
+	char		   switch_value[ 4 ] = { 0 };
+	hydrologyDownBody* downpbody	 = ( hydrologyDownBody* )(g_HydrologyMsg.downbody);
 
 	type = hydrologyJudgeType(funcode);
 
@@ -1668,7 +1668,7 @@ void hydrologyInitReceieve() {
 	downpbody->count	     = 0;
 }
 
-void hydrologyExitReceieve() {
+void hydrologyExitReceieve() { 
 	int i = 0;
 
 	hydrologyDownBody* downpbody = ( hydrologyDownBody* )(g_HydrologyMsg.downbody);

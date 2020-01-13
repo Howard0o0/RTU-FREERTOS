@@ -131,7 +131,7 @@ PenaltyBreakBeforeFirstCallParameter:	19
 # 在一个注释中引入换行的penalty
 PenaltyBreakComment:	300
 # 第一次在<<前换行的penalty
-PenaltyBreakFirstLessLess:	120
+PenaltyBreakFirstLessLess:	80
 # 在一个字符串字面量中引入换行的penalty
 PenaltyBreakString:	1000
 # 对于每个在行字符数限制之外的字符的penalty

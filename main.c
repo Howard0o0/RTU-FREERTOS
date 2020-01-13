@@ -81,7 +81,7 @@ void app_main(void* pvParameters) {
 void main(void) {
 	setup_board_hardware();
 
-	xTaskCreate(app_main, "app_main", configMINIMAL_STACK_SIZE * 6, NULL, tskIDLE_PRIORITY + 2,
+	xTaskCreate(app_main, "app_main", configMINIMAL_STACK_SIZE *4 , NULL, tskIDLE_PRIORITY + 2,
 		    NULL);
 
 	vTaskStartScheduler();
