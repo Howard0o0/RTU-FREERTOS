@@ -1,14 +1,39 @@
 //////////////////////////////////////////////////////
-//     æ–‡ä»¶å: flash.c
-//   æ–‡ä»¶ç‰ˆæœ¬: 1.0.0
-//   åˆ›å»ºæ—¶é—´: 09å¹´11æœˆ30æ—¥
-//   æ›´æ–°å†…å®¹:  
-//       ä½œè€…: æ—æ™º
-//       é™„æ³¨: æ— 
+//     ÎÄ¼şÃû: flash.h
+//   ÎÄ¼ş°æ±¾: 0.0.0
+//   ´´½¨Ê±¼ä: 09Äê 8ÔÂ10ÈÕ
+//   ¸üĞÂÄÚÈİ:  
+//       ×÷Õß: ÁÖÖÇ
+//       ¸½×¢: ÎŞ
 //
 //////////////////////////////////////////////////////
-
 #pragma once 
-  
- 
 
+#define BANK_D_START_ADDR       0x30000
+#define BANK_D_END_ADDR         0x3FFFF
+#define BANK_D_SIZE             0x10000
+#define FLASH_SEGMENT_SIZE      512
+
+
+void FLASH_EraseOneSEG ( unsigned long int Address ); //²Á³ıflash,Ã¿´Î²ÁÉ¾³ıÒ»¸ö¶Î
+
+// *****************************************************
+//°ÑÊı×é´ÓÆ¬ÄÚFLASH¶Á³ö
+//²ÎÊıwaddr:Êı×éµÄÎ»ÖÃ
+//²ÎÊıvalue:¶Á³öµÄÊı×éµÄÖ¸Õë
+//²ÎÊısize:¶Á³öµÄÊı×éµÄ´óĞ¡
+// *****************************************************
+
+void FLASH_EraseOneBank ( unsigned long int Address );//²Á³ıflash,Ã¿´Î²ÁÉ¾³ıÒ»¸öBANK
+
+void FLASH_Writew ( unsigned long int Address,unsigned int nValue ); //Ğ´ÈëÒ»¸ö×Ö½Ú
+
+// *****************************************************
+//°ÑÊı×éĞ´ÈëÊı¾İµ½Æ¬ÄÚFLASH
+//²ÎÊıAddress:±£´æÊı×éµÄÎ»ÖÃ
+//²ÎÊıvalue:Êı×éµÄÖ¸Õë
+//²ÎÊısize:Êı×éµÄ´óĞ¡
+//ÏÈ²Á³ıÔÙĞ´
+// *****************************************************
+void Write_flash_Segment ( unsigned long int Address,  char* value,  int size );
+int Read_Flashw ( unsigned long int waddr ); //¶ÁÈ¡Ò»¸ö×Ö½Ú

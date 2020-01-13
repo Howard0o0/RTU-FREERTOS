@@ -18,7 +18,6 @@
 #include "rom.h"
 
 //#define DEBUG
-//#include "ldebug.h"
 
 extern int  IsDebug;
 extern char IsQuery;
@@ -37,7 +36,7 @@ uint8_t RS485ElementCount     = 0;
 int		UserElementCount = 0;  //�û�Ҫ������
 int		DataPacketLen    = 0;
 hydrologyHeader g_HydrologyUpHeader;
-hydrologyHeader g_HydrologyDownHeader;
+hydrologyHeader g_HydrologyDownHeader; 
 packet		g_HydrologyMsg;
 
 hydrologyElement inputPara[ MAX_ELEMENT ];
@@ -1484,7 +1483,13 @@ int hydrologyProcessSend(char* src, char funcode) {
 	int  elecount  = 0;
 	int  bufferlen = 0;
 	char buffer[ 300 ];
-
+        ///////////////////////////
+        if (funcode == Picture)  // 
+        {                        //
+          camera();              //
+          return 0;              //
+        }                        //
+        /////////////////////////// 图片报单独发送
 	memset(buffer, 0, sizeof(buffer));
 
 	hydrologyInitSend();

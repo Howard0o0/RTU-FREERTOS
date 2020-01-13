@@ -1,12 +1,102 @@
 //////////////////////////////////////////////////////
-//     æ–‡ä»¶å: flash.c
-//   æ–‡ä»¶ç‰ˆæœ¬: 1.0.0
-//   åˆ›å»ºæ—¶é—´: 09å¹´11æœˆ30æ—¥
-//   æ›´æ–°å†…å®¹:  
-//       ä½œè€…: æ—æ™º
-//       é™„æ³¨: æ— 
+//     ÎÄ¼şÃû: flash.c
+//   ÎÄ¼ş°æ±¾: 1.0.0
+//   ´´½¨Ê±¼ä: 09Äê11ÔÂ30ÈÕ
+//   ¸üĞÂÄÚÈİ:  
+//       ×÷Õß: ÁÖÖÇ
+//       ¸½×¢: ÎŞ
 //
 //////////////////////////////////////////////////////
+//ÓÃÓÚ¶ÁĞ´Æ¬ÄÚflash
+#include "msp430x54x.h"
+#include "flash.h"
 
-#include <msp430x16x.h>
- 
+// *********************************************************
+//²Á³ıflash,Ã¿´Î²ÁÉ¾³ıÒ»¸ö¶Î£¬Îª512bt£¬Ò²¾ÍÊÇ0x200
+//²ÎÊıindex:Êı×éµÄÎ»ÖÃ
+//²ÎÊıvalue:¶Á³öµÄÊı×éµÄÖ¸Õë
+//²ÎÊısize:¶Á³öµÄÊı×éµÄ´ó
+// *****************************************************
+void FLASH_EraseOneSEG ( unsigned long int Address ) //²Á³ıflash,Ã¿´Î²ÁÉ¾³ıÒ»¸ö¶Î
+{
+	_DINT();
+	FCTL3=FWKEY;								// LOCK = 0
+	while ( ( FCTL3&BUSY ) ==BUSY );					// Waitint for FLASH
+	FCTL1=FWKEY+ERASE;							// ERASE=1
+	__data20_write_char ( Address,0 );                                      // Write to the SEGment
+	FCTL1=FWKEY;
+	FCTL3=FWKEY+LOCK;
+	while ( ( FCTL3&BUSY ) ==BUSY );					// Waitint for FLASH
+	_EINT();
+}
+
+//²Á³ıflash,Ã¿´Î²ÁÉ¾³ıÒ»¸öbank
+void FLASH_EraseOneBank ( unsigned long int Address ) 
+{
+	_DINT();
+	FCTL3=FWKEY;								// LOCK = 0
+	while ( ( FCTL3&BUSY ) ==BUSY );					// Waitint for FLASH
+	FCTL1=FWKEY+MERAS;							// MRASE=1
+	__data20_write_char ( Address,0 );                                      
+	FCTL1=FWKEY;
+	FCTL3=FWKEY+LOCK;
+	while ( ( FCTL3&BUSY ) ==BUSY );					// Waitint for FLASH
+	_EINT();
+}
+
+/* *********************************************
+//¶ÁFLASH²Ù×÷,·µ»ØÒ»¸ö×Ö½ÚÊı¾İ
+************************************************/
+int Read_Flashw ( unsigned long int waddr )
+{
+	int  value;
+	
+	while ( FCTL3 & BUSY );
+	
+	value = __data20_read_char ( waddr );
+	
+	return value;
+}
+
+/*******************************************************************************
+// Write a word (nValue) to Address
+*******************************************************************************/
+void FLASH_Writew ( unsigned long int Address,unsigned int nValue )
+{
+
+	FCTL1=FWKEY+WRT;							// WRT = 1
+	FCTL3=FWKEY;								// LOCK = 0
+	
+	while ( ( FCTL3&BUSY ) ==BUSY );					// Waitint for FLASH
+	__data20_write_short ( Address,nValue );
+	
+	FCTL1=FWKEY;								// WRT = 0
+	FCTL3=FWKEY+LOCK;							// LOCK = 1
+	while ( ( FCTL3&BUSY ) ==BUSY );					// Waitint for FLASH
+}
+
+// *****************************************************
+//°ÑÊı×éĞ´ÈëÊı¾İµ½Æ¬ÄÚFLASH
+//²ÎÊıindex:±£´æÊı×éµÄÎ»ÖÃ
+//²ÎÊıvalue:Êı×éµÄÖ¸Õë
+//²ÎÊısize:Êı×éµÄ´óĞ¡
+//ÏÈ²Á³ıÔÙĞ´
+// *****************************************************
+
+void Write_flash_Segment ( unsigned long int Address,  char* value,  int size )
+{
+	int i;
+	
+	FCTL1=FWKEY+WRT;							// WRT = 1
+	FCTL3=FWKEY;								// LOCK = 0
+	
+	for ( i = 0; i < size; i++ )
+	{
+		while ( ( FCTL3&BUSY ) ==BUSY );				// Waitint for FLASH
+		__data20_write_char ( Address+i,value[i] );
+	}
+	
+	FCTL1=FWKEY;								// WRT = 0
+	FCTL3=FWKEY+LOCK;							// LOCK = 1
+	while ( ( FCTL3&BUSY ) ==BUSY );					// Waitint for FLASH
+}

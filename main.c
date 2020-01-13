@@ -53,6 +53,7 @@
 #include "communication_opr.h"
 #include "gprs.h"
 #include "memoryleakcheck.h"
+#include "camera.h"
 
 
 int IsDebug = 0;
