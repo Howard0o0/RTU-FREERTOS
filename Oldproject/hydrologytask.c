@@ -283,12 +283,11 @@ static int arrived_store_time(char *now_time) {
 	Utility_Strncpy(storetime, now_time, 6);
 	int tmp = storetime[ 4 ] % (storeinterval);
 	if (tmp != 0) {
-		
-		return TRUE;
+		return FALSE;
 	}
 	else
 	{
-		return FALSE;
+		return TRUE;
 	}
 	
 }
