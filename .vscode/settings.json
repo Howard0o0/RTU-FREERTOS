@@ -13,6 +13,7 @@
 	"communication_opr.h": "c",
 	"common.h": "c",
 	"msp430common.h": "c",
-	"uart3.h": "c"
+	"uart3.h": "c",
+	"hydrology_task.h": "c"
 }
 }
