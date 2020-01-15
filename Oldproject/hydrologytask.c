@@ -89,8 +89,10 @@ void HydrologyUpdateElementTable() {
 				HYDROLOGY_RS485_REGISTER_COUNT_LEN);
 	UserElementCount   = ( int )user;
 	RS485RegisterCount = ( int )rs485;
-	TraceInt4(UserElementCount, 1);
-	TraceInt4(RS485RegisterCount, 1);
+	// TraceInt4(UserElementCount, 1);
+        printf("total element num:%d\n",UserElementCount);
+	// TraceInt4(RS485RegisterCount, 1);
+        printf("rs485 element num:%d\n",RS485RegisterCount);
 	for (i = 0; i < UserElementCount; i++) {
 
 		Hydrology_ReadStoreInfo(HYDROLOGY_ELEMENT1_ID + i * HYDROLOGY_ELEMENT_ID_LEN,
@@ -121,7 +123,7 @@ void HydrologyDataPacketInit() {
 	packet_len += HYDROLOGY_DATA_SEND_FLAG_LEN;
 	packet_len += HYDROLOGY_DATA_TIME_LEN;
 	while (Element_table[ i ].ID != 0) {
-		mypvPortMallocElement(Element_table[ i ].ID, Element_table[ i ].D,
+		os_mallocElement(Element_table[ i ].ID, Element_table[ i ].D,
 				      Element_table[ i ].d, &inputPara[ i ]);
 		packet_len += inputPara[ i ].num;
 		i++;
@@ -147,132 +149,168 @@ void HydrologyDataPacketInit() {
 		     ( char )rtc_time.date, ( char )rtc_time.month, 1, ( char )rtc_time.year, 0);
 }
 
-int HydrologySample(char* _saveTime) {
+//////////////sample//////////
 
-	int	  i = 0, j = 0;
-	int	  adc_i = 0, isr_i = 0;
-	int	  interval = 0;
-	int	  a = 0, b = 0, c = 0;
-	volatile int rs485_i		 = 0;
-	long	 isr_count		 = 0;
-	char	 io_i		 = 0;
-	char	 isr_count_temp[ 5 ] = { 0 };
-	char	 sampleinterval[ 2 ];
-	char	 _temp_sampertime[ 6 ] = { 0 };
-	static char  sampletime[ 6 ]       = { 0 };
+static int get_sample_interval_form_flash()
+{
+        char	 sampleinterval[ 2 ];
 
-	Hydrology_ReadStoreInfo(HYDROLOGY_SAMPLE_INTERVAL, sampleinterval,
+        Hydrology_ReadStoreInfo(HYDROLOGY_SAMPLE_INTERVAL, sampleinterval,
 				HYDROLOGY_SAMPLE_INTERVAL_LEN);  //??????????
 	sampleinterval[ 0 ] = _BCDtoDEC(sampleinterval[ 0 ]);
 	sampleinterval[ 1 ] = _BCDtoDEC(sampleinterval[ 1 ]);
-	interval	    = sampleinterval[ 1 ] + sampleinterval[ 0 ] * 100;
+	return sampleinterval[ 1 ] + sampleinterval[ 0 ] * 100; 
+}
 
-	Utility_Strncpy(sampletime, _saveTime, 6);
+static void take_adc_sample_only_once()
+{
+        int j = 0;
 
-	int tmp = sampletime[ 4 ] % (interval / 60);
-	if (tmp != 0) {
-		printf("Not Sample Time! now time is: %d/%d/%d  %d:%d:%d \r\n", sampletime[ 0 ],
-		       sampletime[ 1 ], sampletime[ 2 ], sampletime[ 3 ], sampletime[ 4 ],
-		       sampletime[ 5 ]);
-		return -1;
-	}
-
-	TraceMsg(" Start Sample:   ", 0);
-	UART1_Open_9600(UART1_U485_TYPE);
-	while (Element_table[ j ].ID != 0) {
+        while (Element_table[ j ].ID != 0) {
 		if (Element_table[ j ].Mode == ADC) {
 			ADC_Sample();
 			break;
 		}
 		j++;
 	}
+}
 
-	while (Element_table[ i ].ID != 0) {
-		memset(value, 0, sizeof(value));
-		switch (Element_table[ i ].Mode) {
+static struct{
+        int adc_i;
+        int isr_i;
+        long isr_count;
+        char isr_count_temp[ 5 ];
+        char io_i;
+        volatile int rs485_i;
+}sample_mode_num;
+
+static struct{
+        int analog_num;
+        int pulse_num;
+        int switch_num;
+}sample_type_num;
+
+static void select_mode_to_sample(int i)
+{
+
+        switch (Element_table[ i ].Mode) {
 		case ADC: {
-
-			adc_i = ( int )Element_table[ i ].Channel;
-			ADC_Element(value, adc_i);
-			// adc_i++;
+			sample_mode_num.adc_i = ( int )Element_table[ i ].Channel;
+			ADC_Element(value, sample_mode_num.adc_i);
 			break;
 		}
 		case ISR_COUNT: {
-			isr_i = ( int )Element_table[ i ].Channel;
-			Hydrology_ReadStoreInfo(HYDROLOGY_ISR_COUNT1
-							+ (isr_i - 1) * HYDROLOGY_ISR_COUNT_LEN,
-						isr_count_temp, HYDROLOGY_ISR_COUNT_LEN);
-			isr_count = (isr_count_temp[ 4 ] * 0x100000000)
-				    + (isr_count_temp[ 3 ] * 0x1000000)
-				    + (isr_count_temp[ 2 ] * 0x10000)
-				    + (isr_count_temp[ 1 ] * 0x100) + (isr_count_temp[ 0 ]);
-			memcpy(value, ( char* )(&isr_count), 4);
-			// isr_i++;
+			sample_mode_num.isr_i = ( int )Element_table[ i ].Channel;
+			Hydrology_ReadStoreInfo(HYDROLOGY_ISR_COUNT1 
+                                                + (sample_mode_num.isr_i - 1) 
+                                                * HYDROLOGY_ISR_COUNT_LEN,
+						sample_mode_num.isr_count_temp,
+                                                HYDROLOGY_ISR_COUNT_LEN);
+			sample_mode_num.isr_count = 
+                                        (sample_mode_num.isr_count_temp[ 4 ] * 0x100000000)
+				        + (sample_mode_num.isr_count_temp[ 3 ] * 0x1000000)
+				        + (sample_mode_num.isr_count_temp[ 2 ] * 0x10000)
+				        + (sample_mode_num.isr_count_temp[ 1 ] * 0x100) 
+                                        + (sample_mode_num.isr_count_temp[ 0 ]);
+			memcpy(value, ( char* )(&sample_mode_num.isr_count), 4);
 			break;
 		}
 		case IO_STATUS: {
-			io_i = ( int )Element_table[ i ].Channel;
-			Hydrology_ReadIO_STATUS(value, io_i);
-			// io_i++;
+			sample_mode_num.io_i = ( int )Element_table[ i ].Channel;
+			Hydrology_ReadIO_STATUS(value, sample_mode_num.io_i);
 			break;
 		}
 		case RS485: {
-			// rs485_i = (int)Element_table[i].Channel;
-			// //??????????????????485?????index???????channel??index
-			Hydrology_ReadRS485(value, rs485_i);
-			rs485_i++;
+			Hydrology_ReadRS485(value, sample_mode_num.rs485_i);
+			sample_mode_num.rs485_i++;
 			break;
 		}
-		}
+	}
+}
 
-		switch (Element_table[ i ].type) {
+static void select_type_to_save_sample_data_temp(int i)
+{
+        char	 _temp_sampertime[ 6 ] = { 0 };
+ 
+        switch (Element_table[ i ].type) {
 		case ANALOG: {
 			convertSampleTimetoHydrology(g_rtc_nowTime, _temp_sampertime);
 			Hydrology_SetObservationTime(Element_table[ i ].ID, _temp_sampertime, i);
-			Hydrology_WriteStoreInfo(HYDROLOGY_ANALOG1 + a * HYDROLOGY_ANALOG_LEN,
+			Hydrology_WriteStoreInfo(HYDROLOGY_ANALOG1 + sample_type_num.analog_num * HYDROLOGY_ANALOG_LEN,
 						 value, HYDROLOGY_ANALOG_LEN);
-			a++;
+			sample_type_num.analog_num++;
 			break;
 		}
 		case PULSE: {
 			convertSampleTimetoHydrology(g_rtc_nowTime, _temp_sampertime);
 			Hydrology_SetObservationTime(Element_table[ i ].ID, _temp_sampertime, i);
-			Hydrology_WriteStoreInfo(HYDROLOGY_PULSE1 + b * HYDROLOGY_PULSE_LEN, value,
+			Hydrology_WriteStoreInfo(HYDROLOGY_PULSE1 + sample_type_num.pulse_num * HYDROLOGY_PULSE_LEN, value,
 						 HYDROLOGY_PULSE_LEN);
-			b++;
+			sample_type_num.pulse_num++;
 			break;
 		}
 		case SWITCH: {
 			convertSampleTimetoHydrology(g_rtc_nowTime, _temp_sampertime);
 			Hydrology_SetObservationTime(Element_table[ i ].ID, _temp_sampertime, i);
-			Hydrology_WriteStoreInfo(HYDROLOGY_SWITCH1 + c * HYDROLOGY_SWITCH_LEN,
+			Hydrology_WriteStoreInfo(HYDROLOGY_SWITCH1 + sample_type_num.switch_num * HYDROLOGY_SWITCH_LEN,
 						 value, HYDROLOGY_SWITCH_LEN);
-			c++;
+			sample_type_num.switch_num++;
 			break;
 		}
-		}
+	}
+}
+
+static void sample_count_init()
+{
+        sample_mode_num.adc_i = 0;
+        sample_mode_num.io_i = 0;
+        sample_mode_num.isr_count = 0;
+        memset(sample_mode_num.isr_count_temp,0,5);
+        sample_mode_num.isr_i = 0;
+        sample_mode_num.rs485_i = 0;
+
+        sample_type_num.analog_num = 0;
+        sample_type_num.pulse_num = 0;
+        sample_type_num.switch_num = 0;
+
+}
+
+static void take_sample_and_save_sample_data_temporary()
+{
+        int i = 0;
+
+        take_adc_sample_only_once();
+	while (Element_table[ i ].ID != 0) {
+		memset(value, 0, sizeof(value));
+                select_mode_to_sample(i);
+                select_type_to_save_sample_data_temp(i);
 		i++;
 	}
+}
+
+int HydrologySample() {
+
+        sample_count_init();
+
+        if(now_time_reach_interval( (get_sample_interval_form_flash() / 60) )){
+                printf("Not Sample Time! now time is: %d/%d/%d  %d:%d:%d \r\n", rtc_nowTime[ 0 ],
+		       rtc_nowTime[ 1 ], rtc_nowTime[ 2 ], rtc_nowTime[ 3 ], rtc_nowTime[ 4 ],
+		       rtc_nowTime[ 5 ]);
+		return -1;
+        }
+
+	printf("\n\n Start Sample:   \n\n");
+	UART1_Open_9600(UART1_U485_TYPE);
+
+        take_sample_and_save_sample_data_temporary();
+
 	UART3_Open(UART3_CONSOLE_TYPE);
 	UART1_Open(UART1_BT_TYPE);
-	TraceMsg("Sample Done!  ", 0);
+	printf("\n\n Sample Done!   \n\n");
 
 	return 0;
 }
 
-int HydrologyOnline() {
-	// if (time_10min >= 1)
-	// hydrologyProcessSend(LinkMaintenance);
-
-	return 0;
-}
-
-int HydrologyOffline() {
-	GPRS_Close_TCP_Link();
-	GPRS_Close_GSM();
-
-	return 0;
-}
 
 static uint8_t get_store_interval(void) {
 	char storeinterval;
@@ -283,10 +321,10 @@ static uint8_t get_store_interval(void) {
 	return ( uint8_t )storeinterval;
 }
 
-static int arrived_store_time(char* now_time) {
+static int arrived_store_time() {
 
 	uint8_t store_interval = get_store_interval();
-	if (now_time_reach_interval(now_time, store_interval) == TRUE) {
+	if (now_time_reach_interval(store_interval) == TRUE) {
 		return TRUE;
 	}
 	else {
@@ -307,7 +345,7 @@ static void fetch_element_value_from_buffer_in_rom() {
 		switch (Element_table[ i ].type) {
 		case ANALOG: {
 			Hydrology_ReadAnalog(&floatvalue, acount++);
-			mypvPortMallocElement(Element_table[ i ].ID, Element_table[ i ].D,
+			os_mallocElement(Element_table[ i ].ID, Element_table[ i ].D,
 					      Element_table[ i ].d,
 					      &inputPara[ i ]);  //获得id ，num，开辟value的空间
 			converToHexElement(( double )floatvalue, Element_table[ i ].D,
@@ -316,7 +354,7 @@ static void fetch_element_value_from_buffer_in_rom() {
 		}
 		case PULSE: {
 			Hydrology_ReadPulse(&intvalue1, pocunt++);
-			mypvPortMallocElement(Element_table[ i ].ID, Element_table[ i ].D,
+			os_mallocElement(Element_table[ i ].ID, Element_table[ i ].D,
 					      Element_table[ i ].d, &inputPara[ i ]);
 			converToHexElement(( double )intvalue1, Element_table[ i ].D,
 					   Element_table[ i ].d, inputPara[ i ].value);
@@ -324,7 +362,7 @@ static void fetch_element_value_from_buffer_in_rom() {
 		}
 		case SWITCH: {
 			Hydrology_ReadSwitch(switch_value);
-			mypvPortMallocElement(Element_table[ i ].ID, Element_table[ i ].D,
+			os_mallocElement(Element_table[ i ].ID, Element_table[ i ].D,
 					      Element_table[ i ].d, &inputPara[ i ]);
 			inputPara[ i ].value[ 0 ] = switch_value[ 3 ];
 			inputPara[ i ].value[ 1 ] = switch_value[ 2 ];
@@ -393,9 +431,9 @@ static void update_package_count(void) {
 	Hydrology_SetDataPacketCount(_effect_count);
 }
 
-int HydrologySaveData(char* rtc_nowTime, char funcode)  // char *_saveTime
+int HydrologySaveData(char funcode)  // char *_saveTime
 {
-	if (arrived_store_time(rtc_nowTime) == FALSE) {
+	if (arrived_store_time() == FALSE) {
 		printf("not store time, %d/%d/%d %d:%d:%d\n\n", rtc_nowTime[ 0 ], rtc_nowTime[ 1 ],
 		       rtc_nowTime[ 2 ], rtc_nowTime[ 3 ], rtc_nowTime[ 4 ], rtc_nowTime[ 5 ]);
 		return FAILED;
@@ -576,7 +614,7 @@ int HydrologyInstantWaterLevel(char* _saveTime)  //检查发送时间，判断�
 		//寻找的数据条数已经超过最大值就退出，防止死循环
 		{
 			TraceMsg("seek num out of range", 1);
-			// hydrologHEXmyvPortFree();
+			// hydrologHEXos_free();
 			System_Delayms(2000);
 			System_Reset();
 		}

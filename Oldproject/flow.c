@@ -87,7 +87,7 @@ int FlowProcess()    //未使用
         if(_seek_num > DATA_ITEM_LEN)//寻找的数据条数已经超过最大值就退出     //+++要改为地址边界判断
         {
             TraceMsg("seek num out of range",1);
-			//hydrologHEXmyvPortFree();
+			//hydrologHEXos_free();
                         System_Delayms(2000);
 			System_Reset();
             //break;
@@ -123,7 +123,7 @@ int FlowProcess()    //未使用
 			TraceInt4(_startIdx, 1);
 			TraceInt4(_endIdx, 1);
 			
-			hydrologHEXmyvPortFree();
+			hydrologHEXos_free();
 
             //continue;
         }
@@ -173,7 +173,7 @@ int FlowProcess()    //未使用
 	        TraceInt4(_startIdx, 1);
 	        TraceInt4(_endIdx, 1);
 
-	        hydrologHEXmyvPortFree();
+	        hydrologHEXos_free();
 
 		}
     }

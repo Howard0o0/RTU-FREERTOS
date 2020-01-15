@@ -153,7 +153,7 @@ rtc_time_t GSM_AT_QueryTime(void) {
 	rtc_time_t get_time_from_gprs_module;
 	get_time_from_gprs_module.year = 0;
 
-	pcRcvAtBuff = ( char* )mypvPortMalloc(200 * sizeof(char));
+	pcRcvAtBuff = ( char* )os_malloc(200 * sizeof(char));
 	if (pcRcvAtBuff == NULL) {
 		printf("pcRcvAtBuff malloc failed! \r\n");
 		return get_time_from_gprs_module;
@@ -219,7 +219,7 @@ rtc_time_t GSM_AT_QueryTime(void) {
 		get_time_from_gprs_module.sec   = (sec1 - 48) * 10 + (sec2 - 48);
 	}
 
-	myvPortFree(pcRcvAtBuff);
+	os_free(pcRcvAtBuff);
 
 	return get_time_from_gprs_module;
 }
@@ -654,14 +654,14 @@ int GRPS_AT_Receive_Response(char* recv_, int* _retErrorCode) {
 			psrc++;
 		}
 		psrc  = recv_ + 10;
-		pdata = ( char* )mypvPortMalloc(_datalensize);
+		pdata = ( char* )os_malloc(_datalensize);
 		Utility_Strncpy(pdata, recv_ + 10, _datalensize);
 		_ReceiveDataLen = Utility_atoi(pdata, _datalensize);
-		myvPortFree(pdata);
+		os_free(pdata);
 		pdata	= NULL;  //
-		_ReceiveData = ( char* )mypvPortMalloc(_ReceiveDataLen * 2);
+		_ReceiveData = ( char* )os_malloc(_ReceiveDataLen * 2);
 		if (_ReceiveData == NULL) {
-			Console_WriteStringln("mypvPortMalloc in GRPS_AT_Receive_Response failed");
+			Console_WriteStringln("os_malloc in GRPS_AT_Receive_Response failed");
 			return MSG_SEND_FAILED;
 		}
 
@@ -669,7 +669,7 @@ int GRPS_AT_Receive_Response(char* recv_, int* _retErrorCode) {
 			psrc++;
 		}
 		Utility_Strncpy(_ReceiveData, psrc + 1, _ReceiveDataLen * 2);
-		myvPortFree(_ReceiveData);  //+++
+		os_free(_ReceiveData);  //+++
 		_ReceiveData = NULL;
 		retValue     = TRUE;
 	}
@@ -1389,9 +1389,9 @@ int GRPS_AT_Send() {
 	int  _retValue   = 0;
 	char recv_[ 30 ] = { 0 };
 
-	char* _send = ( char* )mypvPortMalloc(dataLen + 12);
+	char* _send = ( char* )os_malloc(dataLen + 12);
 	if (_send == NULL) {
-		err_printf("mypvPortMalloc in GPRS_AT_Send failed \n\n");
+		err_printf("os_malloc in GPRS_AT_Send failed \n\n");
 		return MSG_SEND_FAILED;
 	}
 	Utility_Strncpy(_send, "AT%IPSEND=\"", 11);
@@ -1411,7 +1411,7 @@ int GRPS_AT_Send() {
 	_retValue = GPRS_Proc_AT_Response(recv_, &_retMsgNum, SEND_DATA, &errorCode);
 	// 发送指令会先返回一行 %IPSEND:1,15
 	// 再返回一行 OK
-	myvPortFree(_send);
+	os_free(_send);
 	_send = NULL;
 
 	if (_retValue == TRUE) {
@@ -1648,10 +1648,10 @@ int GPRS_Send(char* pSend, int sendDataLen, int isLastPacket, int center) {
 			"Error, Packet exceed 1024, Please Decrease Sending Packet Size! \n\n");
 	}
 
-	psrc = ( char* )mypvPortMalloc(
+	psrc = ( char* )os_malloc(
 		sendDataLen * 2 + 1);  //+1是因为转换函数hex_2_ascii最后有个\0,否则最后会出越界错误
 	if (psrc == NULL) {
-		err_printf("mypvPortMalloc in GPRS_Send Failed \n\n");
+		err_printf("os_malloc in GPRS_Send Failed \n\n");
 		return FALSE;
 	}
 	hex_2_ascii(pSend, psrc, sendDataLen);
@@ -1659,7 +1659,7 @@ int GPRS_Send(char* pSend, int sendDataLen, int isLastPacket, int center) {
 
 	_retvalue = GRPS_AT_Send();
 
-	myvPortFree(psrc);
+	os_free(psrc);
 	psrc = NULL;
 	GPRS_Close_TCP_Link();
 
@@ -1687,17 +1687,17 @@ char* GPRS_Receive() {
 	memset(hexdata, 0, 100);
 	if (GRPS_AT_Receive() == MSG_RECEIVE_SUCCESS) {
 		ConvertAscIItoHex(_ReceiveData, hexdata, _ReceiveDataLen * 2);
-		myvPortFree(_ReceiveData);
+		os_free(_ReceiveData);
 		_ReceiveData = NULL;
 	}
 	else if (GRPS_AT_Receive() == MSG_RECEIVE_SUCCESS) {
 		ConvertAscIItoHex(_ReceiveData, hexdata, _ReceiveDataLen * 2);
-		myvPortFree(_ReceiveData);
+		os_free(_ReceiveData);
 		_ReceiveData = NULL;
 	}
 	else if (GRPS_AT_Receive() == MSG_RECEIVE_SUCCESS) {
 		ConvertAscIItoHex(_ReceiveData, hexdata, _ReceiveDataLen * 2);
-		myvPortFree(_ReceiveData);
+		os_free(_ReceiveData);
 		_ReceiveData = NULL;
 	}
 
@@ -1737,7 +1737,7 @@ int Hydrology_ProcessGPRSReceieve() {
 		HydrologyRecord(ERC17);
 	}
 	if (dowmhydrologydata != NULL)
-		myvPortFree(dowmhydrologydata);
+		os_free(dowmhydrologydata);
 
 	GPRSDataArrived = FALSE;
 	return 0;

@@ -409,7 +409,7 @@ int WIFI_ReceiveConfigDataProcess(char * dest, int recvLength)
     char stepA[A_STEP_LEN] = {0};
     char stepC[C_STEP_LEN] = {0};
     int _step=0;//��ǰ��չ�Ĳ���
-    int mypvPortMallocsize = 0;
+    int os_mallocsize = 0;
     int _ret  = 0;
 
    /*���������鷳���Ȳ��жϳ���*/
@@ -448,22 +448,22 @@ int WIFI_ReceiveConfigDataProcess(char * dest, int recvLength)
     //char hydrologyPara[datagramLen-A_STEP_LEN-C_STEP_LEN]={0};//������ʱ�򣬿��ܻ������⣬C�������С����ʹ�ó���������ʹ�ñ���ʽ
     // #B#001,32,4B,1141956,303434,3,0060501111,0060502222,0060503333,27,28,29,9,3,9,3,9,3#
     // ����վ��ַ,������,ң��վ������,ң��վ����(3λ����,2λ��,2λ��, BCD��),ң��վγ��(2λ����,2λ��,2λ��, BCD��),ң��վ��ַ����, ң��վ��ַ1(ǰ6λBCD��,��4λHex��),ң��վ��ַ2,ң��վ��ַ3,ͨ��1����Ҫ��, ͨ��2����Ҫ��,ͨ��3����Ҫ��,Ҫ��1����λ��,Ҫ��1С��λ��,Ҫ��2����λ��,Ҫ��2С��λ��,Ҫ��3����λ��,Ҫ��3С��λ��
-    mypvPortMallocsize = (recvLength - A_STEP_LEN - C_STEP_LEN - 4) * sizeof(char);
-    TraceMsg("mypvPortMalloc size:",1);
-    TraceInt4(mypvPortMallocsize,1);
+    os_mallocsize = (recvLength - A_STEP_LEN - C_STEP_LEN - 4) * sizeof(char);
+    TraceMsg("os_malloc size:",1);
+    TraceInt4(os_mallocsize,1);
     
-    char *hydrologyPara = (char *) mypvPortMalloc(mypvPortMallocsize);//6�ǰ�ͷ�����ݳ�����ռ�ֽ�,1���ֽڽ���������ȥ7���ֽ�
+    char *hydrologyPara = (char *) os_malloc(os_mallocsize);//6�ǰ�ͷ�����ݳ�����ռ�ֽ�,1���ֽڽ���������ȥ7���ֽ�
     if(hydrologyPara == 0)
     {
-        Console_WriteErrorStringln("0 memory mypvPortMalloced");
+        Console_WriteErrorStringln("0 memory os_malloced");
         return -1;
     }
     
-    Utility_Strncpy(hydrologyPara, &dest[3 + A_STEP_LEN],mypvPortMallocsize);
+    Utility_Strncpy(hydrologyPara, &dest[3 + A_STEP_LEN],os_mallocsize);
 
-    _ret = Main_ProcInitConfig(hydrologyPara, mypvPortMallocsize, &_step);
+    _ret = Main_ProcInitConfig(hydrologyPara, os_mallocsize, &_step);
     
-    myvPortFree(hydrologyPara);
+    os_free(hydrologyPara);
     
     hydrologyPara = NULL; //+++
     if (_ret != 0)

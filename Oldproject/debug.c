@@ -107,6 +107,6 @@ void print_stacktrace()
     {
         Console_WriteStringln(stacktrace[i]);
     }
-    myvPortFree(stacktrace);
+    os_free(stacktrace);
 #endif 
 }

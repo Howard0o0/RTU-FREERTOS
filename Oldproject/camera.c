@@ -1,7 +1,7 @@
 //////////////////////////
-//×÷Õß£ºÅËÁ¢º½
-//Ê±¼ä£º19.10
-//¹¦ÄÜ£ºÅÄÉã¡¢´æ´¢²¢·¢ËÍÍ¼Æ¬
+//ï¿½ï¿½ï¿½ß£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//Ê±ï¿½ä£º19.10
+//ï¿½ï¿½ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ã¡¢ï¿½æ´¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼Æ¬
 //////////////////////////
 
 #include "camera.h"
@@ -18,30 +18,30 @@
 #include "rtc.h"
 #include "memoryleakcheck.h"
 #include "communication_opr.h"
-//ÉãÏñÍ·Ö¸ÁîÖÐµÄ³£Á¿
-const static char reso = RESOLUTION1280_1024;             //·Ö±æÂÊ
+//ï¿½ï¿½ï¿½ï¿½Í·Ö¸ï¿½ï¿½ï¿½ÐµÄ³ï¿½ï¿½ï¿½
+const static char reso = RESOLUTION1280_1024;             //ï¿½Ö±ï¿½ï¿½ï¿½
 
-//½ÓÊÕÉãÏñÍ··µ»ØµÄÐÅÏ¢
-char ack[4] = {0,};                                        //ÓÃÓÚ´æ´¢ackÖ¡
-char pic_info[10]={0,};                                    //ÓÃÓÚ´æ´¢·µ»ØµÄÍ¼Æ¬ÐÅÏ¢Ö¡
-char *pic_packet;                                          //ÓÃÓÚ´æ´¢Í¼Æ¬Êý¾ÝÖ¡ÖÐµÄÊý¾Ý
-char device_id;                                            //ÉãÏñÍ·id
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½Ï¢
+char ack[4] = {0,};                                        //ï¿½ï¿½ï¿½Ú´æ´¢ackÖ¡
+char pic_info[10]={0,};                                    //ï¿½ï¿½ï¿½Ú´æ´¢ï¿½ï¿½ï¿½Øµï¿½Í¼Æ¬ï¿½ï¿½Ï¢Ö¡
+char *pic_packet;                                          //ï¿½ï¿½ï¿½Ú´æ´¢Í¼Æ¬ï¿½ï¿½ï¿½ï¿½Ö¡ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½
+char device_id;                                            //ï¿½ï¿½ï¿½ï¿½Í·id
 
-//·¢ËÍÍ¼Æ¬±¨ÎÄÓÃµ½µÄÈ«¾Ö±äÁ¿
-uint8_t   pack_num_sd;                                      //·¢ËÍÍ¼Æ¬µÄ°ü×ÜÊý 
-char serial_num = 0x00;                                    //µ±Ç°°üÐòÁÐºÅ
-char send_time[6] = {0,};                                  //·¢±¨Ê±¼ä
-char shoot_time[5] = {0,};                                 //ÅÄÉãÊ±¼ä
+//ï¿½ï¿½ï¿½ï¿½Í¼Æ¬ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½È«ï¿½Ö±ï¿½ï¿½ï¿½
+uint8_t   pack_num_sd;                                      //ï¿½ï¿½ï¿½ï¿½Í¼Æ¬ï¿½Ä°ï¿½ï¿½ï¿½ï¿½ï¿½ 
+char serial_num = 0x00;                                    //ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½Ðºï¿½
+char send_time[6] = {0,};                                  //ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
+char shoot_time[5] = {0,};                                 //ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
 
 extern void convertSampleTimetoHydrology(char* src,char* dst);
 bool last_packet ;
 cameratype camera_i, camera_ii;
 
-//·¢ËÍÅÄÉãÖ¸Áî
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½
 void camera_TakeCmdSend(char device )
 {
   uint16_t size = PAC_SIZE;
-  char *pack_size;                                        //ÃüÁîÃ¿°üÍ¼Æ¬³¤¶È
+  char *pack_size;                                        //ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½Í¼Æ¬ï¿½ï¿½ï¿½ï¿½
   pack_size = (char*) (&size);
   char take_cmd [TAKECMD_LEN]= {0x55,0x48,0x00,0x00,0x00,0x00,0x23};
   
@@ -53,7 +53,7 @@ void camera_TakeCmdSend(char device )
   UART2_Send(take_cmd,TAKECMD_LEN,0);
   TraceHexMsg(take_cmd,TAKECMD_LEN);
 }
-//·¢ËÍÈ¡°üÖ¸Áî
+//ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½Ö¸ï¿½ï¿½
 void camera_GetCmdSend(char *pack_cnt,char device )
 {
   char get_cmd [GETCMD_LEN]= {0x55,0x45,0x00,0x00,0x00,0x23};
@@ -63,7 +63,7 @@ void camera_GetCmdSend(char *pack_cnt,char device )
   UART2_Send(get_cmd,GETCMD_LEN,0);
   TraceHexMsg(get_cmd,GETCMD_LEN);
 }
-//¶ÁÈ¡ack
+//ï¿½ï¿½È¡ack
 int camera_AckRead()
 {
   int num=0;
@@ -72,18 +72,18 @@ int camera_AckRead()
   //TraceHexMsg(ack,ACK_LEN);
   return 0;
 }
-//¶ÁÈ¡Í¼ÏñÐÅÏ¢Êý¾Ý°ü
+//ï¿½ï¿½È¡Í¼ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½Ý°ï¿½
 int camera_InfoRead()
 {
   int num=0;
-  char pic_size[4] = {0,};                                   //ÓÃÓÚ´æ´¢Í¼Æ¬ÐÅÏ¢Ö¡ÖÐµÄÍ¼Æ¬´óÐ¡
+  char pic_size[4] = {0,};                                   //ï¿½ï¿½ï¿½Ú´æ´¢Í¼Æ¬ï¿½ï¿½Ï¢Ö¡ï¿½Ðµï¿½Í¼Æ¬ï¿½ï¿½Ð¡
   cameratype *camera;
   
   if (UART2_RecvLineLongWait(pic_info,INFO_LEN,&num)<0)
     return -1;
   TraceHexMsg(pic_info,INFO_LEN);
   
-  //´ÓÐÅÏ¢Ö¡ÖÐ»ñÈ¡Í¼Æ¬Ïà¹ØÐÅÏ¢
+  //ï¿½ï¿½ï¿½ï¿½Ï¢Ö¡ï¿½Ð»ï¿½È¡Í¼Æ¬ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
   pic_size[0] = pic_info[3];
   pic_size[1] = pic_info[4];
   pic_size[2] = pic_info[5];
@@ -98,12 +98,12 @@ int camera_InfoRead()
     default:{camera = &camera_i;break;}
   }
   for(int i = 3;i >= 0;i--)                             
-  {//pic_size Êý×é×ª´æµ½int±äÁ¿Àï
+  {//pic_size ï¿½ï¿½ï¿½ï¿½×ªï¿½æµ½intï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     camera->picture_len <<=8;
     camera->picture_len += (uint8_t)pic_size[i];   
   }
   camera->last_len = camera->picture_len % PAC_SIZE;
-  //»ñÈ¡·Ö°üÊýÁ¿
+  //ï¿½ï¿½È¡ï¿½Ö°ï¿½ï¿½ï¿½ï¿½ï¿½
   camera->pack_num_rc = (uint8_t)pic_info[8];
   camera->pack_num_rc <<= 8;
   camera->pack_num_rc += (uint8_t)pic_info[7];
@@ -112,7 +112,7 @@ int camera_InfoRead()
   {
     case 0 : 
       {
-        FLASH_EraseOneBank (BANK_D_START_ADDR);                       //²Á³ýÕû¸öBANK D
+        FLASH_EraseOneBank (BANK_D_START_ADDR);                       //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½BANK D
         camera_ii.addr_r=camera_ii.addr_w += camera_i.picture_len;
         break;
       }
@@ -136,7 +136,7 @@ int camera_InfoRead()
   return 0;
 }
 
-//¶ÁÈ¡Í¼ÏñÊý¾Ý°ü
+//ï¿½ï¿½È¡Í¼ï¿½ï¿½ï¿½ï¿½ï¿½Ý°ï¿½
 int camera_DatapackRead(char device)
 {
   int num=0;
@@ -157,11 +157,11 @@ int camera_DatapackRead(char device)
   return len;
 }
 
-//·¢ËÍÅÄÉãÖ¸Áî£¬¶ÁÈ¡·µ»ØÐÅÏ¢
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½î£¬ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
 int camera_PictureTake(char device)
 { 
   camera_TakeCmdSend(device);
-  //¼ì²éackºÍinfo
+  //ï¿½ï¿½ï¿½ackï¿½ï¿½info
   if (camera_AckRead()<0)return -1;
   if(ack[1] != 0x48) return -1;
   if (camera_InfoRead()<0)return -1;
@@ -170,7 +170,7 @@ int camera_PictureTake(char device)
   return 0;
 }
 
-//»ñÈ¡Ò»¸ö·Ö°ü²¢´æ´¢
+//ï¿½ï¿½È¡Ò»ï¿½ï¿½ï¿½Ö°ï¿½ï¿½ï¿½ï¿½æ´¢
 int camera_PictureGet(unsigned long addr, char device)
 { 
   cameratype *camera;
@@ -186,7 +186,7 @@ int camera_PictureGet(unsigned long addr, char device)
   if (camera_AckRead()<0) return -1;
   if(ack[1] != 0x45) return -1;
   
-  len = camera_DatapackRead(device);//»ñÈ¡ pic_packet £¬pic_bytes Öµ
+  len = camera_DatapackRead(device);//ï¿½ï¿½È¡ pic_packet ï¿½ï¿½pic_bytes Öµ
   if (len <0) return -1;                                                 
   if (pic_packet[1] != 0x46 ) return -1;
   
@@ -194,21 +194,21 @@ int camera_PictureGet(unsigned long addr, char device)
   return 0;
 }
 
-//×é°üº¯Êý
-//×é×°±¨ÎÄÍ·²¿
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ï¿½ï¿½×°ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½
 int camera_PicturePacketHead(char *head,int pic_len,bool fstflg)        
 {
-  char frame_start[2] = {SOH1,SOH2};                                     //Ö¡ÆðÊ¼·û
-  uint16_t packetlen_int ;                                               //ÕýÎÄ³¤¶È
-  if (fstflg)                                                            //Ö»ÓÐµÚÒ»°üÕýÎÄ³¤¶ÈÓÐ PACKET_INFO_LEN
+  char frame_start[2] = {SOH1,SOH2};                                     //Ö¡ï¿½ï¿½Ê¼ï¿½ï¿½
+  uint16_t packetlen_int ;                                               //ï¿½ï¿½ï¿½Ä³ï¿½ï¿½ï¿½
+  if (fstflg)                                                            //Ö»ï¿½Ðµï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ PACKET_INFO_LEN
     packetlen_int = pic_len + PACKET_INFO_LEN +3;
   else
     packetlen_int = pic_len + 3;
   char *packet_len;                                                   
-  char packet_start = SYN;                                              //±¨ÎÄÆðÊ¼·û
-  char pac_totalnum_serialnum[3];                                       //M3Ä£Ê½ÏÂµÄ°ü×ÜÊý¼°ÐòÁÐºÅ                   
+  char packet_start = SYN;                                              //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½
+  char pac_totalnum_serialnum[3];                                       //M3Ä£Ê½ï¿½ÂµÄ°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðºï¿½                   
   
-  packet_len = (char*)(&packetlen_int);                                 //ÕýÎÄ³¤¶È
+  packet_len = (char*)(&packetlen_int);                                 //ï¿½ï¿½ï¿½Ä³ï¿½ï¿½ï¿½
   
   pac_totalnum_serialnum[0] = (pack_num_sd & 0xf0)>>4;
   pac_totalnum_serialnum[1] = (pack_num_sd & 0x0f)<<4; 
@@ -218,16 +218,16 @@ int camera_PicturePacketHead(char *head,int pic_len,bool fstflg)
   head[index++] = frame_start[0];
   head[index++] = frame_start[1];
   
-  if (Hydrology_ReadStoreInfo(HYDROLOGY_CENTER_ADDR,&head[index],HYDROLOGY_CENTER_LEN-3)<0)     //¶ÁÖÐÐÄÕ¾µØÖ·
+  if (Hydrology_ReadStoreInfo(HYDROLOGY_CENTER_ADDR,&head[index],HYDROLOGY_CENTER_LEN-3)<0)     //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ¾ï¿½ï¿½Ö·
     return -1;   
   index += (HYDROLOGY_CENTER_LEN-3);
-  if (Hydrology_ReadStoreInfo(HYDROLOGY_REMOTE_ADDR,&head[index],HYDROLOGY_REMOTE_LEN)<0)       //¶ÁÒ£²âÕ¾µØÖ·
+  if (Hydrology_ReadStoreInfo(HYDROLOGY_REMOTE_ADDR,&head[index],HYDROLOGY_REMOTE_LEN)<0)       //ï¿½ï¿½Ò£ï¿½ï¿½Õ¾ï¿½ï¿½Ö·
     return -1;     
   index += HYDROLOGY_REMOTE_LEN;
-  if (Hydrology_ReadStoreInfo(HYDROLOGY_PASSWORD_ADDR,&head[index],HYDROLOGY_PASSWORD_LEN)<0)   //¶ÁÃÜÂë
+  if (Hydrology_ReadStoreInfo(HYDROLOGY_PASSWORD_ADDR,&head[index],HYDROLOGY_PASSWORD_LEN)<0)   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     return -1; 
   index += HYDROLOGY_PASSWORD_LEN;
-  head[index++] = Picture;                                                                      //Í¼Æ¬¹¦ÄÜÂë
+  head[index++] = Picture;                                                                      //Í¼Æ¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
   head[index++] = packet_len[1];
   head[index++] = packet_len[0];
   head[index++] = packet_start; 
@@ -236,84 +236,84 @@ int camera_PicturePacketHead(char *head,int pic_len,bool fstflg)
   head[index++] = pac_totalnum_serialnum[2];
   return 0;
 }
-//×é×°ÕýÎÄÐÅÏ¢
+//ï¿½ï¿½×°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
 int camera_PicturePacketInfo(char *packet_info)
 {
-  char ser_num [2];                                                                     //Á÷Ë®ºÅ
-  char remoteaddr_id = 0xF1;                                                            //Ò£²âÕ¾µØÖ·±êÊ¶·û
-  char observationtime_id = 0xF0;                                                       //¹Û²âÊ±¼äÒªËØ±êÊ¶·û
-  char picture_id = 0xF3;                                                               //Í¼Æ¬ÒªËØ±êÊ¶·û
+  char ser_num [2];                                                                     //ï¿½ï¿½Ë®ï¿½ï¿½
+  char remoteaddr_id = 0xF1;                                                            //Ò£ï¿½ï¿½Õ¾ï¿½ï¿½Ö·ï¿½ï¿½Ê¶ï¿½ï¿½
+  char observationtime_id = 0xF0;                                                       //ï¿½Û²ï¿½Ê±ï¿½ï¿½Òªï¿½Ø±ï¿½Ê¶ï¿½ï¿½
+  char picture_id = 0xF3;                                                               //Í¼Æ¬Òªï¿½Ø±ï¿½Ê¶ï¿½ï¿½
   
   int index= 0;
-  getstreamid(ser_num);                                                                 //Éú³ÉÁ÷Ë®ºÅ
+  getstreamid(ser_num);                                                                 //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë®ï¿½ï¿½
   packet_info[index++] = ser_num[0];
   packet_info[index++] = ser_num[1];
   
-  memcpy(&packet_info[index],send_time,6);                                              //×é×°·¢±¨Ê±¼ä
+  memcpy(&packet_info[index],send_time,6);                                              //ï¿½ï¿½×°ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
   index += 6;
   
   packet_info[index++] = remoteaddr_id;
-  packet_info[index++] = remoteaddr_id;                                                 //Ò£²âÕ¾µØÖ·±êÊ¶·û
+  packet_info[index++] = remoteaddr_id;                                                 //Ò£ï¿½ï¿½Õ¾ï¿½ï¿½Ö·ï¿½ï¿½Ê¶ï¿½ï¿½
   
-  if (Hydrology_ReadStoreInfo(HYDROLOGY_REMOTE_ADDR,&packet_info[index],HYDROLOGY_REMOTE_LEN)<0) //¶ÁÒ£²âÕ¾µØÖ·
+  if (Hydrology_ReadStoreInfo(HYDROLOGY_REMOTE_ADDR,&packet_info[index],HYDROLOGY_REMOTE_LEN)<0) //ï¿½ï¿½Ò£ï¿½ï¿½Õ¾ï¿½ï¿½Ö·
     return -1;  
   index += HYDROLOGY_REMOTE_LEN;
   
-  if (Hydrology_ReadStoreInfo(HYDROLOGY_RTUTYPE,&packet_info[index++],HYDROLOGY_RTUTYPE_LEN)<0) //¶ÁÒ£²âÕ¾·ÖÀàÂë
+  if (Hydrology_ReadStoreInfo(HYDROLOGY_RTUTYPE,&packet_info[index++],HYDROLOGY_RTUTYPE_LEN)<0) //ï¿½ï¿½Ò£ï¿½ï¿½Õ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     return -1; 
   
   packet_info[index++] = observationtime_id;
-  packet_info[index++] = observationtime_id;                                                    //¹Û²âÊ±¼äÒªËØ±êÊ¶·û
+  packet_info[index++] = observationtime_id;                                                    //ï¿½Û²ï¿½Ê±ï¿½ï¿½Òªï¿½Ø±ï¿½Ê¶ï¿½ï¿½
   
-  memcpy(&packet_info[index],shoot_time,5);                                                     //×é×°¹Û²âÊ±¼ä
+  memcpy(&packet_info[index],shoot_time,5);                                                     //ï¿½ï¿½×°ï¿½Û²ï¿½Ê±ï¿½ï¿½
   index += 5;
   
   packet_info[index++] = picture_id;
-  packet_info[index++] = picture_id;                                                            //Í¼Æ¬ÒªËØ±êÊ¶·û
+  packet_info[index++] = picture_id;                                                            //Í¼Æ¬Òªï¿½Ø±ï¿½Ê¶ï¿½ï¿½
   return 0;
 }
 
-//×é×°ÕýÎÄ
-void camera_PicturePacketElement(long addr,int pic_len,char *element)//pic_len ÊÇÍ¼Æ¬Êý¾Ý³¤¶È
+//ï¿½ï¿½×°ï¿½ï¿½ï¿½ï¿½
+void camera_PicturePacketElement(long addr,int pic_len,char *element)//pic_len ï¿½ï¿½Í¼Æ¬ï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½
 {
   int i = 0;
   while (i < pic_len)
-    element[i++] = Read_Flashw (addr++);                              //¶ÁÍ¼Æ¬ÒªËØ 
+    element[i++] = Read_Flashw (addr++);                              //ï¿½ï¿½Í¼Æ¬Òªï¿½ï¿½ 
 }
 
-//×é×°±¨ÎÄ
-int camera_PicturePacket(long addr,int pic_len,bool lstflg,bool fstflg)//ÐÎ²Î pic_len Í¼Æ¬Êý¾Ý³¤¶È£¬ lstflg ÊÇ·ñÎª×îºóÒ»°ü±êÖ¾
+//ï¿½ï¿½×°ï¿½ï¿½ï¿½ï¿½
+int camera_PicturePacket(long addr,int pic_len,bool lstflg,bool fstflg)//ï¿½Î²ï¿½ pic_len Í¼Æ¬ï¿½ï¿½ï¿½Ý³ï¿½ï¿½È£ï¿½ lstflg ï¿½Ç·ï¿½Îªï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ö¾
 {
-  //±¨ÎÄÊý×é
-  char head[PACKET_HEAD_LEN]={0,};                                  //±¨ÎÄÍ·²¿
-  char packet_info[PACKET_INFO_LEN]={0,};                           //ÕýÎÄÍ·²¿
-  char element[PACKET_ELEMENT_LEN]={0,};                            //ÒªËØ
-  char up_picture_packet[PACKET_PACKET_LEN];                        //±¨ÎÄ
+  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  char head[PACKET_HEAD_LEN]={0,};                                  //ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½
+  char packet_info[PACKET_INFO_LEN]={0,};                           //ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½
+  char element[PACKET_ELEMENT_LEN]={0,};                            //Òªï¿½ï¿½
+  char up_picture_packet[PACKET_PACKET_LEN];                        //ï¿½ï¿½ï¿½ï¿½
   
-  char packet_end;                                                  //±¨ÎÄ½áÊø·û
-  short CRC;                                                        //Ð£ÑéÂë
+  char packet_end;                                                  //ï¿½ï¿½ï¿½Ä½ï¿½ï¿½ï¿½ï¿½ï¿½
+  short CRC;                                                        //Ð£ï¿½ï¿½ï¿½ï¿½
   int index = 0;
 
-  if (camera_PicturePacketHead(head,pic_len,fstflg)<0)              //×é×°±¨ÎÄÍ·²¿
+  if (camera_PicturePacketHead(head,pic_len,fstflg)<0)              //ï¿½ï¿½×°ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½
     return -1;               
   memcpy(up_picture_packet,head,PACKET_HEAD_LEN);
   index += PACKET_HEAD_LEN;
-  if (fstflg)                                                       //Ö»ÓÐµÚÒ»°üÐèÒªÕýÎÄÐÅÏ¢
+  if (fstflg)                                                       //Ö»ï¿½Ðµï¿½Ò»ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
   {
-    if (camera_PicturePacketInfo(packet_info)<0)                    //×é×°ÕýÎÄÍ·²¿
+    if (camera_PicturePacketInfo(packet_info)<0)                    //ï¿½ï¿½×°ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½
       return -1;
     memcpy(&up_picture_packet[index],packet_info,PACKET_INFO_LEN);
     index += PACKET_INFO_LEN;
-    fstflg = false;                                                //µÚÒ»°ü±êÖ¾½â³ý
+    fstflg = false;                                                //ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½
   }
   
-  camera_PicturePacketElement(addr,pic_len,element);               //×é×°Í¼Æ¬ÒªËØ
+  camera_PicturePacketElement(addr,pic_len,element);               //ï¿½ï¿½×°Í¼Æ¬Òªï¿½ï¿½
   
   memcpy(&up_picture_packet[index],element,pic_len);   
   index += pic_len;
-  //½áÊø·û·ÖÁ½ÖÖ
-  if (lstflg) packet_end =ETX;                                    //×îºóÒ»°üµÄ½áÊø·û
-  else packet_end =ETB;                                           //±íÊ¾ºóÐø»¹ÓÐ°ü
+  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  if (lstflg) packet_end =ETX;                                    //ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ä½ï¿½ï¿½ï¿½ï¿½ï¿½
+  else packet_end =ETB;                                           //ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð°ï¿½
   
   up_picture_packet[index++] = packet_end;
   CRC = hydrologyCRC16(up_picture_packet,index);
@@ -321,7 +321,7 @@ int camera_PicturePacket(long addr,int pic_len,bool lstflg,bool fstflg)//ÐÎ²Î pi
   up_picture_packet[index++] = CRC >> 8;
   up_picture_packet[index++] = CRC & 0xFF;
   
-  //·¢ËÍÒ»Ö¡±¨ÎÄ
+  //ï¿½ï¿½ï¿½ï¿½Ò»Ö¡ï¿½ï¿½ï¿½ï¿½
   communication_module_t* comm_dev = get_communication_dev();
   int i = 2;
   while (comm_dev->send_msg(up_picture_packet,index,0, HYDROLOGY_CENTER1_IP ) == FALSE && i>0) i--;
@@ -331,21 +331,21 @@ int camera_PicturePacket(long addr,int pic_len,bool lstflg,bool fstflg)//ÐÎ²Î pi
   return 0;
 }
 
-//ÅÄÉã²¢´æ´¢Í¼Æ¬
+//ï¿½ï¿½ï¿½ã²¢ï¿½æ´¢Í¼Æ¬
 int camera_Take(char device)
 {
   UART2_Open(1);
   //UART0_Open(1);
   char shoot_time_DEC[5] = {0,};
   RTC_ReadTimeBytes5(shoot_time_DEC);
-  convertSampleTimetoHydrology(shoot_time_DEC,shoot_time);      //»ñÈ¡ÅÄÉãÊ±¼ä
+  convertSampleTimetoHydrology(shoot_time_DEC,shoot_time);      //ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
   
   int i = 4;
   while (camera_PictureTake(device)<0 && i>0)
     i--;
   if (i==0) return -1;
 
-  pic_packet = (char*)mypvPortMalloc(PAC_MAXSIZE); 
+  pic_packet = (char*)os_malloc(PAC_MAXSIZE); 
   
   cameratype *camera;
   switch (device)
@@ -355,7 +355,7 @@ int camera_Take(char device)
     default:{camera = &camera_i;break;}
   }
 
-  while (camera->count < camera->pack_num_rc) //µ±»¹ÓÐ°üÃ»ÓÐ»ñÈ¡Ê±Ñ­»·
+  while (camera->count < camera->pack_num_rc) //ï¿½ï¿½ï¿½ï¿½ï¿½Ð°ï¿½Ã»ï¿½Ð»ï¿½È¡Ê±Ñ­ï¿½ï¿½
   { 
     camera->count++;
     if (camera->count >= camera->pack_num_rc) 
@@ -368,21 +368,21 @@ int camera_Take(char device)
       j--;
     if (j==0)  
     {
-      myvPortFree(pic_packet);
+      os_free(pic_packet);
       return -1;
     }
     camera->addr_w += PAC_SIZE;
   }                                 
 
-  myvPortFree(pic_packet);
+  os_free(pic_packet);
   UART2_Close();
   return 0;
 }
 
-//·¢ËÍÍ¼Æ¬±¨ÎÄ
+//ï¿½ï¿½ï¿½ï¿½Í¼Æ¬ï¿½ï¿½ï¿½ï¿½
 int camera_PacketSend(char device)
 {
-  Hydrology_ReadTime(send_time);                        //»ñÈ¡·¢±¨Ê±¼ä
+  Hydrology_ReadTime(send_time);                        //ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
   cameratype *camera;
   serial_num = 0;
   switch (device)
@@ -391,12 +391,12 @@ int camera_PacketSend(char device)
     case 0x01 : {camera = &camera_ii;break;}
     default:{camera = &camera_i;break;}
   }
-  const int rest_bytes = camera->picture_len % READ_LEN;       //×îºóÒ»°üÊý¾ÝµÄ³¤¶È
+  const int rest_bytes = camera->picture_len % READ_LEN;       //ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ÝµÄ³ï¿½ï¿½ï¿½
   int cnt;
  
-  pack_num_sd = camera->picture_len / READ_LEN;                 //±¨ÎÄÊýÁ¿
+  pack_num_sd = camera->picture_len / READ_LEN;                 //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
   cnt = pack_num_sd; 
-  if(rest_bytes != 0) pack_num_sd++;                    //±¨ÎÄÊýÁ¿»¹Òª¼ÓÉÏ×îºóÒ»°ü
+  if(rest_bytes != 0) pack_num_sd++;                    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
   
   while (cnt-->0)
   {
@@ -412,7 +412,7 @@ int camera_PacketSend(char device)
   return 0;
 }
 
-//³õÊ¼»¯È«¾Ö±äÁ¿£¨Ã¿´ÎÅÄÉãÇ°¶¼ÐèÒªÖØÖÃµÄÒ»Ð©±äÁ¿£©
+//ï¿½ï¿½Ê¼ï¿½ï¿½È«ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ãµï¿½Ò»Ð©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void camera_Init()
 {  
   P10DIR |= BIT2;
@@ -428,12 +428,12 @@ char camera_change(char device)
   {
     case 0: 
     {
-      P10OUT |= BIT2;//p102¸ß¾ÍÑ¡Í¨J14 1 3 5Òý½Å
+      P10OUT |= BIT2;//p102ï¿½ß¾ï¿½Ñ¡Í¨J14 1 3 5ï¿½ï¿½ï¿½ï¿½
       break;
     }
     case 1: 
     {
-      P10OUT &=~ BIT2;//p102µÍ¾ÍÑ¡Í¨J14 7 9 11Òý½Å
+      P10OUT &=~ BIT2;//p102ï¿½Í¾ï¿½Ñ¡Í¨J14 7 9 11ï¿½ï¿½ï¿½ï¿½
       break;
     }
     default: 
@@ -456,6 +456,6 @@ void camera()
     if (camera_PacketSend(0)<0 || camera_PacketSend(1)<0) 
       TraceMsg("Camera Send Failed!",1);
 }
-  //System_Delayms(5000);                                  //ÑÓÊ±5s
+  //System_Delayms(5000);                                  //ï¿½ï¿½Ê±5s
 
 }

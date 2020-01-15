@@ -46,7 +46,7 @@ int Console_WriteHexCharln(char * _str,int len)
 
     if(Debug)
 		TraceMsg("Console.c  Console_WriteHexCharln malloc ", 1);
-    dst = (char*)mypvPortMalloc(len*2);
+    dst = (char*)os_malloc(len*2);
     if(dst == 0)
     {
         Console_WriteStringln("Console.c Console_WriteHexCharln malloc failed");
@@ -61,7 +61,7 @@ int Console_WriteHexCharln(char * _str,int len)
 
     Console_WriteBytesln(dst,len*2);
 
-    myvPortFree(dst);
+    os_free(dst);
     
     return 0;
 }

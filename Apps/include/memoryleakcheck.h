@@ -6,10 +6,10 @@
 #include "stdio.h"
 
 // instead of malloc
-#define mypvPortMalloc(s) dbg_malloc(s, __FILE__, __LINE__)
+#define os_malloc(s) dbg_malloc(s, __FILE__, __LINE__)
 
 // instead of free
-#define myvPortFree(p) dbg_free(p)
+#define os_free(p) dbg_free(p)
 
 /**
 * allocation memory

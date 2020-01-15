@@ -42,7 +42,7 @@ int BC95_Open();
 void BC95_Close();
 BC95State BC95_ConfigProcess();
 int BC95_Send(char * data);  // send AT command to BC95
-char *BC95_Receive(void); 	// receive AT command from BC95
+char *BC95_Receive(int waitingtime); 	// receive AT command from BC95
 BC95State BC95_SendDataToCloud(char *send_data, int send_data_len,int needCloudConfirm);
 void BC95_RecvDataFromCloud(char *recv_data, int *recv_data_len);
 void BC95_Test(void);

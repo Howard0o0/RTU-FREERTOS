@@ -614,7 +614,7 @@ int converToHexElement(double input, int D, int d, char* out) {
 }
 
 int malloccount = 0;
-int mypvPortMallocElement(char element, char D, char d, hydrologyElement* ele) {
+int os_mallocElement(char element, char D, char d, hydrologyElement* ele) {
 	ele->guide[ 0 ] = element;
 	getguideid(&(ele->guide[ 1 ]), D, d);
 	memset(ele->value, 0, 20);
@@ -633,13 +633,13 @@ int mypvPortMallocElement(char element, char D, char d, hydrologyElement* ele) {
 	//   if ( D%2 == 0 )
 	//   {
 	//     if(Debug){
-	//       TraceMsg("message.c mypvPortMallocElement malloc ", 1);
+	//       TraceMsg("message.c os_mallocElement malloc ", 1);
 	//       printf("D:%d\r\n",D);
 	//     }
-	//     ele->value = (char*)mypvPortMalloc(D/2);
+	//     ele->value = (char*)os_malloc(D/2);
 	//     if (ele->value == NULL)
 	//     {
-	//       Console_WriteStringln("message.c mypvPortMallocElement Malloc Failed");
+	//       Console_WriteStringln("message.c os_mallocElement Malloc Failed");
 	//       return -1;
 	//     }
 
@@ -650,14 +650,14 @@ int mypvPortMallocElement(char element, char D, char d, hydrologyElement* ele) {
 	//   else
 	//   {
 	//     if(Debug){
-	//       TraceMsg("message.c mypvPortMallocElement malloc ", 1);
+	//       TraceMsg("message.c os_mallocElement malloc ", 1);
 	//       printf("D:%d\r\n",D);
 	//     }
 
-	//     ele->value = (char*)mypvPortMalloc((D+1)/2);//no free
+	//     ele->value = (char*)os_malloc((D+1)/2);//no free
 	//     if (ele->value == NULL)
 	//     {
-	//       Console_WriteStringln("message.c mypvPortMallocElement Malloc Failed");
+	//       Console_WriteStringln("message.c os_mallocElement Malloc Failed");
 	//       return -1;
 	//     }
 
@@ -843,7 +843,7 @@ void Hydrology_CalElementInfo(int* count, char funcode) {
 			switch (Element_table[ i ].type) {
 			case ANALOG: {
 				Hydrology_ReadAnalog(&floatvalue, acount++);
-				mypvPortMallocElement(
+				os_mallocElement(
 					Element_table[ i ].ID, Element_table[ i ].D,
 					Element_table[ i ].d,
 					&inputPara[ i ]);  //���id ��num������value�Ŀռ�
@@ -853,7 +853,7 @@ void Hydrology_CalElementInfo(int* count, char funcode) {
 			}
 			case PULSE: {
 				Hydrology_ReadPulse(&intvalue1, pocunt++);
-				mypvPortMallocElement(Element_table[ i ].ID, Element_table[ i ].D,
+				os_mallocElement(Element_table[ i ].ID, Element_table[ i ].D,
 						      Element_table[ i ].d, &inputPara[ i ]);
 				converToHexElement(( double )intvalue1, Element_table[ i ].D,
 						   Element_table[ i ].d, inputPara[ i ].value);
@@ -861,7 +861,7 @@ void Hydrology_CalElementInfo(int* count, char funcode) {
 			}
 			case SWITCH: {
 				Hydrology_ReadSwitch(switch_value);
-				mypvPortMallocElement(Element_table[ i ].ID, Element_table[ i ].D,
+				os_mallocElement(Element_table[ i ].ID, Element_table[ i ].D,
 						      Element_table[ i ].d, &inputPara[ i ]);
 				converToHexElement(( double )intvalue2, Element_table[ i ].D,
 						   Element_table[ i ].d, inputPara[ i ].value);
@@ -873,7 +873,7 @@ void Hydrology_CalElementInfo(int* count, char funcode) {
 
 				if (Debug)
 					TraceMsg("message.c Hydrology_CalElementInfo malloc ", 1);
-				//   inputPara[i].value = (char*)mypvPortMalloc(SinglePacketSize);
+				//   inputPara[i].value = (char*)os_malloc(SinglePacketSize);
 				//   if (NULL != inputPara[i].value)
 				//   {
 				inputPara[ i ].num = SinglePacketSize;
@@ -898,7 +898,7 @@ void Hydrology_CalElementInfo(int* count, char funcode) {
 
 			inputPara[ i ].num = ((downpbody->element)[ i ].guide[ 1 ] >> 3);
 			//       inputPara[i].value = (char*)
-			//       mypvPortMalloc((downpbody->element)[i].num); if (NULL ==
+			//       os_malloc((downpbody->element)[i].num); if (NULL ==
 			//       inputPara[i].value)
 			//         continue;
 			HydrologyReadSuiteElement(funcode, inputPara[ i ].guide,
@@ -1007,7 +1007,7 @@ int hydrologyMakeUpBody(int count, char* src) {
 	pbody->count	   = count;
 	for (i = 0; i < pbody->count; i++) {
 		memcpy((pbody->element)[ i ].guide, inputPara[ i ].guide, 2);
-		//     (pbody->element)[i].value = (char*) mypvPortMalloc(inputPara[i].num);//no
+		//     (pbody->element)[i].value = (char*) os_malloc(inputPara[i].num);//no
 		//     free if(NULL == (pbody->element)[i].value)
 		//        return -1;
 		// memcpy((pbody->element)[i].value,inputPara[i].value, inputPara[i].num);
@@ -1319,7 +1319,7 @@ int hydrologyMakeDownBody(char* input, int len, int position) {
 			((pbody->element)[ pbody->count ].guide[ 1 ] >> 3);
 
 		//     (pbody->element)[pbody->count].value = (char*)
-		//     mypvPortMalloc((pbody->element)[pbody->count].num); //����num����data�ռ�
+		//     os_malloc((pbody->element)[pbody->count].num); //����num����data�ռ�
 
 		//     if (NULL == (pbody->element)[pbody->count].value)
 		//       return -1;
@@ -1429,7 +1429,7 @@ void hydrologyInitSend() {
 
 	if (Debug)
 		TraceMsg("message.c hydrologyInitSend malloc", 1);
-	g_HydrologyMsg.upbody = ( void* )mypvPortMalloc(sizeof(hydrologyUpBody));  // no free
+	g_HydrologyMsg.upbody = ( void* )os_malloc(sizeof(hydrologyUpBody));  // no free
 	if (0 == g_HydrologyMsg.upbody)
 		Console_WriteStringln("message.c hydrologyInitSend Malloc Failed");
 
@@ -1470,16 +1470,16 @@ void hydrologyExitSend() {
 	//   {
 	//     if((uppbody->element)[i].value != NULL)
 	//     {
-	//       myvPortFree((uppbody->element)[i].value);
+	//       os_free((uppbody->element)[i].value);
 	//       (uppbody->element)[i].value = NULL;
 	//     }
 	//     if(inputPara[i].value != NULL)
 	//     {
-	//       myvPortFree(inputPara[i].value);
+	//       os_free(inputPara[i].value);
 	//       inputPara[i].value = NULL;
 	//     }
 	//   }
-	myvPortFree(uppbody);
+	os_free(uppbody);
 }
 
 int hydrologyProcessSend(char* src, char funcode) {
@@ -1668,7 +1668,7 @@ void hydrologyInitReceieve() {
 
 	if (Debug)
 		TraceMsg("message.c hydrologyInitReceieve malloc", 1);
-	g_HydrologyMsg.downbody = ( void* )mypvPortMalloc(sizeof(hydrologyDownBody));
+	g_HydrologyMsg.downbody = ( void* )os_malloc(sizeof(hydrologyDownBody));
 	if (0 == g_HydrologyMsg.downbody)
 		Console_WriteStringln("message.c hydrologyInitReceieve Malloc in Failed");
 
@@ -1680,7 +1680,7 @@ void hydrologyExitReceieve() {
 	int i = 0;
 
 	hydrologyDownBody* downpbody = ( hydrologyDownBody* )(g_HydrologyMsg.downbody);
-	myvPortFree(downpbody);
+	os_free(downpbody);
 }
 
 int hydrologyProcessReceieve(char* input, int inputlen) {

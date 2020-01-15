@@ -66,13 +66,13 @@ char s_RTC_PulseBytes[ 4 ][ 3 ] = {
 //
 
 
-int now_time_reach_interval(const char *now_time,uint8_t minutes_interval){
+int now_time_reach_interval(uint8_t minutes_interval){
 	
-	if((now_time == NULL) || (now_time+4 == NULL)){
+	if((rtc_nowTime == NULL) || (rtc_nowTime+4 == NULL)){
 		return FALSE;
 	}
 
-	if( (now_time[4] % minutes_interval) == 0){
+	if( (rtc_nowTime[4] % minutes_interval) == 0){
 		return TRUE;
 	}
 	else

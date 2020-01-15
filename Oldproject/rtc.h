@@ -54,7 +54,7 @@ extern char s_RTC_ReportTime[5];
 extern char s_RTC_StartIdx;
 extern char s_RTC_EndIdx;
 
-int now_time_reach_interval(const char *now_time,uint8_t minutes_interval);
+int now_time_reach_interval(uint8_t minutes_interval);
 
 //数据标签
 int RTC_RetrieveIndex();

@@ -5,9 +5,8 @@
 
 
 #define G_SAMPLE_SAVE_MAX_NUM   3    //ky,��������
-int HydrologySample(char* _saveTime);
+int HydrologySample();
 
-int HydrologyOnline();
 int Hydrology_TimeCheck();   
 int HydrologyTask();
 
@@ -31,7 +30,7 @@ int hydrologyReport(char now_time[ 6 ]);
 int HydrologyInstantWaterLevel(char* _saveTime);
 void HydrologyUpdateElementTable() ;
 void HydrologyDataPacketInit();
-int HydrologySaveData(char *now_time, char funcode);
+int HydrologySaveData(char funcode);
 extern void getElementDd(char ID,char *D,char *d); 
 //extern int BC95_QueryTime(char *year,char *month,char *date,char *hour,char *min,char *second);
 extern void hydrologyExitSend();

@@ -117,7 +117,10 @@ void RS485_Send(char device,char function,char reg_addrH,char reg_addrL,char tim
   command[7] = crc>> 8;
   //RS485_Dir(1);
   RS485_SerilWrite(command,8);
-  TraceHexMsg(command,8);    //++++++++++++++++++++++++++++++++++
+//   TraceHexMsg(command,8);    //++++++++++++++++++++++++++++++++++
+  printf("rs485 send message with crc:");
+  Console_WriteHexCharln(command,8);
+
   RS485_Delayms(1);
   RS485_Delayus(500);
  // RS485_Dir(0);
@@ -131,7 +134,9 @@ int RS485_Read(char *buffer)
   short crc2 = 0;
 
   RS485_SerilRead(temp_buffer,9);
-   TraceHexMsg(temp_buffer,9);
+//    TraceHexMsg(temp_buffer,9);
+  printf("rs485 receive message:");
+  Console_WriteHexCharln(temp_buffer,9);
   
 //  memcpy(temp_buffer2,temp_buffer,9);
 //  memcpy(&temp_buffer[1],temp_buffer2,8);
@@ -149,7 +154,7 @@ int RS485_Read(char *buffer)
   }
   else
   {
-  Hydrology_Printf("RS485 crc check failed!");
+  err_printf("RS485 crc check failed!\n\n");
     return -1;
   }
 }
@@ -157,22 +162,19 @@ int RS485_Read(char *buffer)
 void Hydrology_ReadRS485(char *value,int index)
 {
   char temp_value[5] = {0,0,0,0,0};
-  // char temp_value[5] = {0x01,0x04,0x10,0x10,2};
-  // char read_value[5]; //debug
- // char test[3]={3,4,5};
   char buffer[4] = {0,0,0,0};
   char single_count1 = 0;
   volatile char single_count2 = 0;
   static char rs485_count = 0;
   int i = 0,j = 0,error = 0;
   
-  Hydrology_ReadStoreInfo(HYDROLOGY_RS485_COUNT1 + HYDROLOGY_RS485_COUNT_LEN * index,&single_count1,HYDROLOGY_RS485_COUNT_LEN);
+  Hydrology_ReadStoreInfo(HYDROLOGY_RS485_COUNT1 + HYDROLOGY_RS485_COUNT_LEN * index,
+                                &single_count1,HYDROLOGY_RS485_COUNT_LEN);
   single_count2 = single_count1;
   while(single_count1--)
   {
-
-    //Hydrology_WriteStoreInfo(HYDROLOGY_RS4851,temp_value,HYDROLOGY_RS485_LEN);   //debug
-    Hydrology_ReadStoreInfo(HYDROLOGY_RS4851 + HYDROLOGY_RS485_LEN * (i+rs485_count),temp_value,HYDROLOGY_RS485_LEN);
+    Hydrology_ReadStoreInfo(HYDROLOGY_RS4851 + HYDROLOGY_RS485_LEN * (i+rs485_count),
+                                temp_value,HYDROLOGY_RS485_LEN);
     for(error = 0;error < 3;error++)
     { 
       
