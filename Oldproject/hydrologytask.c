@@ -534,6 +534,8 @@ int hydrologyReport(char now_time[ 6 ]) {
 		return FAILED;
 	}
 
+	printf("packet report done \n\n");
+
 	return SUCCESS;
 }
 

@@ -183,10 +183,13 @@ void Hydrology_SetTime(char* time) {
 //  }
 //  return 0;
 //}
+
+
 int Hydrology_SendData(char* data, int len) {
 	int _repeats = 0;
-
-	TraceHexMsg(data, len);
+	printf("reporting packet: ");
+	print_hex((uint8_t *)data,len);
+	
 	if (isUARTConfig) {
 		isUARTConfig = 0;
 		return 0;

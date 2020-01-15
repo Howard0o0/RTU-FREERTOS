@@ -16,6 +16,8 @@
 	"uart3.h": "c",
 	"hydrology_task.h": "c",
 	"type_traits": "c",
-	"hydrologytask.h": "c"
+	"hydrologytask.h": "c",
+	"stdint.h": "c",
+	"cstdio": "c"
 }
 }

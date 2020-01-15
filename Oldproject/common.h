@@ -19,10 +19,9 @@ extern int trace_open;
 #define XG_SUCCESS 0
 #define XG_FAILED 1
 
-#define __DEBUG__
 #define filename(x) strrchr(x, '\\') ? strrchr(x, '\\') + 1 : x
 
-#define __DEBUG__
+// #define __DEBUG__
 #ifdef __DEBUG__
 #define debug_printf(format, ...) \
 	printf("[file: %s, line: %d] " format, filename(__FILE__), __LINE__, ##__VA_ARGS__)
@@ -150,3 +149,5 @@ int Utility_GetGprsServerPort(char* _str, int* len);
 int Utility_GetGprsServerApn(char* _str, int* len);
 
 void Clear_ExternWatchdog();
+
+void print_hex(uint8_t data_to_print[], int len);

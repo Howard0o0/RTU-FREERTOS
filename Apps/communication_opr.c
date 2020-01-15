@@ -65,17 +65,17 @@ void communication_module_unit_test(void) {
 	install_communication_module_driver();
 	communication_module_t* comm_dev = get_communication_dev();
 	if (comm_dev->power_on() == 0){
-		printf("gprs power on \r\n");
+		printf("%s power on \r\n",comm_dev->name);
 	}
 	else{
-		printf("gprs power failed \r\n");
+		printf("%s power failed \r\n",comm_dev->name);
 	}
 
 	if(comm_dev->check_if_module_is_normal() == 0){
-		printf("gprs module normal \r\n");
+		printf("%s module normal \r\n",comm_dev->name);
 	}
 	else{
-		printf("gprs module is not normal \r\n");
+		printf("%s module is not normal \r\n",comm_dev->name);
 	}
 
 	while (1) {

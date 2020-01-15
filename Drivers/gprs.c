@@ -951,11 +951,11 @@ int GPRS_AT_SetAPN() {
 	_retValue = GPRS_Proc_AT_Response(recv_, &_retMsgNum, SET_APN, &errorCode);
 
 	if (_retValue == TRUE) {
-		TraceMsg("Set APN Success", 1);
+		debug_printf("Set APN Success\n\n");
 		return SET_APN_SUCCESS;
 	}
 	else {
-		Console_WriteStringln("Set APN Failed");
+		err_printf("Set APN Failed, please check if antenna is pluged in\n\n");
 	}
 
 	return SET_APN_FAILED;
@@ -963,7 +963,7 @@ int GPRS_AT_SetAPN() {
 
 int GPRS_AT_ActiveGPRSNet() {
 	int  errorCode   = 0;
-	int  _retMsgNum  = 0;  //
+	int  _retMsgNum  = 0;  
 	int  _cmdLen     = 0;
 	int  _retValue   = 0;
 	char _send[ 10 ] = "at%etcpip";
@@ -978,11 +978,11 @@ int GPRS_AT_ActiveGPRSNet() {
 	_retValue = GPRS_Proc_AT_Response(recv_, &_retMsgNum, ACTIVE_GPRS, &errorCode);
 
 	if (_retValue == TRUE) {
-		TraceMsg("Active GPRS success", 1);
+		debug_printf("Active GPRS success\n\n");
 		return ACTIVE_GPRS_SUCCESS;
 	}
 	else {
-		Console_WriteStringln("Active GPRS failed");
+		err_printf("Active GPRS failed \n\n");
 	}
 
 	return ACTIVE_GPRS_FAILED;
@@ -1005,11 +1005,11 @@ int GPRS_AT_CheckSimStat() {
 	_retValue = GPRS_Proc_AT_Response(recv_, &_retMsgNum, CHECK_SIM_STATUS, errorCode);
 
 	if (_retValue == TRUE) {
-		TraceMsg("CheckSimStat Success", 1);
+		debug_printf("CheckSimStat Success \n\n");
 		return GPRS_CHECKSIM_SUCCESS;
 	}
 	else {
-		Console_WriteStringln("CheckSimStat failed");
+		err_printf("Check Sim card Stat failed, please check if sim card pluged in\n\n");
 	}
 
 	return GPRS_CHECKSIM_FAILED;
@@ -1033,12 +1033,12 @@ int GPRS_AT_QueryOperater() {
 
 	if (_retValue == TRUE) {
 		if (TelecomOperater == CHINA_MOBILE) {
-			TraceMsg("Operater is China Mobile", 1);
+			debug_printf("Operater is China Mobile \n\n" );
 			return QUERY_OPERATER_SUCCESS;
 		}
 	}
 	else {
-		Console_WriteStringln("QUERY Operater Failed");
+		err_printf("query Operater Failed \n\n");
 	}
 
 	return QUERY_OPERATER_FAILED;
@@ -1064,11 +1064,11 @@ int GPRS_AT_QueryIP() {
 	// 再返回一行 OK
 
 	if (_retValue == TRUE) {
-		TraceMsg("QUERY IP Success", 1);
+		debug_printf("QUERY IP Success\n\n");
 		return QUERY_IP_SUCCESS;
 	}
 	else {
-		Console_WriteStringln("QUERY IP Failed");
+		err_printf("query network ip failed \n\n");
 	}
 
 	return QUERY_IP_FAILED;
@@ -1163,7 +1163,7 @@ int GPRS_AT_OpenTCPLink(int center) {
 		}
 	}
 	centerIP[ j - 1 ] = '\0';
-	TraceMsg(centerIP, 1);
+	printf("connecting to server %s",centerIP);
 
 	IPStrLen = Utility_Strlen(centerIP);
 	Utility_Strncpy(&_send[ _cmdLen ], centerIP, IPStrLen);
@@ -1235,7 +1235,7 @@ int GPRS_AT_OpenTCPLink(int center) {
 	Utility_Strncpy(&_send[ _cmdLen ], centerPort, PortStrLen);
 	_cmdLen += PortStrLen;
 
-	TraceMsg(centerPort, 1);
+	printf(":%s \n\n",centerPort);
 
 	//该AT指令会返回:
 	// OK
@@ -1247,12 +1247,12 @@ int GPRS_AT_OpenTCPLink(int center) {
 	//开启成功会返回"CONNECT"
 
 	if (_retValue == TRUE) {
-		TraceMsg("TCP Connection success", 1);
+		debug_printf("TCP Connection success \n\n");
 		// Console_WriteStringln("TCP Connection success");
 		return TCP_CONNECT_SUCCESS;
 	}
 	else {
-		Console_WriteStringln("TCP Connection failed-1223");
+		err_printf("TCP Connection failed-1223 \n\n");
 		//++SIM_ErrorNum;
 	}
 
@@ -1284,8 +1284,7 @@ int GPRS_AT_QueryTCPLink(int* errorCode) {
 		return NO_TCP_CONNECT;
 	}
 	else {
-		TraceMsg("Tcp Connection OK", 1);
-		Console_WriteStringln("Tcp Connection OK");
+		debug_printf("Tcp Connection OK\n\n");
 		return TCP_CONNECT_OK;
 	}
 }
@@ -1308,11 +1307,11 @@ int GPRS_AT_CloseTCPLink(int* errorCode) {
 	_retValue = GPRS_Proc_AT_Response(recv_, &_retMsgNum, CLOSE_TCP_LINK, errorCode);
 
 	if (_retValue == FALSE) {
-		Console_WriteStringln("Close TCP link failed-1286");
+		err_printf("Close TCP link failed-1286 \n\n");
 		return TCP_Link_CLOSE_FAILED;
 	}
 	else {
-		TraceMsg("Close TCP link Success", 1);
+		debug_printf("Close TCP link Success \n\n");
 		return TCP_Link_CLOSE_SUCCESS;
 	}
 }
@@ -1335,12 +1334,12 @@ int GPRS_AT_QuitGPRSNet(int* errorCode) {
 	//开启成功会返回"CONNECT"
 
 	if (_retValue == TRUE) {
-		TraceMsg("Quit GPRS Net Success", 1);
+		debug_printf("Quit GPRS Net Success \n\n");
 		// Console_WriteStringln("Quit GPRS Net Success");
 		return GPRS_NET_QUIT_SUCCESS;
 	}
 	else {
-		Console_WriteStringln("Quit GPRS Net failed");
+		err_printf("Quit GPRS Net failed \n\n");
 	}
 
 	return GPRS_NET_QUIT_FAILED;
@@ -1365,11 +1364,11 @@ int GPRS_AT_SetIOMode() {
 	_retValue = GPRS_Proc_AT_Response(recv_, &_retMsgNum, SETIO_MODE, &errorCode);
 
 	if (_retValue == TRUE) {
-		TraceMsg("Set IO Mode Success", 1);
+		debug_printf("Set IO Mode Success\n\n");
 		return SET_IOMODE_SUCCESS;
 	}
 	else {
-		Console_WriteStringln("Set IO Mode Failed");
+		err_printf("Set IO Mode Failed \n\n");
 	}
 
 	return SET_IOMODE_FAILED;
@@ -1392,7 +1391,7 @@ int GRPS_AT_Send() {
 
 	char* _send = ( char* )mypvPortMalloc(dataLen + 12);
 	if (_send == NULL) {
-		Console_WriteStringln("mypvPortMalloc in GPRS_AT_Send failed");
+		err_printf("mypvPortMalloc in GPRS_AT_Send failed \n\n");
 		return MSG_SEND_FAILED;
 	}
 	Utility_Strncpy(_send, "AT%IPSEND=\"", 11);
@@ -1416,11 +1415,11 @@ int GRPS_AT_Send() {
 	_send = NULL;
 
 	if (_retValue == TRUE) {
-		TraceMsg("AT Send Data Success", 1);
+		debug_printf("AT Send Data Success \n\n");
 		return MSG_SEND_SUCCESS;
 	}
 	else {
-		Console_WriteStringln("AT Send Data failed-sub1408");
+		err_printf("AT Send Data failed-sub1408 \n\n");
 	}
 
 	return MSG_SEND_FAILED;
@@ -1473,11 +1472,11 @@ int GRPS_AT_Receive() {
 	// 再返回一行 OK
 
 	if (_retValue == TRUE) {
-		TraceMsg("AT Receive Data Success", 1);
+		debug_printf("AT Receive Data Success \n\n");
 		return MSG_RECEIVE_SUCCESS;
 	}
 	else {
-		Console_WriteStringln("AT Receive Data failed");
+		err_printf("AT Receive Data failed \n\n");
 	}
 
 	return MSG_RECEIVE_FAILED;
@@ -1665,11 +1664,11 @@ int GPRS_Send(char* pSend, int sendDataLen, int isLastPacket, int center) {
 	GPRS_Close_TCP_Link();
 
 	if (_retvalue == MSG_SEND_SUCCESS) {
-		TraceMsg("GPRS Send Data Success", 1);
+		debug_printf("GPRS Send Data Success \n\n");
 		return TRUE;
 	}
 	else {
-		TraceMsg("GPRS Send Data Failed-1690", 1);
+		err_printf("GPRS Send Data Failed-1690 \n\n");
 	}
 
 	return FALSE;
@@ -1763,7 +1762,7 @@ CloseFeedback:
 	//收到ERROR ,
 	if (Utility_Strncmp(recv_, "ERROR", 5) == 0) {
 		if (repeats_ > 2) {
-			Console_WriteStringln("Close feedback failed");
+			err_printf("gprs module Close feedback failed\n\n");
 			return -2;
 		}
 		//++SIM_ErrorNum;
@@ -1777,7 +1776,7 @@ CloseFeedback:
 			return -1;
 		}
 		if (Utility_Strncmp(recv_, "OK", 2) == 0) {
-			TraceMsg("Close feedback success", 1);
+			debug_printf("Close feedback success \n\n");
 			return 0;
 		}
 		//++SIM_ErrorNum;
@@ -1828,14 +1827,14 @@ static int GSM_DealData(char* recv_, int _dataLen) {
 	//
 	if (Utility_Strncmp(recv_, "RING", 4) == 0) {  //电话
 		++s_RING;
-		TraceMsg(" RING !", 1);
+		debug_printf(" RING ! \n\n");
 		// Console_WriteStringln("SIM_Deal:RING !");
 		GSM_AT_OffCall();
 		return 2;
 	}
 	if (Utility_Strncmp(recv_, "+CMTI: ", 7) == 0) {
 		Led1_WARN();
-		TraceMsg("Got A Msg !", 1);
+		debug_printf("Got A Msg ! \n\n");
 		++s_MsgNum;		  //存放
 		if (recv_[ 13 ] == '\0')  // recvLine函数将末尾处理为'\0'
 			s_MsgArray[ s_RecvIdx ] = (recv_[ 12 ] - '0');

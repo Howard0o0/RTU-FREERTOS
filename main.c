@@ -73,6 +73,8 @@ void app_main(void* pvParameters) {
 
 	bios_check();
 
+	// communication_module_unit_test();
+
 	create_hydrology_tasks();
 
 	vTaskDelete(NULL);
