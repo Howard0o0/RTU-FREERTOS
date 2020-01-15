@@ -7,6 +7,7 @@
 #include "led.h"
 #include "msp430common.h"
 #include "rom.h"
+#include "stdint.h"
 
 extern char g_pulse1_range[ 3 ];
 extern char g_pulse2_range[ 3 ];
@@ -63,6 +64,23 @@ char s_RTC_PulseBytes[ 4 ][ 3 ] = {
 //
 //   该函数不能很好应对发送数据中隐藏着未发送的数据. 待更好的实现.
 //
+
+
+int now_time_reach_interval(const char *now_time,uint8_t minutes_interval){
+	
+	if((now_time == NULL) || (now_time+4 == NULL)){
+		return FALSE;
+	}
+
+	if( (now_time[4] % minutes_interval) == 0){
+		return TRUE;
+	}
+	else
+	{
+		return FALSE;
+	}
+	
+}
 
 int RTC_ReadStartIdx(char* dest) {
 	DownInt();

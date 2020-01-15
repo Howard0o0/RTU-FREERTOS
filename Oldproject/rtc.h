@@ -3,6 +3,7 @@
 #define __RTC_h
 
 #include "msp430common.h"
+#include <stdint.h>
 
  
 #define RTC_RST   BIT4   //P44
@@ -52,6 +53,9 @@ extern char s_RTC_SaveTime[5];
 extern char s_RTC_ReportTime[5];
 extern char s_RTC_StartIdx;
 extern char s_RTC_EndIdx;
+
+int now_time_reach_interval(const char *now_time,uint8_t minutes_interval);
+
 //数据标签
 int RTC_RetrieveIndex();
 int RTC_ReadStartIdx(char * _dest); 

@@ -274,110 +274,149 @@ int HydrologyOffline() {
 	return 0;
 }
 
-static int arrived_store_time(char *now_time) {
-	char	storeinterval;
-	static char storetime[ 6 ] = { 0, 0, 0, 0, 0, 0 };
+static uint8_t get_store_interval(void) {
+	char storeinterval;
 	Hydrology_ReadStoreInfo(HYDROLOGY_WATERLEVEL_STORE_INTERVAL, &storeinterval,
 				HYDROLOGY_WATERLEVEL_STORE_INTERVAL_LEN);  // ly
 	storeinterval = _BCDtoDEC(storeinterval);
-	Utility_Strncpy(storetime, now_time, 6);
-	int tmp = storetime[ 4 ] % (storeinterval);
-	if (tmp != 0) {
-		return FALSE;
-	}
-	else
-	{
-		return TRUE;
-	}
-	
+
+	return ( uint8_t )storeinterval;
 }
 
-int HydrologySaveData(char *rtc_nowTime, char funcode)  // char *_saveTime
-{
+static int arrived_store_time(char* now_time) {
+
+	uint8_t store_interval = get_store_interval();
+	if (now_time_reach_interval(now_time, store_interval) == TRUE) {
+		return TRUE;
+	}
+	else {
+		return FALSE;
+	}
+}
+
+static void fetch_element_value_from_buffer_in_rom() {
 	int   i = 0, acount = 0, pocunt = 0;
 	float floatvalue	= 0;
 	long  intvalue1		= 0;
 	int   intvalue2		= 0;
 	int   type		= 0;
 	int   cnt		= 0;
-	int   _effect_count     = 0;
 	char  switch_value[ 4 ] = { 0 };
 
+	while (Element_table[ i ].ID != 0) {
+		switch (Element_table[ i ].type) {
+		case ANALOG: {
+			Hydrology_ReadAnalog(&floatvalue, acount++);
+			mypvPortMallocElement(Element_table[ i ].ID, Element_table[ i ].D,
+					      Element_table[ i ].d,
+					      &inputPara[ i ]);  //获得id ，num，开辟value的空间
+			converToHexElement(( double )floatvalue, Element_table[ i ].D,
+					   Element_table[ i ].d, inputPara[ i ].value);
+			break;
+		}
+		case PULSE: {
+			Hydrology_ReadPulse(&intvalue1, pocunt++);
+			mypvPortMallocElement(Element_table[ i ].ID, Element_table[ i ].D,
+					      Element_table[ i ].d, &inputPara[ i ]);
+			converToHexElement(( double )intvalue1, Element_table[ i ].D,
+					   Element_table[ i ].d, inputPara[ i ].value);
+			break;
+		}
+		case SWITCH: {
+			Hydrology_ReadSwitch(switch_value);
+			mypvPortMallocElement(Element_table[ i ].ID, Element_table[ i ].D,
+					      Element_table[ i ].d, &inputPara[ i ]);
+			inputPara[ i ].value[ 0 ] = switch_value[ 3 ];
+			inputPara[ i ].value[ 1 ] = switch_value[ 2 ];
+			inputPara[ i ].value[ 2 ] = switch_value[ 1 ];
+			inputPara[ i ].value[ 3 ] = switch_value[ 0 ];
+
+			break;
+		}
+		case STORE: {
+			inputPara[ i ].guide[ 0 ] = Element_table[ i ].ID;
+			inputPara[ i ].guide[ 1 ] = Element_table[ i ].ID;
+			inputPara[ i ].num	= SinglePacketSize;
+			break;
+		}
+		default:
+			break;
+		}
+		i++;
+	}
+}
+
+static void get_elements_sample_time(char sample_time[ 5 ]) {
+	Hydrology_ReadObservationTime(Element_table[ 0 ].ID, sample_time, 0);
+}
+
+static int get_element_count(void) {
+	int i = 0;
+	while (Element_table[ i ].ID != 0) {
+		i++;
+	}
+
+	return i;
+}
+static void put_elements_value_into_package(char package[]) {
+
+	char observationtime[ 5 ];
+	int  len     = 0;
+	package[ 0 ] = 0x00;  // 未发送标记 记为0x00
+
+	get_elements_sample_time(observationtime);
+	memcpy(&package[ 1 ], observationtime, HYDROLOGY_OBSERVATION_TIME_LEN);
+	len += 6;
+
+	int element_count = get_element_count();
+
+	for (int i = 0; i < element_count; i++) {
+		memcpy(&package[ len ], inputPara[ i ].value, inputPara[ i ].num);
+		len += inputPara[ i ].num;
+	}
+}
+
+static int store_package_into_rom(char package[]) {
+	if (Store_WriteDataItemAuto(package) < 0) {
+		return FAILED;
+	}
+	else {
+		return SUCCESS;
+	}
+}
+
+static void update_package_count(void) {
+	int _effect_count = 0;
+
 	Hydrology_ReadDataPacketCount(&_effect_count);  //初始读取内存剩余未发送数据包数量
-
-	type = hydrologyJudgeType(funcode);
-
+	++_effect_count;				//存一条就加1
+	Hydrology_SetDataPacketCount(_effect_count);
+}
+int HydrologySaveData(char* rtc_nowTime, char funcode)  // char *_saveTime
+{
 	if (arrived_store_time(rtc_nowTime) == FALSE) {
+		printf("not store time, %d/%d/%d %d:%d:%d\n\n", rtc_nowTime[ 0 ], rtc_nowTime[ 1 ],
+		       rtc_nowTime[ 2 ], rtc_nowTime[ 3 ], rtc_nowTime[ 4 ], rtc_nowTime[ 5 ]);
 		return FAILED;
 	}
 
-	TraceMsg("Start Store:   ", 0);
-	if (type == 1) {
-		while (Element_table[ i ].ID != 0) {
-			switch (Element_table[ i ].type) {
-			case ANALOG: {
-				Hydrology_ReadAnalog(&floatvalue, acount++);
-				mypvPortMallocElement(
-					Element_table[ i ].ID, Element_table[ i ].D,
-					Element_table[ i ].d,
-					&inputPara[ i ]);  //获得id ，num，开辟value的空间
-				converToHexElement(( double )floatvalue, Element_table[ i ].D,
-						   Element_table[ i ].d, inputPara[ i ].value);
-				break;
-			}
-			case PULSE: {
-				Hydrology_ReadPulse(&intvalue1, pocunt++);
-				mypvPortMallocElement(Element_table[ i ].ID, Element_table[ i ].D,
-						      Element_table[ i ].d, &inputPara[ i ]);
-				converToHexElement(( double )intvalue1, Element_table[ i ].D,
-						   Element_table[ i ].d, inputPara[ i ].value);
-				break;
-			}
-			case SWITCH: {
-				// Hydrology_ReadSwitch(&intvalue2);
-				Hydrology_ReadSwitch(switch_value);
-				mypvPortMallocElement(Element_table[ i ].ID, Element_table[ i ].D,
-						      Element_table[ i ].d, &inputPara[ i ]);
-				// converToHexElement((double)intvalue2,Element_table[i].D,Element_table[i].d,inputPara[i].value);
-				// memcpy(inputPara[i].value,switch_value,4);
-				inputPara[ i ].value[ 0 ] = switch_value[ 3 ];
-				inputPara[ i ].value[ 1 ] = switch_value[ 2 ];
-				inputPara[ i ].value[ 2 ] = switch_value[ 1 ];
-				inputPara[ i ].value[ 3 ] = switch_value[ 0 ];
+	char package[ HYDROLOGY_DATA_ITEM_LEN ] = { 0 };  //数据条为130个字节
 
-				break;
-			}
-			case STORE: {
-				inputPara[ i ].guide[ 0 ] = Element_table[ i ].ID;
-				inputPara[ i ].guide[ 1 ] = Element_table[ i ].ID;
-				inputPara[ i ].num	= SinglePacketSize;
-				break;
-			}
-			default:
-				break;
-			}
-			i++;
-			cnt++;
-		}
-	}
-	char _data[ HYDROLOGY_DATA_ITEM_LEN ] = { 0 };  //数据条为130个字节
-	char observationtime[ 5 ];
-	int  len   = 0;
-	_data[ 0 ] = 0x00;  // 未发送标记 记为0x00
-	Hydrology_ReadObservationTime(Element_table[ 0 ].ID, observationtime, 0);  // or save_time
-	memcpy(&_data[ 1 ], observationtime, HYDROLOGY_OBSERVATION_TIME_LEN);
-	len += 6;
-	for (i = 0; i < cnt; i++) {
-		memcpy(&_data[ len ], inputPara[ i ].value, inputPara[ i ].num);
-		len += inputPara[ i ].num;
-	}
-	++_effect_count;  //存一条就加1
-	Hydrology_SetDataPacketCount(_effect_count);
+	printf("start store element's value into rom \n\n");
 
-	if (Store_WriteDataItemAuto(_data) < 0) {
-		return -1;
+	fetch_element_value_from_buffer_in_rom();
+
+	put_elements_value_into_package(package);
+
+	if (store_package_into_rom(package) != SUCCESS) {
+		err_printf("store elements value into rom failed ! \n\n");
+		return FAILED;
 	}
-	TraceMsg("Save Data Success", 1);
+
+	update_package_count();
+
+	printf("store %d elements' value into rom success \n\n", get_element_count());
+
 	return 0;
 }
 int HydrologyInstantWaterLevel(char* _saveTime)  //检查发送时间，判断上下标，组报文发送
@@ -619,4 +658,3 @@ void task_hydrology_run(void* pvParameters) {
 		vTaskDelay(100 / portTICK_PERIOD_MS);
 	}
 }
-

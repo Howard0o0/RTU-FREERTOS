@@ -22,7 +22,7 @@ void hydrology_sample(void* pvParameters) {
 
 		// debug_printf("\r\nSample end,freeheap:%d\r\n", xPortGetFreeHeapSize());
 
-		vTaskDelay(3000 / portTICK_PERIOD_MS);
+		vTaskDelay(30000 / portTICK_PERIOD_MS);
 	}
 }
 
@@ -30,7 +30,7 @@ void hydrology_store(void* pvParameters) {
 
 	while (1) {
 		HydrologySaveData(rtc_nowTime, TimerReport);
-		vTaskDelay(3000 / portTICK_PERIOD_MS);
+		vTaskDelay(30000 / portTICK_PERIOD_MS);
 	}
 }
 
@@ -38,7 +38,7 @@ void hydrology_report(void* pvParameters) {
 
 	while (1) {
 		HydrologyInstantWaterLevel(rtc_nowTime);
-		vTaskDelay(3000 / portTICK_PERIOD_MS);
+		vTaskDelay(30000 / portTICK_PERIOD_MS);
 	}
 }
 

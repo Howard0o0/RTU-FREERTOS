@@ -20,9 +20,9 @@ void rtc_update(void* pvParameters) {
 		RTC_ReadTimeBytes5(g_rtc_nowTime);
 		RTC_ReadTimeBytes6(rtc_nowTime);
 
-		// debug_printf("rtc time : %d/%d/%d  %d:%d:%d \r\n", rtc_nowTime[ 0 ],
-		//        rtc_nowTime[ 1 ], rtc_nowTime[ 2 ], rtc_nowTime[ 3 ], rtc_nowTime[ 4 ],
-		//        rtc_nowTime[ 5 ]);
+		debug_printf("rtc time : %d/%d/%d  %d:%d:%d \r\n", rtc_nowTime[ 0 ],
+		       rtc_nowTime[ 1 ], rtc_nowTime[ 2 ], rtc_nowTime[ 3 ], rtc_nowTime[ 4 ],
+		       rtc_nowTime[ 5 ]);
 
 
 		vTaskDelay(5000 / portTICK_PERIOD_MS);
