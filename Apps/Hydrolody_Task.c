@@ -1,6 +1,6 @@
-#include "hydrology_task.h"
-#include "rtc_task.h"
 
+#include "rtc_task.h"
+#include "hydrolody_task.h"
 #include "FreeRTOS.h"
 #include "ParTest.h"
 #include "semphr.h"
@@ -37,7 +37,7 @@ void hydrology_store(void* pvParameters) {
 void hydrology_report(void* pvParameters) {
 
 	while (1) {
-		HydrologyInstantWaterLevel(rtc_nowTime);
+		hydrologyReport(rtc_nowTime);
 		vTaskDelay(30000 / portTICK_PERIOD_MS);
 	}
 }

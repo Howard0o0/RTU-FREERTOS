@@ -1645,14 +1645,14 @@ int GPRS_Send(char* pSend, int sendDataLen, int isLastPacket, int center) {
 	}
 
 	if (sendDataLen > 1024) {
-		Console_WriteStringln(
-			"Error, Packet exceed 1024, Please Decrease Sending Packet Size!");
+		err_printf(
+			"Error, Packet exceed 1024, Please Decrease Sending Packet Size! \n\n");
 	}
 
 	psrc = ( char* )mypvPortMalloc(
 		sendDataLen * 2 + 1);  //+1是因为转换函数hex_2_ascii最后有个\0,否则最后会出越界错误
 	if (psrc == NULL) {
-		Console_WriteStringln("mypvPortMalloc in GPRS_Send Failed");
+		err_printf("mypvPortMalloc in GPRS_Send Failed \n\n");
 		return FALSE;
 	}
 	hex_2_ascii(pSend, psrc, sendDataLen);

@@ -4626,23 +4626,23 @@
         <group>
             <name>include</name>
             <file>
-                <name>$PROJ_DIR$\Apps\include\BLE_Task.h</name>
+                <name>$PROJ_DIR$\Apps\include\ble_task.h</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\Apps\include\communication_opr.h</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\Apps\include\hydrology_task.h</name>
+                <name>$PROJ_DIR$\Apps\include\hydrolody_task.h</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\Apps\include\memoryleakcheck.h</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\Apps\include\RTC_Task.h</name>
+                <name>$PROJ_DIR$\Apps\include\rtc_task.h</name>
             </file>
         </group>
         <file>
-            <name>$PROJ_DIR$\Apps\BLE_Task.c</name>
+            <name>$PROJ_DIR$\Apps\ble_task.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\Apps\communication_opr.c</name>
@@ -4654,7 +4654,7 @@
             <name>$PROJ_DIR$\Apps\memoryleakcheck.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\Apps\RTC_Task.c</name>
+            <name>$PROJ_DIR$\Apps\rtc_task.c</name>
         </file>
     </group>
     <group>

@@ -392,6 +392,7 @@ static void update_package_count(void) {
 	++_effect_count;				//存一条就加1
 	Hydrology_SetDataPacketCount(_effect_count);
 }
+
 int HydrologySaveData(char* rtc_nowTime, char funcode)  // char *_saveTime
 {
 	if (arrived_store_time(rtc_nowTime) == FALSE) {
@@ -419,6 +420,123 @@ int HydrologySaveData(char* rtc_nowTime, char funcode)  // char *_saveTime
 
 	return 0;
 }
+
+static int arrived_report_time(char now_time[ 6 ]) {
+	if (Utility_Is_A_ReportTime(now_time) == 0) {
+		return FALSE;
+	}
+	else {
+		return TRUE;
+	}
+}
+
+static int get_packet_index(int* packet_to_send_start_index, int* packet_to_send_end_index) {
+	if (FlowCheckSampleData(packet_to_send_start_index, packet_to_send_end_index) != 0) {
+		return FAILED;
+	}
+	else {
+		return SUCCESS;
+	}
+}
+
+static int report_packet(int count_of_packet_to_send, int packet_to_send_start_index,
+			 int packet_to_send_end_index) {
+
+	int  _seek_num    = 0;  //防止死循环
+	char _send[ 200 ] = { 0 };
+	int  _ret;
+
+	while (count_of_packet_to_send != 0) {
+		// TraceMsg("read data in :", 0);
+		// TraceInt4(packet_to_send_start_index, 1);
+		// TraceInt4(count_of_packet_to_send, 1);
+		if (_seek_num > HYDROLOGY_DATA_MAX_IDX)
+		//寻找的数据条数已经超过最大值就退出，防止死循环
+		{
+			err_printf("seek num out of range, panic occured, rebooting... \n\n");
+			System_Delayms(2000);
+			System_Reset();
+		}
+
+		_ret = Store_ReadDataItem(packet_to_send_start_index, _send,
+					  0);  //读取数据，ret为读出的数据长度
+
+		if (_ret < 0) {
+			err_printf("can't read packet from rom ! \n\n");
+			return FAILED;  //无法读取数据 就直接退了
+		}
+		else if (_ret == 1) {
+			debug_printf("It's a invalid packet, which has been report early \n\n");
+			if (packet_to_send_start_index
+			    >= HYDROLOGY_DATA_MAX_IDX) {  //如果读取的startidx超过可存的最大index，则重新置零
+				packet_to_send_start_index = HYDROLOGY_DATA_MIN_IDX;
+			}
+			else {
+				++packet_to_send_start_index;
+			}  //下一数据
+			++_seek_num;
+			Hydrology_SetStartIdx(
+				packet_to_send_start_index);  //要更新packet_to_send_start_index.
+			debug_printf("packet_to_send_start_index: %d \n\n",
+				     packet_to_send_start_index);
+			debug_printf("packet_to_send_end_index: %d \n\n", packet_to_send_end_index);
+			// hydrologyExitSend();
+		}
+		else  //未发送的数据
+		{
+			lock_communication_dev();
+			hydrologyProcessSend(_send, TimerReport);
+			unlock_communication_dev();
+
+			Store_MarkDataItemSended(packet_to_send_start_index);  //设置该数据已发送
+			--count_of_packet_to_send;
+			Hydrology_SetDataPacketCount(
+				count_of_packet_to_send);  //发送完后要更新有效数据cnt
+			if (packet_to_send_start_index >= HYDROLOGY_DATA_MAX_IDX) {
+				packet_to_send_start_index = HYDROLOGY_DATA_MIN_IDX;
+			}
+			else {
+				++packet_to_send_start_index;  //下一数据
+			}
+			++_seek_num;
+
+			Hydrology_SetStartIdx(
+				packet_to_send_start_index);  //更新packet_to_send_start_index.
+		}
+	}
+
+	return SUCCESS;
+}
+
+int hydrologyReport(char now_time[ 6 ]) {
+	if (arrived_report_time(now_time) == FALSE) {
+		printf("not report time, %d/%d/%d %d:%d:%d\n\n", now_time[ 0 ], now_time[ 1 ],
+		       now_time[ 2 ], now_time[ 3 ], now_time[ 4 ], now_time[ 5 ]);
+		return FAILED;
+	}
+
+	printf("start report \n\n");
+
+	int packet_to_send_start_index = 0, packet_to_send_end_index = 0;
+	int count_of_packet_to_send = 0;
+
+	if (get_packet_index(&packet_to_send_start_index, &packet_to_send_end_index) == FAILED) {
+		return FAILED;
+	}
+
+	Hydrology_ReadDataPacketCount(&count_of_packet_to_send);
+	printf("%d valid packet to report \n\n", count_of_packet_to_send);
+
+	if (report_packet(count_of_packet_to_send, packet_to_send_start_index,
+			  packet_to_send_end_index)
+	    == FAILED) {
+		err_printf("error happend when reporting packet \n\n");
+		return FAILED;
+	}
+
+	return SUCCESS;
+}
+
 int HydrologyInstantWaterLevel(char* _saveTime)  //检查发送时间，判断上下标，组报文发送
 {
 
@@ -428,10 +546,11 @@ int HydrologyInstantWaterLevel(char* _saveTime)  //检查发送时间，判断�
 	ret     = Utility_Is_A_ReportTime(endtime);  //用于判断是否到发送时间
 
 	if (!ret) {
-		printf("Not Send Time, now time is: %d/%d/%d  %d:%d:%d \r\n", endtime[ 0 ],
-		       endtime[ 1 ], endtime[ 2 ], endtime[ 3 ], endtime[ 4 ], endtime[ 5 ]);
+		printf("Not Send Time, %d/%d/%d  %d:%d:%d \r\n", endtime[ 0 ], endtime[ 1 ],
+		       endtime[ 2 ], endtime[ 3 ], endtime[ 4 ], endtime[ 5 ]);
 		return -1;
 	}
+
 	int _effect_count = 0;  //存储在flash的有效未发送的数据包
 	Hydrology_ReadDataPacketCount(&_effect_count);  //读取内存里剩余未发送数据包数量
 	TraceInt4(_effect_count, 1);
@@ -451,8 +570,8 @@ int HydrologyInstantWaterLevel(char* _saveTime)  //检查发送时间，判断�
 		TraceMsg("read data in :", 0);
 		TraceInt4(_startIdx, 1);
 		TraceInt4(_effect_count, 1);
-		if (_seek_num
-		    > HYDROLOGY_DATA_MAX_IDX)  //寻找的数据条数已经超过最大值就退出，防止死循环
+		if (_seek_num > HYDROLOGY_DATA_MAX_IDX)
+		//寻找的数据条数已经超过最大值就退出，防止死循环
 		{
 			TraceMsg("seek num out of range", 1);
 			// hydrologHEXmyvPortFree();
@@ -536,13 +655,6 @@ int HydrologyInstantWaterLevel(char* _saveTime)  //检查发送时间，判断�
 }
 
 int HydrologyVoltage() {
-	//    char _temp_voltage[4];
-	//
-	//    _temp_voltage[0] = A[0] >> 8;
-	//    _temp_voltage[1] = A[0] & 0x00FF;
-	//
-	//    Store_SetHydrologyVoltage(_temp_voltage);
-	//
 	return 0;
 }
 

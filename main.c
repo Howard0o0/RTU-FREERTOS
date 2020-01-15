@@ -47,7 +47,7 @@
 
 /* APP */
 #include "ble_task.h"
-#include "hydrology_task.h"
+#include "hydrolody_task.h"
 #include "rtc_task.h"
 #include "boot.h"
 #include "communication_opr.h"

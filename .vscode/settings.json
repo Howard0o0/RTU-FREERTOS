@@ -15,6 +15,7 @@
 	"msp430common.h": "c",
 	"uart3.h": "c",
 	"hydrology_task.h": "c",
-	"type_traits": "c"
+	"type_traits": "c",
+	"hydrologytask.h": "c"
 }
 }

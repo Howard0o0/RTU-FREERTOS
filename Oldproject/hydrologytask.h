@@ -27,6 +27,7 @@ extern uint16_t time_1s;
 extern uint16_t time_10min;
 extern char Picture_Flag;
 
+int hydrologyReport(char now_time[ 6 ]);
 int HydrologyInstantWaterLevel(char* _saveTime);
 void HydrologyUpdateElementTable() ;
 void HydrologyDataPacketInit();
