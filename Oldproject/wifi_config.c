@@ -392,7 +392,6 @@ void WIFI_Close()
     //wifi EN�ŵ͵�ƽ
     P4DIR |= BIT1;
     P4OUT &= ~BIT1;
-//    System_Delayms(1000);
 
     WIFI_Inited_Flag = 0;
 

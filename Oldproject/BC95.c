@@ -898,7 +898,6 @@ BC95State BC95_query_cdp_server_setting(void)
 {
 	int _repeat = 0;
 	int _dataLen = 0;
-	// char _data[UART1_MAXBUFFLEN] = {0};
         char * _data = NULL;
 	char *at_cmd = "AT+NCDP?";
 
