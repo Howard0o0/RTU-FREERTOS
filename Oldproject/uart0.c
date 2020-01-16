@@ -13,7 +13,6 @@
 #include "uart3.h"
 #include "led.h"
 #include "common.h"
-#include "dtu.h"
 //#include "hydrology.h"
 /************A0********/
 #define TXD0 BIT4
