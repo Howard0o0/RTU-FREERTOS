@@ -5,7 +5,7 @@
 
 # 代码维护注意事项
 1. 使用printf/err_printf/debug_printf时，请在末尾加两个换行(\n\n)，以方便查看串口打印消息
-
+2. MSP430数据类型double默认4字节，可以在Option/General Option/Floating-point中修改
 
 
 # 工程目录说明
