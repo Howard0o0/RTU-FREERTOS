@@ -51,7 +51,7 @@ void hydrology_init() {
 	HydrologyUpdateElementTable();
 	HydrologyDataPacketInit();
 
-	printf("hydrology init done \r\n");
+	printf("hydrology init done \n\n");
 }
 
 void create_hydrology_tasks() {

@@ -756,6 +756,6 @@ int ble_close()
 void BleDriverInstall()
 {
   RegisterIODev(&T_CommuteDevBLE);
-  printf("\r\nBLE driver installed \r\n");
+  printf("BLE driver installed \n\n");
 }
 

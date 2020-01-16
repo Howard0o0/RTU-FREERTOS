@@ -14,8 +14,6 @@ void install_io_devs_driver(void) {
 
 static void boot_communication_module(void) {
 
-	printf("%s module is powering on , waiting for about 42s...\n",
-	       get_communication_dev()->name);
 	get_communication_dev()->power_on();
 }
 
@@ -23,20 +21,20 @@ static void check_communication_module(void) {
 
 	communication_module_t* comm_module = get_communication_dev();
 	if (comm_module->check_if_module_is_normal() == OK) {
-		printf("[OK] %s module\n", comm_module->name);
+		printf("[OK] %s module\n\n", comm_module->name);
 	}
 	else {
-		printf("[ERROR] %s module not respond\n", comm_module->name);
+		printf("[ERROR] %s module not respond\n\n", comm_module->name);
 	}
 }
 
 static void check_rtc_module(void){
 	if(check_if_rtc_normal() == TRUE){
-		printf("[OK] rtc module \n");
+		printf("[OK] rtc module \n\n");
 	}
 	else
 	{
-		printf("[ERROR] rtc module \n");
+		printf("[ERROR] rtc module \n\n");
 	}
 	
 }

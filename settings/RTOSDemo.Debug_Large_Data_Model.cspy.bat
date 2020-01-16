@@ -25,7 +25,7 @@ if not "%~1" == "" goto debugFile
 
 @echo on 
 
-"D:\iar\common\bin\cspybat" -f "C:\Users\waz\Desktop\freertos_rtu\RTU-FREERTOS\settings\RTOSDemo.Debug_Large_Data_Model.general.xcl" --backend -f "C:\Users\waz\Desktop\freertos_rtu\RTU-FREERTOS\settings\RTOSDemo.Debug_Large_Data_Model.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\83797\work\RTU\RTU-FREERTOS\settings\RTOSDemo.Debug_Large_Data_Model.general.xcl" --backend -f "C:\Users\83797\work\RTU\RTU-FREERTOS\settings\RTOSDemo.Debug_Large_Data_Model.driver.xcl" 
 
 @echo off 
 goto end 
@@ -34,7 +34,7 @@ goto end
 
 @echo on 
 
-"D:\iar\common\bin\cspybat" -f "C:\Users\waz\Desktop\freertos_rtu\RTU-FREERTOS\settings\RTOSDemo.Debug_Large_Data_Model.general.xcl" "--debug_file=%~1" --backend -f "C:\Users\waz\Desktop\freertos_rtu\RTU-FREERTOS\settings\RTOSDemo.Debug_Large_Data_Model.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\83797\work\RTU\RTU-FREERTOS\settings\RTOSDemo.Debug_Large_Data_Model.general.xcl" "--debug_file=%~1" --backend -f "C:\Users\83797\work\RTU\RTU-FREERTOS\settings\RTOSDemo.Debug_Large_Data_Model.driver.xcl" 
 
 @echo off 
 :end

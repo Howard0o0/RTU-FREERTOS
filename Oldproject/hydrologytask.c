@@ -90,9 +90,9 @@ void HydrologyUpdateElementTable() {
 	UserElementCount   = ( int )user;
 	RS485RegisterCount = ( int )rs485;
 	// TraceInt4(UserElementCount, 1);
-        printf("total element num:%d\n",UserElementCount);
+        printf("total element num:%d\n\n",UserElementCount);
 	// TraceInt4(RS485RegisterCount, 1);
-        printf("rs485 element num:%d\n",RS485RegisterCount);
+        printf("rs485 element num:%d\n\n",RS485RegisterCount);
 	for (i = 0; i < UserElementCount; i++) {
 
 		Hydrology_ReadStoreInfo(HYDROLOGY_ELEMENT1_ID + i * HYDROLOGY_ELEMENT_ID_LEN,
@@ -140,10 +140,10 @@ void HydrologyDataPacketInit() {
 	unlock_communication_dev();
 	System_Delayms(50);
 	if (rtc_time.year == 0) {
-		printf("update rtc through gprs module failed \r\n");
+		printf("update rtc through gprs module failed \n\n");
 		return;
 	}
-	printf("update rtc time, %d/%d/%d %d:%d:%d \r\n", rtc_time.year, rtc_time.month,
+	printf("update rtc time, %d/%d/%d %d:%d:%d \n\n", rtc_time.year, rtc_time.month,
 	       rtc_time.date, rtc_time.hour, rtc_time.min, rtc_time.sec);
 	_RTC_SetTime(( char )rtc_time.sec, ( char )rtc_time.min, ( char )rtc_time.hour,
 		     ( char )rtc_time.date, ( char )rtc_time.month, 1, ( char )rtc_time.year, 0);
@@ -293,7 +293,7 @@ int HydrologySample() {
         sample_count_init();
 
         if(now_time_reach_interval( (get_sample_interval_form_flash() / 60) )){
-                printf("Not Sample Time! now time is: %d/%d/%d  %d:%d:%d \r\n", rtc_nowTime[ 0 ],
+                printf("Not Sample Time! now time is: %d/%d/%d  %d:%d:%d \n\n", rtc_nowTime[ 0 ],
 		       rtc_nowTime[ 1 ], rtc_nowTime[ 2 ], rtc_nowTime[ 3 ], rtc_nowTime[ 4 ],
 		       rtc_nowTime[ 5 ]);
 		return -1;

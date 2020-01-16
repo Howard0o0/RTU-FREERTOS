@@ -12,6 +12,7 @@
 #include "message.h"
 #include "hydrologycommand.h"
 #include "FreeRTOS.h"
+#include "common.h"
 
 int FlowCheckSampleData(int* pstart,int* pend)
 {
@@ -21,31 +22,25 @@ int FlowCheckSampleData(int* pstart,int* pend)
     
     if(Hydrology_ReadStartIdx(&_startIdx)<0 || Hydrology_ReadEndIdx(&_endIdx)<0 )
     {//如果读出数据索引标记失败
-        TraceMsg("read idx error ,reGenerate .",1);
+        err_printf("read idx error ,reGenerate \n\n");
         
         if(Hydrology_RetrieveIndex()<0)                   //读出索引标记失败，则要生成索引标记++++++++++++++++++++++
         {
-            TraceMsg("reGen failed .",1);
+            err_printf("reGen failed \n\n");
             Hydrology_SetStartIdx(HYDROLOGY_DATA_MIN_IDX);
             Hydrology_SetEndIdx(HYDROLOGY_DATA_MIN_IDX);
         }
-        TraceMsg("StartIdx:",0); 
-        TraceInt4(_startIdx,1);
-        TraceMsg("EndIdx:",0);
-        TraceInt4(_endIdx,1);
+        err_printf("store start index: %d, store end index: %d \n\n",_startIdx,_endIdx);
         Hydrology_ReadStartIdx(&_startIdx);//重新读出
         Hydrology_ReadEndIdx(&_endIdx);//重新读出
     }
     //下标正确性
     if( _endIdx<HYDROLOGY_DATA_MIN_IDX || _endIdx >HYDROLOGY_DATA_MAX_IDX || _startIdx<HYDROLOGY_DATA_MIN_IDX || _startIdx >HYDROLOGY_DATA_MAX_IDX)
     {
-        TraceMsg("Idx bad .",1);
+        err_printf("panic occured,store index err \n\n");
         return -1;
     }
-    TraceMsg("startIdx=",1);
-    TraceInt4(_startIdx,1);
-    TraceMsg("endIdx=",1);
-    TraceInt4(_endIdx,1);
+    printf("store start index: %d, store end index: %d \n\n",_startIdx,_endIdx);
 
       *pstart = _startIdx;
     *pend = _endIdx;
