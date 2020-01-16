@@ -66,3 +66,6 @@ FreeRTOS源代码
 
 ## pvPortMalloc/vPortFree 等FREERTOR提供的API只能在任务体里使用
 推荐使用带内存泄漏检测的malloc与free
+
+## 配置报文导致pirntf卡死
+未解决，设想用uart3_send实现putchar
