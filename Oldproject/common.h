@@ -12,6 +12,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdint.h>
 
 //#define __CONSOLE__DEBUG__ 1
 extern int trace_open;

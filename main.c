@@ -115,7 +115,7 @@ static void setup_board_hardware(void) {
 
 	WDT_A_hold(WDT_A_BASE);
 
-	printf("device power on ! \r\n");
+	printf("device power on ! \n\n");
 
 	Sampler_Open();
 }

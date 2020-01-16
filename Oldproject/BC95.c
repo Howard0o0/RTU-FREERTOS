@@ -818,6 +818,7 @@ communication_module_t bc95_module = {
 
 static int bc95_open()
 {
+	printf("bc95 module is booting, waiting for 5s ...\n\n");
         if(BC95_Open() != 0){
                 err_printf("BC95 Open failed!\n\n");
                 return ERROR;

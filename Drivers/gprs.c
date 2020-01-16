@@ -85,6 +85,8 @@ int gprs_power_on(void) {
 
 	uart0_init();
 
+	printf("gprs module is booting, waiting for 42s ...\n\n");
+
 	taskENTER_CRITICAL();
 	pull_up_pin_batt();
 	pull_down_pin_igt();
