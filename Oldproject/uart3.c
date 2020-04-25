@@ -465,6 +465,6 @@ int putchar(int c)
 {
     while (!(UCA3IFG&UCTXIFG));             // USCI_A0 TX buffer ready?
     UCA3TXBUF = (unsigned char)c; 
-  
+
     return c;
 }

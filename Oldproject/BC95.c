@@ -28,6 +28,7 @@
 #define AT_BC95_NNMI "AT+NNMI=1"			  //将接收到的数据打印到串口
 #define AT_BC95_CPSMS "AT+CPSMS?"			  //查询是否是睡眠模式
 #define AT_BC95_SPSMS "AT+CPSMS=0"  //关闭睡眠模式，才能显示接收到的数据
+#define AT_BC95_OPPSM "AT+CPSMS=1,,,01000001,00000001"  //开启睡眠模式		//zh add
 #define AT_BC95_ATE0 "ATE0"	 //关闭回显
 #define AT_BC95_NSMI "AT+NSMI=1"    //设置发送消息后返回是否发送成功
 
@@ -382,6 +383,7 @@ void BC95_SetCpsms() {
         debug_printf("%s\n\n",AT_BC95_SPSMS);
 	System_Delayms(BC95_DELAY_MS);
 }
+
 
 //关闭回显
 BC95State BC95_CloseATE() {
@@ -795,11 +797,11 @@ char* BC95_Receive(int waitingtime) {
 
 //个人测试函数用，嘻嘻嘻
 void BC95_AtTest(void) {
-	while (1) {
-		BC95_Send("AT+CEREG?");
-		char* bc95Response = BC95_Receive(BC95_REPEAT_TIMES);
-		printf("%s \n\n", bc95Response);
-	}
+	
+	BC95_Send("AT+CEREG?");
+	char* bc95Response = BC95_Receive(BC95_REPEAT_TIMES);
+	printf("%s \n\n", bc95Response);
+	
 }
 
 
@@ -812,7 +814,7 @@ communication_module_t bc95_module = {
 	.wake_up       = bc95_wake_up,
 	.send_msg      = bc95_send,
 	.rcv_msg       = bc95_receive,
-	.get_real_time = bc95_AT_gettime,
+	.get_real_time = bc95_at_gettime,
 	.check_if_module_is_normal = check_bc95_module_is_normal,
 };
 
@@ -835,11 +837,13 @@ static int bc95_close()
 
 static int bc95_sleep()
 {
+		BC95_openpsm();
         return OK;
 }
 
 static int bc95_wake_up()
 {
+		BC95_SetCpsms();
         return OK;
 }
 
@@ -871,13 +875,18 @@ static char* bc95_receive()
         return recv_data;
 }
 
-static rtc_time_t bc95_AT_gettime()
+static rtc_time_t bc95_at_gettime()
 {
-        rtc_time_t bc95_time;
-        bc95_time.year = 0;
-        BC95_QueryTime(&bc95_time.year, &bc95_time.month, &bc95_time.date, &bc95_time.hour,
-                        &bc95_time.min, &bc95_time.sec);
-        return bc95_time;
+	rtc_time_t bc95_time;
+	for(int i = 0; i < 3; i++){
+		memset(&bc95_time, 0, sizeof(rtc_time_t));
+		BC95_QueryTime(&bc95_time.year, &bc95_time.month, &bc95_time.date, &bc95_time.hour,
+						&bc95_time.min, &bc95_time.sec);
+		if(bc95_time.year != 0){
+			break;
+		}
+	}
+	return bc95_time;
 }
 
 static int check_bc95_module_is_normal()
@@ -919,6 +928,13 @@ int bc95_module_driver_install()
         return register_communication_module(&bc95_module);
 }
 
+void BC95_openpsm() {
+	BC95_Send(AT_BC95_OPPSM);
+	debug_printf("%s\n\n",AT_BC95_OPPSM);
+	char * _data = BC95_Receive(BC95_REPEAT_TIMES);
+	debug_printf("%s\n\n",_data);
+	System_Delayms(BC95_DELAY_MS);
+}
 
 void BC95_Unit_test() {
 	int   len				= 0;
@@ -928,14 +944,62 @@ void BC95_Unit_test() {
 
 	bc95_open();
 
+
 	while (1) {
+		rtc_time_t rtc_time = bc95_at_gettime();
+		printf("update rtc time, %d/%d/%d %d:%d:%d \n\n", rtc_time.year, rtc_time.month,
+	       rtc_time.date, rtc_time.hour, rtc_time.min, rtc_time.sec);
+		
+		bc95_wake_up();
+		BC95_Send("AT+NPSMR=1");
+		debug_printf("%s\n\n","AT+NPSMR=1");
+		bc95_sleep();
 
 
-                bc95_send(msgData,Utility_Strlen(msgData),0,0);
+		for(int cnt = 0;;){
+			System_Delayms(50);
+			cnt++;
+			
+			char * _data = BC95_Receive(BC95_REPEAT_TIMES);
+			debug_printf("%s cnt:%d\n\n",_data,cnt);
+			if(strstr(_data,"1")){
+				break;
+			}
+		}
+		printf("sleep ok\n");
+		bc95_send(msgData,Utility_Strlen(msgData),0,0);
 
-		Console_WriteStringln("BC95 send data:");
+		bc95_wake_up();
 
-		Console_WriteStringln(msgData);
+		for(int cnt = 0;;){
+			System_Delayms(50);
+			cnt++;
+			
+			char * _data = BC95_Receive(BC95_REPEAT_TIMES);
+			debug_printf("%s cnt:%d\n\n",_data,cnt);
+			if(strstr(_data,"0")){
+				break;
+			}
+		}
+		printf("wake up ok\n");
+
+		BC95_Send("AT+CPSMS?");
+		debug_printf("%s\n\n","AT+CPSMS?");
+		char * _data = BC95_Receive(BC95_REPEAT_TIMES);
+		debug_printf("%s\n\n",_data);
+
+
+
+		// if(BC95_QueryIsPSMS() == BC95StateOK){
+		// 	err_printf("no sleep mode\n");
+		// 	BC95_openpsm();
+		// }
+
+		// bc95_send(msgData,Utility_Strlen(msgData),0,0);
+
+		// Console_WriteStringln("BC95 send data:");
+
+		// Console_WriteStringln(msgData);
 
 		// BC95_RecvSocketData(recv_data, &len);
 

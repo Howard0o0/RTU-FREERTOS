@@ -72,6 +72,7 @@ void app_main(void* pvParameters) {
 
 	bios_check();
 
+	// BC95_Unit_test();
 	// communication_module_unit_test();
 
 	create_hydrology_tasks();

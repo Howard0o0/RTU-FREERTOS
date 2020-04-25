@@ -222,7 +222,7 @@
                 </option>
                 <option>
                     <name>UsbComPort</name>
-                    <state>COM22</state>
+                    <state>COM4</state>
                 </option>
                 <option>
                     <name>FetConnection</name>

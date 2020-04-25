@@ -22,7 +22,7 @@ extern int trace_open;
 
 #define filename(x) strrchr(x, '\\') ? strrchr(x, '\\') + 1 : x
 
-// #define __DEBUG__
+#define __DEBUG__
 #ifdef __DEBUG__
 #define debug_printf(format, ...) \
 	printf("[file: %s, line: %d] " format, filename(__FILE__), __LINE__, ##__VA_ARGS__)
