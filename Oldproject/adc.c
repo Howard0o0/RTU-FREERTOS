@@ -256,58 +256,59 @@ void ADC_Sample()
     A[8]>>=3;A[9]>>=3;A[10]>>=3;A[11]>>=3;A[12]>>=3;A[13]>>=3;A[14]>>=3;A[15]>>=3; 
    
 //#ifdef __CONSOLE__DEBUG__
-  
+#ifdef ZHADD
 //    TraceMsg("////////////////////////////////////////",1);
 //    TraceMsg("A0: ",1);
-//    TraceInt4(A[0],1);
-//    TraceMsg("      ",1);
-//    TraceMsg("A1: ",1);
-//    TraceInt4(A[1],1);
-//     
-//    TraceMsg("A2: ",1);
-//    TraceInt4(A[2],1);
-//    TraceMsg("      ",1);
-//    TraceMsg("A3: ",1);
-//    TraceInt4(A[3],1);
-//    
-//    TraceMsg("A4: ",1);
-//    TraceInt4(A[4],1);
-//    TraceMsg("      ",1);
-//    TraceMsg("A5: ",1);
-//    TraceInt4(A[5],1);
-//    
-//    TraceMsg("A6: ",1);
-//    TraceInt4(A[6],1);
-//    TraceMsg("      ",1);
-//    TraceMsg("A7: ",1);
-//    TraceInt4(A[7],1);
+   TraceInt4(A[0],1);
+   TraceMsg("      ",1);
+   TraceMsg("A1: ",1);
+   TraceInt4(A[1],1);
+    
+   TraceMsg("A2: ",1);
+   TraceInt4(A[2],1);
+   TraceMsg("      ",1);
+   TraceMsg("A3: ",1);
+   TraceInt4(A[3],1);
+   
+   TraceMsg("A4: ",1);
+   TraceInt4(A[4],1);
+   TraceMsg("      ",1);
+   TraceMsg("A5: ",1);
+   TraceInt4(A[5],1);
+   
+   TraceMsg("A6: ",1);
+   TraceInt4(A[6],1);
+   TraceMsg("      ",1);
+   TraceMsg("A7: ",1);
+   TraceInt4(A[7],1);
   
-//    TraceMsg("      ",1);
-//    TraceMsg("A8: ",1);
-//    TraceInt4(A[8],1);
-//    TraceMsg("      ",1);
-//    TraceMsg("A9: ",1);
-//    TraceInt4(A[9],1);
-//    TraceMsg("      ",1);
-//    TraceMsg("A10: ",1);
-//    TraceInt4(A[10],1);
-//     System_Delayms(20);
-//    TraceMsg("      ",1);
-//    TraceMsg("A11: ",1);
-//    TraceInt4(A[11],1);
-//    TraceMsg("      ",1);
-//    TraceMsg("A12: ",1);
-//    TraceInt4(A[12],1);
-//    TraceMsg("      ",1);
-//    TraceMsg("A13: ",1);
-//    TraceInt4(A[13],1);
-//    TraceMsg("      ",1);
-//    TraceMsg("A14: ",1);
-//    TraceInt4(A[14],1);
-//    TraceMsg("      ",1);
-//    TraceMsg("A15: ",1);
-//    TraceInt4(A[15],1);
-//    TraceMsg("////////////////////////////////////////",1);    
+   TraceMsg("      ",1);
+   TraceMsg("A8: ",1);
+   TraceInt4(A[8],1);
+   TraceMsg("      ",1);
+   TraceMsg("A9: ",1);
+   TraceInt4(A[9],1);
+   TraceMsg("      ",1);
+   TraceMsg("A10: ",1);
+   TraceInt4(A[10],1);
+    System_Delayms(20);
+   TraceMsg("      ",1);
+   TraceMsg("A11: ",1);
+   TraceInt4(A[11],1);
+   TraceMsg("      ",1);
+   TraceMsg("A12: ",1);
+   TraceInt4(A[12],1);
+   TraceMsg("      ",1);
+   TraceMsg("A13: ",1);
+   TraceInt4(A[13],1);
+   TraceMsg("      ",1);
+   TraceMsg("A14: ",1);
+   TraceInt4(A[14],1);
+   TraceMsg("      ",1);
+   TraceMsg("A15: ",1);
+   TraceInt4(A[15],1);
+   TraceMsg("////////////////////////////////////////",1);    
+#endif
 //#endif
 }
 

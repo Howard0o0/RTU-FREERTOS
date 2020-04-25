@@ -1,24 +1,24 @@
 //////////////////////////////////////////////////////
-//     �ļ���: store.c
-//   �ļ��汾: 1.0.0
-//   ����ʱ��: 09��11��30��
-//   ��������:  
-//       ����: ����
-//       ��ע: 
+//     文件名: store.c
+//   文件版本: 1.0.0
+//   创建时间: 09年11月30日
+//   更新内容:  
+//       作者: 林智
+//       附注: 
 //
-//       1. ������֯��ʽ.
-//       ������:
-//           У���ֽ�(1) + ʱ�䴮(10) + ģ��ֵ��(8*2) + ����ֵ��(4*3) + ������(1) 
-//           �������ݲ���Ҫ������
-//           ����ֵ  ���� ���� 3�ֽ�.
-//       ʱ�䴮:
-//           ������������ʱʱ�ַ�
-//       ģ��ֵ��: (������ A ~ H)
-//           ������(1) + ��ֵ(2�ֽ�int����)
-//       ����ֵ��: (������ I ~ L)
-//           ������(1) + ��ֵ(2�ֽ�int����)
+//       1. 数据组织格式.
+//       数据条:
+//           校验字节(1) + 时间串(10) + 模拟值条(8*2) + 脉冲值条(4*3) + 开关量(1) 
+//           保存数据不需要类型码
+//           脉冲值  我们 保存 3字节.
+//       时间串:
+//           年年月月日日时时分分
+//       模拟值条: (类型码 A ~ H)
+//           类型码(1) + 数值(2字节int类型)
+//       脉冲值条: (类型码 I ~ L)
+//           类型码(1) + 数值(2字节int类型)
 //        
-//       2. �ϱ���ʽ
+//       2. 上报格式
 //       $00000000000>0909091230*A1234B1234C1234D1234E1234F1234G1234H1234I000000J000000K000000L000000
 //       M1N1O1P1Q1R1S1T1#
 //////////////////////////////////////////////////////
@@ -39,15 +39,15 @@
 extern int DataPacketLen;
 extern char switcher,anahigh,analow,pulsehigh,pulsemedium,pulselow,vthigh,vtlow;
 int contextlen=0;
-int s_StartIdx=HYDROLOGY_DATA_MAX_IDX+1;//��ʼ��Ϊ����ֵ  ��ΧΪ1~2000    //++++
-int s_EndIdx=HYDROLOGY_DATA_MAX_IDX+1;//��ʼ��Ϊ����ֵ    ��ΧΪ1~2000  
-//int s_DPCount=0; // //��δ���͵Ĵ���flash�����ݰ�����
-//��ʼ��
+int s_StartIdx=HYDROLOGY_DATA_MAX_IDX+1;//初始化为错误值  范围为1~2000    //++++
+int s_EndIdx=HYDROLOGY_DATA_MAX_IDX+1;//初始化为错误值    范围为1~2000   
+//int s_DPCount=0; // //还未发送的存于flash的数据包数量
+//初始化
 void Store_Init()
 {
     ROM_Init();
 } 
-//  ���� 4096�������ִ�
+//  读出 4096这样的字串
 int Store_ReadDataMaxStr(int _index ,char * _dest)
 {
     if( _index < 1 || _index >8)
@@ -80,7 +80,7 @@ int Store_ReadDataMaxInt(int _index, int * _pDestInt)
             return -1;
         }
         ++ _repeats;
-    }//ת��Ϊint
+    }//转化为int
     (*_pDestInt)= (((unsigned int)_temp[0])<<8 ) ;(*_pDestInt)+=_temp[1];//�ߵ�λ�ֽ� 
     return 0;
 }
@@ -106,7 +106,7 @@ int Store_SetDataMaxInt(int _index, const int _max)
     return 0;
 }
 
-//4�ֽ��ַ�����
+//4字节字符数字
 int Store_ReadDataMinStr(int _index, char * _dest)
 {
     if( _index < 1  || _index > 8 )
@@ -140,12 +140,12 @@ int Store_ReadDataMinInt(int _index, int * _pDestInt)
             return -1;
         }
         ++ _repeats;
-    }//ת��ΪInt
+    }//转化为Int
     (*_pDestInt)=((unsigned int)_temp[0])<<8;  (*_pDestInt) += _temp[1];//�ߵ�λ�ֽ� 
     return 0;
 }
 
-//���ø�ʽΪ4068
+//设置格式为4068
 int Store_SetDataMinInt(int _index, const int _min)
 {
     if( _index < 1  || _index > 8 )
@@ -165,7 +165,7 @@ int Store_SetDataMinInt(int _index, const int _min)
 }
 
 
-int Store_ReadConfig(char * _dest)//  1���ֽ�
+int Store_ReadConfig(char * _dest)//  1个字节
 { 
     int _repeats=0;
     while(ROM_ReadByte(CONFIG_ADDR,_dest)!=0)
@@ -193,7 +193,7 @@ int Store_SetConfig(char _config)
      } 
      return 0;
 } 
-// 11���ַ����ֽ�
+// 11个字符型字节
 int Store_ReadDeviceNO(char *_dest)
 {
   int _repeats=0;
@@ -207,7 +207,7 @@ int Store_ReadDeviceNO(char *_dest)
   }
   return 0;
 }
-// 3���ַ����ֽ�
+// 3个字符型字节
 int Store_SetDeviceNO(const char * _src)
 {
   int _repeats=0;
@@ -221,7 +221,7 @@ int Store_SetDeviceNO(const char * _src)
   }  
   return 0;  
 }
-// 4���ַ����ֽ�
+// 4个字符型字节
 int Store_ReadPassword(char *_dest)
 { 
   int _repeats=0;
@@ -237,7 +237,7 @@ int Store_ReadPassword(char *_dest)
 } 
 
 
-// 4���ַ����ֽ�
+// 4个字符型字节
 int Store_SetPassword(const char * _src)
 {
     int _repeats=0;
@@ -266,7 +266,7 @@ int Store_SetWIFIConfigFlag(char * _src){
    return 0;
 }
 
-//��WIFI���ñ�ʶ  by ���ξ� 2017-7-16
+//读WIFI配置标识  by 刘梦君 2017-7-16
 int Store_ReadWIFIConfigFlag(char * _dest){
     int _repeats=0;
    while(ROM_ReadBytes(WIFI_CONFIG_FLAG_ADDR, _dest,WIFI_CONFIG_FLAG_LEN)!=0)
@@ -284,7 +284,7 @@ int Store_ReadWIFIConfigFlag(char * _dest){
 
 
 ///////////
-//1���ַ����ֽ�
+//1个字符型字节
 int  Store_ReadWorkMode(char * _dest)
 {
     int _repeats=0;
@@ -349,15 +349,15 @@ int  Store_ReadAnalogSelect(char * _dest)
 int  Store_SetAnalogSelectStr(const char * _src)
 {
     char _temp=0x00;
-    //��_src�γ�һ��charд��
+    //由_src形成一个char写入
     for(int i=7;i>=0;--i)
     {
-        //��һλ;
+        //下一位;
         _temp<<=1;
         if(_src[i]=='0')
-            _temp &= 0xFE;//�����һλ��0;
+            _temp &= 0xFE;//将最后一位清0;
         else
-            _temp |= 0x01;//�����һλ��1;
+            _temp |= 0x01;//将最后一位置1;
         
     } 
     if(Store_SetAnalogSelect(_temp)<0)
@@ -392,20 +392,20 @@ int  Store_ReadPulseSelect(char * _dest)
 int  Store_SetPulseSelectStr(const char * _src)
 {
     char _temp=0x00;
-    //��_src�γ�һ��charд��
+    //由_src形成一个char写入
     for(int i=0;i<4;++i)
     {
         
         
         if(_src[i]=='0')
-            _temp &= 0xF7;//��������4λ��0;
+            _temp &= 0xF7;//将倒数第4位清0;
         else
-            _temp |= 0x08;//��������4λ��1;
+            _temp |= 0x08;//将倒数第4位置1;
         
         //��һλ;
         _temp<<=1;
     }
-    //ǰ4λ��Ӧ��Ϊѡ��
+    //下一位
     if(Store_SetPulseSelect(_temp)<0)
         return -1;
     return 0;
@@ -448,16 +448,16 @@ int  Store_SetIoSelect(char _src)
 int  Store_SetIoSelectStr(const char * _src)
 {
     char _temp=0x00;
-    //��_src�γ�һ��charд��
+    //由_src形成一个char写入
     for(int i=7;i>=0;--i)
     {
         //��һλ;
         _temp<<=1;
         
         if(_src[i]=='0')
-            _temp &= 0xFE;//�����һλ��0;
+            _temp &= 0xFE;//将最后一位清0;
         else
-            _temp |= 0x01;//�����һλ��1;
+            _temp |= 0x01;//将最后一位置1;
         
     } 
     if(Store_SetIoSelect(_temp)<0)
@@ -499,7 +499,7 @@ int  Store_SetPulseRate(int _index, char _src)
 
 
 int  Store_ReadPulseRange(int _index, char *_dest)
-{//����9�ĸ���  2����
+{//读出9的个数  2进制
     if( _index < 1 || _index>4)
         return -2;
     long _addr = PULSE_RANGE_BASE_ADDR + (_index-1);
@@ -513,7 +513,7 @@ int  Store_ReadPulseRange(int _index, char *_dest)
     return 0;
 }
 int  Store_SetPulseRange(int _index, char  _src)
-{//д�� 9�ĸ��� 2����
+{//写入 9的个数 2进制
     if( _index < 1 || _index>4)
         return -2;
     long _addr = PULSE_RANGE_BASE_ADDR + (_index-1); 
@@ -527,7 +527,7 @@ int  Store_SetPulseRange(int _index, char  _src)
     return 0;
 }
 int  Store_ReadPulseRangeBytes(int _index, char *_dest)
-{//���� ��Ӧ�� 3���ֽ�
+{//读出 对应的 3个字节
    Console_Open();
     if( _index < 1|| _index>4)
         return -2;
@@ -546,7 +546,7 @@ int  Store_ReadPulseRangeBytes(int _index, char *_dest)
     
     switch(_temp)
     {
-      case 0x00://0��9,���ڴ������δ���õ�ʱ��.
+      case 0x00://0个9,用于错误或者未设置的时候.
         _dest[0]=0x00;_dest[1]=0x00;_dest[2]=0x00;
         break;
       case 0x01:
@@ -571,7 +571,7 @@ int  Store_ReadPulseRangeBytes(int _index, char *_dest)
         _dest[0]=0x98;_dest[1]=0x96;_dest[2]=0x7F;
         break;
       default:
-        //�����9�ĸ���,��������Ϊ0
+        //错误的9的个数,我们重置为0
         Store_SetPulseRange(_index,0);
         _dest[0]=0x00;_dest[1]=0x00;_dest[2]=0x00;
         break;
@@ -579,7 +579,7 @@ int  Store_ReadPulseRangeBytes(int _index, char *_dest)
     return 0;
 }
 
-//8���ַ�����
+//8个字符数据
 int Store_ReadIoDirConfigStr(char * _dest)
 {
     char _temp;
@@ -624,9 +624,9 @@ int  Store_SetIoDirConfigStr(char * _src)
     {
         _temp <<=1;
         if(_src[i]=='0')
-            _temp &= 0xFE;//�����һλΪ0
+            _temp &= 0xFE;//清最后一位为0
         else
-            _temp |= 0x01;//�����һλΪ1
+            _temp |= 0x01;//置最后一位为1
         
         
     }
@@ -635,7 +635,7 @@ int  Store_SetIoDirConfigStr(char * _src)
     return 0;
 } 
 
-//8���ַ�����
+//8个字符数据
 int  Store_ReadIoLevelConfigStr(char * _dest)
 {
     char _temp;
@@ -681,9 +681,9 @@ int  Store_SetIoLevelConfigStr(char * _src)
     { 
         _temp <<=1;
         if(_src[i]=='0')
-            _temp &= 0xFE;//�����һλΪ0
+            _temp &= 0xFE;//清最后一位为0
         else
-            _temp |= 0x01;//�����һλΪ1
+            _temp |= 0x01;//置最后一位为1
         
     }
     if(Store_SetIoLevelConfig(_temp)<0)
@@ -691,7 +691,7 @@ int  Store_SetIoLevelConfigStr(char * _src)
     return 0;
 }
 
-//2���ַ����ֽ�
+//2个字符型字节
 int Store_ReadReportTimeMode(char * _dest)
 {
   int _repeats=0;
@@ -708,7 +708,7 @@ int Store_ReadReportTimeMode(char * _dest)
 
 
 
-//2���ַ����ֽ�
+//2个字符型字节
 int Store_SetReportTimeMode(const char * _src)
 {
   int _repeats=0;
@@ -723,7 +723,7 @@ int Store_SetReportTimeMode(const char * _src)
   return 0;
 }
 
-//2���ַ����ֽ�
+//2个字符型字节
 int Store_ReadSaveTimeMode(char *_dest)
 {
   int _repeats=0;
@@ -738,7 +738,7 @@ int Store_ReadSaveTimeMode(char *_dest)
   return 0;
 }
 
-//2���ַ����ֽ�
+//2个字符型字节
 int Store_SetSaveTimeMode(const char * _src)
 {
     int _repeats=0;
@@ -752,7 +752,7 @@ int Store_SetSaveTimeMode(const char * _src)
     } 
     return 0;
 }
-//ˮ��ң��վ��������
+//水文遥测站基本配置
 //int Store_SetHydrologyCenterAddr(char* _src)
 //{
 //    int _repeats=0;
@@ -3607,7 +3607,7 @@ int Store_SetSaveTimeMode(const char * _src)
 //    } 
 //    return 0;
 //}
-//����hydrology config data
+//设置hydrology config data
 int Store_SetHydrologyConfigData(char* _src)
 {
     int _repeats=0;
@@ -3642,7 +3642,7 @@ int Store_SetHydrologyConfigData(char* _src)
             
     return 0;
 }
-//��ȡhydrology config data
+//读取hydrology config data
 int Store_ReadHydrologyConfigData(char* _dest)
 {
     int _repeats=0;
@@ -3681,7 +3681,7 @@ int Store_ReadHydrologyConfigData(char* _dest)
 
 
 //////////////////////////////////////////////////////////////
-//     GSM ����
+//     GSM 函数
 //////////////////////////////////////////////////////////////
 int  Store_GSM_ReadCenterPhone(int _index, char *_dest)
 {
@@ -3720,11 +3720,11 @@ int  Store_GSM_SetCenterPhone(int _index, char *_src)
 
 //
 //
-//  ���ݱ����� ��������
+//  数据保存区 操作函数
 //
 //
 //
-int  Store_CheckDataItemSended(int _index) //��鷢�ʹ洢���  
+int  Store_CheckDataItemSended(int _index) //检查发送存储标记  
 {
     if( _index < HYDROLOGY_DATA_MIN_IDX || _index > HYDROLOGY_DATA_MAX_IDX)
         return -2;
@@ -3747,7 +3747,8 @@ int  Store_CheckDataItemSended(int _index) //��鷢�ʹ洢���
 
 int  Store_ClearWork()         //+++++++
 {
-    //����������ȫ����ΪĬ��
+    //数据上下限全部设为默认
+#ifndef ZHADD
     for(int i=1;i<=8;++i)
     {
         if(Store_SetDataMaxInt(i,4096)<0)
@@ -3755,7 +3756,8 @@ int  Store_ClearWork()         //+++++++
         if(Store_SetDataMinInt(i,0)<0)
             return -1;
     }
-    //������ȫ����Ϊ�Ѿ�����
+#endif
+    //数据区全部认为已经发送
     for(int i=HYDROLOGY_DATA_MIN_IDX;i<=HYDROLOGY_DATA_MAX_IDX;++i)
     {
         if(Store_MarkDataItemSended(i)<0)
@@ -3764,7 +3766,7 @@ int  Store_ClearWork()         //+++++++
     return 0;
 }
 
-int  Store_MarkDataItemSended(int _index)   //���÷��ͱ��
+int  Store_MarkDataItemSended(int _index)   //设置发送标记
 {
     if( _index < HYDROLOGY_DATA_MIN_IDX || _index > HYDROLOGY_DATA_MAX_IDX)
         return -2;
@@ -3776,12 +3778,12 @@ int  Store_MarkDataItemSended(int _index)   //���÷��ͱ��
     }
     return 0;
 }
-//  д���ݺ��� ֱ��д
+//  写数据函数 直接写
 int  Store_WriteDataItem(int _index,  char * _src)
 {
     if( _index < HYDROLOGY_DATA_MIN_IDX || _index > HYDROLOGY_DATA_MAX_IDX)
         return -2;
-    //��һ��δ�����(��У���ֽ�)��_src�ṩ
+    //第一个未读标记(或校验字节)由_src提供
    // int _addr = DATA_START_ADDR + ( _index -1 ) * DATA_ITEM_LEN; 
     //char _tmp;                                                                  //+++++   
     //Hydrology_ReadStoreInfo(HYDROLOGY_DATA_PACKET_LEN,&_tmp,HYDROLOGY_DATA_PACKET_LEN_LEN); 
@@ -3796,11 +3798,11 @@ int  Store_WriteDataItemAuto(char * _src)
 {
     int _endIdx=0;
     if(Hydrology_ReadEndIdx(&_endIdx)<0)//
-    {//��ȡ��д��Ǵ���
+    {//读取填写标记错误
         if(Hydrology_RetrieveIndex()<0)
-            return -1;//�������ɱ��ʧ��
+            return -1;//尝试生成标记失败
         if(Hydrology_ReadEndIdx(&_endIdx)<0)
-            return -1;//�Ծɴ���
+            return -1;//仍旧错误
     }
     if(Store_WriteDataItem(_endIdx,_src)<0)
         return -1;
@@ -3810,27 +3812,27 @@ int  Store_WriteDataItemAuto(char * _src)
     else
     {
         ++_endIdx;
-    //RTC_SetEndIdx(_endIdx);//����_endIdx
+    //RTC_SetEndIdx(_endIdx);//更新_endIdx
        
     }
      Hydrology_SetEndIdx(_endIdx);
     return 0;
 } 
 
-// ���ݵ�ǰ���ö������ݴ�
-// ��Ҫ95�ֽڵ�buffer
-//  ����ֵΪʵ����д�ĸ���(����д����һ���±�)
-//  _dest��дΪ ʱ�䴮*A0000B0000
+// 根据当前配置读出数据串
+// 需要95字节的buffer
+//  返回值为实际填写的个数(即可写的下一个下标)
+//  _dest填写为 时间串*A0000B0000
 //  
-//  ����������ֱ��ʹ��
-//  ��������Ϊ
-//  У���ֽ� 0909011230�ֽ�A1�ֽ�A2�ֽ�B1�ֽ�B2�ֽ�..�ֽ�I1�ֽ�I2...�����ֽ�
-//  ����:
+//  供发送流程直接使用
+//  保存内容为
+//  校验字节 0909011230字节A1字节A2字节B1字节B2字节..字节I1字节I2...开关字节
+//  如下:
 //  0           1          2          3     
 //  0  1234567890 1234567890123456 789012345678  9
-//  У 0909011230 AABBCCDDEEFFGGHH IIIJJJKKKLLL ����
+//  校 0909011230 AABBCCDDEEFFGGHH IIIJJJKKKLLL 开关
 // 
-//  _buffer(����)
+//  _buffer(样例)
 //  0         1         2         3         4
 //  01234567890123456789012345678901234567890 
 //  0909011230*A4096B4096I0000F0J000000M1N0R1 
@@ -3856,14 +3858,14 @@ int  Store_ReadDataItem(int _index , char * _dest, int _flag)
         {
             _read_flag =1;
         }
-        //��дʱ�䴮
+        //填写时间串
         Utility_Strncpy(_dest, &(_buffer[1]),5);
-        //��д����
+        //填写数据
         Utility_Strncpy(&(_dest[5]), &(_buffer[6]),DataPacketLen-6);
         
            
     
-    //���� �ѷ��ͱ�ǽ��з���
+    //根据 已发送标记进行返回
     if(_read_flag && !_flag)
         return 1;
     else

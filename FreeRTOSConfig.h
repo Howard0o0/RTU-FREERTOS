@@ -60,6 +60,7 @@
 #define configUSE_RECURSIVE_MUTEXES		0
 #define configUSE_MALLOC_FAILED_HOOK	1
 #define configUSE_APPLICATION_TASK_TAG	0
+#define configUSE_TIME_SLICING			0	//close time slice scheduling
 
 #if __DATA_MODEL__ == __DATA_MODEL_SMALL__
 	#define configMINIMAL_STACK_SIZE		( ( unsigned short ) 110 )

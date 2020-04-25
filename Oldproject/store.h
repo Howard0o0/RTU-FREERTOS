@@ -1,18 +1,20 @@
 //////////////////////////////////////////////////////
-//     ÎÄ¼şÃû: store.h
-//   ÎÄ¼ş°æ±¾: 1.0.0
-//   ´´½¨Ê±¼ä: 09Äê 11ÔÂ30ÈÕ
-//   ¸üĞÂÄÚÈİ:  
-//       ×÷Õß: ÁÖÖÇ
-//       ¸½×¢: ÎŞ
+//     æ–‡ä»¶å: store.h
+//   æ–‡ä»¶ç‰ˆæœ¬: 1.0.0
+//   åˆ›å»ºæ—¶é—´: 09å¹´ 11æœˆ30æ—¥
+//   æ›´æ–°å†…å®¹:  
+//       ä½œè€…: æ—æ™º
+//       é™„æ³¨: æ— 
 //
 //////////////////////////////////////////////////////
 
 #pragma once
 
+// #define ZHADD
+
 ////////////////////////////////////////
-//  ROMÇøÓò·ÖÅä  µØÖ·ÎªintÀàĞÍ,11Î» 
-//  ÆğÊ¼µØÖ·: 0x0000  ×î¸ßµØÖ·: 0x07FF 
+//  ROMåŒºåŸŸåˆ†é…  åœ°å€ä¸ºintç±»å‹,11ä½ 
+//  èµ·å§‹åœ°å€: 0x0000  æœ€é«˜åœ°å€: 0x07FF 
 ////////////////////////////////////////
 
 //00 u6
@@ -24,75 +26,75 @@
 //11 u3
 #define ROM4_START 0x60000
 
-//    0x0000 ~ 0x0035   Éè±¸»ù±¾ÅäÖÃ
-//    0x0036 ~ 0x0079   ¸÷ÏµÍ³ÅäÖÃ
-//    0x00A0 ~ 0x07FF   Êı¾İÇø 
+//    0x0000 ~ 0x0035   è®¾å¤‡åŸºæœ¬é…ç½®
+//    0x0036 ~ 0x0079   å„ç³»ç»Ÿé…ç½®
+//    0x00A0 ~ 0x07FF   æ•°æ®åŒº 
 
 #define           BASE_ADDR    0x0000
 
 
-//ÉèÖÃÍêÕûĞÔ×Ö½Ú               1×Ö½Ú,  0x0000  
+//è®¾ç½®å®Œæ•´æ€§å­—èŠ‚               1å­—èŠ‚,  0x0000    
 #define         CONFIG_ADDR    BASE_ADDR 
 
-//Éè±¸ºÅ                       11×Ö½Ú, 0x0001 ~ 0x000B
+//è®¾å¤‡å·                       11å­—èŠ‚, 0x0001 ~ 0x000B
 #define       DEVICENO_ADDR    (BASE_ADDR + 1 )
 #define       DEVICENO_LEN     11
-//ÃÜÂë                         4×Ö½Ú,  0x000C ~ 0x000F   
+//å¯†ç                          4å­—èŠ‚,  0x000C ~ 0x000F
 #define       PASSWORD_ADDR    (BASE_ADDR + 12)
 #define       PASSWORD_LEN     4
-//±¨¸æ Ê±¼ä¼ä¸ôÄ£Ê½            2×Ö½Ú,  0x0010 ~ 0x0011
+//æŠ¥å‘Š æ—¶é—´é—´éš”æ¨¡å¼            2å­—èŠ‚,  0x0010 ~ 0x0011
 #define REPORTTIME_MODE_ADDR   (BASE_ADDR + 16)
 #define REPORTTIME_MODE_LEN    2 
-//±£´æ Ê±¼ä¼ä¸ôÄ£Ê½            2×Ö½Ú,  0x0012 ~ 0x0013
+//ä¿å­˜ æ—¶é—´é—´éš”æ¨¡å¼            2å­—èŠ‚,  0x0012 ~ 0x0013
 #define   SAVETIME_MODE_ADDR   (BASE_ADDR + 18)
 #define   SAVETIME_MODE_LEN    2 
 
 
-//Êı¾İÉÏÏÂÏŞ  Êı¾İµÄ»ùµØÖ·  
+//æ•°æ®ä¸Šä¸‹é™  æ•°æ®çš„åŸºåœ°å€  
 #define DATA_LIMIT_BASE_ADDR   (BASE_ADDR + 20)
 #define DATA_MAX_BASE_ADDR     DATA_LIMIT_BASE_ADDR
 //                                    0x0015
 #define DATA_MIN_BASE_ADDR     (DATA_LIMIT_BASE_ADDR + 2 )
 
 #define     DATA_LIMIT_LEN     2
-//Êı¾İ1±¨¾¯ÉÏÏŞ                2×Ö½Ú,  0x0014~0x0015  
+//æ•°æ®1æŠ¥è­¦ä¸Šé™                2å­—èŠ‚,  0x0014~0x0015  
 #define     DATA1_MAX_ADDR     DATA_MAX_BASE_ADDR
-//Êı¾İ1±¨¾¯ÏÂÏŞ                2×Ö½Ú,  0x0016~0x0017  
+//æ•°æ®1æŠ¥è­¦ä¸‹é™                2å­—èŠ‚,  0x0016~0x0017
 #define     DATA1_MIN_ADDR     DATA_MIN_BASE_ADDR
-//Êı¾İ2±¨¾¯ÉÏÏŞ                2×Ö½Ú,  0x0018~0x0019  
+//æ•°æ®2æŠ¥è­¦ä¸Šé™                2å­—èŠ‚,  0x0018~0x0019
 #define     DATA2_MAX_ADDR     (DATA_MAX_BASE_ADDR+4)
-//Êı¾İ2±¨¾¯ÏÂÏŞ                2×Ö½Ú,  0x001A~0x001B  
+//æ•°æ®2æŠ¥è­¦ä¸‹é™                2å­—èŠ‚,  0x001A~0x001B  
 #define     DATA2_MIN_ADDR     (DATA_MIN_BASE_ADDR+4)
-//Êı¾İ3±¨¾¯ÉÏÏŞ                2×Ö½Ú,  0x001C~0x001D  
+//æ•°æ®3æŠ¥è­¦ä¸Šé™                2å­—èŠ‚,  0x001C~0x001D 
 #define     DATA3_MAX_ADDR     (DATA_MAX_BASE_ADDR+8)
-//Êı¾İ3±¨¾¯ÏÂÏŞ                2×Ö½Ú,  0x001E~0x001F  
+//æ•°æ®3æŠ¥è­¦ä¸‹é™                2å­—èŠ‚,  0x001E~0x001F 
 #define     DATA3_MIN_ADDR     (DATA_MIN_BASE_ADDR+8)
-//Êı¾İ4±¨¾¯ÉÏÏŞ                2×Ö½Ú,  0x0020~0x0021  
+//æ•°æ®4æŠ¥è­¦ä¸Šé™                2å­—èŠ‚,  0x0020~0x0021
 #define     DATA4_MAX_ADDR     (DATA_MAX_BASE_ADDR+12)
-//Êı¾İ4±¨¾¯ÏÂÏŞ                2×Ö½Ú,  0x0022~0x0023  
+//æ•°æ®4æŠ¥è­¦ä¸‹é™                2å­—èŠ‚,  0x0022~0x0023
 #define     DATA4_MIN_ADDR     (DATA_MIN_BASE_ADDR+12)
-//Êı¾İ5±¨¾¯ÉÏÏŞ                2×Ö½Ú,  0x0024~0x0025  
+//æ•°æ®5æŠ¥è­¦ä¸Šé™                2å­—èŠ‚,  0x0024~0x0025 
 #define     DATA5_MAX_ADDR     (DATA_MAX_BASE_ADDR+16)
-//Êı¾İ5±¨¾¯ÏÂÏŞ                2×Ö½Ú,  0x0026~0x0027  
+//æ•°æ®5æŠ¥è­¦ä¸‹é™                2å­—èŠ‚,  0x0026~0x0027 
 #define     DATA5_MIN_ADDR     (DATA_MIN_BASE_ADDR+16)
-//Êı¾İ6±¨¾¯ÉÏÏŞ                2×Ö½Ú,  0x0028~0x0029  
+//æ•°æ®6æŠ¥è­¦ä¸Šé™                2å­—èŠ‚,  0x0028~0x0029 
 #define     DATA6_MAX_ADDR     (DATA_MAX_BASE_ADDR+20)
-//Êı¾İ6±¨¾¯ÏÂÏŞ                2×Ö½Ú,  0x002A~0x002B  
+//æ•°æ®6æŠ¥è­¦ä¸‹é™                2å­—èŠ‚,  0x002A~0x002B 
 #define     DATA6_MIN_ADDR     (DATA_MIN_BASE_ADDR+20)
-//Êı¾İ7±¨¾¯ÉÏÏŞ                2×Ö½Ú,  0x002C~0x002D  
+//æ•°æ®7æŠ¥è­¦ä¸Šé™                2å­—èŠ‚,  0x002C~0x002D
 #define     DATA7_MAX_ADDR     (DATA_MAX_BASE_ADDR+24)
-//Êı¾İ7±¨¾¯ÏÂÏŞ                2×Ö½Ú,  0x002E~0x002F  
+//æ•°æ®7æŠ¥è­¦ä¸‹é™                2å­—èŠ‚,  0x002E~0x002F  
 #define     DATA7_MIN_ADDR     (DATA_MIN_BASE_ADDR+24)
-//Êı¾İ8±¨¾¯ÉÏÏŞ                2×Ö½Ú,  0x0030~0x0031  
+//æ•°æ®8æŠ¥è­¦ä¸Šé™                2å­—èŠ‚,  0x0030~0x0031
 #define     DATA8_MAX_ADDR     (DATA_MAX_BASE_ADDR+28)
-//Êı¾İ8±¨¾¯ÏÂÏŞ                2×Ö½Ú,  0x0032~0x0033  
+//æ•°æ®8æŠ¥è­¦ä¸‹é™                2å­—èŠ‚,  0x0032~0x0033 
 #define     DATA8_MIN_ADDR     (DATA_MIN_BASE_ADDR+28)
 
-//Í¨µÀÅäÖÃ                     3×Ö½Ú
+//é€šé“é…ç½®                     3å­—èŠ‚
 #define CHANNEL_CONFIG_ADDR    (DATA_LIMIT_BASE_ADDR + 32 )
 //                             0x0034
 #define     ANALOG_SEL_ADDR    CHANNEL_CONFIG_ADDR
-//                             0x0035  µÍ4Î»ºöÂÔ
+//                             0x0035  ä½4ä½å¿½ç•¥
 #define     PULSE_SEL_ADDR     (CHANNEL_CONFIG_ADDR + 1)
 //                             0x0036
 #define     ONOFF_SEL_ADDR     (CHANNEL_CONFIG_ADDR + 2)
@@ -111,7 +113,7 @@
 #define     PULSE4_RATE_ADDR   (CHANNEL_CONFIG_ADDR + 8)
 
 
-//  ÒÔ¼¸¸ö9À´±íÊ¾ Âö³å±íµÄÁ¿³Ì
+//  ä»¥å‡ ä¸ª9æ¥è¡¨ç¤º è„‰å†²è¡¨çš„é‡ç¨‹
 
 //                             0x003D 
 #define PULSE_RANGE_BASE_ADDR  (CHANNEL_CONFIG_ADDR + 9)
@@ -131,7 +133,7 @@
 #define     Config_END_ADDR    0x004F
 //////////////////////////////////////
 //
-//  GSM ÏµÍ³µÄ·ÖÅä
+//  GSM ç³»ç»Ÿçš„åˆ†é…
 //
 ///////////////////////////////////////
 //                                     0x0050
@@ -142,17 +144,17 @@
 #define     GSM_CENTER_PHONE_LEN       11
 
 //                                     0x0050    
-//   Êı¾İÖĞĞÄ1                         11×Ö½Ú,   0x0050 -5A
+//   æ•°æ®ä¸­å¿ƒ1                         11å­—èŠ‚,   0x0050 -5A
 #define     GSM_CENTER1_PHONE_ADDR     ( GSM_CENTERPHONE_BASE_ADDR )
-//   Êı¾İÖĞĞÄ2                         11×Ö½Ú,   0x005B 
+//   æ•°æ®ä¸­å¿ƒ2                         11å­—èŠ‚,   0x005B 
 #define     GSM_CENTER2_PHONE_ADDR     ( GSM_CENTERPHONE_BASE_ADDR + 11)
-//   Êı¾İÖĞĞÄ3                         11×Ö½Ú,   0x0066
+//   æ•°æ®ä¸­å¿ƒ3                         11å­—èŠ‚,   0x0066
 #define     GSM_CENTER3_PHONE_ADDR     ( GSM_CENTERPHONE_BASE_ADDR + 22)
-//   Êı¾İÖĞĞÄ4                         11×Ö½Ú,   0x0071
+//   æ•°æ®ä¸­å¿ƒ4                         11å­—èŠ‚,   0x0071
 #define     GSM_CENTER4_PHONE_ADDR     ( GSM_CENTERPHONE_BASE_ADDR + 33)
-//   ÅäÖÃÖĞĞÄ                          11×Ö½Ú,   0x007C
+//   é…ç½®ä¸­å¿ƒ                          11å­—èŠ‚,   0x007C
 #define      GSM_CONFIG_PHONE_ADDR     ( GSM_CENTERPHONE_BASE_ADDR + 44)
-//   ¸ºÔğÈËµç»°                        11×Ö½Ú,   0x0087
+//   è´Ÿè´£äººç”µè¯                        11å­—èŠ‚,   0x0087
 #define      GSM_LEADER_PHONE_ADDR     ( GSM_CENTERPHONE_BASE_ADDR + 55) 
 //                                     0x0091  
 #define     GSM_CENTERPHONE_END_ADDR   ( GSM_CENTERPHONE_BASE_ADDR + 65 )
@@ -161,7 +163,7 @@
 
 ///////////////////////////////////////
 //
-//  DTU ÏµÍ³µÄ·ÖÅä 
+//  DTU ç³»ç»Ÿçš„åˆ†é… 
 //
 ///////////////////////////////////////
 
@@ -169,29 +171,29 @@
 #define     DTU_START_ADDR             0x0050
 #define     DTU_CENTERIP_BASE_ADDR     DTU_START_ADDR
 #define     CENTER_IP_LEN              6      
-//   Êı¾İÖĞĞÄ1                         6×Ö½Ú,  0x0050 ~  
+//   æ•°æ®ä¸­å¿ƒ1                         6å­—èŠ‚,  0x0050 ~  
 #define     CENTER1_IP_ADDR           (DTU_CENTERIP_BASE_ADDR)
-//   Êı¾İÖĞĞÄ2                         6×Ö½Ú,  0x0056 ~  
+//   æ•°æ®ä¸­å¿ƒ2                         6å­—èŠ‚,  0x0056 ~  
 #define     CENTER2_IP_ADDR            (DTU_CENTERIP_BASE_ADDR + 6)
-//   Êı¾İÖĞĞÄ3                         6×Ö½Ú,  0x005B ~  
+//   æ•°æ®ä¸­å¿ƒ3                         6å­—èŠ‚,  0x005B ~  
 #define     CENTER3_IP_ADDR            (DTU_CENTERIP_BASE_ADDR + 12)
-//   Êı¾İÖĞĞÄ4                         6×Ö½Ú,  0x0050 ~  
+//   æ•°æ®ä¸­å¿ƒ4                         6å­—èŠ‚,  0x0050 ~  
 #define     CENTER4_IP_ADDR            (DTU_CENTERIP_BASE_ADDR + 18)
-//   Êı¾İÖĞĞÄ5                         6×Ö½Ú,  0x0055 ~  
+//   æ•°æ®ä¸­å¿ƒ5                         6å­—èŠ‚,  0x0055 ~  
 #define     CENTER5_IP_ADDR            (DTU_CENTERIP_BASE_ADDR + 24)
 
 
 //////////////////////////////////////
 //
-//  485 ÏµÍ³µÄ·ÖÅä 
+//  485 ç³»ç»Ÿçš„åˆ†é… 
 //
 ///////////////////////////////////////
 
 
-//Êı¾İÇø
+//æ•°æ®åŒº
 //                                    0x00A0
 #define     DATA_START_ADDR           0x00A0
-#define     DATA_ITEM_LEN             40     //¶à¼ÓÒ»Ìõcameraaddress
+#define     DATA_ITEM_LEN             40     //å¤šåŠ ä¸€æ¡cameraaddress
 #define     DATA_ITEM_MAX             DATA_MAX_IDX
 #define     DATA_END_ADDR             (DATA_START_ADDR + DATA_ITEM_MAX * DATA_ITEM_LEN)
 
@@ -200,11 +202,11 @@
 #define     DATA_MIN_IDX              1  
 
 
-//WiFiÅäÖÃ±êÊ¶
+//WiFié…ç½®æ ‡è¯†
 #define       WIFI_CONFIG_FLAG_ADDR                     0x0400
 #define       WIFI_CONFIG_FLAG_LEN                      1
 
-//Ë®ÎÄ¹æÔ¼Ğ­Òé
+//æ°´æ–‡è§„çº¦åè®®
 #define       HYDROLOGYCONFIGDATA_ADDR                  0x0402
 #define       HYDROLOGYCONFIGDATA_ADDR_LEN              sizeof(hydrologyConfigPara)
 
@@ -391,34 +393,34 @@
 
 void Store_Init();   
  
-int  Store_ReadDataMaxInt(int index, int *destInt); //intÊıÖµ
-int  Store_ReadDataMaxStr(int index, char *dest);   //4Î»Êı×Ö
+int  Store_ReadDataMaxInt(int index, int *destInt); //intæ•°å€¼
+int  Store_ReadDataMaxStr(int index, char *dest);   //4ä½æ•°å­—
 int  Store_SetDataMaxInt(int index , int temp);
 int  Store_ReadDataMinInt(int index, int *destInt);
 int  Store_ReadDataMinStr(int index, char *dest);
 int  Store_SetDataMinInt(int index,  int temp);
 
-//±£´æµÄÊı¾İÌõ
+//ä¿å­˜çš„æ•°æ®æ¡
 int  Store_ClearWork();
 int  Store_EraseData();
 
-int  Store_CheckDataItemSended(int _index); //¼ì²é·¢ËÍ±ê¼Ç
-int  Store_MarkDataItemSended(int _index);  //ÉèÖÃ·¢ËÍ±ê¼Ç
+int  Store_CheckDataItemSended(int _index); //æ£€æŸ¥å‘é€æ ‡è®°
+int  Store_MarkDataItemSended(int _index);  //è®¾ç½®å‘é€æ ‡è®°
 int  Store_ReadDataItem(int _index , char * _dest, int _flag);
 //int  Store_ReadDataItemAuto(char * _dest);
 
-int  New_Store_ReadDataItem(char _index , char * _dest, int _flag);  //ÓÃ×÷ĞÂË®Àû²âÊÔ
+int  New_Store_ReadDataItem(char _index , char * _dest, int _flag);  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 int  Store_WriteDataItem( int  _index ,  char * _src);
 int  Store_WriteDataItemAuto( char * _src);
 
-//ÉèÖÃ²ÎÊı
+//è®¾ç½®å‚æ•°
 int  Store_ReadConfig(char *dest); 
 int  Store_SetConfig(char config);
 int  Store_ReadDeviceNO(char *dest);
 int  Store_SetDeviceNO(const char *src);
 int  Store_ReadPassword(char *dest);
 int  Store_SetPassword(const char *src);
-int  Store_ReadReportTimeMode(char *dest); //2¸ö×Ö·û
+int  Store_ReadReportTimeMode(char *dest); //2ä¸ªå­—ç¬¦
 int  Store_SetReportTimeMode(const char * src);
 int  Store_ReadSaveTimeMode(char *dest);
 int  Store_SetSaveTimeMode(const char * src);
@@ -427,10 +429,10 @@ int  Store_SetWorkMode(char _src);
 int  Store_ReadSystemType(char * _dest);
 int  Store_SetSystemType(char _src);
 
-//ÉèÖÃWIFIÅäÖÃ±êÊ¶  by ÁõÃÎ¾ı 2017-7-16
+//è®¾ç½®WIFIé…ç½®æ ‡è¯†  by åˆ˜æ¢¦å› 2017-7-16
 int Store_SetWIFIConfigFlag(char * _src);
 
-//¶ÁWIFIÅäÖÃ±êÊ¶  by ÁõÃÎ¾ı 2017-7-16
+//è¯»WIFIé…ç½®æ ‡è¯†  by åˆ˜æ¢¦å› 2017-7-16
 int Store_ReadWIFIConfigFlag(char * _dest);
 
 

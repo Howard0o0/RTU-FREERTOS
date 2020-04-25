@@ -10,6 +10,7 @@
 #ifndef  _ADC_H_
 #define  _ADC_H_
 
+// #define ZHADD
 
 extern unsigned int A[16]; 
 

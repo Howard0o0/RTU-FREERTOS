@@ -1,10 +1,10 @@
 //////////////////////////////////////////////////////
-//     �ļ���: Sampler.c
-//   �ļ��汾: 1.0.0
-//   ����ʱ��: 09�� 11��30��
-//   ��������:  
-//       ����: ����
-//       ��ע: ��
+//     文件名: Sampler.c
+//   文件版本: 1.0.0
+//   创建时间: 09年 11月30日
+//   更新内容:  
+//       作者: 林智
+//       附注: 无
 //
 //////////////////////////////////////////////////////
 
@@ -27,84 +27,90 @@
 //static int s_pulse3_flag=0;
 //static int s_pulse4_flag=0;
 
-//static unsigned int  s_pulse1_num=0; //���� 
+//static unsigned int  s_pulse1_num=0; //计数  
 //static unsigned int  s_pulse2_num=0; 
 //static unsigned int  s_pulse3_num=0; 
 //static unsigned int  s_pulse4_num=0;
 
 
-char g_pulse_rate[4]={0,0,0,0}; //  ������
+char g_pulse_rate[4]={0,0,0,0}; //  满计数
 char g_pulse_range[4][3];
 
-//�������� ,  �����ظ�����.�Լ���������ĳ��� 
+//复警告标记 ,  不会重复警告.以及抖动警告的出现 
 int s_alert_flag[8];
                   
 char alert_str[60];//A,0000,B,0000,C,0000,D,0000,E,0000,F,0000,G,0000,H,0000
 int alert_str_idx=0;
 
 int  Sampler_Init()
-{//������Ϳ������Ķ˿ڽ��г�ʼ��.
+{//对脉冲和开关量的端口进行初始化.
     
-//����ΪP2 -->P1    ly 
-//����ΪP5 -->P4        
+//脉冲为P2 -->P1    ly 
+//开关为P5 -->P4       
     P1SEL = 0x00;   
     P1DIR = 0x00;
     P4SEL = 0x00;
     
     char _temp = 0x00; 
     
-//  ��ȡIO��������
+//  读取IO方向设置
     if(Store_ReadIoDirConfig(&_temp)>=0 ) 
         P4DIR = _temp; 
     printf("");
-//  ��ȡIO��ƽ����
+//  读取IO电平设置
     if(Store_ReadIoLevelConfig(&_temp)>=0) 
         P4OUT = _temp; 
 
-    //������ʹֵ��ʧ,�������︴�Ƴ���. 
+    //重启会使值丢失,我们这里复制出来. 
     
-//  ����Ƶ��
+//  脉冲频率
     Store_ReadPulseRate(1,&(g_pulse_rate[0]));
     Store_ReadPulseRate(2,&(g_pulse_rate[1]));
     Store_ReadPulseRate(3,&(g_pulse_rate[2]));
     Store_ReadPulseRate(4,&(g_pulse_rate[3]));
     
-//  �������ֵ
+//  脉冲最大值
     Store_ReadPulseRangeBytes(1,g_pulse_range[0]);
     Store_ReadPulseRangeBytes(2,g_pulse_range[1]);
     Store_ReadPulseRangeBytes(3,g_pulse_range[2]);
     Store_ReadPulseRangeBytes(4,g_pulse_range[3]);
-    RTC_RetrievePulseBytes();//��ȡ����ֵ
+    RTC_RetrievePulseBytes();//提取脉冲值
     
-    
-// 2418 P2����,P2.3 �����ж� ����RTC׼������֮�� . P2.0-2.4�ж�flag high-to-low transition
-//5438 P1����  P1.3                                P1.0-1.4
+#ifndef ZHADD
+// 2418 P2设置,P2.3 开启中断 放在RTC准备好了之后 . P2.0-2.4中断flag high-to-low transition
+//5438 P1设置  P1.3                                P1.0-1.4
     P1IE = 0x03;
     P1IES = 0x0F;
+#else
+// 2418 P2设置,P2.3 开启中断 放在RTC准备好了之后 . P2.0-2.4中断flag high-to-low transition
+//5438 P1设置  P1.3                                P1.0-1.4
+    P1IE = 0xFF;  //中断使能位
+    P1IES = 0xFF; // high-to-low transition
+#endif
     
     return 0;
 }
 
-//����8��IO�ڵĵ�ƽ,��������Ϊ���. ��ʼΪ1
+//控制8个IO口的电平,必须设置为输出. 起始为1
 int Sampler_IO_Level(int _ioIdx, int _level)
 {
     if( _ioIdx < 1 || _ioIdx>8)
         return -3;
-    //��ȡIO����
+    //读取IO配置
     char _temp1=0x00; char _temp2=0x00;char _temp3=0x00;
     if(Store_ReadIoDirConfig(&_temp1)<0)
-    {//����޷������Ͷ�Ĭ��Ϊ�������.
-        //�����ɹ�.
+    {//如果无法读出就都默认为输出好了.
+        //让他成功.
         _temp1=0xFF;
     }
     -- _ioIdx;
     _temp2 = ( 0x01 << _ioIdx );
     if(_temp2 & _temp1==0x00)
-    {//��λ��Ϊ���
+    {//该位不为输出
         return -2;
     }
     
-    //������Ҫ��������
+    //该设置要保存起来
     if(Store_ReadIoLevelConfig(&_temp3)<0) 
         return -1; 
     if(_level) 
@@ -115,8 +121,8 @@ int Sampler_IO_Level(int _ioIdx, int _level)
         return -1;
     
     P4DIR |= _temp2;
-    //����IO��
-    if(_level)//�Ը�λ��������
+    //驱动IO口
+    if(_level)//对该位进行设置
         P4OUT |= _temp2;
     else
         P4OUT &= ~ _temp2;
@@ -125,12 +131,12 @@ int Sampler_IO_Level(int _ioIdx, int _level)
 
 int Sampler_Open()
 { 
-    //�򿪴�������Դ 
+    //打开传感器电源 
     P9DIR |= BIT3;
     P9OUT |= BIT3; 
     
     
-    //��ѹ����
+    //电压产生
     System_Delayms(500);
     ADC_Open(); //
     return 0;
@@ -151,33 +157,33 @@ int Sampler_Sample()
 }
  
 int Sampler_GSM_ReadAlertString(char * _dest)
-{//�����ͷ���-1
+{//出错就返回-1
     int  _idx=0; 
     char _tempChar1 = 0x00;
     char _tempChar2 = 0x00;
     char _buffer[3];
     if(Store_ReadAnalogSelect(&_tempChar1)<0)
             return -1;
-    //����ģ����
+    //添加模拟量
     for(int i=0;i<8;++i)
     {
         if(_tempChar1 & 0x01)
-        {//�����λ��
-            //�����������������
+        {//如果该位有
+            //则添上类型码和数据
             _dest[_idx] = 'A' + i ;
             ADC_ReadAnalogStr(i+1, &(_dest[++ _idx]));
             _idx += 4;
         }
-        //Ȼ������һ��
-        _tempChar1 >>= 1 ;//����һλ
+        //然后是下一个
+        _tempChar1 >>= 1 ;//左移一位
     } 
-    //����������
+    //添加脉冲量
     if(Store_ReadPulseSelect(&_tempChar1)<0)
             return -1;
     for(int i=0;i<4;++i)
     {
         if( _tempChar1 & 0x80)
-        {//�����λ�в����Ӹ�λ
+        {//如果该位有才添加该位
             _dest[_idx++] = 'I' + i ; 
             RTC_ReadPulseBytes(i+1,_buffer);
             Utility_CharToHex( _buffer[0],&(_dest[_idx]));
@@ -189,15 +195,15 @@ int Sampler_GSM_ReadAlertString(char * _dest)
          }
          _tempChar1 <<=1;
     } 
-    //������ 
+    //开关量 
     _tempChar1=0x01;
-    //_tempChar2װ������������
+    //_tempChar2装开关量的配置
     if(Store_ReadIoSelect(&_tempChar2)<0)
         return -1;
     for(int i=0;i<8;++i)
-    {//����8��λ
+    {//对于8个位
         if(_tempChar2&0x01)
-        {//Ϊ1��λҪ��¼0��1
+        {//为1的位要记录0或1
             _dest[_idx++] = 'M' + i;
             if(P4IN & _tempChar1)
             {
@@ -208,11 +214,11 @@ int Sampler_GSM_ReadAlertString(char * _dest)
                 _dest[_idx++]='0';
             }
          }
-         //�ж���һ��
+         //判断下一个
          _tempChar1 >>=1;
          _tempChar2 >>=1;
     }
-    //����  ����#��,���ͳ����Լ���
+    //结束  对于#号,发送程序自己加
     return _idx;
 }
 
@@ -224,32 +230,32 @@ int Sampler_DTU_ReadAlertString( char * _dest)
 
 //0123456798901234567890123456789012345678901234567890123456789
 //3:A=1024;C=1022;H=3333;
-//����1��ʾ Ҫ����
-//����δѡ���ͨ�� �򲻹���
+//返回1表示 要警告
+//对于未选择的通道 则不管它
 int Sampler_CheckNormal()
 {
-    int _max=4096; //���ޱ���
-    int _min=0;    //���ޱ���
-    char _tempChar1=0x00; //��ʱ����
-    int  _tempInt = 0;    //��ʱ����
+    int _max=4096; //上限变量
+    int _min=0;    //下限变量
+    char _tempChar1=0x00; //临时变量
+    int  _tempInt = 0;    //临时变量
     
-    int _need_alert=0; //�Ƿ���Ҫ����.
+    int _need_alert=0; //是否需要报警.
     
-    alert_str_idx=1;   //������дalert_str;
+    alert_str_idx=1;   //重新填写alert_str;
     alert_str[alert_str_idx++]=':';
-    char _alert_num=0;//����ָʾ��������.
+    char _alert_num=0;//用来指示报警数量.
     
     
     if(Store_ReadAnalogSelect(&_tempChar1)<0)
-    {//�޷�����ѡ��,�͵���ѡ����.
+    {//无法读出选择串,就当都选择了.
         _tempChar1 = 0xFF;
     }
-    //�������μ�����ͨ��
+    //下面依次检查各个通道
     for(int i=0; i< 8; ++i)
     {
         _tempInt= _tempChar1 & (0x01<<i);
         if(_tempInt==0)
-        {//���ͨ��δ��ʹ��
+        {//这个通道未被使用
             continue;
         }
         if(Store_ReadDataMinInt( i+1 , &_min)<0 )
@@ -258,24 +264,24 @@ int Sampler_CheckNormal()
             _max=4096;
         
         if( A[i] < _min || A[i] > _max)
-        {//ֻҪ������Χ�����ڱ�����Ϣ�����¼�¼
-            //���ɸ�ͨ���ϵı�����Ŀ,
+        {//只要超过范围都会在报警信息里留下记录
+            //生成该通道上的报警条目,
             ++_alert_num;
             alert_str[alert_str_idx++]='A'+i;
             alert_str[alert_str_idx++]='=';
             _tempInt=A[i];
             Utility_UintToStr4(_tempInt,&alert_str[alert_str_idx]);
             alert_str_idx+=4;
-            alert_str[alert_str_idx++]= ';';//��һ��,�Ž��зָ�
-            //����ⲿ�ֵ���д
+            alert_str[alert_str_idx++]= ';';//以一个,号进行分隔
+            //完成这部分的填写
         }
-        //������ڼǺź;���
-        //�����һ· �������.
-        //�ж��Ƿ���Ҫ��� �ظ�������
+        //下面关于记号和警报
+        //如果这一路 警告过了.
+        //判断是否需要解除 重复警告标记
         if(s_alert_flag[i]>0)
         {
-            //���������� ��ʽ����ת�����鷳. , ��Ϊһ������!
-            //( A[i] < _max-100)  �� _max-100<0��ʱ�� ,�޷��ŵ�A[i]�������鷳
+            //下面遇到了 隐式类型转换的麻烦. , 做为一个经验!
+            //( A[i] < _max-100)  当 _max-100<0的时候 ,无符号的A[i]将产生麻烦
             if(   (    _max-100>0   &&   A[i]< _max-100 )   ||   (  _max-100<=0 && A[i]<_max ) )
             {
                 TraceMsg("A[i] = ",0);TraceInt4(A[i],1);
@@ -300,16 +306,16 @@ int Sampler_CheckNormal()
         
         if( A[i] < _min)
         {
-            s_alert_flag[i]=-1;//���ñ��,1��ʾ������Ϊ̫С��������
+            s_alert_flag[i]=-1;//设置标记,1表示曾经因为太小而被报警
             _need_alert=1;
         }
         if( A[i] > _max)
         {
-            s_alert_flag[i]=1;//���ñ��
+            s_alert_flag[i]=1;//设置标记
             _need_alert=1;
         }
     }
-    //Ȼ����±�����Ŀ�ַ�.
+    //然后更新报警数目字符.
     alert_str[0] = '0' + _alert_num;
     if(_need_alert)
         return 1;
@@ -317,17 +323,17 @@ int Sampler_CheckNormal()
         return 0;
 }
 
-//  ��������Ϊ
-//  У���ֽ� 0909011230�ֽ�A1�ֽ�A2�ֽ�B1�ֽ�B2�ֽ�..�ֽ�I1�ֽ�I2...�����ֽ�
-//  ����:
+//  保存内容为
+//  校验字节 0909011230字节A1字节A2字节B1字节B2字节..字节I1字节I2...开关字节
+//  如下:
 //  0           1          2          3     
 //  0  1234567890 1234567890123456 789012345678  9
-//  У 0909011230 AABBCCDDEEFFGGHH IIIJJJKKKLLL ����
+//  校 0909011230 AABBCCDDEEFFGGHH IIIJJJKKKLLL 开关
 // 
 int Sampler_SaveData(char * _saveTime)
 {
-    char _data[40];  //������Ϊ40
-    _data[0] = 0x00; // �ѷ��ͱ�� ��Ϊ0x00 ,
+    char _data[40];  //数据条为40
+    _data[0] = 0x00; // 已发送标记 记为0x00 ,
     _data[1] = _saveTime[0]/10 + '0';
     _data[2] = _saveTime[0]%10 + '0';
     _data[3] = _saveTime[1]/10 + '0';
@@ -362,31 +368,31 @@ int Sampler_SaveData(char * _saveTime)
     RTC_ReadPulseBytes(4,&(_data[36]));
     char _tempIO=0x00;
     //
-    //  �жϿ��ؿ�
+    //  判断开关口
     //
-    //  ���ڿ��صı�������,
-    //  �������ȶ�ȡ ����,
-    //  ���������,���Ǳ���  P5IN�ĵ�ƽֵ
-    //  ���������,���Ǳ��� ��P5OUT������
+    //  对于开关的保存数据,
+    //  我们首先读取 方向,
+    //  对于输入的,我们保存  P5IN的电平值
+    //  对于输出的,我们保存 对P5OUT的配置
     char _dir;
     Store_ReadIoDirConfig(&_dir);
-    P4DIR = _dir;//�ٸ���һ��,������ROM����ͬ
+    P4DIR = _dir;//再更新一次,保持与ROM中相同
     char _level;
     Store_ReadIoLevelConfig(&_level);
-    P4OUT = _level;//�ٸ���һ��,������ROM����ͬ
+    P4OUT = _level;//再更新一次,保持与ROM中相同
     
     char _bit = BIT0;
     for(int i=0;i<8;++i)
     {
         if(_dir & _bit)
-        {//��ʾ��λΪ���
-            if(_level & _bit) //����Ϊ�ߵ�ƽ
+        {//表示该位为输出
+            if(_level & _bit) //配置为高电平
                 _tempIO |=_bit; 
             else
                 _tempIO &= ~_bit;
         }
         else
-        {//��ʾ��λΪ����
+        {//表示该位为输入
             if(P4IN & _bit)
                 _tempIO |= _bit;
             else
@@ -394,9 +400,9 @@ int Sampler_SaveData(char * _saveTime)
         }
         _bit<<=1;
     }
-    //Ȼ����д
+    //然后填写
     _data[39] = _tempIO; 
-    //д��_data��
+    //写好_data了
     if(Store_WriteDataItemAuto(_data)<0)
     {
         return -1;
@@ -431,8 +437,11 @@ void longtochar(char *arr1, long *arr2)
     arr1[2] = (char)arr2[2];
 }
 
-
+#ifndef ZHADD
 char ISR_Count_Temp[5] = {0,0,0,0,0};
+#else
+
+#endif
 
 void ISR_Count_Cal(char* ISR_Count_Arr)
 {
@@ -459,6 +468,11 @@ static char s_pulse6_flag=0;
 static char s_pulse7_flag=0;
 static char s_pulse8_flag=0;
 extern char s_isr_count_flag;
+/*脉冲计数中断*/
+//char s_rtc_nowTime1[6];
+//char s_rtc_nowTime2[6];
+
+
 #pragma vector = PORT1_VECTOR
 __interrupt void PORT1_ISR(void) 
 { 
@@ -473,7 +487,7 @@ __interrupt void PORT1_ISR(void)
  char ISR_Count_Temp7[5] = {0,0,0,0,0};
  char ISR_Count_Temp8[5] = {0,0,0,0,0};  
   static int a[8] = {0};
-  int i =0;
+//   int i =0;
     //TraceInt4(i++,1);
    
  //Hydrology_ReadStoreInfo(HYDROLOGY_ISR_COUNT_FLAG,&isr_count_flag,HYDROLOGY_ISR_COUNT_FLAG_LEN);    
