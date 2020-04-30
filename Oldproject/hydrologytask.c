@@ -31,7 +31,7 @@ extern int		 RS485RegisterCount;
 extern int		 IsDebug;
 extern int		 DataPacketLen;
 extern hydrologyElement  inputPara[ MAX_ELEMENT ];
-extern hydrologyElement  outputPara[ MAX_ELEMENT ];
+// extern hydrologyElement  outputPara[ MAX_ELEMENT ];
 uint16_t		 time_10min = 0, time_5min = 0, time_1min = 1, time_1s = 0;
 extern SemaphoreHandle_t GPRS_Lock;
 
@@ -57,28 +57,74 @@ void convertSendTimetoHydrology(char* src, char* dst) {
 	dst[ 4 ] = _DECtoBCD(src[ 4 ]);
 	dst[ 5 ] = _DECtoBCD(src[ 5 ]);
 }
-
-float ConvertAnalog(int v, int range) {
+void convert_array_bcd2dec(char* array, int len) {
+	for (int i = 0; i < len; i++) {
+		array[ i ] = _BCDtoDEC(array[ i ]);
+	}
+}
+float ConvertAnalog(int v, int index) {
 	float tmp;
+	char  range[ HYDROLOGY_ADC_RANGE_LEN ]		   = { 0, 1 };
+	char  coefficient[ HYDROLOGY_ADC_COEFFICIENT_LEN ] = { 1, 0 };
+	char  offset[ HYDROLOGY_ADC_OFFSET_LEN ]	   = { 0 };
+	char  base[ HYDROLOGY_ADC_BASE_LEN ]		   = { 0 };
+	char  upper, lower, warnning1, warnning2;
+	float Range, Coefficient, Offset;
+	float Base;
 
-	// tmp = v / (4096.0) * range;
-	tmp = (v - 4096.0) / (4096.0) * range;
+	Hydrology_ReadStoreInfo(HYDROLOGY_ADC_RANGE1 + index * HYDROLOGY_ADC_RANGE_LEN, range,
+				HYDROLOGY_ADC_RANGE_LEN);
+	Hydrology_ReadStoreInfo(HYDROLOGY_ADC_COEFFICIENT1 + index * HYDROLOGY_ADC_COEFFICIENT_LEN,
+				coefficient, HYDROLOGY_ADC_COEFFICIENT_LEN);
+	Hydrology_ReadStoreInfo(HYDROLOGY_ADC_OFFSET1 + index * HYDROLOGY_ADC_OFFSET_LEN, offset,
+				HYDROLOGY_ADC_OFFSET_LEN);
+	Hydrology_ReadStoreInfo(HYDROLOGY_ADC_BASE1 + index * HYDROLOGY_ADC_BASE_LEN, base,
+				HYDROLOGY_ADC_BASE_LEN);
+	Hydrology_ReadStoreInfo(HYDROLOGY_ADC_UPPER1 + index * HYDROLOGY_ADC_UPPER_LEN, &upper,
+				HYDROLOGY_ADC_UPPER_LEN);
+	Hydrology_ReadStoreInfo(HYDROLOGY_ADC_LOWER1 + index * HYDROLOGY_ADC_LOWER_LEN, &lower,
+				HYDROLOGY_ADC_LOWER_LEN);
+	Hydrology_ReadStoreInfo(HYDROLOGY_ADC_WARNNING1_1 + index * HYDROLOGY_ADC_WARNNING_LEN,
+				&warnning1, HYDROLOGY_ADC_WARNNING_LEN);
+	Hydrology_ReadStoreInfo(HYDROLOGY_ADC_WARNNING2_1 + index * HYDROLOGY_ADC_WARNNING_LEN,
+				&warnning2, HYDROLOGY_ADC_WARNNING_LEN);
+
+	convert_array_bcd2dec(range, HYDROLOGY_ADC_RANGE_LEN);
+	convert_array_bcd2dec(coefficient, HYDROLOGY_ADC_COEFFICIENT_LEN);
+	convert_array_bcd2dec(offset, HYDROLOGY_ADC_OFFSET_LEN);
+	convert_array_bcd2dec(base, HYDROLOGY_ADC_BASE_LEN);
+	convert_array_bcd2dec(&upper, HYDROLOGY_ADC_UPPER_LEN);
+	convert_array_bcd2dec(&lower, HYDROLOGY_ADC_LOWER_LEN);
+	convert_array_bcd2dec(&warnning1, HYDROLOGY_ADC_WARNNING_LEN);
+	convert_array_bcd2dec(&warnning2, HYDROLOGY_ADC_WARNNING_LEN);
+
+	Range	    = range[ 0 ] * 100 + range[ 1 ];
+	Coefficient = coefficient[ 0 ] + (( float )coefficient[ 1 ]) / 100;
+	Offset	    = offset[ 0 ] + (( float )offset[ 1 ]) / 100;
+	//   Base = (double)((((base[0] * 100) + base[1] * 100) + base[2] * 100) + base[3]) +
+	//                                         (double)((double)base[4] +
+	//                                         ((double)base[5]/100))/100;
+	Base = ( float )base[ 0 ];
+	Base = Base * 100 + ( float )base[ 1 ];
+	Base = Base * 100 + ( float )base[ 2 ];
+	Base += (( float )base[ 3 ] / 100);
+	//   Base = Base + Base1 + Base2;
+
+	tmp = ( float )v / (4096.0) * 2 * Range * Coefficient + Offset + Base;
 	return tmp;
 }
 
-void ADC_Element(char* value, int index) {
-	// int range[5] = {1,20,100,5000,4000};     //模拟量范围
-	int   range[ 16 ] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
-	float floatvalue  = 0;
+void ADC_Element(char* value, int index, int adc_i) { // int range[5] = {1,20,100,5000,4000};     //ģ������Χ
+	// int range[16] = {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2};
+	float floatvalue = 0;
 
 	// floatvalue = ConvertAnalog(A[index+1],range[index]);
-	floatvalue = ConvertAnalog(A[ index ], range[ index ]); /*++++++++++++++++*/
+	floatvalue = ConvertAnalog(A[ index - 1 ], adc_i); /*++++++++++++++++*/
 	memcpy(value, ( char* )(&floatvalue), 4);
 }
-
 char value[ 4 ] = { 0, 0, 0, 0 };
 
-void HydrologyUpdateElementTable() {
+void HydrologyUpdateElementTable(){
 	int  i     = 0;
 	char user  = 0;
 	char rs485 = 0;
@@ -105,9 +151,8 @@ void HydrologyUpdateElementTable() {
 						+ i * HYDROLOGY_ELEMENT_CHANNEL_LEN,
 					&Element_table[ i ].Channel, HYDROLOGY_ELEMENT_CHANNEL_LEN);
 		// Hydrology_ReadStoreInfo(HYDROLOGY_SWITCH1,temp_value,HYDROLOGY_SWITCH_LEN);
-		getElementDd(
-			Element_table[ i ].ID, &Element_table[ i ].D,
-			&Element_table[ i ].d);  // D,d存了取还是直接取，可以先测直接取的，看可行否
+		getElementDd(Element_table[ i ].ID, &Element_table[ i ].D,
+			     &Element_table[ i ].d);  // D,d存了取还是直接取，可以先测直接取的，看可行否
 	}
 	Element_table[ i ].ID      = NULL;
 	Element_table[ i ].type    = NULL;
@@ -117,6 +162,7 @@ void HydrologyUpdateElementTable() {
 	Element_table[ i ].Channel = NULL;
 }
 char s_isr_count_flag = 0;
+char s_picture_flag   = 0;
 void HydrologyDataPacketInit() {
 	char packet_len = 0;
 	int  i		= 0;

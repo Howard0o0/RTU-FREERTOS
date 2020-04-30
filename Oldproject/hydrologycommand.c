@@ -9,23 +9,21 @@
 #include "uart3.h"
 #include "uart1.h"
 #include "common.h"
-
-//extern const hydrologyElementInfo Element_table[UserElementCount+1]; 
-extern  hydrologyElementInfo Element_table[MAX_ELEMENT+1]; //Ҫ�ر�
-extern int UserElementCount; //�û�Ҫ������
-int RS485RegisterCount = 0; //485Ҫ������
-  extern char s_isr_count_flag;
-
+//extern const hydrologyElementInfo Element_table[UserElementCount+1]; //++++++++++++++++++++++++++
+extern  hydrologyElementInfo Element_table[MAX_ELEMENT+1]; //+++++++++++++++++++++++
+extern int UserElementCount; //++++++++++++++++++++++++++++++++
+int RS485RegisterCount = 0; //++++++++++
+extern char s_picture_flag;
 /* USER CODE END Includes */
 
-/*���º���Ϊ�ⲿ�ӿں����������û�����Ӳ���豸ʵ�֣�����ˮ��Э���޷�����*/
+/*以下函数为外部接口函数，需由用户根据硬件设备实现，否则水文协议无法运行*/
 void RS485_Dir(char inout)
 {
   if(inout)
   {
 //    P3DIR |= BIT0+BIT1;
 //    P3OUT |= BIT0+BIT1;
-//���ý� ��P100Ҫѡ��
+//复用脚 对P100要选低
      P10DIR |= BIT4;
      P10OUT |= BIT4;
   }
@@ -59,94 +57,173 @@ void RS485_Delayus(int timeout)
 
 void RS485_ValueDefine(char *buffer,char *value,int index,int times)
 {
- // float floatvalue = 0;
- // uint32_t intvalue = 0;
+  float floatvalue = 0;
+  uint32_t intvalue = 0;
   char buffer1[4];
-    
-  switch(index)
+  //++++++++
+  char data_order = 0;
+   Hydrology_ReadStoreInfo(HYDROLOGY_RS485_RECV_DATA_ORDER1 + HYDROLOGY_RS485_RECV_DATA_ORDER_LEN * index,&data_order,HYDROLOGY_RS485_RECV_DATA_ORDER_LEN);
+ 
+//+++++  
+  switch(data_order) //+++++++++++++4.接收数据顺序++++字节顺序+++++++++
   {
-//    case 0:
-//    {
-//      floatvalue = buffer[0]*16777216 + buffer[1]*65536 + buffer[2]*256 + buffer[3];
-//      floatvalue /= 1000;
-//      
-//      memcpy(value,(char*)(&floatvalue),4);
-//      break;
-//    }
-    case 0:
-    {
-      buffer1[3] = buffer[2];
-      buffer1[2] = buffer[3];
-      buffer1[1] = buffer[0];
-      buffer1[0] = buffer[1];
-      memcpy(value,buffer1,4);
-      break;
-    }
+
     case 1:
     {
+      buffer1[3] = buffer[3];
+      buffer1[2] = buffer[2];
+      buffer1[1] = buffer[1];
+      buffer1[0] = buffer[0];
+      memcpy(value,buffer1,4);
+      break;
+    }
+    case 2:
+    {
+      buffer1[3] = buffer[0];
+      buffer1[2] = buffer[1];
+      buffer1[1] = buffer[2];
+      buffer1[0] = buffer[3];
+      memcpy(value,buffer1,4);
+      break;
+    }
+   case 3:
+    {
       buffer1[3] = buffer[2];
       buffer1[2] = buffer[3];
       buffer1[1] = buffer[0];
       buffer1[0] = buffer[1];
       memcpy(value,buffer1,4);
       break;
+    } 
+  case 4:
+    {
+      buffer1[3] = buffer[1];
+      buffer1[2] = buffer[0];
+      buffer1[1] = buffer[3];
+      buffer1[0] = buffer[2];
+      memcpy(value,buffer1,4);
+      break;
     }
- 
-
+ case 5:
+    {
+      intvalue = (uint32_t)buffer[3]*16777216 + (uint32_t)buffer[2]*65536 + (uint32_t)buffer[1]*256 + (uint32_t)buffer[0];  
+      memcpy(value,(char*)(&intvalue),4);
+   
+    break;
+    }
+ case 6:
+    {
+      intvalue = (uint32_t)buffer[2]*16777216 + (uint32_t)buffer[3]*65536 + (uint32_t)buffer[0]*256 + (uint32_t)buffer[1];  
+      memcpy(value,(char*)(&intvalue),4);
+   
+    break;
+    }
+ case 7:
+    {
+      intvalue = (uint32_t)buffer[1]*16777216 + (uint32_t)buffer[0]*65536 + (uint32_t)buffer[3]*256 + (uint32_t)buffer[2];  
+      memcpy(value,(char*)(&intvalue),4);
+   
+    break;
+    }
+ case 8:
+    {
+      intvalue = (uint32_t)buffer[0]*16777216 + (uint32_t)buffer[1]*65536 + (uint32_t)buffer[2]*256 + (uint32_t)buffer[3];  
+      memcpy(value,(char*)(&intvalue),4);
+   
+    break;
+    }
+case 9:
+    {
+     floatvalue = buffer[3]*16777216 + buffer[2]*65536 + buffer[1]*256 + buffer[0];
+     floatvalue /= 1000;
+      
+     memcpy(value,(char*)(&floatvalue),4);
+    break;
+    }
     default:
     {
       break;
     }
   }
 }
-/*���Ϻ���Ϊ�ⲿ�ӿں����������û�����Ӳ���豸ʵ�֣�����ˮ��Э���޷�����*/
+/*以上函数为外部接口函数，需由用户根据硬件设备实现，否则水文协议无法运行*/
 
-void RS485_Send(char device,char function,char reg_addrH,char reg_addrL,char timeout)
+void RS485_Send(char device,char function,char reg_addrH,char reg_addrL,char timeout,int index)
 {
   char command[8];
   short crc = 0;
-  
+  //+++++++
+  char crc_type = 0;
+  char _crc_order[2] = {0};
+   Hydrology_ReadStoreInfo(HYDROLOGY_RS485_CRC_TYPE1 + HYDROLOGY_RS485_CRC_TYPE_LEN * index,&crc_type,HYDROLOGY_RS485_CRC_TYPE_LEN);
+   Hydrology_ReadStoreInfo(HYDROLOGY_RS485_CRC_ORDER1 + HYDROLOGY_RS485_CRC_ORDER_LEN * index,_crc_order,HYDROLOGY_RS485_CRC_ORDER_LEN);
+  //+++++++
   command[0] = device;
   command[1] = function;
   command[2] = reg_addrH ;
   command[3] = reg_addrL;
   command[4] = 0;
   command[5] = 2;
-  crc = hydrologyCRC16(command,6);
-  command[6] = crc% 256;
-  command[7] = crc>> 8;
+  if(crc_type == 0x01)
+  {
+  crc = hydrologyCRC16(command,6);   //++++++++++++1.发送crc校验类型和2.大小端顺序++++++++++++++
+  
+    if(_crc_order[0] == 0x01) //高位在前，低位在后
+    {
+       command[6] = crc>> 8;
+       command[7] = crc% 256;
+ 
+    }
+    else
+    {
+       command[6] = crc% 256;
+       command[7] = crc>> 8;
+    }
+  }
+  else if(crc_type == 0x02)
+  {
+    
+   command[6] = _crc_order[0];
+   command[7] = _crc_order[1];
+  }
+ 
   //RS485_Dir(1);
   RS485_SerilWrite(command,8);
-//   TraceHexMsg(command,8);    //++++++++++++++++++++++++++++++++++
-  printf("rs485 send message with crc:");
-  Console_WriteHexCharln(command,8);
-
+  TraceHexMsg(command,8);    //++++++++++++++++++++++++++++++++++
   RS485_Delayms(1);
   RS485_Delayus(500);
  // RS485_Dir(0);
 }
 
-int RS485_Read(char *buffer)
+int RS485_Read(char *buffer,int index)
 {
  
   char temp_buffer[9];
   short crc1 = 0;
   short crc2 = 0;
+  char recv_crc_order = 0;
 
   RS485_SerilRead(temp_buffer,9);
-//    TraceHexMsg(temp_buffer,9);
-  printf("rs485 receive message:");
-  Console_WriteHexCharln(temp_buffer,9);
+   TraceHexMsg(temp_buffer,9);
   
+  Hydrology_ReadStoreInfo(HYDROLOGY_RS485_RECV_CRC_ORDER1 + HYDROLOGY_RS485_RECV_CRC_ORDER_LEN * index,&recv_crc_order,HYDROLOGY_RS485_RECV_CRC_ORDER_LEN);
 //  memcpy(temp_buffer2,temp_buffer,9);
 //  memcpy(&temp_buffer[1],temp_buffer2,8);
 //  temp_buffer[0] = 0x01;
+
   
-  crc1 = hydrologyCRC16(temp_buffer,7);
-  crc2 = temp_buffer[8]<<8 | temp_buffer[7];
-//  crc2 = hydrologyCRC16(temp_buffer,7);
-//  crc1 = temp_buffer[8]<<8 | temp_buffer[7];  //��λ��ǰ����λ�ں�
- 
+      if(recv_crc_order == 0x01) ////高位在前，低位在后 
+      {
+          crc1 = hydrologyCRC16(temp_buffer,7);          //++++++++++++5.接收crc校验大小端顺序++++++++++++++
+          crc2 = temp_buffer[7]<<8 | temp_buffer[8];
+      }
+      else if(recv_crc_order == 0x02)   //低位在前，高位在后
+      { 
+        crc1 = hydrologyCRC16(temp_buffer,7);
+        crc2 = temp_buffer[8]<<8 | temp_buffer[7];   
+      }
+  
+   
   if(crc1 == crc2)
   {
     memcpy(buffer,&temp_buffer[3],4);
@@ -154,7 +231,7 @@ int RS485_Read(char *buffer)
   }
   else
   {
-  err_printf("RS485 crc check failed!\n\n");
+  Hydrology_Printf("RS485 crc check failed!");
     return -1;
   }
 }
@@ -162,25 +239,38 @@ int RS485_Read(char *buffer)
 void Hydrology_ReadRS485(char *value,int index)
 {
   char temp_value[5] = {0,0,0,0,0};
+  // char temp_value[5] = {0x01,0x04,0x10,0x10,2};
+  // char read_value[5]; //debug
+ // char test[3]={3,4,5};
   char buffer[4] = {0,0,0,0};
   char single_count1 = 0;
   volatile char single_count2 = 0;
   static char rs485_count = 0;
   int i = 0,j = 0,error = 0;
   
-  Hydrology_ReadStoreInfo(HYDROLOGY_RS485_COUNT1 + HYDROLOGY_RS485_COUNT_LEN * index,
-                                &single_count1,HYDROLOGY_RS485_COUNT_LEN);
+  //+++++++++++
+  char delay_time[2] = {0};
+  int _delay_time = 0;
+  //+++++++++
+  Hydrology_ReadStoreInfo(HYDROLOGY_RS485_COUNT1 + HYDROLOGY_RS485_COUNT_LEN * index,&single_count1,HYDROLOGY_RS485_COUNT_LEN);
   single_count2 = single_count1;
   while(single_count1--)
   {
-    Hydrology_ReadStoreInfo(HYDROLOGY_RS4851 + HYDROLOGY_RS485_LEN * (i+rs485_count),
-                                temp_value,HYDROLOGY_RS485_LEN);
+
+    //Hydrology_WriteStoreInfo(HYDROLOGY_RS4851,temp_value,HYDROLOGY_RS485_LEN);   //debug
+    Hydrology_ReadStoreInfo(HYDROLOGY_RS4851 + HYDROLOGY_RS485_LEN * (i+rs485_count),temp_value,HYDROLOGY_RS485_LEN);
+    
+    Hydrology_ReadStoreInfo(HYDROLOGY_RS485_RECV_DELAY1 + HYDROLOGY_RS485_RECV_DELAY_LEN * index,delay_time,HYDROLOGY_RS485_RECV_DELAY_LEN);
+    delay_time[0] = _BCDtoDEC(delay_time[0]);
+    delay_time[1] = _BCDtoDEC(delay_time[1]);
+    _delay_time = delay_time[0]*100 + delay_time[1];
+    
     for(error = 0;error < 3;error++)
     { 
       
-      RS485_Send(temp_value[0],temp_value[1],temp_value[2],temp_value[3],temp_value[4]);
-      RS485_Delayms(5000);
-      if(RS485_Read(buffer) != 0)
+      RS485_Send(temp_value[0],temp_value[1],temp_value[2],temp_value[3],temp_value[4],index);
+      RS485_Delayms(_delay_time);  //++++++++++++3.接收延时++++++++5000+++++
+      if(RS485_Read(buffer,index) != 0)
         continue;
       else
       {
@@ -196,7 +286,8 @@ void Hydrology_ReadRS485(char *value,int index)
   else
     rs485_count += single_count2;
 }
-
+/*读取开关量状态值，一个字节表示8个io口*/
+/*
 void Hydrology_ReadIO_STATUS(char *value,int flag)  //1是对P2开关输入，2是io9-16，3是io17-24，对P8开关输入（分时复用）++++++++++++++++++++++++++++++++++
 {
    //开关量 
@@ -264,7 +355,154 @@ void Hydrology_ReadIO_STATUS(char *value,int flag)  //1是对P2开关输入，2�
 
 
 }
-/*���ÿ�����,���������*/
+*/
+unsigned int binary_to_gray(unsigned int x)
+{
+	return x ^ (x >> 1);
+}
+unsigned char get_io_status_parse_type(void) 
+{
+	char switch_parse_type;
+	Hydrology_ReadStoreInfo(HYDROLOGY_SWITCH_PARSE_TYPE, &switch_parse_type,
+				HYDROLOGY_SWITCH_PARSE_TYPE_LEN);
+	return ( unsigned char )switch_parse_type;
+}
+/*读取开关量状态值，一个字节表示8个io口*/
+void Hydrology_ReadIO_STATUS(char *value,int flag)  //1是对P2开关输入，2是io9-16，3是io17-24，对P8开关输入（分时复用）++++++++++++++++++++++++++++++++++
+{
+   //开关量 
+   //char _tempChar0=BIT0;
+   char _tempChar1=BIT0;
+   char _tempChar2=BIT0;
+   char _tempChar3=BIT0;
+   char *temp = value;
+
+ /*
+      for(int i=0;i<2;++i)
+      {
+        if(P2IN & _tempChar0)
+            {
+                *(&temp[0]) |=1<<i;
+            }
+            else
+            {
+                *(&temp[0]) &=~(1<<i);
+            }
+        _tempChar0= _tempChar0 << 1;
+      }
+      
+      if(P2IN & BIT2)
+            {
+                *(&temp[0]) |=1<<7;
+            }
+            else
+            {
+                *(&temp[0]) &=~(1<<7);
+            }
+       if(P2IN & BIT3)
+            {
+                *(&temp[1]) |=1<<2;
+            }
+            else
+            {
+                *(&temp[1]) &=~(1<<2);
+            }
+          
+      for(int i=4;i<8;++i)
+      {
+            if(P2IN & _tempChar1)
+            {
+                *(&temp[1]) |=1<<i;
+            }
+            else
+            {
+                *(&temp[1]) &=~(1<<i);
+            }
+         
+         //判断下一个
+        _tempChar1= _tempChar1 << 1;
+         
+      }*/
+   
+      
+      *(&temp[0]) = 0;
+      
+     for(int i=0;i<8;i++)
+        {
+        if(P2IN & _tempChar1)
+            {
+                *(&temp[1]) |=1<<i;
+            }
+            else
+            {
+               *(&temp[1]) &=~(1<<i);
+            }
+         _tempChar1= _tempChar1 << 1;
+        }
+    
+      P11DIR |= BIT0+BIT1+BIT2;             
+      P11OUT &=~(BIT0+BIT1+BIT2);
+      
+    for(int i=0;i<8;i++)
+    {
+        if(P8IN & _tempChar2)
+            {
+                *(&temp[2]) |=1<<i;
+            }
+            else
+            {
+               *(&temp[2]) &=~(1<<i);
+            }
+         _tempChar2= _tempChar2 << 1;
+    }
+   
+   
+   
+
+     P11DIR |= BIT0+BIT1+BIT2;
+     P11OUT |=BIT0;
+     P11OUT &=~(BIT1+BIT2);
+     
+    for(int i=0;i<8;i++)
+    {
+        if(P8IN & _tempChar3)
+            {
+                *(&temp[3]) |=1<<i;
+            }
+            else
+            {
+                *(&temp[3]) &=~(1<<i);
+            }
+         _tempChar3= _tempChar3 << 1;
+    }
+   
+    *(&temp[1]) = ~(*(&temp[1]));
+     *(&temp[2]) = ~(*(&temp[2]));
+      *(&temp[3]) = ~(*(&temp[3]));
+      if (get_io_status_parse_type() == HYDROLOGY_SWITCH_PARSE_TYPE_GRAY_CODE) 
+      {
+		unsigned int io_status_group_1 = (unsigned int) * (&temp[ 1 ]);
+		unsigned int io_status_group_2 = (unsigned int) * (&temp[ 2 ]);
+		unsigned int io_status_group_3 = (unsigned int) * (&temp[ 3 ]);
+
+		unsigned int io_status_channel_1_gray =
+			(io_status_group_1 << 4) | (io_status_group_2 >> 4);
+		unsigned int io_status_channel_2_gray =
+			((io_status_group_2 & 0xF) << 8) | io_status_group_3;
+
+		io_status_channel_1_gray = binary_to_gray(io_status_channel_1_gray);
+		io_status_channel_2_gray = binary_to_gray(io_status_channel_2_gray);
+
+		*(&temp[ 1 ]) = ( char )(io_status_channel_1_gray >> 4);
+		*(&temp[ 2 ]) = ( char )((io_status_channel_1_gray & 0xF) << 4
+					 | (io_status_channel_2_gray >> 8));
+		*(&temp[ 3 ]) = ( char )(io_status_channel_2_gray & 0xFF);
+      }
+   return ;
+
+
+}
+/*设置开关量,开关量输出*/
 void Hydrology_SetIO_STATUS(char *value)          //+++++++++++++++++++++++++++++++++++++++
 {
     char _temp = 0xff;
@@ -273,8 +511,8 @@ void Hydrology_SetIO_STATUS(char *value)          //++++++++++++++++++++++++++++
     P4DIR |= _temp;   // temp2
     P4OUT |= _temp2;
 
-    //����IO��
-    //�Ը�λ��������
+    //驱动IO口
+    //对该位进行设置
 
     return ;
 
@@ -510,6 +748,21 @@ int hydrologySetParaSelect(char* guide,char* value)
     }
     case 0x21:
     {
+
+        /*发送图片的flag置1，存flag和发送图片的间隔*/
+      /*
+      if(!value)
+      {  
+        s_picture_flag = 0x00;
+      }
+      else
+      {
+      s_picture_flag = 0x01;
+      }
+      Hydrology_WriteStoreInfo(PICTURE_FLAG,&s_picture_flag,PICTURE_FLAG_LEN);
+     
+     ret= Hydrology_WriteStoreInfo(PICTURE_INTERVAL,value,PICTURE_INTERVAL_LEN);*/
+
       ret = Hydrology_WriteStoreInfo(HYDROLOGY_ADD_INTERVAL,value,HYDROLOGY_ADD_INTERVAL_LEN);
       break;
     }
@@ -825,7 +1078,7 @@ int hydrologySetParaSelect(char* guide,char* value)
     }
     case 0xFF:
     {
-      //ret = Hydrology_WriteElementTable();  //����0xff������һ��element table���Ԫ��  
+      //ret = Hydrology_WriteElementTable();  //遇到0xff，就是一个element table里的元素  
       break;
     }
     default:
@@ -1172,7 +1425,7 @@ int hydrologyReadParaSelect(char* guide,char* value)
   return ret;
 }
 
-void getElementDd(char ID,char *D,char *d)         //++++++++++++++++����Ҫ�����ñ�+++++++++++++++++++++++
+void getElementDd(char ID,char *D,char *d)         //++++++++++++++++编码要素配置表+++++++++++++++++++++++
 {       
   char x = ID ;
   char *y = D ;
@@ -1188,9 +1441,9 @@ void getElementDd(char ID,char *D,char *d)         //++++++++++++++++����
   }else if(x==0x02 ||x==0x03 ||x==0x0D )
   {
     *y = 3; *z = 1;
-  }else if(x==0x45)
+  }else if(x==0x45)  //4字节hex
   {
-    *y = 4; *z = 0;
+    *y = 8; *z = 0;
   }else if((x>=0x10 && x<=0x18)||x==0x35 ||x==0x47 ||x==0x4A ||(x>=0x70 && x<=0x75))
   {
     *y = 4;*z = 1;
@@ -1249,18 +1502,34 @@ void getElementDd(char ID,char *D,char *d)         //++++++++++++++++����
 int hydrologySetPara(void)
 {
   int i,j = 0;
+  int adc=0;
   int ret;
   char user = 0,rs485 = 0;
   char temp[8] = {0,0,0,0,0,0,0,0};
   char end = 0;
-
-
+  char isr_count_flag =0;  
+  char pictureinterval=0;
+  char switch_parse_type = 0;
+  int count = 0;
   hydrologyDownBody* pbody = (hydrologyDownBody*)(g_HydrologyMsg.downbody);
   
   if(Extend_Flag == 1)                                                            //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   {
      
     UserElementCount = pbody->count;
+    count = UserElementCount;
+    /*
+    for(i=0;i<count;i++)
+    {
+        if((pbody->element)[i].guide[0]==0xF3)  //图片报
+     {
+        //发送图片的flag置1，存flag和发送图片的间隔
+       pictureinterval = (pbody->element)[i].value[0];
+       Hydrology_WriteStoreInfo(PICTURE_INTERVAL,&pictureinterval,PICTURE_INTERVAL_LEN);
+      UserElementCount--;
+     continue;
+     }
+    }*/
     user = (char)UserElementCount;
     Hydrology_WriteStoreInfo(HYDROLOGY_USER_ElEMENT_COUNT ,&user,HYDROLOGY_USER_ElEMENT_COUNT_LEN);
     TraceInt4(UserElementCount,1);
@@ -1271,30 +1540,91 @@ int hydrologySetPara(void)
      Hydrology_WriteStoreInfo(HYDROLOGY_ELEMENT1_TYPE+i*HYDROLOGY_ELEMENT_TYPE_LEN,&(pbody->element)[i].value[0],HYDROLOGY_ELEMENT_TYPE_LEN);
      Hydrology_WriteStoreInfo(HYDROLOGY_ELEMENT1_MODE+i*HYDROLOGY_ELEMENT_MODE_LEN,&(pbody->element)[i].value[1],HYDROLOGY_ELEMENT_MODE_LEN);
      Hydrology_WriteStoreInfo(HYDROLOGY_ELEMENT1_CHANNEL+i*HYDROLOGY_ELEMENT_CHANNEL_LEN,&(pbody->element)[i].value[2],HYDROLOGY_ELEMENT_CHANNEL_LEN);
-      /*����ID��ȡD,d*/     
+      /*根据ID获取D,d*/     
      getElementDd(Element_table[i].ID,&Element_table[i].D,&Element_table[i].d);
       if((pbody->element)[i].value[1] == RS485)
       {  
-         
-         temp[0] =  (pbody->element)[i].value[3];     //�Ĵ�������
+             temp[0] =  (pbody->element)[i].value[3];     //寄存器个数
          Hydrology_WriteStoreInfo(HYDROLOGY_RS485_COUNT1 +j*HYDROLOGY_RS485_COUNT_LEN,temp,HYDROLOGY_RS485_COUNT_LEN);        
-         memcpy(temp,&(pbody->element)[i].value[5],(pbody->element)[i].value[4]);            //(pbody->element)[i].value[4] =HYDROLOGY_RS485_LEN   485����
+         memcpy(temp,&(pbody->element)[i].value[5],(pbody->element)[i].value[4]);            //(pbody->element)[i].value[4] =HYDROLOGY_RS485_LEN   485命令
          Hydrology_WriteStoreInfo(HYDROLOGY_RS4851+j*HYDROLOGY_RS485_LEN,temp,HYDROLOGY_RS485_LEN);   
          
-         j++; //485Ҫ�ص�����
+         //+++++++++++++++++++++++++++++扩展部分++++++++++++++++++++++++++++++++++++++++++++
+         int offt = 10;
+         temp[0] =  (pbody->element)[i].value[offt]; 
+         Hydrology_WriteStoreInfo(HYDROLOGY_RS485_CRC_TYPE1+j*HYDROLOGY_RS485_CRC_TYPE_LEN,temp,HYDROLOGY_RS485_CRC_TYPE_LEN);
+         offt+=1;
+         memcpy(temp,&(pbody->element)[i].value[offt],2);
+         Hydrology_WriteStoreInfo(HYDROLOGY_RS485_CRC_ORDER1+j*HYDROLOGY_RS485_CRC_ORDER_LEN,temp,HYDROLOGY_RS485_CRC_ORDER_LEN);
+         offt+=2;
+          memcpy(temp,&(pbody->element)[i].value[offt],2);
+         Hydrology_WriteStoreInfo(HYDROLOGY_RS485_RECV_DELAY1+j*HYDROLOGY_RS485_RECV_DELAY_LEN,temp,HYDROLOGY_RS485_RECV_DELAY_LEN);
+         offt+=2;
+          temp[0] =  (pbody->element)[i].value[offt]; 
+         Hydrology_WriteStoreInfo(HYDROLOGY_RS485_RECV_DATA_ORDER1+j*HYDROLOGY_RS485_RECV_DATA_ORDER_LEN,temp,HYDROLOGY_RS485_RECV_DATA_ORDER_LEN);
+         offt+=1;
+          temp[0] =  (pbody->element)[i].value[offt]; 
+         Hydrology_WriteStoreInfo(HYDROLOGY_RS485_RECV_CRC_ORDER1+j*HYDROLOGY_RS485_RECV_CRC_ORDER_LEN,temp,HYDROLOGY_RS485_RECV_CRC_ORDER_LEN);
+         offt+=1;
+         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+         j++; //485要素的数量
       } 
             if((pbody->element)[i].value[1] == ISR_COUNT)//脉冲量，判断是单路计数的还是联合计数的，雨量是联合计数的flag=1
         {
             if((pbody->element)[i].guide[0]==0x20||(pbody->element)[i].guide[0]==0x26)
             {
-                s_isr_count_flag = 1;
-               Hydrology_WriteStoreInfo(HYDROLOGY_ISR_COUNT_FLAG,&s_isr_count_flag,HYDROLOGY_ISR_COUNT_FLAG_LEN);  //初始化这块内存是0
+                isr_count_flag = 1;
+               Hydrology_WriteStoreInfo(HYDROLOGY_ISR_COUNT_FLAG,&isr_count_flag,HYDROLOGY_ISR_COUNT_FLAG_LEN);  //初始化这块内存是0
             }
             else
             {
-               Hydrology_WriteStoreInfo(HYDROLOGY_ISR_COUNT_FLAG,&s_isr_count_flag,HYDROLOGY_ISR_COUNT_FLAG_LEN);
+               Hydrology_WriteStoreInfo(HYDROLOGY_ISR_COUNT_FLAG,&isr_count_flag,HYDROLOGY_ISR_COUNT_FLAG_LEN);
             }
-        }       
+        }  
+	/* -------------------switch parse type------------------ */
+	if ((pbody->element)[ i ].value[ 1 ] == IO_STATUS) 
+        {
+	  switch_parse_type = (pbody->element)[ i ].value[ 3 ];
+	Hydrology_WriteStoreInfo(HYDROLOGY_SWITCH_PARSE_TYPE,&switch_parse_type,HYDROLOGY_SWITCH_PARSE_TYPE_LEN);
+	//printf("HYDROLOGY_SWITCH_PARSE_TYPE : %x \n\n", switch_parse_type);
+	}
+       if((pbody->element)[i].value[1] == ADC){
+                int offset = 3;
+
+                memcpy(temp,&(pbody->element)[i].value[offset],HYDROLOGY_ADC_RANGE_LEN);
+                Hydrology_WriteStoreInfo(HYDROLOGY_ADC_RANGE1+adc*HYDROLOGY_ADC_RANGE_LEN,temp,HYDROLOGY_ADC_RANGE_LEN);
+                offset+=HYDROLOGY_ADC_RANGE_LEN;
+
+                memcpy(temp,&(pbody->element)[i].value[offset],HYDROLOGY_ADC_COEFFICIENT_LEN);
+                Hydrology_WriteStoreInfo(HYDROLOGY_ADC_COEFFICIENT1+adc*HYDROLOGY_ADC_COEFFICIENT_LEN,temp,HYDROLOGY_ADC_COEFFICIENT_LEN);
+                offset+=HYDROLOGY_ADC_COEFFICIENT_LEN;
+
+                memcpy(temp,&(pbody->element)[i].value[offset],HYDROLOGY_ADC_OFFSET_LEN);
+                Hydrology_WriteStoreInfo(HYDROLOGY_ADC_OFFSET1+adc*HYDROLOGY_ADC_OFFSET_LEN,temp,HYDROLOGY_ADC_OFFSET_LEN);
+                offset+=HYDROLOGY_ADC_OFFSET_LEN;
+
+                memcpy(temp,&(pbody->element)[i].value[offset],HYDROLOGY_ADC_BASE_LEN);
+                Hydrology_WriteStoreInfo(HYDROLOGY_ADC_BASE1+adc*HYDROLOGY_ADC_BASE_LEN,temp,HYDROLOGY_ADC_BASE_LEN);
+                offset+=HYDROLOGY_ADC_BASE_LEN;
+
+                memcpy(temp,&(pbody->element)[i].value[offset],HYDROLOGY_ADC_UPPER_LEN);
+                Hydrology_WriteStoreInfo(HYDROLOGY_ADC_UPPER1+adc*HYDROLOGY_ADC_UPPER_LEN,temp,HYDROLOGY_ADC_UPPER_LEN);
+                offset+=HYDROLOGY_ADC_UPPER_LEN;
+
+                memcpy(temp,&(pbody->element)[i].value[offset],HYDROLOGY_ADC_LOWER_LEN);
+                Hydrology_WriteStoreInfo(HYDROLOGY_ADC_LOWER1+adc*HYDROLOGY_ADC_LOWER_LEN,temp,HYDROLOGY_ADC_LOWER_LEN);
+                offset+=HYDROLOGY_ADC_LOWER_LEN;
+
+                memcpy(temp,&(pbody->element)[i].value[offset],HYDROLOGY_ADC_WARNNING_LEN);
+                Hydrology_WriteStoreInfo(HYDROLOGY_ADC_WARNNING1_1+adc*HYDROLOGY_ADC_WARNNING_LEN,temp,HYDROLOGY_ADC_WARNNING_LEN);
+                offset+=HYDROLOGY_ADC_WARNNING_LEN;
+
+                memcpy(temp,&(pbody->element)[i].value[offset],HYDROLOGY_ADC_WARNNING_LEN);
+                Hydrology_WriteStoreInfo(HYDROLOGY_ADC_WARNNING2_1+adc*HYDROLOGY_ADC_WARNNING_LEN,temp,HYDROLOGY_ADC_WARNNING_LEN);
+                offset+=HYDROLOGY_ADC_WARNNING_LEN;
+
+                adc++;
+        }    
     }   
       RS485RegisterCount = j;
       rs485 = (char)RS485RegisterCount;
@@ -1359,7 +1689,7 @@ int hydrologyInitializeSolidStorage(void)
 int Hydrology_Reset(void)
 {
   char temp[14] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-  
+  int i = 0;
   temp[0] = 0x50;
   Hydrology_WriteStoreInfo(HYDROLOGY_RTUTYPE,temp,HYDROLOGY_RTUTYPE_LEN);
   temp[0] = 0x01;temp[1] = 0x02;temp[2] = 0x03;temp[3] = 0x04;
@@ -1431,6 +1761,18 @@ int Hydrology_Reset(void)
   Hydrology_WriteStoreInfo(HYDROLOGY_ADD_BELOW_THRESHOLD,temp,HYDROLOGY_ADD_BELOW_THRESHOLD_LEN);
   memcpy(temp,"*WHU-2018-V2.0",14);
   Hydrology_WriteStoreInfo(HYDROLOGY_SOFTWARE_VERSION,temp,HYDROLOGY_SOFTWARE_VERSION_LEN);
+
+    temp[0] = 0x00;temp[1] = 0x00;temp[2] = 0x00;temp[3] = 0x00;temp[4] = 0x00;temp[5] = 0x00;
+    for(i=0;i<8;i++){
+   Hydrology_WriteStoreInfo(HYDROLOGY_ISR_COUNT1+i*HYDROLOGY_ISR_COUNT_LEN,temp,HYDROLOGY_ISR_COUNT_LEN);
+    }
+    temp[0] = 0x00;
+   Hydrology_WriteStoreInfo(HYDROLOGY_ISR_COUNT_FLAG,temp,HYDROLOGY_ISR_COUNT_FLAG_LEN); //脉冲计数方式，0为单路，1为联合
+  
+    Hydrology_SetStartIdx(1);  //0,0可测试retrive函数
+    Hydrology_SetEndIdx(1);
+    Hydrology_SetDataPacketCount(0); //有效数据包数1
+    //Store_ClearWork();  //数据全部标记为已发送
 //  temp[0] = 1;
 //  Hydrology_WriteStoreInfo(HYDROLOGY_RS485_COUNT1,temp,HYDROLOGY_RS485_COUNT_LEN);
 //  temp[0] = 0x01;temp[1] = 0x03;temp[2] = 0x00;temp[3] = 0x03;temp[4] = 5;
