@@ -10,7 +10,9 @@
 
 #pragma once 
 
-// #define ZHADD
+#ifndef ZHADD
+#define ZHADD
+#endif
 
 extern char g_pulse_rate[4]; //  满计数
 

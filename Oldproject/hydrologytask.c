@@ -241,8 +241,15 @@ static void select_mode_to_sample(int i)
 
         switch (Element_table[ i ].Mode) {
 		case ADC: {
-			sample_mode_num.adc_i = ( int )Element_table[ i ].Channel;
-			ADC_Element(value, sample_mode_num.adc_i);
+			//before
+			// sample_mode_num.adc_i = ( int )Element_table[ i ].Channel;
+			// ADC_Element(value, sample_mode_num.adc_i);
+			//after
+			int index = 1;
+			index = _BCDtoDEC(Element_table[ i ].Channel);  // 0x10->10
+			ADC_Element(value, index, sample_mode_num.adc_i);
+			sample_mode_num.adc_i++;
+			//
 			break;
 		}
 		case ISR_COUNT: {
@@ -345,7 +352,7 @@ int HydrologySample() {
 		return -1;
         }
 
-	printf("\n\n Start Sample:   \n\n");
+	printf("\n\n Start Sample:   interval:%d\n\n",(get_sample_interval_form_flash() / 60));
 	UART1_Open_9600(UART1_U485_TYPE);
 
         take_sample_and_save_sample_data_temporary();
@@ -370,6 +377,9 @@ static uint8_t get_store_interval(void) {
 static int arrived_store_time() {
 
 	uint8_t store_interval = get_store_interval();
+
+	printf("store interval:%d\n",store_interval);
+
 	if (now_time_reach_interval(store_interval) == TRUE) {
 		return TRUE;
 	}

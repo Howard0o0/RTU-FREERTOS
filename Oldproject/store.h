@@ -10,7 +10,9 @@
 
 #pragma once
 
-// #define ZHADD
+#ifndef ZHADD
+#define ZHADD
+#endif
 
 ////////////////////////////////////////
 //  ROM区域分配  地址为int类型,11位 
