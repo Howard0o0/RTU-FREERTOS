@@ -15,14 +15,13 @@ int debug = 0;
 void hydrology_sample(void* pvParameters) {
 
 	while (1) {
-		// debug_printf("\r\nSample start,freeheap:%d\r\n", xPortGetFreeHeapSize());
-		// debug_printf("Sample HWM :%d\r\n", uxTaskGetStackHighWaterMark(NULL));
-
 		HydrologySample();
 
-		// debug_printf("\r\nSample end,freeheap:%d\r\n", xPortGetFreeHeapSize());
-
-		vTaskDelay(30000 / portTICK_PERIOD_MS);
+		unsigned int interval = get_sample_interval_form_flash();
+		for(unsigned int i=0; i<interval; i++){
+			vTaskDelay(60 * 1000 / portTICK_PERIOD_MS);
+			printf("sample still alive, 1 min\n");
+		}
 	}
 }
 
@@ -30,7 +29,12 @@ void hydrology_store(void* pvParameters) {
 
 	while (1) {
 		HydrologySaveData(TimerReport);
-		vTaskDelay(30000 / portTICK_PERIOD_MS);
+
+		unsigned int interval = get_store_interval();
+		for(unsigned int i=0; i<interval; i++){
+			vTaskDelay(60 * 1000 / portTICK_PERIOD_MS);
+			printf("store still alive, 1 min\n");
+		}
 	}
 }
 
@@ -38,7 +42,12 @@ void hydrology_report(void* pvParameters) {
 
 	while (1) {
 		hydrologyReport(rtc_nowTime);
-		vTaskDelay(30000 / portTICK_PERIOD_MS);
+
+		unsigned int interval = get_report_interval();
+		for(unsigned int i=0; i<interval; i++){
+			vTaskDelay(60 * 1000 / portTICK_PERIOD_MS);
+			printf("report still alive, 1 min\n");
+		}
 	}
 }
 
@@ -52,6 +61,11 @@ void hydrology_init() {
 	HydrologyDataPacketInit();
 
 	printf("hydrology init done \n\n");
+
+	unsigned int sample_interval = get_sample_interval_form_flash();
+	unsigned int store_interval = get_store_interval();
+	unsigned int report_interval = get_report_interval();
+	printf("sample:%d store:%d report:%d\n",sample_interval,store_interval,report_interval);
 }
 
 void create_hydrology_tasks() {
@@ -65,6 +79,6 @@ void create_hydrology_tasks() {
 	xTaskCreate(hydrology_store, "hydrology store", configMINIMAL_STACK_SIZE * 4, NULL,
 		    tskIDLE_PRIORITY + 2, NULL);  // 550 306//660 396//440 242
 
-	xTaskCreate(hydrology_report, "hydrology report", configMINIMAL_STACK_SIZE * 5, NULL,
+	xTaskCreate(hydrology_report, "hydrology report", configMINIMAL_STACK_SIZE * 6, NULL,
 		    tskIDLE_PRIORITY + 2, NULL);  // 550 198//660 278//440 118
 }

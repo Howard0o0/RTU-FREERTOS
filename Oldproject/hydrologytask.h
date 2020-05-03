@@ -53,5 +53,9 @@ void task_hydrology_run(void *pvParameters);
 
 // void task_hydrology_instant_waterlevel(void *pvParameters);
 
+unsigned int get_sample_interval_form_flash();   //minutes
+uint8_t get_store_interval(void);                //minutes
+unsigned int get_report_interval();              //minutes
+
 
 #endif /* _HYDROLOGYTASK_H_ */

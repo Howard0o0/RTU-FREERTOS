@@ -197,7 +197,7 @@ void HydrologyDataPacketInit() {
 
 //////////////sample//////////
 
-static int get_sample_interval_form_flash()
+unsigned int get_sample_interval_form_flash()
 {
         char	 sampleinterval[ 2 ];
 
@@ -205,7 +205,7 @@ static int get_sample_interval_form_flash()
 				HYDROLOGY_SAMPLE_INTERVAL_LEN);  //??????????
 	sampleinterval[ 0 ] = _BCDtoDEC(sampleinterval[ 0 ]);
 	sampleinterval[ 1 ] = _BCDtoDEC(sampleinterval[ 1 ]);
-	return sampleinterval[ 1 ] + sampleinterval[ 0 ] * 100; 
+	return (sampleinterval[ 1 ] + sampleinterval[ 0 ] * 100) / 60; 
 }
 
 static void take_adc_sample_only_once()
@@ -345,17 +345,17 @@ int HydrologySample() {
 
         sample_count_init();
 
-        if(now_time_reach_interval( (get_sample_interval_form_flash() / 60) )){
-                printf("Not Sample Time! now time is: %d/%d/%d  %d:%d:%d \n\n", rtc_nowTime[ 0 ],
-		       rtc_nowTime[ 1 ], rtc_nowTime[ 2 ], rtc_nowTime[ 3 ], rtc_nowTime[ 4 ],
-		       rtc_nowTime[ 5 ]);
-		return -1;
-        }
+    //     if(now_time_reach_interval( (get_sample_interval_form_flash() / 60) )){
+    //             printf("Not Sample Time! now time is: %d/%d/%d  %d:%d:%d \n\n", rtc_nowTime[ 0 ],
+	// 	       rtc_nowTime[ 1 ], rtc_nowTime[ 2 ], rtc_nowTime[ 3 ], rtc_nowTime[ 4 ],
+	// 	       rtc_nowTime[ 5 ]);
+	// 	return -1;
+    //     }
 
-	printf("\n\n Start Sample:   interval:%d\n\n",(get_sample_interval_form_flash() / 60));
+	printf("\n\n Start Sample:   \n\n");
 	UART1_Open_9600(UART1_U485_TYPE);
 
-        take_sample_and_save_sample_data_temporary();
+	take_sample_and_save_sample_data_temporary();
 
 	UART3_Open(UART3_CONSOLE_TYPE);
 	UART1_Open(UART1_BT_TYPE);
@@ -365,7 +365,7 @@ int HydrologySample() {
 }
 
 
-static uint8_t get_store_interval(void) {
+uint8_t get_store_interval(void) {
 	char storeinterval;
 	Hydrology_ReadStoreInfo(HYDROLOGY_WATERLEVEL_STORE_INTERVAL, &storeinterval,
 				HYDROLOGY_WATERLEVEL_STORE_INTERVAL_LEN);  // ly
@@ -489,11 +489,11 @@ static void update_package_count(void) {
 
 int HydrologySaveData(char funcode)  // char *_saveTime
 {
-	if (arrived_store_time() == FALSE) {
-		printf("not store time, %d/%d/%d %d:%d:%d\n\n", rtc_nowTime[ 0 ], rtc_nowTime[ 1 ],
-		       rtc_nowTime[ 2 ], rtc_nowTime[ 3 ], rtc_nowTime[ 4 ], rtc_nowTime[ 5 ]);
-		return FAILED;
-	}
+	// if (arrived_store_time() == FALSE) {
+	// 	printf("not store time, %d/%d/%d %d:%d:%d\n\n", rtc_nowTime[ 0 ], rtc_nowTime[ 1 ],
+	// 	       rtc_nowTime[ 2 ], rtc_nowTime[ 3 ], rtc_nowTime[ 4 ], rtc_nowTime[ 5 ]);
+	// 	return FAILED;
+	// }
 
 	char package[ HYDROLOGY_DATA_ITEM_LEN ] = { 0 };  //数据条为130个字节
 
@@ -513,6 +513,71 @@ int HydrologySaveData(char funcode)  // char *_saveTime
 	printf("store %d elements' value into rom success \n\n", get_element_count());
 
 	return 0;
+}
+
+unsigned int get_report_interval() {
+	//  01:  5分钟   02:  10分钟  03: 20分钟   04:  30分钟
+	//  05:  1小时   06:   2小时  07:  3小时   08:  6小时
+	//  09:  12小时  10:    1天   11:    2天   12:   3天
+	//  13:    5天   14:    10天  15:  15天    16:  1个月
+	char timerinterval;
+	Hydrology_ReadStoreInfo(HYDROLOGY_TIMER_INTERVAL, &timerinterval,
+				HYDROLOGY_WATERLEVEL_STORE_INTERVAL_LEN);
+	timerinterval = _BCDtoDEC(timerinterval);
+	unsigned int time = 0;
+	switch (timerinterval) {
+	case 1:
+		time = 5;
+		break;
+	case 2:
+		time = 10;
+		break;
+	case 3:
+		time = 20;
+		break;
+	case 4:
+		time = 30;
+		break;
+	case 5:
+		time = 60;
+		break;
+	case 6:
+		time = 2 * 60;
+		break;
+	case 7:
+		time = 3 * 60;
+		break;
+	case 8:
+		time = 6 * 60;
+		break;
+	case 9:
+		time = 12 * 60;
+		break;
+	case 10:
+		time = 24 * 60;
+		break;
+	case 11:
+		time = 2 * 24 * 60;
+		break;
+	case 12:
+		time = 3 * 24 * 60;
+		break;
+	case 13:
+		time = 5 * 24 * 60;
+		break;
+	case 14:
+		time = 10 * 24 * 60;
+		break;
+	case 15:
+		time = 15 * 24 * 60;
+		break;
+	case 16:
+		time = 30 * 24 * 60;
+		break;
+	default:
+		break;
+	}
+	return time;
 }
 
 static int arrived_report_time(char now_time[ 6 ]) {
@@ -603,11 +668,11 @@ static int report_packet(int count_of_packet_to_send, int packet_to_send_start_i
 }
 
 int hydrologyReport(char now_time[ 6 ]) {
-	if (arrived_report_time(now_time) == FALSE) {
-		printf("not report time, %d/%d/%d %d:%d:%d\n\n", now_time[ 0 ], now_time[ 1 ],
-		       now_time[ 2 ], now_time[ 3 ], now_time[ 4 ], now_time[ 5 ]);
-		return FAILED;
-	}
+	// if (arrived_report_time(now_time) == FALSE) {
+	// 	printf("not report time, %d/%d/%d %d:%d:%d\n\n", now_time[ 0 ], now_time[ 1 ],
+	// 	       now_time[ 2 ], now_time[ 3 ], now_time[ 4 ], now_time[ 5 ]);
+	// 	return FAILED;
+	// }
 
 	printf("start report \n\n");
 
