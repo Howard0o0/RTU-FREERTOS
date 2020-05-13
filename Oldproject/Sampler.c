@@ -76,17 +76,11 @@ int  Sampler_Init()
     Store_ReadPulseRangeBytes(4,g_pulse_range[3]);
     RTC_RetrievePulseBytes();//提取脉冲值
     
-#ifndef ZHADD
-// 2418 P2设置,P2.3 开启中断 放在RTC准备好了之后 . P2.0-2.4中断flag high-to-low transition
-//5438 P1设置  P1.3                                P1.0-1.4
-    P1IE = 0x03;
-    P1IES = 0x0F;
-#else
+
 // 2418 P2设置,P2.3 开启中断 放在RTC准备好了之后 . P2.0-2.4中断flag high-to-low transition
 //5438 P1设置  P1.3                                P1.0-1.4
     P1IE = 0xFF;  //中断使能位
     P1IES = 0xFF; // high-to-low transition
-#endif
     
     return 0;
 }
@@ -437,11 +431,6 @@ void longtochar(char *arr1, long *arr2)
     arr1[2] = (char)arr2[2];
 }
 
-#ifndef ZHADD
-char ISR_Count_Temp[5] = {0,0,0,0,0};
-#else
-
-#endif
 
 void ISR_Count_Cal(char* ISR_Count_Arr)
 {

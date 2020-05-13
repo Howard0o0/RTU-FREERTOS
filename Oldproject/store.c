@@ -3748,15 +3748,13 @@ int  Store_CheckDataItemSended(int _index) //检查发送存储标记
 int  Store_ClearWork()         //+++++++
 {
     //数据上下限全部设为默认
-#ifndef ZHADD
-    for(int i=1;i<=8;++i)
-    {
-        if(Store_SetDataMaxInt(i,4096)<0)
-            return -1;
-        if(Store_SetDataMinInt(i,0)<0)
-            return -1;
-    }
-#endif
+    // for(int i=1;i<=8;++i)
+    // {
+    //     if(Store_SetDataMaxInt(i,4096)<0)
+    //         return -1;
+    //     if(Store_SetDataMinInt(i,0)<0)
+    //         return -1;
+    // }
     //数据区全部认为已经发送
     for(int i=HYDROLOGY_DATA_MIN_IDX;i<=HYDROLOGY_DATA_MAX_IDX;++i)
     {

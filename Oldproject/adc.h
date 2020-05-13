@@ -10,10 +10,6 @@
 #ifndef  _ADC_H_
 #define  _ADC_H_
 
-#ifndef ZHADD
-#define ZHADD
-#endif
-
 extern unsigned int A[16]; 
 
 void ADC_Open();

@@ -10,10 +10,6 @@
 
 #pragma once
 
-#ifndef ZHADD
-#define ZHADD
-#endif
-
 ////////////////////////////////////////
 //  ROM区域分配  地址为int类型,11位 
 //  起始地址: 0x0000  最高地址: 0x07FF 

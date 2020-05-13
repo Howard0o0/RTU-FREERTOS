@@ -256,7 +256,6 @@ void ADC_Sample()
     A[8]>>=3;A[9]>>=3;A[10]>>=3;A[11]>>=3;A[12]>>=3;A[13]>>=3;A[14]>>=3;A[15]>>=3; 
    
 //#ifdef __CONSOLE__DEBUG__
-#ifdef ZHADD
 //    TraceMsg("////////////////////////////////////////",1);
 //    TraceMsg("A0: ",1);
    TraceInt4(A[0],1);
@@ -308,7 +307,6 @@ void ADC_Sample()
    TraceMsg("A15: ",1);
    TraceInt4(A[15],1);
    TraceMsg("////////////////////////////////////////",1);    
-#endif
 //#endif
 }
 

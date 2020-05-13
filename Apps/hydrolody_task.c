@@ -19,8 +19,9 @@ void hydrology_sample(void* pvParameters) {
 
 		unsigned int interval = get_sample_interval_form_flash();
 		for(unsigned int i=0; i<interval; i++){
-			vTaskDelay(60 * 1000 / portTICK_PERIOD_MS);
-			printf("sample still alive, 1 min\n");
+			vTaskDelay(30 * 1000 / portTICK_PERIOD_MS);
+			vTaskDelay(30 * 1000 / portTICK_PERIOD_MS);
+			printf("sample still alive, already %d mins, total interval time %d mins\n", i, interval);
 		}
 	}
 }
@@ -32,8 +33,9 @@ void hydrology_store(void* pvParameters) {
 
 		unsigned int interval = get_store_interval();
 		for(unsigned int i=0; i<interval; i++){
-			vTaskDelay(60 * 1000 / portTICK_PERIOD_MS);
-			printf("store still alive, 1 min\n");
+			vTaskDelay(30 * 1000 / portTICK_PERIOD_MS);
+			vTaskDelay(30 * 1000 / portTICK_PERIOD_MS);
+			printf("store still alive, already %d mins, total interval time %d mins\n", i, interval);
 		}
 	}
 }
@@ -45,8 +47,9 @@ void hydrology_report(void* pvParameters) {
 
 		unsigned int interval = get_report_interval();
 		for(unsigned int i=0; i<interval; i++){
-			vTaskDelay(60 * 1000 / portTICK_PERIOD_MS);
-			printf("report still alive, 1 min\n");
+			vTaskDelay(30 * 1000 / portTICK_PERIOD_MS);
+			vTaskDelay(30 * 1000 / portTICK_PERIOD_MS);
+			printf("report still alive, already %d mins, total interval time %d mins\n", i, interval);
 		}
 	}
 }
@@ -62,16 +65,16 @@ void hydrology_init() {
 
 	printf("hydrology init done \n\n");
 
-	unsigned int sample_interval = get_sample_interval_form_flash();
-	unsigned int store_interval = get_store_interval();
-	unsigned int report_interval = get_report_interval();
-	printf("sample:%d store:%d report:%d\n",sample_interval,store_interval,report_interval);
+	// unsigned int sample_interval = get_sample_interval_form_flash();
+	// unsigned int store_interval = get_store_interval();
+	// unsigned int report_interval = get_report_interval();
+	// printf("sample:%d store:%d report:%d\n",sample_interval,store_interval,report_interval);
 }
 
 void create_hydrology_tasks() {
 	hydrology_init();
-	xTaskCreate(rtc_update, "RTC update", configMINIMAL_STACK_SIZE * 4, NULL,
-		    tskIDLE_PRIORITY + 2, NULL);  // 550 333//660 433//440 266
+	// xTaskCreate(rtc_update, "RTC update", configMINIMAL_STACK_SIZE * 4, NULL,
+	// 	    tskIDLE_PRIORITY + 2, NULL);  // 550 333//660 433//440 266
 
 	xTaskCreate(hydrology_sample, "hydrology sample", configMINIMAL_STACK_SIZE * 4, NULL,
 		    tskIDLE_PRIORITY + 2, NULL);  // 550 306//660 396//440 242

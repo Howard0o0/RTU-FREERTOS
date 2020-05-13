@@ -126,6 +126,7 @@ __interrupt void TIMERB1_ISR(void)
         TBCCR1 += 61440;
         break;
       case 4:
+        TimerB_Clear();     //rtc task add
         WatchDog_Clear(); 
         TBCCR2 += 1024;
         Clear_ExternWatchdog();

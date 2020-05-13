@@ -35,6 +35,9 @@ extern hydrologyElement  inputPara[ MAX_ELEMENT ];
 uint16_t		 time_10min = 0, time_5min = 0, time_1min = 1, time_1s = 0;
 extern SemaphoreHandle_t GPRS_Lock;
 
+static void try_to_correct_rtc_time_via_network(void);
+
+
 void HydrologyTimeBase() {
 	time_1min++;
 	time_5min++;
@@ -343,7 +346,7 @@ static void take_sample_and_save_sample_data_temporary()
 
 int HydrologySample() {
 
-        sample_count_init();
+	sample_count_init();
 
     //     if(now_time_reach_interval( (get_sample_interval_form_flash() / 60) )){
     //             printf("Not Sample Time! now time is: %d/%d/%d  %d:%d:%d \n\n", rtc_nowTime[ 0 ],
@@ -353,6 +356,7 @@ int HydrologySample() {
     //     }
 
 	printf("\n\n Start Sample:   \n\n");
+
 	UART1_Open_9600(UART1_U485_TYPE);
 
 	take_sample_and_save_sample_data_temporary();
@@ -673,6 +677,9 @@ int hydrologyReport(char now_time[ 6 ]) {
 	// 	       now_time[ 2 ], now_time[ 3 ], now_time[ 4 ], now_time[ 5 ]);
 	// 	return FAILED;
 	// }
+	try_to_correct_rtc_time_via_network();			//synchronize rtc time
+	RTC_ReadTimeBytes5(g_rtc_nowTime);				//
+	RTC_ReadTimeBytes6(rtc_nowTime);				//
 
 	printf("start report \n\n");
 
