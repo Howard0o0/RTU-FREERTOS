@@ -54,8 +54,11 @@
 #include "memoryleakcheck.h"
 #include "camera.h"
 
-
+extern bool Is_uart3_RX_INT;     //增加 LSHB200508
 int IsDebug = 0;
+
+bool Is_RS485_1=false,Is_bluetooth=false,Is_uart1_RX_INT=false; //工作指示灯控制，三种情况(1)当前UART1是否是485，（2）当前UART1是否是蓝牙，（3）是否发生了uart1中断  LSHB 20200506
+
 // extern SemaphoreHandle_t xSemaphore_BLE;
 
 /*

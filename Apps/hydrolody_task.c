@@ -65,10 +65,6 @@ void hydrology_init() {
 
 	printf("hydrology init done \n\n");
 
-	// unsigned int sample_interval = get_sample_interval_form_flash();
-	// unsigned int store_interval = get_store_interval();
-	// unsigned int report_interval = get_report_interval();
-	// printf("sample:%d store:%d report:%d\n",sample_interval,store_interval,report_interval);
 }
 
 void create_hydrology_tasks() {

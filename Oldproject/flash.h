@@ -1,10 +1,10 @@
 //////////////////////////////////////////////////////
-//     ÎÄ¼þÃû: flash.h
-//   ÎÄ¼þ°æ±¾: 0.0.0
-//   ´´½¨Ê±¼ä: 09Äê 8ÔÂ10ÈÕ
-//   ¸üÐÂÄÚÈÝ:  
-//       ×÷Õß: ÁÖÖÇ
-//       ¸½×¢: ÎÞ
+//     ï¿½Ä¼ï¿½ï¿½ï¿½: flash.h
+//   ï¿½Ä¼ï¿½ï¿½æ±¾: 0.0.0
+//   ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½: 09ï¿½ï¿½ 8ï¿½ï¿½10ï¿½ï¿½
+//   ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:  
+//       ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½
+//       ï¿½ï¿½×¢: ï¿½ï¿½
 //
 //////////////////////////////////////////////////////
 #pragma once 
@@ -15,25 +15,30 @@
 #define FLASH_SEGMENT_SIZE      512
 
 
-void FLASH_EraseOneSEG ( unsigned long int Address ); //²Á³ýflash,Ã¿´Î²ÁÉ¾³ýÒ»¸ö¶Î
+void FLASH_EraseOneSEG ( unsigned long int Address ); //ï¿½ï¿½ï¿½ï¿½flash,Ã¿ï¿½Î²ï¿½É¾ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½
 
 // *****************************************************
-//°ÑÊý×é´ÓÆ¬ÄÚFLASH¶Á³ö
-//²ÎÊýwaddr:Êý×éµÄÎ»ÖÃ
-//²ÎÊývalue:¶Á³öµÄÊý×éµÄÖ¸Õë
-//²ÎÊýsize:¶Á³öµÄÊý×éµÄ´óÐ¡
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¬ï¿½ï¿½FLASHï¿½ï¿½ï¿½ï¿½
+//ï¿½ï¿½ï¿½ï¿½waddr:ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
+//ï¿½ï¿½ï¿½ï¿½value:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½
+//ï¿½ï¿½ï¿½ï¿½size:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½Ð¡
 // *****************************************************
 
-void FLASH_EraseOneBank ( unsigned long int Address );//²Á³ýflash,Ã¿´Î²ÁÉ¾³ýÒ»¸öBANK
+void FLASH_EraseOneBank ( unsigned long int Address );//ï¿½ï¿½ï¿½ï¿½flash,Ã¿ï¿½Î²ï¿½É¾ï¿½ï¿½Ò»ï¿½ï¿½BANK
 
-void FLASH_Writew ( unsigned long int Address,unsigned int nValue ); //Ð´ÈëÒ»¸ö×Ö½Ú
+void FLASH_Writew ( unsigned long int Address,unsigned int nValue ); //Ð´ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ö½ï¿½
 
 // *****************************************************
-//°ÑÊý×éÐ´ÈëÊý¾Ýµ½Æ¬ÄÚFLASH
-//²ÎÊýAddress:±£´æÊý×éµÄÎ»ÖÃ
-//²ÎÊývalue:Êý×éµÄÖ¸Õë
-//²ÎÊýsize:Êý×éµÄ´óÐ¡
-//ÏÈ²Á³ýÔÙÐ´
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½Ýµï¿½Æ¬ï¿½ï¿½FLASH
+//ï¿½ï¿½ï¿½ï¿½Address:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
+//ï¿½ï¿½ï¿½ï¿½value:ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½
+//ï¿½ï¿½ï¿½ï¿½size:ï¿½ï¿½ï¿½ï¿½Ä´ï¿½Ð¡
+//ï¿½È²ï¿½ï¿½ï¿½ï¿½ï¿½Ð´
 // *****************************************************
 void Write_flash_Segment ( unsigned long int Address,  char* value,  int size );
-int Read_Flashw ( unsigned long int waddr ); //¶ÁÈ¡Ò»¸ö×Ö½Ú
+int Read_Flashw ( unsigned long int waddr ); //ï¿½ï¿½È¡Ò»ï¿½ï¿½ï¿½Ö½ï¿½
+
+
+void Write_Flash_Erase_Segment ( unsigned long int Address,  char* value,  int size );
+void Write_Flash_Segment ( unsigned long int Address,  char* value,  int size );
+void Read_Flash_Segment(unsigned long int Address, char* value, int size);

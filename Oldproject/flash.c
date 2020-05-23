@@ -100,3 +100,93 @@ void Write_flash_Segment ( unsigned long int Address,  char* value,  int size )
 	FCTL3=FWKEY+LOCK;							// LOCK = 1
 	while ( ( FCTL3&BUSY ) ==BUSY );					// Waitint for FLASH
 }
+
+// *****************************************************		add
+
+void Write_Flash_Erase_Segment ( unsigned long int Address,  char* value,  int size )
+{
+	int i;
+	_DINT();
+     //  FCTL2 = FWKEY + FSSEL_1 + FN3 + FN4;//4.6
+        
+        FCTL3=FWKEY;// LOCK = 0	
+       
+	FCTL1=FWKEY+ERASE;
+        //FCTL1=FWKEY+MERAS;// ERASE=1
+	__data20_write_char ( Address,0 ); 	/*2020.4.6*/					
+	FCTL1=FWKEY+WRT;								// WRT = 1  单字节写
+	 //while ( ( FCTL3&BUSY ) ==BUSY ); //2020.4.7
+	for ( i = 0; i < size; i++ )
+	{
+		//while ( ( FCTL3&BUSY ) ==BUSY );					// Waitint for FLASH
+		__data20_write_char ( Address+i,value[i] );
+             //  *(char *)Address++ = *value++;
+        }
+	
+	FCTL1=FWKEY;								// WRT = 0
+	FCTL3=FWKEY+LOCK;							// LOCK = 1
+	//FCTL3=FWKEY;
+        while ( ( FCTL3&BUSY ) ==BUSY );	                                // Waitint for FLASH
+      _EINT();
+}
+
+void Write_Flash_Segment ( unsigned long int Address,  char* value,  int size )
+{
+  
+//	int i;
+//	_DINT();
+//        //FCTL2 = FWKEY + FSSEL_1 + FN3 + FN4;//4.6
+//        
+//        FCTL3=FWKEY;// LOCK = 0	
+//       /*
+//	FCTL1=FWKEY+ERASE;
+//        //FCTL1=FWKEY+MERAS;// ERASE=1
+//	__data20_write_char ( Address,0 ); 	/*2020.4.6*/					
+//	FCTL1=FWKEY+WRT;								// WRT = 1  单字节写
+//	 //while ( ( FCTL3&BUSY ) ==BUSY ); //2020.4.7
+//	for ( i = 0; i < size; i++ )
+//	{
+//		//while ( ( FCTL3&BUSY ) ==BUSY );					// Waitint for FLASH
+//		__data20_write_char ( Address+i,value[i] );
+//             //  *(char *)Address++ = *value++;
+//        }
+//	
+//	FCTL1=FWKEY;								// WRT = 0
+//	FCTL3=FWKEY+LOCK;							// LOCK = 1
+//	//FCTL3=FWKEY;
+//        while ( ( FCTL3&BUSY ) ==BUSY );	                                // Waitint for FLASH
+//      _EINT();
+//     
+      //
+      int i;
+	_DINT();
+	FCTL1=FWKEY+WRT;							// WRT = 1
+	FCTL3=FWKEY;								// LOCK = 0
+	
+	for ( i = 0; i < size; i++ )
+	{
+		while ( ( FCTL3&BUSY ) ==BUSY );				// Waitint for FLASH
+		__data20_write_char ( Address+i,value[i] );
+	}
+	
+	FCTL1=FWKEY;								// WRT = 0
+	FCTL3=FWKEY+LOCK;							// LOCK = 1
+	while ( ( FCTL3&BUSY ) ==BUSY );
+        _EINT();
+}
+
+void Read_Flash_Segment(unsigned long int Address, char* value, int size)
+{
+       // int  value;
+      _DINT();
+        int i = 0;
+        for(i=0 ;i<size;i++)
+        {
+         // while ( FCTL3 & BUSY );
+           //*value++ = *(char *)Address++ ; //无关，写进去就有随机性
+           value[i] = __data20_read_char ( Address+i );
+	}
+     _EINT();
+	return ;
+
+}

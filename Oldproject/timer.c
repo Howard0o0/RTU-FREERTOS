@@ -17,6 +17,9 @@
 
 static unsigned int s_ClockTicks=0;   
 static unsigned int s_reset_count=0;
+
+unsigned int sys_errorcode_runcode=100; // 定义 sys_errorcode_runcode为全局变量，取值1-69， 初值定为100，防止误点灯   LSHB 20200506
+
 void Timer_Zero()
 {
     s_ClockTicks=0;
@@ -85,6 +88,34 @@ void TimerB_Clear()
 {
     s_reset_count=0;
 }
+
+// void Timer0_A0_Enable()  // 启动Timer0_A0中断 LSHB 20200506
+// {
+//     TA0CCTL0 |= CCIE;
+// }
+
+// void Timer0_A0_Clear()  // 清除Timer0_A0中断 LSHB 20200506
+// {
+//      TA0CCTL0 &= ~CCIE;
+// }
+
+// void TimerB0_Enable()  // 启动TIMERB0中断 LSHB 20200506
+// {
+//     TB0CCTL0=CCIE;
+// }
+
+// void TimerB0_Clear()  // 清除TIMERB0中断 LSHB 20200506
+// {
+//     TB0CCTL0=~CCIE;
+// }
+
+// #pragma vector = TIMER0_A0_VECTOR
+// __interrupt void TIMER0_A0_ISR (void)
+// {    
+  
+//   sys_error_status(sys_errorcode_runcode);  //用于系统错误和工作状态指示灯控制 LSHB   20200506
+// }
+
 /*   TIMERA0_VECTOR   *   TIMER1_A0_VECTOR*/
 volatile unsigned long ulStatsOverflowCount = 0;
 #pragma vector=TIMER1_A0_VECTOR 
@@ -99,6 +130,8 @@ __interrupt void TIMERA0_ISR(void)
     ++s_ClockTicks;
     ulStatsOverflowCount++;
     HydrologyTimeBase();
+    TimerB_Clear();
+    WatchDog_Clear();
 }
 
 //12���ӵĿ��Ź�
@@ -126,7 +159,6 @@ __interrupt void TIMERB1_ISR(void)
         TBCCR1 += 61440;
         break;
       case 4:
-        TimerB_Clear();     //rtc task add
         WatchDog_Clear(); 
         TBCCR2 += 1024;
         Clear_ExternWatchdog();

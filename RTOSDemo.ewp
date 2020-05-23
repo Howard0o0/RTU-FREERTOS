@@ -5095,6 +5095,12 @@
             <name>$PROJ_DIR$\Oldproject\store.h</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\Oldproject\sys_status.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Oldproject\sys_status.h</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\Oldproject\timer.c</name>
         </file>
         <file>

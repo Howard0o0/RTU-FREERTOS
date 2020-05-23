@@ -17,7 +17,7 @@ int HydrologyCancelMark();
 void HydrologyTimeBase();
 
 void convertSendTimetoHydrology(char* src,char* dst);
-
+void convert_array_bcd2dec(char* array,int len);
 
 int HydrologyRecord(int index);
 
